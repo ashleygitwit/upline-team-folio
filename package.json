@@ -1,0 +1,10 @@
+{
+  "name": "upline-team-folio",
+  "private": true,
+  "scripts": {
+    "sync-data": "cp data/venture-plan.json app/public/data/venture-plan.json",
+    "dev": "npm run sync-data && npm --prefix app run dev",
+    "build": "npm run sync-data && npm --prefix app run build",
+    "preview": "npm --prefix app run preview"
+  }
+}
