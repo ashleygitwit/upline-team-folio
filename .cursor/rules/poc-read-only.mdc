@@ -1,0 +1,31 @@
+# POC Read-Only — Team Folio Workspace
+
+This rule applies **only in workspaces that include the Team Folio folder**. It does not
+affect Ashley's separate POC-only Cursor window, where she keeps full write access.
+
+## The rule
+
+The `upline-poc` folder (at `/Users/ashleyroberts/Documents/upline-poc`) is **reference-only**
+from this workspace.
+
+### Never do inside upline-poc:
+- Create, edit, or delete files
+- `git add`, `git commit`, `git push`, `git pull`
+- `git checkout`, `git merge`, `git rebase`, `git reset`
+- Run scripts that modify POC files or state
+
+### Allowed (read-only reference):
+- Read files
+- `git log`, `git branch`, `git show`, `git diff`, `git status` (inspection only)
+- Copy content **out** into Team Folio (one-way; never write back)
+
+## Why
+
+Team Folio is a separate venture planning hub. The POC is Austin's codebase and must never
+be accidentally changed from this workspace. All Team Folio work happens in the Team Folio
+folder and its own git remote.
+
+## Overrides
+
+This rule explicitly overrides any POC workspace rules (e.g. `git-session-end` auto-push)
+**while working in this combined workspace**.
