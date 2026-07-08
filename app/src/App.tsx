@@ -41,17 +41,27 @@ function toTask(initiative: VenturePlan['initiatives'][number], index: number): 
 
 function App() {
   const [plan, setPlan] = useState<VenturePlan | null>(null);
+  const [exportMarkdown, setExportMarkdown] = useState('');
   const [statusFilter, setStatusFilter] = useState<InitiativeStatus | 'All'>('All');
   const [workstreamFilter, setWorkstreamFilter] = useState<string>('All');
+  const [copied, setCopied] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch('/data/venture-plan.json')
-      .then((res) => {
+    Promise.all([
+      fetch('/data/venture-plan.json').then((res) => {
         if (!res.ok) throw new Error('Could not load venture plan');
-        return res.json();
+        return res.json() as Promise<VenturePlan>;
+      }),
+      fetch('/venture/planning/execution-plan.md').then((res) => {
+        if (!res.ok) throw new Error('Could not load execution plan export');
+        return res.text();
+      }),
+    ])
+      .then(([planData, markdown]) => {
+        setPlan(planData);
+        setExportMarkdown(markdown);
       })
-      .then((data: VenturePlan) => setPlan(data))
       .catch((err: Error) => setError(err.message));
   }, []);
 
@@ -75,6 +85,12 @@ function App() {
     [filteredInitiatives],
   );
 
+  async function copyExport() {
+    await navigator.clipboard.writeText(exportMarkdown);
+    setCopied(true);
+    window.setTimeout(() => setCopied(false), 2000);
+  }
+
   if (error) {
     return (
       <div className="page">
@@ -94,101 +110,113 @@ function App() {
   return (
     <div className="page">
       <header className="header">
-        <div className="header-brand">
-          <img src="/upline-logo.png" alt="Upline" className="logo" />
-          <div>
-            <p className="eyebrow">Venture Plan</p>
-            <h1>Upline Gantt</h1>
-          </div>
-        </div>
-        <p className="summary">{plan.summary}</p>
+        <img src="/upline-logo.png" alt="Upline" className="logo" />
+        <p className="eyebrow">Venture Plan</p>
         <p className="meta">Last updated {plan.lastUpdated}</p>
       </header>
 
-      <section className="filters">
-        <label>
-          Status
-          <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value as InitiativeStatus | 'All')}
-          >
-            <option value="All">All</option>
-            {STATUSES.map((status) => (
-              <option key={status} value={status}>
-                {status}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label>
-          Workstream
-          <select value={workstreamFilter} onChange={(e) => setWorkstreamFilter(e.target.value)}>
-            <option value="All">All</option>
-            {workstreams.map((workstream) => (
-              <option key={workstream} value={workstream}>
-                {workstream}
-              </option>
-            ))}
-          </select>
-        </label>
+      <section className="card thesis-card">
+        <h2>Venture thesis</h2>
+        <p>{plan.venture.thesis}</p>
       </section>
 
-      <section className="legend">
-        {STATUSES.map((status) => (
-          <span key={status} className="legend-item">
-            <span className="swatch" style={{ backgroundColor: STATUS_COLORS[status] }} />
-            {status}
-          </span>
-        ))}
+      <section className="card mantra-card">
+        <h2>Mantra</h2>
+        <blockquote>{plan.venture.mantra}</blockquote>
       </section>
 
-      <section className="gantt-wrap">
-        {tasks.length === 0 ? (
-          <p className="empty">No initiatives match these filters.</p>
-        ) : (
-          <Gantt
-            tasks={tasks}
-            viewMode={ViewMode.Month}
-            listCellWidth="280px"
-            columnWidth={56}
-            rowHeight={44}
-            barFill={62}
-            TooltipContent={({ task }) => {
-              const initiative = filteredInitiatives.find((i) => i.id === task.id);
-              if (!initiative) return null;
-              return (
-                <div className="tooltip">
-                  <strong>{initiative.title}</strong>
-                  <p>{initiative.workstream}</p>
-                  <p>{initiative.status} · {initiative.owner}</p>
-                  {initiative.notes ? <p>{initiative.notes}</p> : null}
-                </div>
-              );
-            }}
-          />
-        )}
+      <section className="card proof-card">
+        <h2>Upcoming proof point</h2>
+        <p>{plan.venture.upcomingProofPoint}</p>
       </section>
 
-      <section className="initiative-list">
-        <h2>Initiatives ({filteredInitiatives.length})</h2>
-        <ul>
-          {filteredInitiatives.map((initiative) => (
-            <li key={initiative.id}>
-              <span
-                className="status-dot"
-                style={{ backgroundColor: STATUS_COLORS[initiative.status] }}
-              />
-              <div>
-                <strong>{initiative.title}</strong>
-                <p>
-                  {initiative.workstream} · {initiative.owner} · {initiative.start} →{' '}
-                  {initiative.end}
-                </p>
-                {initiative.notes ? <p className="notes">{initiative.notes}</p> : null}
-              </div>
-            </li>
+      <section className="card gantt-card">
+        <div className="section-head">
+          <h2>Gantt</h2>
+          <div className="filters">
+            <label>
+              Status
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value as InitiativeStatus | 'All')}
+              >
+                <option value="All">All</option>
+                {STATUSES.map((status) => (
+                  <option key={status} value={status}>
+                    {status}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label>
+              Workstream
+              <select
+                value={workstreamFilter}
+                onChange={(e) => setWorkstreamFilter(e.target.value)}
+              >
+                <option value="All">All</option>
+                {workstreams.map((workstream) => (
+                  <option key={workstream} value={workstream}>
+                    {workstream}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+        </div>
+
+        <div className="legend">
+          {STATUSES.map((status) => (
+            <span key={status} className="legend-item">
+              <span className="swatch" style={{ backgroundColor: STATUS_COLORS[status] }} />
+              {status}
+            </span>
           ))}
-        </ul>
+        </div>
+
+        <div className="gantt-wrap">
+          {tasks.length === 0 ? (
+            <p className="empty">No initiatives match these filters.</p>
+          ) : (
+            <Gantt
+              tasks={tasks}
+              viewMode={ViewMode.Month}
+              listCellWidth="280px"
+              columnWidth={56}
+              rowHeight={44}
+              barFill={62}
+              TooltipContent={({ task }) => {
+                const initiative = filteredInitiatives.find((i) => i.id === task.id);
+                if (!initiative) return null;
+                return (
+                  <div className="tooltip">
+                    <strong>{initiative.title}</strong>
+                    <p>
+                      {initiative.workstream} · {initiative.status} · {initiative.owner}
+                    </p>
+                    {initiative.notes ? <p>{initiative.notes}</p> : null}
+                  </div>
+                );
+              }}
+            />
+          )}
+        </div>
+      </section>
+
+      <section className="card export-card">
+        <div className="section-head">
+          <div>
+            <h2>Copy for your LLM</h2>
+            <p className="export-hint">
+              Paste into ChatGPT, Claude, or your preferred chat tool to ask about timeline,
+              priorities, and what is in flight.
+            </p>
+          </div>
+          <button type="button" className="copy-btn" onClick={copyExport}>
+            {copied ? 'Copied!' : 'Copy execution-plan.md'}
+          </button>
+        </div>
+        <pre className="export-box">{exportMarkdown}</pre>
       </section>
     </div>
   );

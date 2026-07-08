@@ -11,7 +11,14 @@ Nothing here writes to or deploys to the POC.
 - **URL (v1):** TBD — starts as `*.vercel.app`, custom domain added when ready
 - **Custom domain goal:** something like `plan.upline.com` or a domain you register (see below)
 
-## How to update the plan (Ashley)
+## Try it locally
+
+```bash
+cd "/Users/ashleyroberts/Upline Venture - Team Folio"
+npm run dev
+```
+
+Open **http://localhost:5299** — Team Folio uses its own port (5299), separate from other projects on 5173.
 
 1. Edit `data/venture-plan.json` in Cursor (or ask the agent).
 2. Run `npm run generate-plan` (Phase 2+) to refresh `venture/planning/execution-plan.md`.

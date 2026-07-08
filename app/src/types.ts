@@ -11,8 +11,14 @@ export interface Initiative {
   notes?: string;
 }
 
+export interface VentureContext {
+  thesis: string;
+  mantra: string;
+  upcomingProofPoint: string;
+}
+
 export interface VenturePlan {
-  summary: string;
   lastUpdated: string;
+  venture: VentureContext;
   initiatives: Initiative[];
 }

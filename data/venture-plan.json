@@ -1,6 +1,10 @@
 {
-  "summary": "Upline pilot: Week 1 outreach board, tiered email logic, and questionnaire pipeline. Seeded from execution-plan (read-only reference from upline-poc).",
   "lastUpdated": "2026-07-08",
+  "venture": {
+    "thesis": "Upline helps independent insurance agencies retain and grow household relationships by proactively reviewing coverage at renewal — surfacing savings, cross-sell opportunities, and carrier shopping when it actually pays off.",
+    "mantra": "Right recommendation, right time, right carrier — without the manual grind.",
+    "upcomingProofPoint": "Week 1 pilot board: 15 households with tiered outreach (optimize-in-place under 10%, shop at 10%+) and live questionnaires — proving the renewal-review workflow end to end with Members 1st."
+  },
   "initiatives": [
     {
       "id": "ws-g-questionnaires",
@@ -90,17 +94,17 @@
       "owner": "Ashley",
       "start": "2026-07-08",
       "end": "2026-07-10",
-      "notes": "This project. View-only Gantt at shareable URL."
+      "notes": "View-only Gantt at shareable URL."
     },
     {
       "id": "folio-llm-export",
       "title": "Team Folio LLM export (execution-plan.md)",
       "workstream": "Venture Hub",
-      "status": "Next",
+      "status": "In Flight",
       "owner": "Ashley",
       "start": "2026-07-10",
       "end": "2026-07-12",
-      "notes": "Phase 2. Copy/paste export for ChatGPT and Claude."
+      "notes": "Copy/paste export for ChatGPT and Claude."
     }
   ]
 }
