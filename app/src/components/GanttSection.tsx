@@ -1,12 +1,8 @@
 import { useMemo, useState } from 'react';
-import { Gantt, ViewMode } from 'gantt-task-react';
-import type { Task } from 'gantt-task-react';
 import type { Initiative, InitiativeStatus, VenturePlan } from '../types';
-import { STATUS_COLORS, buildGanttTasks, touchPlan } from '../utils/ganttTasks';
-import {
-  formatDateInput,
-  newInitiativeId,
-} from '../utils/planStorage';
+import { STATUS_COLORS, touchPlan } from '../utils/ganttTasks';
+import { newInitiativeId } from '../utils/planStorage';
+import { TimelineGantt, type TimelineZoom } from './TimelineGantt';
 
 const STATUSES: InitiativeStatus[] = ['In Flight', 'Next', 'Future', 'Done'];
 
@@ -29,7 +25,7 @@ const emptyForm = {
 
 export function GanttSection({ plan, onPlanChange }: GanttSectionProps) {
   const [view, setView] = useState<GanttView>('timeline');
-  const [viewMode, setViewMode] = useState<ViewMode>(ViewMode.Week);
+  const [viewMode, setViewMode] = useState<TimelineZoom>('Week');
   const [statusFilter, setStatusFilter] = useState<InitiativeStatus | 'All'>('All');
   const [workstreamFilter, setWorkstreamFilter] = useState<string>('All');
   const [showAddForm, setShowAddForm] = useState(false);
@@ -51,31 +47,21 @@ export function GanttSection({ plan, onPlanChange }: GanttSectionProps) {
     [plan.initiatives, statusFilter, workstreamFilter],
   );
 
-  const tasks = useMemo(() => buildGanttTasks(filteredInitiatives), [filteredInitiatives]);
-
   function updateInitiatives(next: Initiative[]) {
     onPlanChange(touchPlan({ ...plan, initiatives: next }));
   }
 
-  function handleDateChange(task: Task) {
-    if (task.id.startsWith('project-')) return;
+  function handleDateChange(id: string, start: string, end: string) {
     updateInitiatives(
       plan.initiatives.map((initiative) =>
-        initiative.id === task.id
-          ? {
-              ...initiative,
-              start: formatDateInput(task.start),
-              end: formatDateInput(task.end),
-            }
-          : initiative,
+        initiative.id === id ? { ...initiative, start, end } : initiative,
       ),
     );
   }
 
-  function handleDelete(task: Task) {
-    if (task.id.startsWith('project-')) return;
-    if (!window.confirm(`Delete "${task.name}"?`)) return;
-    updateInitiatives(plan.initiatives.filter((i) => i.id !== task.id));
+  function handleDelete(id: string, title: string) {
+    if (!window.confirm(`Delete "${title}"?`)) return;
+    updateInitiatives(plan.initiatives.filter((i) => i.id !== id));
   }
 
   function handleAddInitiative(e: React.FormEvent) {
@@ -236,11 +222,11 @@ export function GanttSection({ plan, onPlanChange }: GanttSectionProps) {
             Zoom
             <select
               value={viewMode}
-              onChange={(e) => setViewMode(e.target.value as ViewMode)}
+              onChange={(e) => setViewMode(e.target.value as TimelineZoom)}
             >
-              <option value={ViewMode.Day}>Day</option>
-              <option value={ViewMode.Week}>Week</option>
-              <option value={ViewMode.Month}>Month</option>
+              <option value="Day">Day</option>
+              <option value="Week">Week</option>
+              <option value="Month">Month</option>
             </select>
           </label>
         ) : null}
@@ -256,54 +242,16 @@ export function GanttSection({ plan, onPlanChange }: GanttSectionProps) {
       </div>
 
       <p className="edit-hint">
-        Drag bar edges or the whole bar to reschedule. Select a bar and press Delete to remove it.
-        Edits save in this browser — use &ldquo;Download plan JSON&rdquo; below to commit changes
-        to the repo.
+        Drag bars in Timeline view to reschedule. Use List view to review details or delete items.
+        Edits save in this browser — download plan JSON below to commit to the repo.
       </p>
 
       {view === 'timeline' ? (
-        <div className="gantt-wrap timeline-view">
-          {tasks.length === 0 ? (
-            <p className="empty">No initiatives match these filters.</p>
-          ) : (
-            <Gantt
-              tasks={tasks}
-              viewMode={viewMode}
-              listCellWidth="240px"
-              columnWidth={viewMode === ViewMode.Day ? 48 : viewMode === ViewMode.Week ? 72 : 56}
-              rowHeight={44}
-              barFill={68}
-              ganttHeight={Math.min(560, Math.max(280, tasks.length * 46 + 60))}
-              todayColor="rgba(67, 56, 202, 0.12)"
-              onDateChange={handleDateChange}
-              onDelete={handleDelete}
-              TooltipContent={({ task }) => {
-                if (task.type === 'project') {
-                  return (
-                    <div className="tooltip">
-                      <strong>{task.name}</strong>
-                      <p>Workstream group</p>
-                    </div>
-                  );
-                }
-                const initiative = filteredInitiatives.find((i) => i.id === task.id);
-                if (!initiative) return null;
-                return (
-                  <div className="tooltip">
-                    <strong>{initiative.title}</strong>
-                    <p>
-                      {initiative.workstream} · {initiative.status} · {initiative.owner}
-                    </p>
-                    <p>
-                      {initiative.start} → {initiative.end}
-                    </p>
-                    {initiative.notes ? <p>{initiative.notes}</p> : null}
-                  </div>
-                );
-              }}
-            />
-          )}
-        </div>
+        <TimelineGantt
+          initiatives={filteredInitiatives}
+          viewMode={viewMode}
+          onDateChange={handleDateChange}
+        />
       ) : (
         <div className="list-view">
           {filteredInitiatives.length === 0 ? (
@@ -318,6 +266,7 @@ export function GanttSection({ plan, onPlanChange }: GanttSectionProps) {
                   <th>Owner</th>
                   <th>Start</th>
                   <th>End</th>
+                  <th />
                 </tr>
               </thead>
               <tbody>
@@ -339,6 +288,15 @@ export function GanttSection({ plan, onPlanChange }: GanttSectionProps) {
                     <td>{initiative.owner}</td>
                     <td>{initiative.start}</td>
                     <td>{initiative.end}</td>
+                    <td>
+                      <button
+                        type="button"
+                        className="delete-btn"
+                        onClick={() => handleDelete(initiative.id, initiative.title)}
+                      >
+                        Delete
+                      </button>
+                    </td>
                   </tr>
                 ))}
               </tbody>

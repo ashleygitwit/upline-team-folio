@@ -395,3 +395,22 @@ h2 {
   font-weight: 600;
   white-space: nowrap;
 }
+
+.delete-btn {
+  padding: 0.25rem 0.5rem;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+  background: #fff;
+  color: #b91c1c;
+  font: inherit;
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+.delete-btn:hover {
+  background: #fef2f2;
+}
+
+.gantt-card {
+  overflow: hidden;
+}

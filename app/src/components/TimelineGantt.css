@@ -1,0 +1,82 @@
+.timeline-gantt {
+  min-height: 320px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.timeline-gantt .gantt-container {
+  font-family: Inter, system-ui, sans-serif;
+}
+
+.timeline-gantt .gantt .bar-wrapper .bar {
+  fill: #4338ca;
+}
+
+.timeline-gantt .gantt .bar-wrapper.status-in-flight .bar {
+  fill: #4338ca;
+}
+
+.timeline-gantt .gantt .bar-wrapper.status-next .bar {
+  fill: #6366f1;
+}
+
+.timeline-gantt .gantt .bar-wrapper.status-future .bar {
+  fill: #94a3b8;
+}
+
+.timeline-gantt .gantt .bar-wrapper.status-done .bar {
+  fill: #16a34a;
+}
+
+.timeline-gantt .gantt .bar-wrapper.status-in-flight .bar-progress {
+  fill: #312e81;
+}
+
+.timeline-gantt .gantt .bar-wrapper.status-next .bar-progress {
+  fill: #4338ca;
+}
+
+.timeline-gantt .gantt .bar-wrapper.status-future .bar-progress {
+  fill: #64748b;
+}
+
+.timeline-gantt .gantt .bar-wrapper.status-done .bar-progress {
+  fill: #15803d;
+}
+
+.timeline-gantt .gantt .grid-header {
+  fill: #f8fafc;
+  stroke: #e2e8f0;
+}
+
+.timeline-gantt .gantt .grid-row {
+  fill: #fff;
+}
+
+.timeline-gantt .gantt .grid-row:nth-child(even) {
+  fill: #fafafa;
+}
+
+.timeline-gantt .gantt .row-line,
+.timeline-gantt .gantt .tick {
+  stroke: #e2e8f0;
+}
+
+.timeline-gantt .gantt .today-highlight {
+  fill: rgba(67, 56, 202, 0.08);
+}
+
+.timeline-gantt .gantt .handle {
+  fill: #4338ca;
+  opacity: 0.9;
+}
+
+.timeline-gantt .popup-wrapper .popup {
+  background: #1e1b4b;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  color: #fff;
+  font-size: 0.85rem;
+}
