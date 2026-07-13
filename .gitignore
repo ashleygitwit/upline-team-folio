@@ -13,3 +13,5 @@ app/dist/
 
 # Editor
 *.local
+.vercel
+.env*
