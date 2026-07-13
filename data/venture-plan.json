@@ -13,146 +13,183 @@
       "successCriteria": ["Agent Trust", "Customer Engagement", "Scalability Confidence"]
     }
   },
+  "workstreams": ["Ops", "Product", "Go-to-market"],
+  "pilotSummary": {
+    "agency": "Members 1st Insurance",
+    "kickoffDate": "2026-06-17",
+    "asOfDate": "2026-07-13",
+    "pilotWeek": 3,
+    "outreachSendWeek": 4,
+    "sessionRhythm": "Mon · Wed · Fri",
+    "sessionsCompleted": 5,
+    "sessionsPlanned": 12,
+    "scheduleNote": "Kickoff Jun 17 (Wed). Week 1: Jun 17, 22, 24. Gap (no sessions Jun 26–Jul 3). Week 2: Jul 6, 8, 10. Week 3 starts Jul 13 (Mon): Jul 13, 15, 17. Outreach sends ~1 week behind sessions — catch-up Jul 20, 22, 24. Break week Jul 27 for iteration + Stockton Hill prep.",
+    "clientNamingRule": "First name + last initial only (e.g. Daniel P). Never full last names in team-facing exports.",
+    "funnel": {
+      "outreachEmailsDrafted": 20,
+      "outreachEmailsSent": 0,
+      "emailsSentTotal": 0,
+      "questionnairesCompleted": 1,
+      "quotesReviewedWithAgency": 1,
+      "recommendationEmailsSent": 0,
+      "completedEndToEnd": 0
+    },
+    "outreachEmail": {
+      "version": "v8 (Session 4, Jul 6 2026)",
+      "summary": "One boilerplate for every renewal. Only variables: first name, renewal date, new premium (dollars only — no %, no old price, no increase language), and questionnaire link. Premium is never in the first sentence.",
+      "subject": "A quick review of your upcoming renewal",
+      "body": "Hi [First Name],\n\nAt Members 1st Insurance, we value you as a member, not just a policyholder. As your renewal on [renewal date] approaches, we'd like to take a few minutes to review your coverage and make sure everything still fits your needs. Sometimes we find our members are missing out on discounts, because over time the information we have no longer reflects your current situation. Your renewal premium for this term is $[new premium].\n\nOne of the advantages of working with Members 1st Insurance is that we partner with seven different insurance companies. That means we're able to compare options across multiple carriers to help ensure you're receiving competitive rates and the coverage that's right for you. There's no need to shop your insurance with other carriers when we can do that for you right here. We work on behalf of our members to find the best rates — let us take the guesswork and the multiple phone calls off your plate.\n\nTo make sure you're not missing any available discounts or carrying coverage that may no longer match your situation, I've put together a brief questionnaire. Your responses will help us identify potential savings opportunities, verify your current information, and make sure you're properly protected.\n\n[Complete the questionnaire here →]([QUESTIONNAIRE_LINK])\n\nThank you for being a valued member of Members 1st Insurance. We're committed to helping you protect what matters most while making sure your insurance continues to work for you.\n\n[agent]"
+    },
+    "recommendationEmail": {
+      "version": "v6.1",
+      "summary": "Post-shop handoff: rate comparison in paragraph one, simple comparison table, coverage reassurance, CTA to schedule a call (switch) or confirm stay (no shop). Agent reviews every quote before client contact.",
+      "status": "Active design target. Daniel P is the gold-standard switch example; first rec email draft pending agency review.",
+      "goldStandardClient": "Daniel P"
+    },
+    "keyFindings": [
+      "Outreach collapsed to a single boilerplate (v8) — agency wants one email for everyone, not per-bucket variants. Questionnaire carries nuance; recommendation email is the next frontier.",
+      "New premium only — never show % increase, old price, or cause diagnosis. Clients flee sticker shock; broker-identity opener (valued member + seven carriers) is required.",
+      "Shop threshold: prioritize ≥15% increases, ranked biggest-first. Email everyone on renewal as a relationship touch; concentrate shopping on big jumps.",
+      "Small-batch sends (5–6/week) paced to quoting capacity — not all 15 at once.",
+      "Quoting workflow: Upline quotes → Members 1st reviews before any client email → service team closes. Donegal→Travelers rewrite contract governs first move.",
+      "Phone follow-up stays in-house — agency wants the personal touch on non-responders.",
+      "First live quoting walkthrough (Session 5, Jul 7): Daniel P test case across Travelers, Safeco, Nationwide, Progressive. Home + auto quoted together.",
+      "Sends ~1 week behind session rhythm — Week 4 catch-up Jul 20–24. Week 3 sessions start Jul 13."
+    ],
+    "notableProgress": [
+      {
+        "client": "Daniel P",
+        "note": "First questionnaire response. Live quoting walkthrough complete Jul 7. Recommendation email draft next."
+      }
+    ],
+    "roster": {
+      "week1Households": 15,
+      "week1OutreachDrafts": 15,
+      "week2Households": 15,
+      "week2OutreachDrafts": 5,
+      "week2EndToEndBuilt": 6
+    }
+  },
   "initiatives": [
     {
-      "id": "macro-m1st-pilot",
-      "title": "Members 1st pilot",
-      "workstream": "Macro Timeline",
-      "status": "In Flight",
-      "owner": "Ashley + Agent",
-      "start": "2026-06-17",
-      "end": "2026-07-31",
-      "notes": "Live (week 3). Now → late July."
-    },
-    {
-      "id": "ws-g-questionnaires",
-      "title": "Draft Week 1 client questionnaires",
-      "workstream": "POC / Pilot",
-      "status": "In Flight",
-      "owner": "Ashley + Agent",
-      "start": "2026-06-17",
-      "end": "2026-07-15",
-      "notes": "Active now. Daniel Pazich done; remaining Week 1 clients in progress. Unblocks outreach CTAs."
-    },
-    {
-      "id": "ws-b-board-fill",
-      "title": "Fill Week 1 board to 15 (≥10% households)",
-      "workstream": "POC / Pilot",
-      "status": "In Flight",
-      "owner": "Ashley",
-      "start": "2026-06-19",
-      "end": "2026-07-12",
-      "notes": "5 of ~10 new ≥10% households qualified. Need ~5 more from EZLynx."
-    },
-    {
-      "id": "ws-a-tiered-email",
-      "title": "Tiered email logic (optimize-in-place vs shop)",
-      "workstream": "POC / Pilot",
-      "status": "In Flight",
-      "owner": "Ashley + Agent",
-      "start": "2026-06-17",
-      "end": "2026-07-01",
-      "notes": "10% threshold confirmed. 10 emails drafted. Blocked: Notion push until Austin returns."
-    },
-    {
-      "id": "ws-a-notion-push",
-      "title": "Push Week 1 clients to Notion",
-      "workstream": "POC / Pilot",
-      "status": "Next",
-      "owner": "Austin",
-      "start": "2026-07-08",
-      "end": "2026-07-15",
-      "notes": "Blocked on Austin OOO. Hold until he's back."
-    },
-    {
-      "id": "ws-d-learnings",
-      "title": "Promote pilot learnings to venture synthesis",
-      "workstream": "Venture",
-      "status": "Next",
-      "owner": "Agent",
-      "start": "2026-07-01",
-      "end": "2026-07-31",
-      "notes": "Session 1 learnings captured Jun 22. Promote to venture/learnings-synthesis."
-    },
-    {
-      "id": "ws-c-playbook",
-      "title": "Agency playbook (Members 1st inside baseball)",
-      "workstream": "Venture",
-      "status": "In Flight",
-      "owner": "Ashley",
-      "start": "2026-06-20",
-      "end": "2026-08-01",
-      "notes": "Template seeded. Feed carrier-specific rules as they surface."
-    },
-    {
-      "id": "ws-f-handoff",
-      "title": "Austin OOO email-drafting runbook",
+      "id": "ops-ceo-hiring",
+      "title": "CEO hiring",
       "workstream": "Ops",
-      "status": "Next",
-      "owner": "Ashley + Agent",
-      "start": "2026-07-08",
-      "end": "2026-07-20",
-      "notes": "Draft docs/process/drafting-outreach-emails.md; walk Austin through it."
+      "status": "In Flight",
+      "owner": "Ashley + Austin",
+      "start": "2026-07-13",
+      "end": "2026-11-20",
+      "notes": "Executive search and hiring process."
     },
     {
-      "id": "macro-stockton-hill",
-      "title": "Stockton Hill pilot",
-      "workstream": "Macro Timeline",
-      "status": "Next",
-      "owner": "Ashley",
-      "start": "2026-08-01",
-      "end": "2026-08-31",
-      "notes": "After M1st momentum. Paperwork signed — start date TBD."
-    },
-    {
-      "id": "macro-design-sprint",
-      "title": "Design sprint",
-      "workstream": "Macro Timeline",
-      "status": "Future",
-      "owner": "Ashley + Agent",
-      "start": "2026-08-15",
-      "end": "2026-08-31",
-      "notes": "Mid–late August. After Stockton Hill."
-    },
-    {
-      "id": "ws-e-no-ams",
-      "title": "No-AMS launch feasibility (background)",
-      "workstream": "Strategy",
-      "status": "Future",
-      "owner": "Agent",
-      "start": "2026-08-01",
-      "end": "2026-09-30",
-      "notes": "Spare-cycles. Catalog evidence in venture/strategy/no-ams-launch.md."
-    },
-    {
-      "id": "macro-mvp-launch",
-      "title": "MVP / first paid launch",
-      "workstream": "Macro Timeline",
-      "status": "Future",
-      "owner": "Ashley + Agent",
-      "start": "2026-09-01",
-      "end": "2026-10-31",
-      "notes": "Post-pilot. Informed by sprint + pilot signal."
-    },
-    {
-      "id": "folio-gantt-v1",
-      "title": "Team Folio Gantt v1 live",
-      "workstream": "Venture Hub",
+      "id": "prod-m1st-week1",
+      "title": "Members 1st pilot — Week 1",
+      "workstream": "Product",
       "status": "Done",
-      "owner": "Ashley",
-      "start": "2026-07-08",
+      "owner": "Ashley + Agent",
+      "start": "2026-06-17",
+      "end": "2026-06-24",
+      "notes": "Sessions Jun 17 (Wed), 22, 24."
+    },
+    {
+      "id": "prod-m1st-week2",
+      "title": "Members 1st pilot — Week 2",
+      "workstream": "Product",
+      "status": "Done",
+      "owner": "Ashley + Agent",
+      "start": "2026-07-06",
       "end": "2026-07-10",
-      "notes": "View-only Gantt at shareable URL."
+      "notes": "Sessions Jul 6, 8, 10."
     },
     {
-      "id": "folio-llm-export",
-      "title": "Team Folio LLM export (execution-plan.md)",
-      "workstream": "Venture Hub",
-      "status": "Done",
-      "owner": "Ashley",
-      "start": "2026-07-10",
-      "end": "2026-07-12",
-      "notes": "Copy/paste export for ChatGPT and Claude."
+      "id": "prod-m1st-week3",
+      "title": "Members 1st pilot — Week 3",
+      "workstream": "Product",
+      "status": "In Flight",
+      "owner": "Ashley + Agent",
+      "start": "2026-07-13",
+      "end": "2026-07-17",
+      "notes": "Sessions Jul 13, 15, 17."
+    },
+    {
+      "id": "prod-m1st-week4-sends",
+      "title": "Members 1st — outreach catch-up (Week 4)",
+      "workstream": "Product",
+      "status": "Next",
+      "owner": "Ashley + Agent",
+      "start": "2026-07-20",
+      "end": "2026-07-24",
+      "notes": "Send batch Jul 20, 22, 24 — ~1 week behind session rhythm."
+    },
+    {
+      "id": "prod-pilot-break",
+      "title": "Pilot break — iterate & Stockton prep",
+      "workstream": "Product",
+      "status": "Next",
+      "owner": "Ashley + Agent",
+      "start": "2026-07-27",
+      "end": "2026-08-02",
+      "notes": "One week off between pilots. Synthesize M1st learnings; set up Stockton Hill."
+    },
+    {
+      "id": "prod-stockton-hill",
+      "title": "Stockton Hill pilot",
+      "workstream": "Product",
+      "status": "Next",
+      "owner": "Ashley + Agent",
+      "start": "2026-08-03",
+      "end": "2026-08-19",
+      "notes": "Sessions Aug 3, 5, 7, 10, 12, 14, 17, 19."
+    },
+    {
+      "id": "prod-sprint-prep",
+      "title": "Sprint prep week",
+      "workstream": "Product",
+      "status": "Future",
+      "owner": "Ashley + Agent",
+      "start": "2026-08-24",
+      "end": "2026-08-28",
+      "notes": "Learnings and prep for product strategy sprint."
+    },
+    {
+      "id": "prod-strategy-sprint",
+      "title": "Product strategy sprint",
+      "workstream": "Product",
+      "status": "Future",
+      "owner": "Ashley + Agent",
+      "start": "2026-08-31",
+      "end": "2026-09-04",
+      "notes": "Sprint week — Aug 31 through Sep 4."
+    },
+    {
+      "id": "prod-mvp-planning",
+      "title": "MVP planning week",
+      "workstream": "Product",
+      "status": "Future",
+      "owner": "Ashley + Agent",
+      "start": "2026-09-07",
+      "end": "2026-09-11",
+      "notes": "Scope and plan MVP build."
+    },
+    {
+      "id": "prod-mvp-build",
+      "title": "MVP build",
+      "workstream": "Product",
+      "status": "Future",
+      "owner": "Ashley + Agent",
+      "start": "2026-09-14",
+      "end": "2026-11-20",
+      "notes": "10-week build. Kickoff Sep 14."
+    },
+    {
+      "id": "prod-no-ams",
+      "title": "No-AMS launch feasibility (background)",
+      "workstream": "Product",
+      "status": "In Flight",
+      "owner": "Agent",
+      "start": "2026-07-13",
+      "end": "2026-09-04",
+      "notes": "Background spare-cycles work through sprint week."
     }
   ]
 }

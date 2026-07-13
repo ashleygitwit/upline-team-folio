@@ -119,6 +119,16 @@
   outline: 2px solid #4338ca;
 }
 
+.cg-empty-label {
+  color: #94a3b8;
+  font-size: 0.85rem;
+  padding-left: 1.5rem;
+}
+
+.cg-empty-row .cg-timeline {
+  min-height: 28px;
+}
+
 .cg-task-label {
   position: absolute;
   top: 12px;

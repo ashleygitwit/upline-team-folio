@@ -31,10 +31,16 @@ export function GanttSection({ plan, onPlanChange }: GanttSectionProps) {
   const [showAddForm, setShowAddForm] = useState(false);
   const [form, setForm] = useState(emptyForm);
 
-  const workstreams = useMemo(
-    () => [...new Set(plan.initiatives.map((i) => i.workstream))].sort(),
-    [plan.initiatives],
-  );
+  const workstreams = useMemo(() => {
+    const fromInitiatives = [...new Set(plan.initiatives.map((i) => i.workstream))];
+    const order = plan.workstreams ?? [];
+    return [
+      ...order,
+      ...fromInitiatives.filter((workstream) => !order.includes(workstream)).sort(),
+    ];
+  }, [plan.initiatives, plan.workstreams]);
+
+  const ganttWorkstreamOrder = workstreamFilter === 'All' ? (plan.workstreams ?? []) : [];
 
   const filteredInitiatives = useMemo(
     () =>
@@ -249,6 +255,7 @@ export function GanttSection({ plan, onPlanChange }: GanttSectionProps) {
       {view === 'timeline' ? (
         <CustomGantt
           initiatives={filteredInitiatives}
+          workstreamOrder={ganttWorkstreamOrder}
           viewMode={viewMode}
           onDateChange={handleDateChange}
         />

@@ -23,6 +23,7 @@ const DAY_LETTERS = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
 
 interface CustomGanttProps {
   initiatives: Initiative[];
+  workstreamOrder?: string[];
   viewMode: TimelineZoom;
   onDateChange: (id: string, start: string, end: string) => void;
 }
@@ -43,7 +44,12 @@ type DragState = {
   deltaDays: number;
 };
 
-export function CustomGantt({ initiatives, viewMode, onDateChange }: CustomGanttProps) {
+export function CustomGantt({
+  initiatives,
+  workstreamOrder = [],
+  viewMode,
+  onDateChange,
+}: CustomGanttProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [drag, setDrag] = useState<DragState | null>(null);
 
@@ -62,19 +68,32 @@ export function CustomGantt({ initiatives, viewMode, onDateChange }: CustomGantt
       list.push(item);
       map.set(item.workstream, list);
     }
-    return [...map.entries()]
-      .sort(([a], [b]) => a.localeCompare(b))
-      .map(([name, items]) => {
-        const starts = items.map((i) => parseDate(i.start));
-        const ends = items.map((i) => parseDate(i.end));
+
+    const orderedNames = [
+      ...workstreamOrder,
+      ...[...map.keys()].filter((name) => !workstreamOrder.includes(name)).sort(),
+    ];
+
+    return orderedNames.map((name) => {
+      const items = map.get(name) ?? [];
+      if (items.length === 0) {
         return {
           name,
-          initiatives: items,
-          phaseStart: new Date(Math.min(...starts.map((d) => d.getTime()))),
-          phaseEnd: new Date(Math.max(...ends.map((d) => d.getTime()))),
+          initiatives: [],
+          phaseStart: rangeStart,
+          phaseEnd: addDays(rangeStart, totalDays - 1),
         };
-      });
-  }, [initiatives]);
+      }
+      const starts = items.map((i) => parseDate(i.start));
+      const ends = items.map((i) => parseDate(i.end));
+      return {
+        name,
+        initiatives: items,
+        phaseStart: new Date(Math.min(...starts.map((d) => d.getTime()))),
+        phaseEnd: new Date(Math.max(...ends.map((d) => d.getTime()))),
+      };
+    });
+  }, [initiatives, workstreamOrder, rangeStart, totalDays]);
 
   const offsetLeft = useCallback(
     (date: Date) => daysBetween(rangeStart, date) * dayWidth,
@@ -164,15 +183,24 @@ export function CustomGantt({ initiatives, viewMode, onDateChange }: CustomGantt
               <div className="cg-row cg-phase-row">
                 <div className="cg-label-col cg-phase-name">{group.name}</div>
                 <div className="cg-timeline" style={{ width: timelineWidth }}>
-                  <div
-                    className="cg-phase-bar"
-                    style={{
-                      left: offsetLeft(group.phaseStart),
-                      width: barWidth(group.phaseStart, group.phaseEnd),
-                    }}
-                  />
+                  {group.initiatives.length > 0 ? (
+                    <div
+                      className="cg-phase-bar"
+                      style={{
+                        left: offsetLeft(group.phaseStart),
+                        width: barWidth(group.phaseStart, group.phaseEnd),
+                      }}
+                    />
+                  ) : null}
                 </div>
               </div>
+
+              {group.initiatives.length === 0 && (
+                <div className="cg-row cg-task-row cg-empty-row">
+                  <div className="cg-label-col cg-empty-label">—</div>
+                  <div className="cg-timeline" style={{ width: timelineWidth }} />
+                </div>
+              )}
 
               {group.initiatives.map((initiative) => {
                 const start = parseDate(initiative.start);
