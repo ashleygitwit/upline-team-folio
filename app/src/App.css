@@ -2,7 +2,7 @@
   max-width: 1100px;
   margin: 0 auto;
   padding: 2rem 1.25rem 3rem;
-  color: #1e1b4b;
+  color: var(--foreground);
 }
 
 .header {
@@ -21,21 +21,22 @@
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #4338ca;
+  color: var(--primary);
 }
 
 .meta {
   margin: 0.35rem 0 0;
   font-size: 0.875rem;
-  color: #64748b;
+  color: var(--muted-foreground);
 }
 
 .card {
-  background: #fff;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: calc(var(--radius) + 4px);
   padding: 1.25rem 1.5rem;
   margin-bottom: 1rem;
+  box-shadow: var(--shadow-sm);
 }
 
 h2 {
@@ -44,7 +45,7 @@ h2 {
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: #4338ca;
+  color: var(--primary);
 }
 
 .hypothesis-card p,
@@ -52,7 +53,7 @@ h2 {
 .proof-card p {
   margin: 0;
   line-height: 1.6;
-  color: #334155;
+  color: var(--card-foreground);
   font-size: 1.05rem;
 }
 
@@ -68,7 +69,7 @@ h2 {
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: #64748b;
+  color: var(--muted-foreground);
 }
 
 .thesis-grid dd {
@@ -78,17 +79,18 @@ h2 {
 .proof-success {
   margin-top: 0.75rem !important;
   font-size: 0.95rem !important;
-  color: #475569 !important;
+  color: var(--muted-foreground) !important;
 }
 
 .mantra-card blockquote {
   margin: 0;
   padding: 0;
   border: none;
-  font-size: 1.15rem;
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
   font-weight: 600;
   line-height: 1.5;
-  color: #1e1b4b;
+  color: var(--foreground);
 }
 
 .section-head {
@@ -118,15 +120,16 @@ h2 {
   font-weight: 600;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: #64748b;
+  color: var(--muted-foreground);
 }
 
 .filters select {
   min-width: 150px;
   padding: 0.4rem 0.55rem;
-  border: 1px solid #cbd5e1;
-  border-radius: 6px;
-  background: #fff;
+  border: 1px solid var(--input);
+  border-radius: var(--radius);
+  background: var(--card);
+  color: var(--foreground);
   font: inherit;
   font-size: 0.875rem;
   text-transform: none;
@@ -139,7 +142,7 @@ h2 {
   gap: 1rem;
   margin-bottom: 0.75rem;
   font-size: 0.8rem;
-  color: #64748b;
+  color: var(--muted-foreground);
 }
 
 .legend-item {
@@ -155,18 +158,10 @@ h2 {
   border-radius: 999px;
 }
 
-.gantt-wrap {
-  overflow-x: auto;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  background: #f8fafc;
-  padding: 0.5rem;
-}
-
 .export-hint {
   margin: 0.35rem 0 0;
   font-size: 0.875rem;
-  color: #64748b;
+  color: var(--muted-foreground);
   line-height: 1.4;
   max-width: 48ch;
 }
@@ -175,9 +170,9 @@ h2 {
   flex-shrink: 0;
   padding: 0.55rem 1rem;
   border: none;
-  border-radius: 8px;
-  background: #4338ca;
-  color: #fff;
+  border-radius: var(--radius);
+  background: var(--primary);
+  color: var(--primary-foreground);
   font: inherit;
   font-size: 0.875rem;
   font-weight: 600;
@@ -185,7 +180,7 @@ h2 {
 }
 
 .copy-btn:hover {
-  background: #3730a3;
+  filter: brightness(0.92);
 }
 
 .export-box {
@@ -193,35 +188,25 @@ h2 {
   padding: 1rem;
   max-height: 320px;
   overflow: auto;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  background: #f8fafc;
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--muted);
+  font-family: var(--font-mono);
   font-size: 0.75rem;
   line-height: 1.5;
   white-space: pre-wrap;
-  color: #334155;
+  color: var(--foreground);
 }
 
 .loading,
 .error,
 .empty {
   padding: 2rem 0;
-  color: #64748b;
+  color: var(--muted-foreground);
 }
 
 .error {
-  color: #b91c1c;
-}
-
-.tooltip {
-  padding: 0.25rem 0;
-  font-size: 0.8rem;
-  line-height: 1.4;
-}
-
-.tooltip p {
-  margin: 0.2rem 0 0;
+  color: var(--destructive);
 }
 
 @media (max-width: 768px) {
@@ -237,9 +222,9 @@ h2 {
 .local-edits-banner {
   margin: 0.5rem 0 0;
   padding: 0.5rem 0.75rem;
-  border-radius: 8px;
-  background: #eef2ff;
-  color: #3730a3;
+  border-radius: var(--radius);
+  background: var(--secondary);
+  color: var(--secondary-foreground);
   font-size: 0.85rem;
 }
 
@@ -252,16 +237,16 @@ h2 {
 
 .view-toggle {
   display: inline-flex;
-  border: 1px solid #cbd5e1;
-  border-radius: 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
   overflow: hidden;
 }
 
 .view-toggle button {
   padding: 0.45rem 0.85rem;
   border: none;
-  background: #fff;
-  color: #475569;
+  background: var(--card);
+  color: var(--muted-foreground);
   font: inherit;
   font-size: 0.875rem;
   font-weight: 600;
@@ -269,16 +254,16 @@ h2 {
 }
 
 .view-toggle button.active {
-  background: #4338ca;
-  color: #fff;
+  background: var(--primary);
+  color: var(--primary-foreground);
 }
 
 .secondary-btn {
   padding: 0.55rem 1rem;
-  border: 1px solid #cbd5e1;
-  border-radius: 8px;
-  background: #fff;
-  color: #334155;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--card);
+  color: var(--foreground);
   font: inherit;
   font-size: 0.875rem;
   font-weight: 600;
@@ -286,7 +271,7 @@ h2 {
 }
 
 .secondary-btn:hover {
-  background: #f8fafc;
+  background: var(--accent);
 }
 
 .export-actions {
@@ -311,15 +296,16 @@ h2 {
   font-weight: 600;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: #64748b;
+  color: var(--muted-foreground);
 }
 
 .filters-row select {
   min-width: 130px;
   padding: 0.4rem 0.55rem;
-  border: 1px solid #cbd5e1;
-  border-radius: 6px;
-  background: #fff;
+  border: 1px solid var(--input);
+  border-radius: var(--radius);
+  background: var(--card);
+  color: var(--foreground);
   font: inherit;
   font-size: 0.875rem;
   text-transform: none;
@@ -329,11 +315,7 @@ h2 {
 .edit-hint {
   margin: 0 0 0.75rem;
   font-size: 0.8rem;
-  color: #64748b;
-}
-
-.timeline-view {
-  background: #fff;
+  color: var(--muted-foreground);
 }
 
 .add-form {
@@ -342,9 +324,9 @@ h2 {
   gap: 0.75rem;
   margin-bottom: 1rem;
   padding: 1rem;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  background: #f8fafc;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--muted);
 }
 
 .add-form label {
@@ -355,7 +337,7 @@ h2 {
   font-weight: 600;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: #64748b;
+  color: var(--muted-foreground);
 }
 
 .add-form label.full-width {
@@ -365,8 +347,10 @@ h2 {
 .add-form input,
 .add-form select {
   padding: 0.45rem 0.55rem;
-  border: 1px solid #cbd5e1;
-  border-radius: 6px;
+  border: 1px solid var(--input);
+  border-radius: var(--radius);
+  background: var(--card);
+  color: var(--foreground);
   font: inherit;
   font-size: 0.875rem;
   text-transform: none;
@@ -375,8 +359,8 @@ h2 {
 
 .list-view {
   overflow-x: auto;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
 }
 
 .list-view table {
@@ -388,18 +372,18 @@ h2 {
 .list-view th,
 .list-view td {
   padding: 0.65rem 0.85rem;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--border);
   text-align: left;
   vertical-align: top;
 }
 
 .list-view th {
-  background: #f8fafc;
+  background: var(--muted);
   font-size: 0.7rem;
   font-weight: 700;
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  color: #64748b;
+  color: var(--muted-foreground);
 }
 
 .list-view tr:last-child td {
@@ -409,14 +393,13 @@ h2 {
 .row-notes {
   margin: 0.25rem 0 0;
   font-size: 0.8rem;
-  color: #64748b;
+  color: var(--muted-foreground);
 }
 
 .status-pill {
   display: inline-block;
   padding: 0.15rem 0.5rem;
   border-radius: 999px;
-  color: #fff;
   font-size: 0.75rem;
   font-weight: 600;
   white-space: nowrap;
@@ -424,17 +407,17 @@ h2 {
 
 .delete-btn {
   padding: 0.25rem 0.5rem;
-  border: 1px solid #fecaca;
-  border-radius: 6px;
-  background: #fff;
-  color: #b91c1c;
+  border: 1px solid color-mix(in oklch, var(--destructive) 35%, transparent);
+  border-radius: var(--radius);
+  background: var(--card);
+  color: var(--destructive);
   font: inherit;
   font-size: 0.75rem;
   cursor: pointer;
 }
 
 .delete-btn:hover {
-  background: #fef2f2;
+  background: color-mix(in oklch, var(--destructive) 8%, var(--card));
 }
 
 .gantt-card {

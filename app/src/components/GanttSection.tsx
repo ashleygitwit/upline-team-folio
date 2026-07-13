@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import type { Initiative, InitiativeStatus, VenturePlan } from '../types';
-import { STATUS_COLORS, touchPlan } from '../utils/ganttTasks';
+import { STATUS_COLORS, STATUS_TEXT_COLORS, touchPlan } from '../utils/ganttTasks';
 import { newInitiativeId } from '../utils/planStorage';
 import { CustomGantt, type TimelineZoom } from './CustomGantt';
 
@@ -287,7 +287,10 @@ export function GanttSection({ plan, onPlanChange }: GanttSectionProps) {
                     <td>
                       <span
                         className="status-pill"
-                        style={{ backgroundColor: STATUS_COLORS[initiative.status] }}
+                        style={{
+                          backgroundColor: STATUS_COLORS[initiative.status],
+                          color: STATUS_TEXT_COLORS[initiative.status],
+                        }}
                       >
                         {initiative.status}
                       </span>
