@@ -29,8 +29,8 @@ function App() {
     const stored = loadPlanFromStorage();
     if (stored) {
       setPlan(stored);
-      setExportMarkdown(generateExportMarkdown(stored));
       setHasLocalEdits(true);
+      setExportMarkdown(generateExportMarkdown(stored));
       return;
     }
 

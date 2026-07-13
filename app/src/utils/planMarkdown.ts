@@ -3,7 +3,7 @@ import type { PilotSummary, VenturePlan } from '../types';
 export function formatPilotSummary(pilot: PilotSummary | undefined): string[] {
   if (!pilot) return [];
 
-  const f = pilot.funnel;
+  const f = pilot.funnel ?? {};
   const lines: string[] = [
     '## Pilot activity summary',
     '',

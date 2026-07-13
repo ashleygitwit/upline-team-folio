@@ -11,8 +11,14 @@ export function loadPlanFromStorage(): VenturePlan | null {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return null;
-    return JSON.parse(raw) as VenturePlan;
+    const parsed = JSON.parse(raw);
+    if (!isValidPlan(parsed)) {
+      clearPlanStorage();
+      return null;
+    }
+    return parsed;
   } catch {
+    clearPlanStorage();
     return null;
   }
 }
@@ -26,7 +32,22 @@ export function clearPlanStorage(): void {
 }
 
 export function generateExportMarkdown(plan: VenturePlan): string {
-  return buildExecutionPlanMarkdown(plan);
+  try {
+    return buildExecutionPlanMarkdown(plan);
+  } catch (err) {
+    console.error('Failed to generate execution plan markdown', err);
+    return '# Upline Venture — Execution Plan\n\n*(Export unavailable — plan data could not be formatted.)*';
+  }
+}
+
+function isValidPlan(value: unknown): value is VenturePlan {
+  if (!value || typeof value !== 'object') return false;
+  const plan = value as Partial<VenturePlan>;
+  return (
+    typeof plan.venture === 'object' &&
+    plan.venture !== null &&
+    Array.isArray(plan.initiatives)
+  );
 }
 
 export function newInitiativeId(title: string): string {
