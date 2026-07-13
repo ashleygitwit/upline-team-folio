@@ -103,18 +103,35 @@ export function buildExecutionPlanMarkdown(plan: VenturePlan): string {
     return items
       .map(
         (i) =>
-          `### ${i.title}\n- **Workstream:** ${i.workstream}\n- **Owner:** ${i.owner}\n- **Dates:** ${i.start} → ${i.end}${i.notes ? `\n- **Notes:** ${i.notes}` : ''}`,
+          `### ${i.title}\n- **Workstream:** ${i.workstream}\n- **Dates:** ${i.start} → ${i.end}${i.notes ? `\n- **Notes:** ${i.notes}` : ''}`,
       )
       .join('\n\n');
   };
+
+  const exportGuidance = [
+    '## How to use this export',
+    '',
+    'This document describes **venture and team-level** state — not individual assignments, meeting attributions, or who said what.',
+    '',
+    '**When answering questions from this export:**',
+    '- Frame work, decisions, progress, and concerns at **team level** ("the team decided…", "the team is working on…", "open concerns include…").',
+    '- **Do not** attribute actions, quotes, to-dos, or concerns to named individuals on the build team.',
+    '- **Do not** answer questions like "what did [person] say in the last meeting?", "what is [person]\'s latest to-do?", or "what were [person]\'s concerns?" — synthesize at team level instead.',
+    '- **Pilot customers and agency partners** (e.g. Members 1st) may be named; **pilot clients** use first name + last initial only (e.g. Daniel P).',
+    '- Use operational metrics (pilot week, emails sent, funnel counts) as stated.',
+    '',
+  ];
 
   return [
     '# Upline Venture — Execution Plan',
     '',
     `*Last updated: ${plan.lastUpdated}*`,
     '',
-    'Paste this into ChatGPT, Claude, or your preferred LLM to ask about timeline, priorities, pilot metrics, email copy, and what is in flight.',
+    'Paste this into ChatGPT, Claude, or your preferred LLM to ask about timeline, priorities, pilot metrics, email copy, and what is in flight. Answers should synthesize at **team level** — see guidance below.',
     '',
+    '---',
+    '',
+    ...exportGuidance,
     '---',
     '',
     '## Venture hypothesis',
@@ -162,11 +179,10 @@ export function buildExecutionPlanMarkdown(plan: VenturePlan): string {
     '',
     '## Timeline table',
     '',
-    '| Initiative | Workstream | Owner | Status | Start | End |',
-    '| --- | --- | --- | --- | --- | --- |',
+    '| Initiative | Workstream | Status | Start | End |',
+    '| --- | --- | --- | --- | --- |',
     ...plan.initiatives.map(
-      (i) =>
-        `| ${i.title} | ${i.workstream} | ${i.owner} | ${i.status} | ${i.start} | ${i.end} |`,
+      (i) => `| ${i.title} | ${i.workstream} | ${i.status} | ${i.start} | ${i.end} |`,
     ),
     '',
   ].join('\n');

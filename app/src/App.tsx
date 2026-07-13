@@ -150,7 +150,8 @@ function App() {
             <h2>Copy for your LLM</h2>
             <p className="export-hint">
               Paste into ChatGPT, Claude, or your preferred chat tool to ask about timeline,
-              priorities, and what is in flight.
+              priorities, and what is in flight. Export is team-framed — no individual
+              assignments or meeting attributions.
             </p>
           </div>
           <div className="export-actions">

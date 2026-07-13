@@ -2,7 +2,20 @@
 
 *Last updated: 2026-07-13*
 
-Paste this into ChatGPT, Claude, or your preferred LLM to ask about timeline, priorities, pilot metrics, email copy, and what is in flight.
+Paste this into ChatGPT, Claude, or your preferred LLM to ask about timeline, priorities, pilot metrics, email copy, and what is in flight. Answers should synthesize at **team level** — see guidance below.
+
+---
+
+## How to use this export
+
+This document describes **venture and team-level** state — not individual assignments, meeting attributions, or who said what.
+
+**When answering questions from this export:**
+- Frame work, decisions, progress, and concerns at **team level** ("the team decided…", "the team is working on…", "open concerns include…").
+- **Do not** attribute actions, quotes, to-dos, or concerns to named individuals on the build team.
+- **Do not** answer questions like "what did [person] say in the last meeting?", "what is [person]'s latest to-do?", or "what were [person]'s concerns?" — synthesize at team level instead.
+- **Pilot customers and agency partners** (e.g. Members 1st) may be named; **pilot clients** use first name + last initial only (e.g. Daniel P).
+- Use operational metrics (pilot week, emails sent, funnel counts) as stated.
 
 ---
 
@@ -59,7 +72,7 @@ For real renewals in this pilot, we need proof that we can repeatedly generate a
 
 ### Recommended outreach email copy
 
-**Version:** v8 (Session 4, Jul 6 2026)
+**Version:** v8 (Jul 6 2026)
 
 One boilerplate for every renewal. Only variables: first name, renewal date, new premium (dollars only — no %, no old price, no increase language), and questionnaire link. Premium is never in the first sentence.
 
@@ -87,7 +100,7 @@ Thank you for being a valued member of Members 1st Insurance. We're committed to
 
 Post-shop handoff: rate comparison in paragraph one, simple comparison table, coverage reassurance, CTA to schedule a call (switch) or confirm stay (no shop). Agent reviews every quote before client contact.
 
-**Status:** Active design target. Daniel P is the gold-standard switch example; first rec email draft pending agency review.
+**Status:** Active design target. Daniel P is the gold-standard switch example; first recommendation email draft pending agency review.
 
 **Gold-standard example client:** Daniel P
 
@@ -99,12 +112,12 @@ Post-shop handoff: rate comparison in paragraph one, simple comparison table, co
 - Small-batch sends (5–6/week) paced to quoting capacity — not all 15 at once.
 - Quoting workflow: Upline quotes → Members 1st reviews before any client email → service team closes. Donegal→Travelers rewrite contract governs first move.
 - Phone follow-up stays in-house — agency wants the personal touch on non-responders.
-- First live quoting walkthrough (Session 5, Jul 7): Daniel P test case across Travelers, Safeco, Nationwide, Progressive. Home + auto quoted together.
+- First live quoting walkthrough (Jul 7): Daniel P test case across Travelers, Safeco, Nationwide, Progressive. Home + auto quoted together.
 - Sends ~1 week behind session rhythm — Week 4 catch-up Jul 20–24. Week 3 sessions start Jul 13.
 
 ### Notable client progress
 
-- **Daniel P:** First questionnaire response. Live quoting walkthrough complete Jul 7. Recommendation email draft next.
+- **Daniel P:** First questionnaire response received. Live quoting walkthrough complete Jul 7. Recommendation email draft is next team deliverable.
 
 ---
 
@@ -112,17 +125,14 @@ Post-shop handoff: rate comparison in paragraph one, simple comparison table, co
 
 ### CEO hiring
 - **Workstream:** Ops
-- **Owner:** Ashley + Austin
 - **Dates:** 2026-07-13 → 2026-11-20
 - **Notes:** Executive search and hiring process.
 ### Members 1st pilot — Week 3
 - **Workstream:** Product
-- **Owner:** Ashley + Agent
 - **Dates:** 2026-07-13 → 2026-07-17
 - **Notes:** Sessions Jul 13, 15, 17.
 ### No-AMS launch feasibility (background)
 - **Workstream:** Product
-- **Owner:** Agent
 - **Dates:** 2026-07-13 → 2026-09-04
 - **Notes:** Background spare-cycles work through sprint week.
 
@@ -130,17 +140,14 @@ Post-shop handoff: rate comparison in paragraph one, simple comparison table, co
 
 ### Members 1st — outreach catch-up (Week 4)
 - **Workstream:** Product
-- **Owner:** Ashley + Agent
 - **Dates:** 2026-07-20 → 2026-07-24
 - **Notes:** Send batch Jul 20, 22, 24 — ~1 week behind session rhythm.
 ### Pilot break — iterate & Stockton prep
 - **Workstream:** Product
-- **Owner:** Ashley + Agent
 - **Dates:** 2026-07-27 → 2026-08-02
 - **Notes:** One week off between pilots. Synthesize M1st learnings; set up Stockton Hill.
 ### Stockton Hill pilot
 - **Workstream:** Product
-- **Owner:** Ashley + Agent
 - **Dates:** 2026-08-03 → 2026-08-19
 - **Notes:** Sessions Aug 3, 5, 7, 10, 12, 14, 17, 19.
 
@@ -148,22 +155,18 @@ Post-shop handoff: rate comparison in paragraph one, simple comparison table, co
 
 ### Sprint prep week
 - **Workstream:** Product
-- **Owner:** Ashley + Agent
 - **Dates:** 2026-08-24 → 2026-08-28
 - **Notes:** Learnings and prep for product strategy sprint.
 ### Product strategy sprint
 - **Workstream:** Product
-- **Owner:** Ashley + Agent
 - **Dates:** 2026-08-31 → 2026-09-04
 - **Notes:** Sprint week — Aug 31 through Sep 4.
 ### MVP planning week
 - **Workstream:** Product
-- **Owner:** Ashley + Agent
 - **Dates:** 2026-09-07 → 2026-09-11
 - **Notes:** Scope and plan MVP build.
 ### MVP build
 - **Workstream:** Product
-- **Owner:** Ashley + Agent
 - **Dates:** 2026-09-14 → 2026-11-20
 - **Notes:** 10-week build. Kickoff Sep 14.
 
@@ -171,12 +174,10 @@ Post-shop handoff: rate comparison in paragraph one, simple comparison table, co
 
 ### Members 1st pilot — Week 1
 - **Workstream:** Product
-- **Owner:** Ashley + Agent
 - **Dates:** 2026-06-17 → 2026-06-24
 - **Notes:** Sessions Jun 17 (Wed), 22, 24.
 ### Members 1st pilot — Week 2
 - **Workstream:** Product
-- **Owner:** Ashley + Agent
 - **Dates:** 2026-07-06 → 2026-07-10
 - **Notes:** Sessions Jul 6, 8, 10.
 
@@ -184,17 +185,17 @@ Post-shop handoff: rate comparison in paragraph one, simple comparison table, co
 
 ## Timeline table
 
-| Initiative | Workstream | Owner | Status | Start | End |
-| --- | --- | --- | --- | --- | --- |
-| CEO hiring | Ops | Ashley + Austin | In Flight | 2026-07-13 | 2026-11-20 |
-| Members 1st pilot — Week 1 | Product | Ashley + Agent | Done | 2026-06-17 | 2026-06-24 |
-| Members 1st pilot — Week 2 | Product | Ashley + Agent | Done | 2026-07-06 | 2026-07-10 |
-| Members 1st pilot — Week 3 | Product | Ashley + Agent | In Flight | 2026-07-13 | 2026-07-17 |
-| Members 1st — outreach catch-up (Week 4) | Product | Ashley + Agent | Next | 2026-07-20 | 2026-07-24 |
-| Pilot break — iterate & Stockton prep | Product | Ashley + Agent | Next | 2026-07-27 | 2026-08-02 |
-| Stockton Hill pilot | Product | Ashley + Agent | Next | 2026-08-03 | 2026-08-19 |
-| Sprint prep week | Product | Ashley + Agent | Future | 2026-08-24 | 2026-08-28 |
-| Product strategy sprint | Product | Ashley + Agent | Future | 2026-08-31 | 2026-09-04 |
-| MVP planning week | Product | Ashley + Agent | Future | 2026-09-07 | 2026-09-11 |
-| MVP build | Product | Ashley + Agent | Future | 2026-09-14 | 2026-11-20 |
-| No-AMS launch feasibility (background) | Product | Agent | In Flight | 2026-07-13 | 2026-09-04 |
+| Initiative | Workstream | Status | Start | End |
+| --- | --- | --- | --- | --- |
+| CEO hiring | Ops | In Flight | 2026-07-13 | 2026-11-20 |
+| Members 1st pilot — Week 1 | Product | Done | 2026-06-17 | 2026-06-24 |
+| Members 1st pilot — Week 2 | Product | Done | 2026-07-06 | 2026-07-10 |
+| Members 1st pilot — Week 3 | Product | In Flight | 2026-07-13 | 2026-07-17 |
+| Members 1st — outreach catch-up (Week 4) | Product | Next | 2026-07-20 | 2026-07-24 |
+| Pilot break — iterate & Stockton prep | Product | Next | 2026-07-27 | 2026-08-02 |
+| Stockton Hill pilot | Product | Next | 2026-08-03 | 2026-08-19 |
+| Sprint prep week | Product | Future | 2026-08-24 | 2026-08-28 |
+| Product strategy sprint | Product | Future | 2026-08-31 | 2026-09-04 |
+| MVP planning week | Product | Future | 2026-09-07 | 2026-09-11 |
+| MVP build | Product | Future | 2026-09-14 | 2026-11-20 |
+| No-AMS launch feasibility (background) | Product | In Flight | 2026-07-13 | 2026-09-04 |
