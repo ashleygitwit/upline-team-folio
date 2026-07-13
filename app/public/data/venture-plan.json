@@ -1,11 +1,29 @@
 {
-  "lastUpdated": "2026-07-08",
+  "lastUpdated": "2026-07-13",
   "venture": {
-    "thesis": "Upline helps independent insurance agencies retain and grow household relationships by proactively reviewing coverage at renewal — surfacing savings, cross-sell opportunities, and carrier shopping when it actually pays off.",
-    "mantra": "Right recommendation, right time, right carrier — without the manual grind.",
-    "upcomingProofPoint": "Week 1 pilot board: 15 households with tiered outreach (optimize-in-place under 10%, shop at 10%+) and live questionnaires — proving the renewal-review workflow end to end with Members 1st."
+    "hypothesis": "If we help independent P&C agencies turn renewal season into a repeatable, agent-approved outreach-and-recommendation workflow by triaging which accounts need action, doing the shopping legwork, and drafting a clear client recommendation, then agencies will retain more at-risk households and convert more renewals into cross-sell or up-sell conversations across their existing book of business, because today that work is too manual and time-consuming for most teams to run account-by-account at scale.",
+    "thesis": {
+      "problem": "Every renewal deserves attention most agencies can't consistently give.",
+      "worldAfter": "Every renewal reminds customers why their agent matters.",
+      "approach": "AI prepares the renewal. The agent owns the client relationship. Upline treats renewal as the agency's most reliable trust-building moment, not just an administrative deadline."
+    },
+    "mantra": "Make every renewal prove the agent is in my corner.",
+    "upcomingProofPoint": {
+      "description": "For real renewals in this pilot, we need proof that we can repeatedly generate a proposal moment that agents trust enough to send and that customers respond to.",
+      "successCriteria": ["Agent Trust", "Customer Engagement", "Scalability Confidence"]
+    }
   },
   "initiatives": [
+    {
+      "id": "macro-m1st-pilot",
+      "title": "Members 1st pilot",
+      "workstream": "Macro Timeline",
+      "status": "In Flight",
+      "owner": "Ashley + Agent",
+      "start": "2026-06-17",
+      "end": "2026-07-31",
+      "notes": "Live (week 3). Now → late July."
+    },
     {
       "id": "ws-g-questionnaires",
       "title": "Draft Week 1 client questionnaires",
@@ -77,6 +95,26 @@
       "notes": "Draft docs/process/drafting-outreach-emails.md; walk Austin through it."
     },
     {
+      "id": "macro-stockton-hill",
+      "title": "Stockton Hill pilot",
+      "workstream": "Macro Timeline",
+      "status": "Next",
+      "owner": "Ashley",
+      "start": "2026-08-01",
+      "end": "2026-08-31",
+      "notes": "After M1st momentum. Paperwork signed — start date TBD."
+    },
+    {
+      "id": "macro-design-sprint",
+      "title": "Design sprint",
+      "workstream": "Macro Timeline",
+      "status": "Future",
+      "owner": "Ashley + Agent",
+      "start": "2026-08-15",
+      "end": "2026-08-31",
+      "notes": "Mid–late August. After Stockton Hill."
+    },
+    {
       "id": "ws-e-no-ams",
       "title": "No-AMS launch feasibility (background)",
       "workstream": "Strategy",
@@ -87,10 +125,20 @@
       "notes": "Spare-cycles. Catalog evidence in venture/strategy/no-ams-launch.md."
     },
     {
+      "id": "macro-mvp-launch",
+      "title": "MVP / first paid launch",
+      "workstream": "Macro Timeline",
+      "status": "Future",
+      "owner": "Ashley + Agent",
+      "start": "2026-09-01",
+      "end": "2026-10-31",
+      "notes": "Post-pilot. Informed by sprint + pilot signal."
+    },
+    {
       "id": "folio-gantt-v1",
       "title": "Team Folio Gantt v1 live",
       "workstream": "Venture Hub",
-      "status": "In Flight",
+      "status": "Done",
       "owner": "Ashley",
       "start": "2026-07-08",
       "end": "2026-07-10",
@@ -100,7 +148,7 @@
       "id": "folio-llm-export",
       "title": "Team Folio LLM export (execution-plan.md)",
       "workstream": "Venture Hub",
-      "status": "In Flight",
+      "status": "Done",
       "owner": "Ashley",
       "start": "2026-07-10",
       "end": "2026-07-12",

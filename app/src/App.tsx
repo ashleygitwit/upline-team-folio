@@ -105,9 +105,27 @@ function App() {
         ) : null}
       </header>
 
+      <section className="card hypothesis-card">
+        <h2>Venture hypothesis</h2>
+        <p>{plan.venture.hypothesis}</p>
+      </section>
+
       <section className="card thesis-card">
         <h2>Venture thesis</h2>
-        <p>{plan.venture.thesis}</p>
+        <dl className="thesis-grid">
+          <div>
+            <dt>Problem</dt>
+            <dd>{plan.venture.thesis.problem}</dd>
+          </div>
+          <div>
+            <dt>World after</dt>
+            <dd>{plan.venture.thesis.worldAfter}</dd>
+          </div>
+          <div>
+            <dt>Our approach</dt>
+            <dd>{plan.venture.thesis.approach}</dd>
+          </div>
+        </dl>
       </section>
 
       <section className="card mantra-card">
@@ -117,7 +135,11 @@ function App() {
 
       <section className="card proof-card">
         <h2>Upcoming proof point</h2>
-        <p>{plan.venture.upcomingProofPoint}</p>
+        <p>{plan.venture.upcomingProofPoint.description}</p>
+        <p className="proof-success">
+          <strong>Success:</strong>{' '}
+          {plan.venture.upcomingProofPoint.successCriteria.join(' · ')}
+        </p>
       </section>
 
       <GanttSection plan={plan} onPlanChange={applyPlan} />

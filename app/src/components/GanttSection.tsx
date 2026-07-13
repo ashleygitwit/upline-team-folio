@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import type { Initiative, InitiativeStatus, VenturePlan } from '../types';
 import { STATUS_COLORS, touchPlan } from '../utils/ganttTasks';
 import { newInitiativeId } from '../utils/planStorage';
-import { TimelineGantt, type TimelineZoom } from './TimelineGantt';
+import { CustomGantt, type TimelineZoom } from './CustomGantt';
 
 const STATUSES: InitiativeStatus[] = ['In Flight', 'Next', 'Future', 'Done'];
 
@@ -97,7 +97,7 @@ export function GanttSection({ plan, onPlanChange }: GanttSectionProps) {
               className={view === 'timeline' ? 'active' : ''}
               onClick={() => setView('timeline')}
             >
-              Timeline
+              Gantt chart
             </button>
             <button
               type="button"
@@ -106,7 +106,7 @@ export function GanttSection({ plan, onPlanChange }: GanttSectionProps) {
               className={view === 'list' ? 'active' : ''}
               onClick={() => setView('list')}
             >
-              List
+              Table
             </button>
           </div>
           <button type="button" className="secondary-btn" onClick={() => setShowAddForm((v) => !v)}>
@@ -242,12 +242,12 @@ export function GanttSection({ plan, onPlanChange }: GanttSectionProps) {
       </div>
 
       <p className="edit-hint">
-        Drag bars in Timeline view to reschedule. Use List view to review details or delete items.
+        Drag bars in Gantt chart view to reschedule. Use Table view to review details or delete items.
         Edits save in this browser — download plan JSON below to commit to the repo.
       </p>
 
       {view === 'timeline' ? (
-        <TimelineGantt
+        <CustomGantt
           initiatives={filteredInitiatives}
           viewMode={viewMode}
           onDateChange={handleDateChange}
