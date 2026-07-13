@@ -13,7 +13,10 @@ export function formatDate(date: Date): string {
 }
 
 export function addDays(date: Date, days: number): Date {
-  return new Date(date.getTime() + days * DAY_MS);
+  // Calendar-based arithmetic so the result always lands on local midnight,
+  // immune to DST transitions (raw ms math drifts by ±1h across DST and can
+  // cause zero-length steps → infinite loops when walking date ranges).
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate() + days);
 }
 
 export function daysBetween(start: Date, end: Date): number {
@@ -48,9 +51,10 @@ export function buildMonthColumns(rangeStart: Date, totalDays: number): MonthCol
   let cursor = new Date(rangeStart);
   let remaining = totalDays;
 
-  while (remaining > 0) {
+  let guard = 0;
+  while (remaining > 0 && guard++ < 1000) {
     const endOfMonth = new Date(cursor.getFullYear(), cursor.getMonth() + 1, 0);
-    const daysInSlice = Math.min(daysBetween(cursor, endOfMonth) + 1, remaining);
+    const daysInSlice = Math.max(1, Math.min(daysBetween(cursor, endOfMonth) + 1, remaining));
     months.push({
       start: new Date(cursor),
       days: daysInSlice,
