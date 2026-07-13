@@ -49,12 +49,32 @@
   border-right: 1px solid #e2e8f0;
 }
 
+.cg-month {
+  flex-shrink: 0;
+  border-right: 1px solid #e2e8f0;
+  min-width: 0;
+}
+
+.cg-month-label {
+  padding: 8px 4px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #475569;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .cg-week-label {
-  padding: 6px 8px 2px;
+  padding: 6px 4px 2px;
   font-size: 0.7rem;
   font-weight: 600;
   color: #475569;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
 }
 
 .cg-day-letters {

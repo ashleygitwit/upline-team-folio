@@ -37,18 +37,44 @@ export interface WeekColumn {
   label: string;
 }
 
-export function buildWeekColumns(rangeStart: Date, rangeEnd: Date): WeekColumn[] {
-  const weeks: WeekColumn[] = [];
-  let cursor = startOfWeek(rangeStart);
+export interface MonthColumn {
+  start: Date;
+  days: number;
+  label: string;
+}
 
-  while (cursor <= rangeEnd) {
+export function buildMonthColumns(rangeStart: Date, totalDays: number): MonthColumn[] {
+  const months: MonthColumn[] = [];
+  let cursor = new Date(rangeStart);
+  let remaining = totalDays;
+
+  while (remaining > 0) {
+    const endOfMonth = new Date(cursor.getFullYear(), cursor.getMonth() + 1, 0);
+    const daysInSlice = Math.min(daysBetween(cursor, endOfMonth) + 1, remaining);
+    months.push({
+      start: new Date(cursor),
+      days: daysInSlice,
+      label: cursor.toLocaleString('en-US', { month: 'short', year: 'numeric' }),
+    });
+    cursor = addDays(cursor, daysInSlice);
+    remaining -= daysInSlice;
+  }
+
+  return months;
+}
+
+export function buildWeekColumns(rangeStart: Date, totalDays: number): WeekColumn[] {
+  const weeks: WeekColumn[] = [];
+  const numWeeks = totalDays / 7;
+
+  for (let i = 0; i < numWeeks; i++) {
+    const cursor = addDays(rangeStart, i * 7);
     const weekEnd = addDays(cursor, 6);
     const label =
       cursor.getMonth() === weekEnd.getMonth()
         ? `${cursor.getDate()}–${weekEnd.getDate()} ${monthShort(cursor)}`
         : `${cursor.getDate()} ${monthShort(cursor)} – ${weekEnd.getDate()} ${monthShort(weekEnd)}`;
-    weeks.push({ start: new Date(cursor), label });
-    cursor = addDays(cursor, 7);
+    weeks.push({ start: cursor, label });
   }
 
   return weeks;
@@ -61,6 +87,7 @@ export function computeRange(initiatives: { start: string; end: string }[]) {
   const max = new Date(Math.max(...ends.map((d) => d.getTime())));
   const rangeStart = addDays(startOfWeek(min), -7);
   const rangeEnd = addDays(startOfWeek(max), 21);
-  const totalDays = daysBetween(rangeStart, rangeEnd) + 1;
+  const rawTotal = daysBetween(rangeStart, rangeEnd) + 1;
+  const totalDays = Math.ceil(rawTotal / 7) * 7;
   return { rangeStart, rangeEnd, totalDays };
 }

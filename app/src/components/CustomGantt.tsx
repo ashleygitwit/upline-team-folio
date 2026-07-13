@@ -3,6 +3,7 @@ import type { Initiative, InitiativeStatus } from '../types';
 import { STATUS_COLORS } from '../utils/ganttTasks';
 import {
   addDays,
+  buildMonthColumns,
   buildWeekColumns,
   computeRange,
   daysBetween,
@@ -56,7 +57,11 @@ export function CustomGantt({
   const dayWidth = DAY_WIDTH[viewMode];
   const { rangeStart, totalDays } = useMemo(() => computeRange(initiatives), [initiatives]);
   const weeks = useMemo(
-    () => buildWeekColumns(rangeStart, addDays(rangeStart, totalDays - 1)),
+    () => buildWeekColumns(rangeStart, totalDays),
+    [rangeStart, totalDays],
+  );
+  const months = useMemo(
+    () => buildMonthColumns(rangeStart, totalDays),
     [rangeStart, totalDays],
   );
   const timelineWidth = totalDays * dayWidth;
@@ -159,22 +164,32 @@ export function CustomGantt({
           <div className="cg-row cg-header">
             <div className="cg-label-col" />
             <div className="cg-timeline" style={{ width: timelineWidth }}>
-              {weeks.map((week) => (
-                <div
-                  key={week.start.toISOString()}
-                  className="cg-week"
-                  style={{ width: 7 * dayWidth }}
-                >
-                  <div className="cg-week-label">{week.label}</div>
-                  <div className="cg-day-letters">
-                    {DAY_LETTERS.map((letter, i) => (
-                      <span key={i} style={{ width: dayWidth }}>
-                        {letter}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              ))}
+              {viewMode === 'Month'
+                ? months.map((month) => (
+                    <div
+                      key={month.start.toISOString()}
+                      className="cg-month"
+                      style={{ width: month.days * dayWidth }}
+                    >
+                      <div className="cg-month-label">{month.label}</div>
+                    </div>
+                  ))
+                : weeks.map((week) => (
+                    <div
+                      key={week.start.toISOString()}
+                      className="cg-week"
+                      style={{ width: 7 * dayWidth }}
+                    >
+                      <div className="cg-week-label">{week.label}</div>
+                      <div className="cg-day-letters">
+                        {DAY_LETTERS.map((letter, i) => (
+                          <span key={i} style={{ width: dayWidth }}>
+                            {letter}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
             </div>
           </div>
 
