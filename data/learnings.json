@@ -1,0 +1,151 @@
+{
+  "lastUpdated": "2026-07-22",
+  "intro": "How our thinking has changed over time — the evolution from an initial concept toward what will become the MVP. The learning log below is added to constantly as each pilot teaches us more; the open questions up top are the ones we're still pressure-testing.",
+  "questions": [
+    {
+      "id": "agent-trust",
+      "question": "Would an agent actually send what Upline drafts?",
+      "status": "Emerging",
+      "lens": "desirability",
+      "note": "Agency rapport is warming and back-channel signals say the team is 'way more excited than they're letting on.' The real test is still the post-shop recommendation email."
+    },
+    {
+      "id": "customer-engagement",
+      "question": "Do customers respond and opt in?",
+      "status": "Emerging",
+      "lens": "desirability",
+      "note": "Early yes: questionnaires completed fast (under 8 minutes), ~25% response on a batch, and a life-insurance opt-in already booked a meeting. Directionally meaningful, not crickets."
+    },
+    {
+      "id": "shopping-wedge",
+      "question": "Is automated shopping the wedge?",
+      "status": "Answered",
+      "lens": "viability",
+      "note": "No. Shopping is a ~$6 task; retention and cross-sell are the ~$800 tasks — and only they serve the mantra. Lead with those; let VAs shop for now."
+    },
+    {
+      "id": "scalability",
+      "question": "Can this become a real, scalable product?",
+      "status": "Evolved",
+      "lens": "viability",
+      "note": "Path changed rather than closed: VAs shop in the near term while we build the data repository; full shopping automation is a 2-year horizon, not a blocker."
+    },
+    {
+      "id": "pricing",
+      "question": "How do we price when agencies control the copy and the cohort?",
+      "status": "Open",
+      "lens": "viability",
+      "note": "Both outcome-only and book-based pricing have failure modes. Pricing must assume agencies won't use the product exactly as we recommend."
+    },
+    {
+      "id": "no-ams",
+      "question": "Can we operate without ongoing AMS integration?",
+      "status": "Open",
+      "lens": "feasibility",
+      "note": "Working hypothesis: a one-time AMS dump on onboarding, then carrier portals + email/questionnaire extraction keep our own system of record current. Research in progress."
+    }
+  ],
+  "entries": [
+    {
+      "date": "2026-03-04",
+      "kind": "learning",
+      "source": "Initial interviews",
+      "learning": "The durable wedge is clarity and proactive communication at renewal — not the lowest rate. Renewals are the highest-leverage moment for an agent to prove value, but a ~1,500-policy book throws off ~30 renewals a week, far too many to work account-by-account by hand today."
+    },
+    {
+      "date": "2026-05-01",
+      "kind": "milestone",
+      "title": "Built the Upline concept demo",
+      "learning": "We created the Upline concept demo — a clickable experience showing what a renewal handled by Upline could feel like — and put it in front of the Members 1st team."
+    },
+    {
+      "date": "2026-05-12",
+      "kind": "learning",
+      "source": "Concept demo",
+      "learning": "The concept resonated org-wide. The excitement wasn't limited to agency owners and producers — the individual support and service teams were visibly bought in too. Strong enough signal to commit to a live pilot."
+    },
+    {
+      "date": "2026-06-08",
+      "kind": "learning",
+      "source": "Members 1st pilot",
+      "learning": "Real agency data is messier than expected. The AMS and the documents disagree, duplicate, and go stale, and a missing or bad email is a hard stop for outreach. The renewal premium also has to be posted in the AMS before we can act — and many clients 45–60 days out aren't posted yet — so the workable outreach window is narrower than we assumed.",
+      "detail": [
+        "Selection filters (home + auto, verified email, premium posted, under 80) shrink the list so much they nearly pick the cohort for us."
+      ]
+    },
+    {
+      "date": "2026-06-10",
+      "kind": "learning",
+      "source": "Internal team",
+      "learning": "We stripped the UI and built the logic in Cursor first. Product-market fit here is 'would I actually send that email / is that a good proposal?' — not the interface. We stay un-beholden to any UI until the underlying logic is proven."
+    },
+    {
+      "date": "2026-06-17",
+      "kind": "milestone",
+      "title": "Members 1st pilot kicked off",
+      "learning": "Our first live pilot with an independent agency began — weekly Mon/Wed/Fri working sessions, and the first real outreach going out under the agency's own name."
+    },
+    {
+      "date": "2026-06-22",
+      "kind": "learning",
+      "source": "Members 1st pilot",
+      "learning": "After a lot of back-and-forth with the Members 1st team, we landed on a single boilerplate outreach email in the agency's exact voice — not the customized, circumstance-based copy we started with. Its only job is to give a little context that sets up the shopping conversation.",
+      "detail": [
+        "Show the new premium only — never the old price, the % increase, or a cause diagnosis (clients read the jump as a reason to leave: 'let me go down to State Farm').",
+        "Open with the broker identity — a valued member of an agency that shops ~7 carriers on the client's behalf.",
+        "One email for everyone, regardless of increase / flat / decrease — the V1 circumstance logic was removed (~85% rewritten)."
+      ]
+    },
+    {
+      "date": "2026-06-24",
+      "kind": "learning",
+      "source": "Members 1st pilot",
+      "learning": "Concentrate shopping where the retention risk is. Shop the biggest increases first (15%+, ranked largest-first) — the big jumps bleed out the fastest. Email everyone on renewal as a relationship touch, but put the shopping effort behind the largest increases; phone follow-up stays in-house to keep it personal."
+    },
+    {
+      "date": "2026-07-06",
+      "kind": "learning",
+      "source": "Internal team",
+      "learning": "With outreach reduced to formatting and sending, the product's value moves downstream. The intelligence has to live in the questionnaire → shop → recommendation, not in the outreach email."
+    },
+    {
+      "date": "2026-07-07",
+      "kind": "learning",
+      "source": "Internal team",
+      "learning": "Pricing has to assume agencies won't use the product exactly as we recommend — they'll change the copy and narrow the cohort. Outcome-only pricing risks results we can't attribute; book-based pricing invites agencies to shrink outreach. Still an open question."
+    },
+    {
+      "date": "2026-07-13",
+      "kind": "learning",
+      "source": "Members 1st pilot",
+      "learning": "First real end-to-end signal: a client went all the way through shopping, beyond just draft review. Engagement is landing too — questionnaires complete in under 8 minutes, and even the plain boilerplate email draws responses (arguably a cleaner signal, since the copy isn't doing the persuading)."
+    },
+    {
+      "date": "2026-07-14",
+      "kind": "learning",
+      "source": "Internal team",
+      "learning": "The pivot: de-prioritize automated shopping in favor of VAs guided step-by-step ('Uber drivers, not taxi drivers'). Automated quoting by RPA is harder than hoped — the real gap is an incomplete question set, not just brittle automation — so we'll be our own VAs for at least the first year. Moving the shopping cost onto us is fine; the value is in retention and cross-sell.",
+      "detail": [
+        "RPA friction seen live: dropdowns not populating, plus carrier edge cases like roof and furnace age."
+      ]
+    },
+    {
+      "date": "2026-07-14",
+      "kind": "learning",
+      "source": "Internal team",
+      "learning": "The mantra settles the strategy. Automated shopping just saves the agent time — a ~$6 task — while retention and cross-sell are the ~$800 tasks that actually prove the agent is in the customer's corner. Lead with those, and build the data repository as a byproduct of using Upline; after ~24 months of accumulated data it can surface as a superior alternative to the AMS."
+    },
+    {
+      "date": "2026-07-13",
+      "kind": "learning",
+      "source": "Members 1st pilot",
+      "learning": "Cross-sell is a real revenue line, not a someday idea. A life-insurance batch drew ~25% responses; 4 of 5 questionnaire respondents asked about life and one booked a meeting — and agencies pay ~$200 per shown appointment."
+    },
+    {
+      "date": "2026-07-15",
+      "kind": "learning",
+      "source": "Members 1st pilot",
+      "learning": "Preliminary quotes aren't bind-ready. An MVR/CLUE pull surfaced an accident that accident-forgiveness had masked, wiping out a client's savings and keeping them put. Recommendation quality still depends on the agent's verification call: automation preps the renewal, the agent closes it."
+    }
+  ]
+}

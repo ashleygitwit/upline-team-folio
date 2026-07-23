@@ -1,6 +1,13 @@
 import { useCallback, useEffect, useState } from 'react';
-import type { VenturePlan } from './types';
-import { GanttSection } from './components/GanttSection';
+import type { Learnings, VenturePlan } from './types';
+import { HomePage } from './pages/HomePage';
+import { LearningsPage } from './pages/LearningsPage';
+import { RoadmapPage } from './pages/RoadmapPage';
+import { PocPage } from './pages/PocPage';
+import { SprintPage } from './pages/SprintPage';
+import { MvpPage } from './pages/MvpPage';
+import { BrandPage } from './pages/BrandPage';
+import { TeamPage } from './pages/TeamPage';
 import {
   clearPlanStorage,
   generateExportMarkdown,
@@ -9,12 +16,52 @@ import {
 } from './utils/planStorage';
 import './App.css';
 
+type RouteKey = 'home' | 'learnings' | 'roadmap' | 'poc' | 'sprint' | 'mvp' | 'brand' | 'team';
+
+const NAV: { key: RouteKey; label: string; href: string }[] = [
+  { key: 'home', label: 'What is Upline', href: '#/' },
+  { key: 'learnings', label: 'Learnings', href: '#/learnings' },
+  { key: 'roadmap', label: 'Roadmap', href: '#/roadmap' },
+  { key: 'brand', label: 'Brand', href: '#/brand' },
+  { key: 'team', label: 'Team', href: '#/team' },
+];
+
+// Roadmap detail pages highlight the Roadmap nav item.
+const ROADMAP_ROUTES: RouteKey[] = ['roadmap', 'poc', 'sprint', 'mvp'];
+
+// Sub-pages surfaced in the Roadmap nav dropdown.
+const ROADMAP_MENU: { key: RouteKey; label: string; href: string }[] = [
+  { key: 'roadmap', label: 'Roadmap overview', href: '#/roadmap' },
+  { key: 'poc', label: 'Proof of Concept', href: '#/poc' },
+  { key: 'sprint', label: 'Strategy Sprint', href: '#/sprint' },
+  { key: 'mvp', label: 'MVP', href: '#/mvp' },
+];
+
+function routeFromHash(): RouteKey {
+  const hash = window.location.hash.replace(/^#\/?/, '').split('/')[0];
+  // Legacy link support: #/milestones now resolves to the Roadmap page.
+  if (hash === 'milestones') return 'roadmap';
+  if (
+    hash === 'learnings' ||
+    hash === 'roadmap' ||
+    hash === 'poc' ||
+    hash === 'sprint' ||
+    hash === 'mvp' ||
+    hash === 'brand' ||
+    hash === 'team'
+  ) {
+    return hash;
+  }
+  return 'home';
+}
+
 function App() {
   const [plan, setPlan] = useState<VenturePlan | null>(null);
+  const [learnings, setLearnings] = useState<Learnings | null>(null);
   const [exportMarkdown, setExportMarkdown] = useState('');
-  const [copied, setCopied] = useState(false);
   const [hasLocalEdits, setHasLocalEdits] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [route, setRoute] = useState<RouteKey>(routeFromHash());
 
   const applyPlan = useCallback((next: VenturePlan, persist = true) => {
     setPlan(next);
@@ -26,31 +73,41 @@ function App() {
   }, []);
 
   useEffect(() => {
+    const onHashChange = () => {
+      setRoute(routeFromHash());
+      window.scrollTo({ top: 0 });
+    };
+    window.addEventListener('hashchange', onHashChange);
+    return () => window.removeEventListener('hashchange', onHashChange);
+  }, []);
+
+  useEffect(() => {
     const stored = loadPlanFromStorage();
     if (stored) {
       setPlan(stored);
       setHasLocalEdits(true);
       setExportMarkdown(generateExportMarkdown(stored));
-      return;
+    } else {
+      fetch('/data/venture-plan.json')
+        .then((res) => {
+          if (!res.ok) throw new Error('Could not load venture plan');
+          return res.json() as Promise<VenturePlan>;
+        })
+        .then((planData) => {
+          setPlan(planData);
+          setExportMarkdown(generateExportMarkdown(planData));
+        })
+        .catch((err: Error) => setError(err.message));
     }
 
-    fetch('/data/venture-plan.json')
+    fetch('/data/learnings.json')
       .then((res) => {
-        if (!res.ok) throw new Error('Could not load venture plan');
-        return res.json() as Promise<VenturePlan>;
+        if (!res.ok) throw new Error('Could not load learnings');
+        return res.json() as Promise<Learnings>;
       })
-      .then((planData) => {
-        setPlan(planData);
-        setExportMarkdown(generateExportMarkdown(planData));
-      })
-      .catch((err: Error) => setError(err.message));
+      .then(setLearnings)
+      .catch(() => setLearnings(null));
   }, []);
-
-  async function copyExport() {
-    await navigator.clipboard.writeText(exportMarkdown);
-    setCopied(true);
-    window.setTimeout(() => setCopied(false), 2000);
-  }
 
   function downloadPlanJson() {
     if (!plan) return;
@@ -75,101 +132,86 @@ function App() {
     window.location.reload();
   }
 
-  if (error) {
-    return (
-      <div className="page">
-        <p className="error">{error}</p>
-      </div>
-    );
-  }
-
-  if (!plan) {
-    return (
-      <div className="page">
-        <p className="loading">Loading venture plan…</p>
-      </div>
-    );
-  }
-
   return (
     <div className="page">
-      <header className="header">
-        <img src="/upline-logo.png" alt="Upline" className="logo" />
-        <p className="eyebrow">Venture Plan</p>
-        <p className="meta">Last updated {plan.lastUpdated}</p>
-        {hasLocalEdits ? (
-          <p className="local-edits-banner">
-            You have unsaved browser edits. Download JSON and ask the agent to commit, or reset to
-            the deployed version.
-          </p>
-        ) : null}
+      <header className="site-header">
+        <a className="brand-lockup" href="#/" aria-label="The Upline Through Line — home">
+          <img src="/upline-logo.png" alt="Upline" className="logo" />
+          <span className="wordmark">The Through Line</span>
+        </a>
+        <nav className="site-nav" aria-label="Primary">
+          {NAV.map((item) => {
+            if (item.key === 'roadmap') {
+              const isActive = ROADMAP_ROUTES.includes(route);
+              return (
+                <div key={item.key} className="nav-has-menu">
+                  <a
+                    href={item.href}
+                    className={isActive ? 'nav-link active' : 'nav-link'}
+                    aria-current={isActive ? 'page' : undefined}
+                  >
+                    {item.label}
+                    <span className="nav-caret" aria-hidden="true">
+                      ▾
+                    </span>
+                  </a>
+                  <div className="nav-menu" role="menu">
+                    {ROADMAP_MENU.map((sub) => (
+                      <a
+                        key={sub.key}
+                        href={sub.href}
+                        role="menuitem"
+                        className={route === sub.key ? 'nav-menu-item active' : 'nav-menu-item'}
+                        aria-current={route === sub.key ? 'page' : undefined}
+                      >
+                        {sub.label}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              );
+            }
+            const isActive = route === item.key;
+            return (
+              <a
+                key={item.key}
+                href={item.href}
+                className={isActive ? 'nav-link active' : 'nav-link'}
+                aria-current={isActive ? 'page' : undefined}
+              >
+                {item.label}
+              </a>
+            );
+          })}
+        </nav>
       </header>
 
-      <section className="card hypothesis-card">
-        <h2>Venture hypothesis</h2>
-        <p>{plan.venture.hypothesis}</p>
-      </section>
+      {error ? <p className="error">{error}</p> : null}
 
-      <section className="card thesis-card">
-        <h2>Venture thesis</h2>
-        <dl className="thesis-grid">
-          <div>
-            <dt>Problem</dt>
-            <dd>{plan.venture.thesis.problem}</dd>
-          </div>
-          <div>
-            <dt>World after</dt>
-            <dd>{plan.venture.thesis.worldAfter}</dd>
-          </div>
-          <div>
-            <dt>Our approach</dt>
-            <dd>{plan.venture.thesis.approach}</dd>
-          </div>
-        </dl>
-      </section>
+      {route === 'home' ? <HomePage plan={plan} /> : null}
+      {route === 'learnings' ? <LearningsPage learnings={learnings} /> : null}
+      {route === 'roadmap' ? (
+        <RoadmapPage
+          plan={plan}
+          exportMarkdown={exportMarkdown}
+          hasLocalEdits={hasLocalEdits}
+          onPlanChange={applyPlan}
+          onDownload={downloadPlanJson}
+          onReset={resetToServerPlan}
+        />
+      ) : null}
+      {route === 'poc' ? <PocPage plan={plan} /> : null}
+      {route === 'sprint' ? <SprintPage /> : null}
+      {route === 'mvp' ? <MvpPage /> : null}
+      {route === 'brand' ? <BrandPage /> : null}
+      {route === 'team' ? <TeamPage /> : null}
 
-      <section className="card mantra-card">
-        <h2>Mantra</h2>
-        <blockquote>{plan.venture.mantra}</blockquote>
-      </section>
-
-      <section className="card proof-card">
-        <h2>Upcoming proof point</h2>
-        <p>{plan.venture.upcomingProofPoint.description}</p>
-        <p className="proof-success">
-          <strong>Success:</strong>{' '}
-          {plan.venture.upcomingProofPoint.successCriteria.join(' · ')}
+      <footer className="site-footer">
+        <p>
+          The Upline Through Line · Upline's home base. Present, learnings, and where we're headed —
+          one roof.
         </p>
-      </section>
-
-      <GanttSection plan={plan} onPlanChange={applyPlan} />
-
-      <section className="card export-card">
-        <div className="section-head">
-          <div>
-            <h2>Copy for your LLM</h2>
-            <p className="export-hint">
-              Paste into ChatGPT, Claude, or your preferred chat tool to ask about timeline,
-              priorities, and what is in flight. Export is team-framed — no individual
-              assignments or meeting attributions.
-            </p>
-          </div>
-          <div className="export-actions">
-            <button type="button" className="secondary-btn" onClick={downloadPlanJson}>
-              Download plan JSON
-            </button>
-            {hasLocalEdits ? (
-              <button type="button" className="secondary-btn" onClick={resetToServerPlan}>
-                Reset to deployed
-              </button>
-            ) : null}
-            <button type="button" className="copy-btn" onClick={copyExport}>
-              {copied ? 'Copied!' : 'Copy execution-plan.md'}
-            </button>
-          </div>
-        </div>
-        <pre className="export-box">{exportMarkdown}</pre>
-      </section>
+      </footer>
     </div>
   );
 }

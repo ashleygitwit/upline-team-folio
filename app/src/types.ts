@@ -92,3 +92,33 @@ export interface VenturePlan {
   pilotSummary?: PilotSummary;
   initiatives: Initiative[];
 }
+
+export type QuestionStatus = 'Open' | 'Emerging' | 'Answered' | 'Evolved';
+
+export type QuestionLens = 'desirability' | 'viability' | 'feasibility';
+
+export interface OpenQuestion {
+  id: string;
+  question: string;
+  status: QuestionStatus;
+  lens: QuestionLens;
+  note: string;
+}
+
+export type LearningKind = 'milestone' | 'learning';
+
+export interface LearningEntry {
+  date: string;
+  kind?: LearningKind;
+  source?: string;
+  title?: string;
+  learning: string;
+  detail?: string[];
+}
+
+export interface Learnings {
+  lastUpdated: string;
+  intro: string;
+  questions: OpenQuestion[];
+  entries: LearningEntry[];
+}

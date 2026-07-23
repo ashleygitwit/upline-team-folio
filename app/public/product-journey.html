@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Upline — The Product Journey</title>
+<style>
+  :root {
+    --bg: #ffffff;
+    --panel: #f7f7f8;
+    --elevated: #ffffff;
+    --border: #e4e4e7;
+    --border-soft: #eeeef1;
+    --text: #1a1a1e;
+    --muted: #6b6b73;
+    --faint: #9a9aa2;
+    --accent: #2f6fb0;
+    --upline: #1f8a65;
+    --va: #c08532;
+    --agent: #3685bf;
+    --customer: #8a8a8f;
+    --warn: #b5730a;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1800px; margin: 0 auto; padding: 32px 28px 64px; }
+  h1 { font-size: 26px; margin: 0 0 6px; }
+  h2 { font-size: 19px; margin: 0 0 4px; }
+  h3 { font-size: 16px; margin: 0; }
+  h4 { font-size: 13px; margin: 0 0 6px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+  p { margin: 0; }
+  .sub { color: var(--muted); font-size: 14px; }
+  .small { font-size: 13px; }
+  .muted { color: var(--muted); }
+
+  .thesis {
+    margin: 20px 0;
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--accent);
+    background: var(--panel);
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+  .thesis .t { font-weight: 600; margin-bottom: 4px; }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 16px 0; }
+  .tag {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 3px 10px; border-radius: 999px;
+    border: 1px solid var(--border); background: var(--panel);
+    font-size: 12px; color: var(--muted);
+  }
+  .dot { width: 8px; height: 8px; border-radius: 2px; display: inline-block; }
+
+  /* ── Swimlane grid: columns = steps, rows = lanes ── */
+  .matrix {
+    display: grid;
+    gap: 14px;
+    overflow-x: auto;
+    padding: 6px 2px 18px;
+    align-items: stretch;
+  }
+  .lane-label {
+    position: sticky; left: 0; z-index: 5;
+    background: var(--bg);
+    border-right: 1px solid var(--border);
+    box-shadow: 10px 0 10px -8px rgba(0,0,0,.08);
+    padding: 4px 16px 4px 0;
+    display: flex; flex-direction: column; justify-content: flex-start;
+  }
+  .lane-label .lt { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--text); }
+  .lane-label .ld { font-size: 12px; color: var(--faint); margin-top: 3px; }
+  .lane-label.toggle {
+    cursor: pointer; user-select: none;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    box-shadow: none;
+    transition: border-color .15s ease, box-shadow .15s ease, transform .05s ease;
+  }
+  .lane-label.toggle:hover {
+    border-color: var(--accent);
+    box-shadow: 0 2px 10px rgba(0,0,0,.08);
+  }
+  .lane-label.toggle:active { transform: translateY(1px); }
+  .lane-label.toggle .lt { color: var(--accent); }
+  .lane-label.toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .lane-label .caret { display: inline-block; font-size: 15px; color: var(--accent); margin-right: 8px; transition: transform .15s ease; }
+  .lane-label.collapsed .caret { transform: rotate(-90deg); }
+  .lane-label.collapsed .ld { display: none; }
+  .lane-label.toggle::after {
+    content: "Show";
+    align-self: flex-start;
+    margin-top: 10px;
+    font-size: 11px; font-weight: 600; letter-spacing: .02em; text-transform: uppercase;
+    color: var(--accent); background: transparent;
+    border: 1px solid var(--accent); border-radius: 999px; padding: 2px 11px;
+  }
+  .lane-label.toggle:not(.collapsed)::after { content: "Hide"; }
+  /* Collapsed lanes render as clean full-width accordion header bars. */
+  .lane-label.toggle.collapsed {
+    grid-column: 1 / -1 !important;
+    flex-direction: row;
+    align-items: center;
+    padding: 11px 16px;
+    box-shadow: none;
+  }
+  .lane-label.toggle.collapsed .lt { margin: 0; }
+  .lane-label.toggle.collapsed::after { margin-top: 0; margin-left: auto; }
+  .matrix .lane-cell[hidden] { display: none !important; }
+
+  .cardhead { display: flex; align-items: center; gap: 8px; }
+  .num {
+    width: 28px; height: 28px; border-radius: 999px; flex-shrink: 0;
+    background: var(--panel); border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 600; font-size: 13px;
+  }
+  .spacer { flex: 1; }
+  .roles { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+
+  .stepcard {
+    position: relative;
+    border: 1px solid var(--border); border-top: 4px solid var(--accent);
+    border-radius: 10px; background: var(--elevated); padding: 16px;
+    display: flex; flex-direction: column;
+  }
+  .stepcard h3 { margin: 12px 0 8px; }
+  .stepcard .body { color: var(--muted); font-size: 13px; }
+  .stepcard:not(.last)::after {
+    content: "→"; position: absolute; right: -21px; top: 24px;
+    color: var(--faint); font-size: 18px; line-height: 1; z-index: 1;
+  }
+
+  .cell {
+    border: 1px solid var(--border-soft); border-radius: 10px;
+    background: var(--elevated); padding: 14px;
+  }
+  .cell-data { background: var(--panel); border-left: 3px solid var(--accent); }
+  .cell-future { background: var(--panel); border-style: dashed; }
+  .cell-empty {
+    border: 1px dashed var(--border-soft); border-radius: 10px;
+    background: transparent; padding: 14px;
+    display: flex; align-items: center; justify-content: center; color: var(--faint);
+  }
+  .cell .summary { font-size: 13px; color: var(--muted); }
+  .cell ul { margin: 6px 0 0; padding-left: 18px; }
+  .cell li { color: var(--muted); font-size: 13px; margin-bottom: 5px; }
+  .cell li.parent { color: var(--text); font-weight: 500; list-style: none; margin-left: -18px; }
+  .cell li.parent::before { content: "• "; color: var(--accent); }
+  .cell ul.sub { margin: 4px 0 8px; }
+  .cell ul.sub li { list-style: none; position: relative; padding-left: 14px; }
+  .cell ul.sub li::before { content: "–"; position: absolute; left: 0; color: var(--faint); }
+  .cell-future .note {
+    border-left: 3px solid var(--va);
+    background: var(--elevated); border-radius: 8px; padding: 10px 12px;
+    color: var(--muted); font-size: 13px; margin-bottom: 8px;
+  }
+  .cell-future .note:last-child { margin-bottom: 0; }
+
+  .cell-review { background: var(--panel); border-left: 3px solid var(--warn); }
+  .cell-review .ri { font-size: 13px; color: var(--muted); margin-bottom: 8px; padding-left: 15px; position: relative; }
+  .cell-review .ri:last-child { margin-bottom: 0; }
+  .cell-review .ri::before { content: "•"; position: absolute; left: 0; color: var(--faint); }
+  .cell-review .ri.warn { color: var(--text); font-weight: 500; }
+  .cell-review .ri.warn::before { content: "\26A0"; color: var(--warn); font-size: 11px; }
+
+  .stepcard.cut { border-color: #e8c893; }
+  .cut-badge {
+    display: inline-flex; align-items: center; gap: 6px; align-self: flex-start;
+    font-size: 11px; font-weight: 600; color: var(--warn);
+    background: #fff6ea; border: 1px solid #f0d9b5;
+    border-radius: 999px; padding: 2px 9px; margin-bottom: 10px;
+  }
+
+  .review-banner {
+    margin: 18px 0; border: 1px solid var(--border); border-left: 4px solid var(--warn);
+    background: #fffaf2; border-radius: 10px; padding: 14px 16px;
+  }
+  .review-banner .t { font-weight: 600; margin-bottom: 6px; }
+  .review-banner ul { margin: 6px 0 0; padding-left: 18px; }
+  .review-banner li { font-size: 13px; color: var(--muted); margin-bottom: 4px; }
+
+  .block { border: 1px solid var(--border); border-radius: 12px; padding: 18px; margin-top: 24px; }
+  .block.repo-anchor { border-left: 4px solid var(--accent); background: var(--panel); }
+  .breadcrumb { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: 14px 0 12px; }
+  .chip { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--panel); font-size: 13px; }
+  .chip b { font-weight: 600; }
+  .chip .s { color: var(--faint); }
+  .domains { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .domain { border: 1px solid var(--border-soft); border-top: 3px solid var(--accent); border-radius: 10px; background: var(--elevated); padding: 14px; }
+  .domain h4 { color: var(--text); text-transform: none; letter-spacing: 0; font-size: 14px; font-weight: 600; margin-bottom: 8px; }
+  .domain ul { margin: 0; padding-left: 18px; }
+  .domain li { color: var(--muted); font-size: 13px; margin-bottom: 5px; }
+
+  .funnel-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+  .funnel-label { width: 210px; flex-shrink: 0; }
+  .funnel-label .n { font-size: 13px; font-weight: 500; }
+  .funnel-label .note { font-size: 12px; color: var(--faint); }
+  .funnel-track { flex: 1; min-width: 0; }
+  .funnel-bar { height: 24px; border-radius: 4px; background: var(--accent); min-width: 28px; }
+  .funnel-count { width: 48px; text-align: right; font-weight: 600; flex-shrink: 0; }
+  .stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-top: 16px; }
+  .stat { border: 1px solid var(--border-soft); border-radius: 10px; padding: 14px; }
+  .stat .v { font-size: 24px; font-weight: 600; }
+  .stat .l { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .cost-assumptions { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 4px; }
+  .cost-assumptions .pill { border: 1px solid var(--border); background: var(--panel); border-radius: 8px; padding: 6px 10px; font-size: 12px; color: var(--muted); }
+  .cost-assumptions .pill b { color: var(--text); font-weight: 600; }
+  table.cost { width: 100%; border-collapse: collapse; margin-top: 14px; font-size: 13px; }
+  table.cost th, table.cost td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border-soft); }
+  table.cost th { font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); font-weight: 600; }
+  table.cost td.amt, table.cost th.amt { text-align: right; white-space: nowrap; }
+  table.cost tr.group td { font-weight: 600; background: var(--panel); color: var(--text); }
+  table.cost tr.total td { font-weight: 700; border-top: 2px solid var(--border); border-bottom: none; }
+  .cost-note { font-size: 12px; color: var(--faint); margin-top: 8px; }
+  .callout { margin-top: 14px; border: 1px solid var(--border); border-left: 4px solid var(--warn); background: var(--panel); border-radius: 8px; padding: 12px 14px; }
+  .callout .t { font-weight: 600; margin-bottom: 4px; }
+  .footer { margin-top: 28px; color: var(--faint); font-size: 12px; }
+  @media (max-width: 720px) {
+    .domains, .stats { grid-template-columns: 1fr; }
+    .funnel-label { width: 150px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Upline — the product journey</h1>
+  <p class="sub">How Upline works, left to right. The top lane is the journey; each column drops down into the data it writes to the repository, its operational logic, future ideas, and the open questions &amp; decisions from the Jul 15 team review (⚠ = open decision).</p>
+
+  <div class="legend" id="legend">
+    <span class="small muted">Who runs each step:</span>
+  </div>
+
+  <div class="journey" id="journey"></div>
+
+  <div class="footer">Directional working document — Upline product strategy. Numbers are early pilot trends, to be firmed up.</div>
+</div>
+
+<script>
+const ROLES = {
+  upline:   { label: "Upline",   color: "var(--upline)" },
+  va:       { label: "VA",       color: "var(--va)" },
+  agent:    { label: "Agent",    color: "var(--agent)" },
+  customer: { label: "Customer", color: "var(--customer)" },
+};
+
+const STEPS = [
+  { n:1, name:"AMS data upload (RPA)", roles:["upline"],
+    body:"A one-time RPA job does the initial bulk pull of the entire existing book from the AMS into the data repository — the baseline profile for every household. It's a single initial load, not a 24/7 sync. Data can drift, but ~80–90% stays accurate over a customer's lifetime, so a cheap automated snapshot is well worth it.",
+    logic:{ summary:"One-time automated bulk load — run once (e.g., overnight), not continuously.", bullets:[
+      "An RPA tool pulls every existing client's records in one initial sweep, instead of a VA keying them by hand.",
+      "Not a live sync — renewals and ongoing changes are picked up by the weekly RPA in the next step.",
+      "Rationale: ~80–90% of a household's data stays accurate for the life of the customer, so a cheap one-time snapshot beats expensive manual onboarding." ] },
+    data:["Full policy history (multi-year premium trends)","Communications history (AMS Histories tab — requests, etc.)","Claims history","Current declaration pages","Contacts — email, phone, DOB","Policy list + LOB (active / inactive) status"] },
+
+  { n:2, name:"Pull renewal numbers (RPA)", roles:["upline"],
+    body:"Before outreach, a robotic tool (RPA) visits the carrier portals and pulls the latest renewal numbers — so we know the new premium before we reach out. This is the workaround for not living inside the AMS.",
+    logic:{ summary:"Which renewals to hunt for, and when — targeted, not the whole book every week.", bullets:[
+      "When a household's renewal is ~75–90 days out, add them to the robotic list (we already know their current carrier).",
+      "Each week the RPA checks that carrier's portal to see whether the renewal number has posted yet.",
+      "Keep checking weekly until the renewal is found.",
+      "Once found, sunset that household until their next renewal date comes around.",
+      "A found renewal funnels the household into the outreach queue; who gets reached on which day then runs through the prioritization layer." ] },
+    data:["Latest renewal premium (once posted)","Renewal % change vs. current","Current carrier per household","Robotic-list status (hunting / found / sunset)"] },
+
+  { n:3, name:"Refresh household data (VA)", roles:["va"],
+    body:"Right before outreach, a VA re-pulls the household's latest info from the agency's live AMS. The initial bulk load can be months stale by the time a renewal comes up — someone onboarded in January whose renewal hits in October may have added a car or a driver, moved, or changed coverage. This refresh makes sure the outreach, questionnaire, and cross-sell are built on the current picture, not the onboarding snapshot.",
+    logic:{ summary:"A targeted refresh of the households entering the outreach window — not the whole book.", bullets:[
+      "Runs on a rolling cadence (~every 2 weeks) for the households whose renewals are coming up next.",
+      "The Step 2 renewal RPA only refreshes the renewal number — this refreshes the household profile (vehicles, drivers, address, policies, account notes) from the live AMS.",
+      "Catches changes since onboarding so the cross-sell logic stays right (e.g., someone who has since added auto shouldn't get an auto cross-sell).",
+      "Hands a current profile to the generate-outreach step." ] },
+    data:["Updated policy list + LOB status","New / changed vehicles, drivers, addresses","Refreshed coverage & declaration pages","New account notes / household facts since onboarding"] },
+
+  { n:4, name:"Upline generates outreach", roles:["upline"],
+    body:"Upline selects who to contact from the book and generates the outreach email automatically — no human writes it. It runs weekly and queues sends so the entire book is reached over time, prioritized by who has the biggest renewal increase (using the numbers pulled in the previous step).",
+    logic:{ summary:"Who to contact, and which email to generate:", bullets:[
+      "Eligibility: every household is contacted when their renewal comes up — we make sure to reach everyone at least 20 days before their renewal.",
+      "Coverage: we touch base with every single person in the book over the course of the year — not just those with increases (or increases over some %). Everyone gets reached before their renewal.",
+      "Priority (may not end up mattering): if we cap how many we contact per day, we start each week with the highest-increase renewals first — they're the most likely to shop, which front-loads shopping and gives VAs more of the week to work.",
+      "Bottom line: everyone is reached when their renewal is coming up, before it happens.",
+      { text:"Frame by change:", sub:[
+        ">10% increase → 'let's shop.'",
+        "<10% increase → 'let's make sure you're getting the most from your current carrier / any discounts.'",
+        "Flat → 'good news, it held.'",
+        "Decrease → 'good news, it dropped.'" ] },
+      { text:"Cross-sell & upsell:", sub:[
+        "Every email includes a cross-sell offer.",
+        "Under 65 → life insurance.",
+        "Over 65 → Medicare / Medicaid.",
+        "Has home but not auto → offer auto.",
+        "Has auto but not home → offer home." ] } ] },
+    future:[
+      "Agency can set how the outreach email is framed / written — or use the Upline default.",
+      "Upline pulls the agent's writing style from their email inbox so outreach sounds more like the agent." ],
+    data:["Record of who was selected for outreach","The queued / sent send event"] },
+
+  { n:5, name:"Send outreach email", roles:["upline","agent"],
+    body:"Upline sends the email on the agent's behalf — but it comes from the agent's own name. There is no 'Upline is reaching out'; to the customer, it's simply their agent getting in touch.",
+    logic:{ summary:"Upline sends the email on the agent's behalf.", bullets:[
+      "It comes from the agent's own name — there's no 'Upline is reaching out.' To the customer, it's simply their agent.",
+      { text:"Variant matches the renewal (frame decided in the generate step):", sub:[
+        "Decrease / flat → reassurance + cross-sell intro.",
+        "Increase < 10% → optimize-with-current-carrier framing.",
+        "Increase > 10% → let's-shop framing (routes toward Shop)." ] } ] },
+    data:["Which email frame was used (decrease / flat / <10% / >10%)","Send timestamp + delivery status"] },
+
+  { n:6, name:"Customer fills out questionnaire", roles:["customer"],
+    body:"The recipient responds and completes the questionnaire, and their answers flow straight back into Upline. Where there's no valid email, a text fallback could capture them so almost no one is unreachable.",
+    logic:{ summary:"The questionnaire is custom-tailored to each client.", bullets:[
+      { text:"Built from three inputs:", sub:[
+        "What we already know about the client (from the repository).",
+        "What carriers will ask in order to shop (we know the carrier question sets).",
+        "Any gaps / holes between the two." ] },
+      "Only asks what's missing — it fills the gaps rather than re-asking data we already have.",
+      "A response triggers the next stage; non-responders re-enter the weekly outreach cadence." ] },
+    data:["Questionnaire answers","Verified contact info","Coverage gaps & household details","Life-insurance / cross-sell interest"] },
+
+  { n:7, name:"Shop", roles:["va"],
+    body:"A team of 3–5 VAs shops flagged households. Each gets a ticket ('shop X with carrier Y') and follows a step-by-step, page-by-page portal workflow — no insurance experience required — then drops the carrier's PDF into the household profile. Target turnaround is 24 hours.",
+    logic:{ summary:"Which carriers to shop — and how many.", bullets:[
+      "Triggered for households that opt to be shopped.",
+      "Almost every household is shopped with more than one carrier.",
+      { text:"How many, and which carriers, depend on demographic / parameter-based matching:", sub:[
+        "Which carriers prefer — or are good — to cover a given profile / consideration set.",
+        "Insider-baseball fit rules, e.g. 'X is great for a teen who just got their license,' or 'only Y covers you after a claim in the last year.'" ] } ] },
+    future:[
+      "Carrier partnerships: identify a household's demographic / profile / conditions and suggest — or always shop — a partner carrier first. E.g. a carrier expanding into a geography and targeting a profile (family of four, two cars, one suburban home, no claims, a certain age range) gets surfaced first as part of the partnership." ],
+    data:["Shopped carrier PDFs (the output of shopping, pulled directly from the carrier portals)","Quoted premiums","Coverages & endorsements quoted"] },
+
+  { n:8, name:"Recommendation & review", roles:["upline","agent"],
+    body:"The shopped PDF triggers Upline to draft a recommendation email that covers both the shopped renewal recommendation and the cross-sell / upsell (e.g. life). The agent reviews, adjusts if needed, and sends — they keep final say.",
+    logic:{ summary:"Compares shopped options against the current policy, surfaces the savings / coverage deltas, and bundles the cross-sell into the same recommendation.", bullets:[
+      "The trigger is the shopped PDF — the carrier's own output, pulled directly from the carrier portals.",
+      "One recommendation covers both the renewal and the cross-sell (e.g. life). Upline handles the life piece itself — no handoff to a separate sales agent." ] },
+    data:["Recommendation sent (shopped options + rationale)","Cross-sell / upsell offer included (e.g. life)","Customer's response to the recommendation"] },
+
+  { n:9, name:"Client schedules a time", roles:["upline","customer"],
+    body:"Upline sends a Calendly link and the client picks a time to meet with Upline — by phone call, Zoom, or in person.",
+    logic:{ summary:"Captures when — and how — a meeting is scheduled.", bullets:[
+      "Meeting channel can be a phone call, Zoom, or in-person.",
+      "Non-schedulers re-enter the outreach cadence." ] },
+    data:["Scheduled meeting (Calendly)","Meeting channel — phone / Zoom / in-person"] },
+
+  { n:10, name:"Meeting & close", roles:["upline","agent"],
+    body:"The client meets with Upline. Upline transcribes the meeting, pulls the details into the repository, and drafts the final send-out email. The agent attaches the signature paperwork; sending it triggers Upline's thank-you-for-signing email.",
+    logic:{ summary:"The meeting is where both existing coverage and the cross-sell close — all handled by Upline.", bullets:[
+      "Show-up is confirmed by the meeting — the billing trigger ($200 per shown appointment for life leads).",
+      "Upline transcribes the meeting and writes the details back to the repository.",
+      "Upline drafts the final send-out email; the agent attaches the appropriate signature paperwork (may be generated ahead of an in-person meeting).",
+      "Sending the final paperwork email triggers Upline's automated thank-you-for-signing email ('if you have any other questions, reach out')." ] },
+    data:["Meeting recording + transcript","Call / meeting intelligence and details","Final paperwork / signature email sent","Thank-you-for-signing email sent","Decision / outcome (retained, switched, cross-sold)"] },
+];
+
+const DOMAINS = [
+  { title:"Client details", color:"var(--agent)", items:[
+    "Contacts — email, phone, DOB","Policy list + LOB status","Current declaration pages","Multi-year policy & premium history","Latest renewal premium + % change (RPA-pulled)","Current carrier per household","Claims history","Coverage gaps & household facts","Cross-sell interest (life / Medicare-Medicaid / commercial)" ] },
+  { title:"Communications", color:"var(--upline)", items:[
+    "Outreach emails — frame sent + delivery","Inbound replies — content","Questionnaire submissions — answers","Calls & meetings — recordings, transcripts, intelligence","Texts — two-way messages" ] },
+  { title:"Past outreach logic", color:"var(--va)", items:[
+    "Which email frame was sent, and when","Weekly cadence position + number of touches","Follow-ups / re-entries","Cross-sell offers made" ] },
+  { title:"Responses & sentiment", color:"var(--customer)", items:[
+    "Response rate","Response type (opened, replied, questionnaire, booked, showed)","Sentiment (positive / neutral / negative)","Outcome (shopped, switched, retained, cross-sold)" ] },
+];
+
+const FUNNEL = [
+  { label:"Outreach emails sent", count:20, note:"one weekly batch" },
+  { label:"Deliverable (valid email)", count:18, note:"~2 bounced / bad address" },
+  { label:"Responded", count:5, note:"≈25% response rate" },
+  { label:"Proceeded to shop", count:1 },
+];
+const STATS = [
+  { v:"~25%", l:"Response rate (5 of ~20)" },
+  { v:"~25%", l:"Life interest (1 of 4 responders)" },
+  { v:"$200", l:"Value per shown appointment" },
+];
+
+// Steps flagged as candidates to cut in the Jul 15 review
+const CUT = [];
+
+// Open questions & decisions surfaced in the Jul 15 review, keyed by step number.
+// { warn:true } marks an unresolved decision / tension.
+const REVIEW = {
+  1: [
+    { t:"Decided (Jul 15): the one-time bulk upload is done by the RPA tool, not a VA — a single initial load, not a 24/7 sync." },
+    { t:"Why keep it: ~80–90% of a household's data stays accurate over their lifetime, so a cheap automated snapshot beats ~9+ FTE-weeks (~$3k) of manual onboarding." },
+    { t:"Staleness is handled downstream: the weekly renewal RPA (Step 2) refreshes the renewal number, and a pre-outreach refresh (Step 3) re-pulls the household profile from the live AMS." },
+  ],
+  2: [
+    { t:"Decided (Jul 15): the RPA does the weekly renewal-number pulls (and the one-time initial load)." },
+    { t:"Cheaper fallbacks if RPA cost / maintenance grows: have VAs export the AMS renewal report, or read the weekly renewal-readout email the team already receives." },
+    { t:"Caveat: RPA breaks over time (Jacob) — budget for maintenance; sturdier for the one-time load than for fragile weekly portal sweeps.", warn:true },
+    { t:"Strategy Q: do VAs update the AMS (fast 5-sec fixes) or deliberately create distance so Upline becomes the source of truth (stickier long-term)?", warn:true },
+  ],
+  3: [
+    { t:"NEW (Jul 16): re-pull the household's data from the live AMS right before outreach — the initial snapshot goes stale by the time a fall renewal comes up (added car, new driver, move, coverage change)." },
+    { t:"Open: who does it — VA (shown here), the RPA (same AMS pull as Step 1, scoped to the window → keeps VA to shopping only, near-zero cost), or a hybrid (RPA refreshes structured data, VA verifies notes / edge cases)?", warn:true },
+    { t:"Cadence open: every ~2–4 weeks vs. just-in-time per household as it enters the ~20-day window.", warn:true },
+  ],
+  4: [
+    { t:"Jacob: get more granular on the front end — spell out generation → send in detail." },
+  ],
+  5: [
+    { t:"Integrate with the agency's email system (Outlook, etc.) to dodge spam filters and let customers reply directly — answers Jacob's 'which email / how are we emailing them / what to integrate.'" },
+    { t:"Send model open: Upline presents & agent sends vs. Upline sends on the agent's behalf once approved in-system (leaning latter).", warn:true },
+  ],
+  6: [
+    { t:"Add a reminder / follow-up email for non-responders. Kept here as a proposal — say the word and I'll promote it to its own journey step.", warn:true },
+  ],
+  7: [
+    { t:"VA team size TBD — depends on customer count; needs the economics model before we commit a number." },
+  ],
+  8: [
+    { t:"Compliance layer: how much must the agent be involved in the recommendation? Varies by agency (e.g., Members First is paid only for the hands-on call) — likely configurable.", warn:true },
+  ],
+  9: [
+    { t:"Proposed: skip the call — a self-serve landing page where the client picks their new policy, with the agency phone number shown for questions (Calendly is a pain for both sides)." },
+    { t:"TENSION: the scheduled call / show-up is the billing trigger ($200 per shown appt) and some agencies need the hands-on call for compliance. Reconcile before removing.", warn:true },
+  ],
+  10: [
+    { t:"Keep meeting transcription in the MVP from day one — frame as a benefit: surface notes back to the agent / deposit as AMS notes, and memorialize declines (e.g., 'client turned down uninsured motorist')." },
+    { t:"Reconcile with Step 9's close model (scheduled call vs. self-serve landing page)." },
+  ],
+};
+
+function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+function tag(kind){ const r = ROLES[kind]; return `<span class="tag"><span class="dot" style="background:${r.color}"></span>${r.label}</span>`; }
+function bulletsHTML(bullets){
+  let html = "<ul>";
+  for (const b of bullets){
+    if (typeof b === "string"){ html += `<li>${esc(b)}</li>`; }
+    else {
+      html += `<li class="parent">${esc(b.text)}</li>`;
+      html += `<ul class="sub">` + b.sub.map(s => `<li>${esc(s)}</li>`).join("") + `</ul>`;
+    }
+  }
+  return html + "</ul>";
+}
+
+// Legend
+document.getElementById("legend").insertAdjacentHTML("beforeend",
+  Object.keys(ROLES).map(k => tag(k)).join(""));
+
+// Journey — swimlane grid (columns = steps, rows = lanes)
+const matrix = document.getElementById("journey");
+matrix.className = "matrix";
+const N = STEPS.length;
+matrix.style.gridTemplateColumns = `190px repeat(${N}, 300px)`;
+
+// Each grid child is placed explicitly (col + row) so hiding a lane's cells
+// never reflows the auto-placement of the other lanes.
+const LANE_ROW = { journey: 1, data: 2, logic: 3, future: 4, review: 5 };
+function cellPos(key, i){ return `grid-column:${i + 2};grid-row:${LANE_ROW[key]}`; }
+
+function laneLabel(title, desc, key, collapsible){
+  const cls = "lane-label" + (collapsible ? " toggle" : "");
+  const caret = collapsible ? `<span class="caret">\u25BE</span>` : "";
+  const attrs = collapsible ? ` role="button" tabindex="0" aria-expanded="true" data-toggle="${key}"` : "";
+  return `<div class="${cls}" style="grid-column:1;grid-row:${LANE_ROW[key]}"${attrs}><div class="lt">${caret}${esc(title)}</div>${desc?`<div class="ld">${esc(desc)}</div>`:""}</div>`;
+}
+
+let html = "";
+
+// Row 1 — journey step cards (not collapsible)
+html += laneLabel("Journey", "left → right", "journey", false);
+STEPS.forEach((step, i) => {
+  const lane = ROLES[step.roles[0]].color;
+  const isCut = CUT.includes(step.n);
+  html += `<div class="stepcard${i === N - 1 ? " last" : ""}${isCut ? " cut" : ""}" style="border-top-color:${lane};${cellPos("journey", i)}">
+    ${isCut ? `<span class="cut-badge">\u26A0 Candidate to cut</span>` : ""}
+    <div class="cardhead"><span class="num">${step.n}</span><span class="spacer"></span><span class="roles">${step.roles.map(tag).join("")}</span></div>
+    <h3>${esc(step.name)}</h3>
+    <p class="body">${esc(step.body)}</p>
+  </div>`;
+});
+
+// Row 2 — Data Written to the Repository
+html += laneLabel("Data Written to the Repository", "what each step adds", "data", true);
+STEPS.forEach((step, i) => {
+  html += `<div class="cell cell-data lane-cell" data-lane="data" style="${cellPos("data", i)}"><ul>${step.data.map(d=>`<li>${esc(d)}</li>`).join("")}</ul></div>`;
+});
+
+// Row 3 — Operational Logic
+html += laneLabel("Operational Logic", "the rules behind each step", "logic", true);
+STEPS.forEach((step, i) => {
+  let inner = `<div class="summary">${esc(step.logic.summary)}</div>`;
+  if (step.logic.bullets) inner += bulletsHTML(step.logic.bullets);
+  html += `<div class="cell cell-logic lane-cell" data-lane="logic" style="${cellPos("logic", i)}">${inner}</div>`;
+});
+
+// Row 4 — Future Ideas
+html += laneLabel("Future Ideas", "not built yet", "future", true);
+STEPS.forEach((step, i) => {
+  if (step.future && step.future.length){
+    html += `<div class="cell cell-future lane-cell" data-lane="future" style="${cellPos("future", i)}">${step.future.map(f=>`<div class="note">${esc(f)}</div>`).join("")}</div>`;
+  } else {
+    html += `<div class="cell cell-empty lane-cell" data-lane="future" style="${cellPos("future", i)}">—</div>`;
+  }
+});
+
+// Row 5 — Open questions & decisions (Jul 15 review)
+html += laneLabel("Open questions & decisions", "from the Jul 15 review", "review", true);
+STEPS.forEach((step, i) => {
+  const items = REVIEW[step.n];
+  if (items && items.length){
+    html += `<div class="cell cell-review lane-cell" data-lane="review" style="${cellPos("review", i)}">${items.map(r=>`<div class="ri${r.warn?" warn":""}">${esc(r.t)}</div>`).join("")}</div>`;
+  } else {
+    html += `<div class="cell-empty lane-cell" data-lane="review" style="${cellPos("review", i)}">—</div>`;
+  }
+});
+
+matrix.innerHTML = html;
+
+// Collapsible lanes — click (or Enter/Space on) a lane label to toggle its whole row.
+matrix.querySelectorAll(".lane-label.toggle").forEach(label => {
+  const key = label.getAttribute("data-toggle");
+  function setCollapsed(collapsed){
+    label.classList.toggle("collapsed", collapsed);
+    label.setAttribute("aria-expanded", String(!collapsed));
+    matrix.querySelectorAll('.lane-cell[data-lane="' + key + '"]').forEach(c => {
+      if (collapsed) c.setAttribute("hidden", ""); else c.removeAttribute("hidden");
+    });
+  }
+  label.addEventListener("click", () => setCollapsed(!label.classList.contains("collapsed")));
+  label.addEventListener("keydown", e => {
+    if (e.key === "Enter" || e.key === " "){ e.preventDefault(); setCollapsed(!label.classList.contains("collapsed")); }
+  });
+  // Default: start collapsed so the journey reads cleanly; each lane expands on click.
+  setCollapsed(true);
+});
+
+</script>
+</body>
+</html>

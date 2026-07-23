@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "generate-plan": "node scripts/generate-execution-plan.mjs",
-    "sync-data": "cp data/venture-plan.json app/public/data/venture-plan.json",
+    "sync-data": "cp data/venture-plan.json app/public/data/venture-plan.json && cp data/learnings.json app/public/data/learnings.json",
     "prepare": "npm run generate-plan && npm run sync-data",
     "dev": "npm run prepare && npm --prefix app run dev",
     "build": "npm run prepare && npm --prefix app run build",
