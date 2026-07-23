@@ -7,10 +7,11 @@ Nothing here writes to or deploys to the POC.
 
 ## Live site
 
-**https://upline-team-folio.vercel.app**
+**https://upline-throughline.vercel.app**
 
 - **Hosting:** Vercel (Upline team)
 - **GitHub:** https://github.com/ashleygitwit/upline-team-folio
+- **Legacy URL:** `upline-team-folio.vercel.app` still resolves to the same project.
 - **Custom domain:** add in Vercel → Settings → Domains when ready (e.g. `plan.upline.com`)
 
 ## Try it locally

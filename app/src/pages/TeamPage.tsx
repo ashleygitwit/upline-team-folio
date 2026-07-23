@@ -41,7 +41,7 @@ const TEAM: Member[] = [
     role: 'Industry Expert · SME',
     photo: '/team/justin.png',
     owns: 'Our subject-matter expert and design partner — deep P&C domain knowledge that keeps the product grounded in reality.',
-    chips: ['Insurance domain knowledge', 'How agencies really operate', 'Reality-checking our assumptions'],
+    chips: ['Insurance domain knowledge'],
   },
   {
     name: 'Amanda Treadwell',
