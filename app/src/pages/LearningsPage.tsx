@@ -58,9 +58,9 @@ const FN_NODES: FunnelNode[] = [
     desc: ['Renewal email sent'],
   },
   {
-    x: 250, y: 255, w: 150, h: 110, count: '7', color: FN_GRAY,
-    label: ['In prep'],
-    desc: ['Not sent yet'],
+    x: 250, y: 255, w: 150, h: 110, count: '6', color: FN_GRAY,
+    label: ['Not emailed'],
+    desc: ['Held — not in', 'the send queue'],
   },
   {
     x: 480, y: 70, w: 150, h: 155, count: '12', color: FN_GREEN,
@@ -133,7 +133,7 @@ function PilotFunnel() {
         className="funnel-svg"
         viewBox="0 0 1130 400"
         role="img"
-        aria-label="Members 1st pilot funnel snapshot: 49 households in the pilot; 42 outreach emails sent (7 still in prep); 12 responded (30 awaiting reply); 10 carriers shopped with a recommendation produced (2 still in questionnaire); 7 recommendations to the client — 4 rewritten to a new carrier, 2 stayed/retained, 1 pending send."
+        aria-label="Members 1st pilot funnel snapshot: 49 households in the pilot; 42 have been sent an outreach email and 6 are held (not emailed) — the send queue is clear; 12 responded, 30 awaiting reply; 10 carriers shopped with a recommendation produced, 2 still in questionnaire; 7 recommendations to the client — 4 rewritten to a new carrier, 2 stayed/retained, 1 pending send."
       >
         {FN_STAGES.map((s) => (
           <text key={s.label} x={s.x} y={22} textAnchor="middle" className="fn-stage">
@@ -183,9 +183,9 @@ function PilotFunnel() {
         })}
       </svg>
       <figcaption>
-        Current snapshot from the Pilot Customer Funnel board (Members 1st, Jul 27, 2026). Directional
-        — where each of the 49 households sits today; the 42 sent are still working through response
-        and shopping.
+        Current snapshot from the Pilot Customer Funnel board (Members 1st, Jul 27, 2026). The send
+        queue is clear — 42 of 49 have been emailed, 6 are held. Green stages are cumulative
+        (households that reached at least that stage), so they read higher than any single board column.
       </figcaption>
     </figure>
   );
