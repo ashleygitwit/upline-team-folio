@@ -48,62 +48,53 @@ interface FunnelNode {
 
 const FN_NODES: FunnelNode[] = [
   {
-    x: 20, y: 115, w: 140, h: 270, count: '30', color: FN_GRAY, ty: 92,
-    label: ['All outreach'],
-    desc: ['Households sent a', 'renewal outreach email'],
+    x: 20, y: 85, w: 150, h: 280, count: '49', color: FN_GRAY, ty: 108,
+    label: ['In the pilot'],
+    desc: ['Renewals pulled', 'into the pilot'],
   },
   {
-    x: 270, y: 115, w: 150, h: 81, count: '9', color: FN_GREEN,
-    label: ['Questionnaire done'],
-    desc: ['Replied + filled out', 'the questionnaire'],
+    x: 250, y: 70, w: 150, h: 165, count: '42', color: FN_GREEN,
+    label: ['Outreach sent'],
+    desc: ['Renewal email sent'],
   },
   {
-    x: 270, y: 202, w: 150, h: 50, count: '4', color: FN_GRAY,
-    label: ['Could not contact'],
-    desc: ['Bad / missing email'],
+    x: 250, y: 255, w: 150, h: 110, count: '7', color: FN_GRAY,
+    label: ['In prep'],
+    desc: ['Not sent yet'],
   },
   {
-    x: 270, y: 258, w: 150, h: 153, count: '17', color: FN_GRAY, ty: 40,
-    label: ['No response'],
-    desc: ['Received it, no', 'reply yet'],
+    x: 480, y: 70, w: 150, h: 155, count: '12', color: FN_GREEN,
+    label: ['Responded'],
+    desc: ['Questionnaire in', 'or further'],
   },
   {
-    x: 530, y: 95, w: 150, h: 58, count: '4', color: FN_GREEN,
-    label: ['Requoted + shared'],
-    desc: ['Shopped + shared rec'],
+    x: 480, y: 245, w: 150, h: 120, count: '30', color: FN_GRAY, ty: 34,
+    label: ['No response yet'],
+    desc: ['Received, awaiting', 'reply'],
   },
   {
-    x: 530, y: 165, w: 150, h: 58, count: '5', color: FN_PURPLE,
-    label: ['Requoted, pending'],
-    desc: ['Not shared yet (confirm)'],
+    x: 710, y: 70, w: 150, h: 155, count: '10', color: FN_GREEN,
+    label: ['Carriers shopped'],
+    desc: ['Recommendation', 'produced'],
   },
   {
-    x: 800, y: 63, w: 155, h: 58, count: '1', color: FN_GREEN,
-    label: ['Umbrella + life'],
-    desc: ['Cross-sell (confirm)'],
+    x: 710, y: 245, w: 150, h: 90, count: '2', color: FN_GRAY,
+    label: ['In questionnaire'],
+    desc: ['Not yet shopped'],
   },
   {
-    x: 800, y: 135, w: 155, h: 58, count: '1', color: FN_PURPLE,
-    label: ['Medicare'],
-    desc: ['Cross-sell (confirm)'],
-  },
-  {
-    x: 800, y: 207, w: 155, h: 58, count: '1', color: FN_GRAY,
-    label: ['Not asked'],
-    desc: ['To shop yet (confirm)'],
-  },
-  {
-    x: 800, y: 279, w: 155, h: 72, count: '6', color: FN_GRAY, ty: 8,
-    label: ['Declined'],
-    desc: ['Chose to stay /', 'declined to switch'],
+    x: 940, y: 70, w: 175, h: 265, count: '7', color: FN_PURPLE, ty: 8,
+    label: ['Rec to client'],
+    desc: ['Rewritten — 4', 'Stayed / retained — 2', 'Pending send — 1'],
   },
 ];
 
 const FN_STAGES: { x: number; label: string }[] = [
-  { x: 90, label: 'Outreach' },
-  { x: 345, label: 'Response' },
-  { x: 605, label: 'Requote' },
-  { x: 877, label: 'Outcome' },
+  { x: 95, label: 'In pilot' },
+  { x: 325, label: 'Outreach' },
+  { x: 555, label: 'Response' },
+  { x: 785, label: 'Shop' },
+  { x: 1027, label: 'Outcome' },
 ];
 
 interface FunnelLink {
@@ -113,16 +104,17 @@ interface FunnelLink {
 }
 
 const FN_LINKS: FunnelLink[] = [
-  { x1: 160, y1: 155.5, t1: 81, x2: 270, y2: 155.5, t2: 81, color: FN_GREEN },
-  { x1: 160, y1: 214, t1: 36, x2: 270, y2: 227, t2: 36, color: FN_GRAY },
-  { x1: 160, y1: 308.5, t1: 153, x2: 270, y2: 334.5, t2: 153, color: FN_GRAY },
-  { x1: 420, y1: 133, t1: 36, x2: 530, y2: 124, t2: 36, color: FN_GREEN },
-  { x1: 420, y1: 173.5, t1: 45, x2: 530, y2: 194, t2: 45, color: FN_PURPLE },
-  { x1: 680, y1: 110.5, t1: 9, x2: 800, y2: 92, t2: 9, color: FN_GREEN },
-  { x1: 680, y1: 119.5, t1: 9, x2: 800, y2: 236, t2: 9, color: FN_GREEN },
-  { x1: 680, y1: 133, t1: 18, x2: 800, y2: 297, t2: 18, color: FN_GREEN },
-  { x1: 680, y1: 176, t1: 9, x2: 800, y2: 164, t2: 9, color: FN_PURPLE },
-  { x1: 680, y1: 198.5, t1: 36, x2: 800, y2: 324, t2: 36, color: FN_PURPLE },
+  // In pilot -> outreach sent / in prep
+  { x1: 170, y1: 185, t1: 110, x2: 250, y2: 152, t2: 110, color: FN_GREEN },
+  { x1: 170, y1: 300, t1: 22, x2: 250, y2: 310, t2: 22, color: FN_GRAY },
+  // Outreach sent -> responded / no response yet
+  { x1: 400, y1: 120, t1: 32, x2: 480, y2: 147, t2: 32, color: FN_GREEN },
+  { x1: 400, y1: 190, t1: 78, x2: 480, y2: 305, t2: 78, color: FN_GRAY },
+  // Responded -> carriers shopped / in questionnaire
+  { x1: 630, y1: 138, t1: 26, x2: 710, y2: 147, t2: 26, color: FN_GREEN },
+  { x1: 630, y1: 175, t1: 6, x2: 710, y2: 290, t2: 6, color: FN_GRAY },
+  // Carriers shopped -> rec to client
+  { x1: 860, y1: 147, t1: 26, x2: 940, y2: 200, t2: 26, color: FN_PURPLE },
 ];
 
 function ribbonPath(l: FunnelLink): string {
@@ -139,9 +131,9 @@ function PilotFunnel() {
     <figure className="funnel-figure">
       <svg
         className="funnel-svg"
-        viewBox="0 0 975 425"
+        viewBox="0 0 1130 400"
         role="img"
-        aria-label="Pilot funnel: 30 outreach contacts flow to 9 questionnaires, 4 could-not-contact, 17 no-response; the 9 are requoted and split into outcomes (declined 6, umbrella+life 1, Medicare 1, not asked 1)."
+        aria-label="Members 1st pilot funnel snapshot: 49 households in the pilot; 42 outreach emails sent (7 still in prep); 12 responded (30 awaiting reply); 10 carriers shopped with a recommendation produced (2 still in questionnaire); 7 recommendations to the client — 4 rewritten to a new carrier, 2 stayed/retained, 1 pending send."
       >
         {FN_STAGES.map((s) => (
           <text key={s.label} x={s.x} y={22} textAnchor="middle" className="fn-stage">
@@ -191,8 +183,9 @@ function PilotFunnel() {
         })}
       </svg>
       <figcaption>
-        Directional, small sample from the pilot so far. &ldquo;(confirm)&rdquo; marks a label we
-        still need to verify with the agency.
+        Current snapshot from the Pilot Customer Funnel board (Members 1st, Jul 27, 2026). Directional
+        — where each of the 49 households sits today; the 42 sent are still working through response
+        and shopping.
       </figcaption>
     </figure>
   );
@@ -288,10 +281,10 @@ export function LearningsPage({ learnings }: LearningsPageProps) {
       </section>
 
       <section className="card">
-        <h2>Funnel economics — early pilot trends</h2>
+        <h2>Pilot customer funnel — where households sit now</h2>
         <p className="export-hint">
-          Where the pilot outreach has landed so far (small sample) — every contact traced through
-          questionnaire, requote, and outcome.
+          A live snapshot of the Members 1st pilot: all 49 households traced from outreach through
+          response, shopping, and the recommendation to the client.
         </p>
         <PilotFunnel />
       </section>
