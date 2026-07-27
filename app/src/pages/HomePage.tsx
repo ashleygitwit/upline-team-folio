@@ -1,8 +1,37 @@
 import type { VenturePlan } from '../types';
+import { SwimlaneMap, type SwimLane, type SwimStep, type SwimPhase } from '../components/SwimlaneMap';
 
 interface HomePageProps {
   plan: VenturePlan | null;
 }
+
+// "At a glance" version of the full product journey — the actors and the
+// left-to-right flow, minus the deep detail in the embedded version below.
+const JOURNEY_LANES: SwimLane[] = [
+  { key: 'upline', label: 'Upline', color: 'var(--primary)' },
+  { key: 'va', label: 'VA', color: 'oklch(0.62 0.14 40)' },
+  { key: 'agent', label: 'Agent', color: 'var(--chart-5)' },
+  { key: 'customer', label: 'Customer', color: 'oklch(0.55 0.12 262)' },
+];
+
+const JOURNEY_STEPS: SwimStep[] = [
+  { lane: 0, text: 'Pull the book + renewal numbers (RPA)' },
+  { lane: 1, text: 'Refresh household data before outreach' },
+  { lane: 0, text: 'Generate the outreach email' },
+  { lane: 2, text: 'Send it — from the agent\u2019s own name' },
+  { lane: 3, text: 'Complete the tailored questionnaire' },
+  { lane: 1, text: 'Shop across multiple carriers' },
+  { lane: 0, text: 'Draft the recommendation + cross-sell' },
+  { lane: 2, text: 'Review, adjust, and send' },
+  { lane: 3, text: 'Schedule, meet, and decide' },
+];
+
+const JOURNEY_PHASES: SwimPhase[] = [
+  { start: 0, span: 2, label: 'Set up the data', bg: 'var(--primary)', fg: '#fff' },
+  { start: 2, span: 3, label: 'Reach out & intake', bg: 'var(--chart-3)', fg: '#3a3320' },
+  { start: 5, span: 2, label: 'Shop & recommend', bg: 'var(--chart-5)', fg: '#fff' },
+  { start: 7, span: 2, label: 'Review & close', bg: 'oklch(0.55 0.12 262)', fg: '#fff' },
+];
 
 interface ArcStep {
   beat: string;
@@ -104,6 +133,20 @@ export function HomePage({ plan }: HomePageProps) {
       )}
 
       <section className="product-journey">
+        <div className="journey-glance">
+          <h2>Upline Journey — at a glance</h2>
+          <p className="arc-intro">
+            The whole flow in one view — who does what, left to right. Want the detail? The full
+            version is right below.
+          </p>
+          <SwimlaneMap
+            lanes={JOURNEY_LANES}
+            steps={JOURNEY_STEPS}
+            phases={JOURNEY_PHASES}
+            ariaLabel="Upline product journey at a glance. Upline pulls the book and renewal numbers by RPA; a VA refreshes household data; Upline generates the outreach email; the agent sends it from their own name; the customer completes a tailored questionnaire; a VA shops across carriers; Upline drafts the recommendation and cross-sell; the agent reviews, adjusts, and sends; the customer schedules, meets, and decides."
+          />
+        </div>
+
         <div className="embed-frame embed-frame-tall">
           <iframe
             title="Upline — the product journey"

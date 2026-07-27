@@ -1907,6 +1907,19 @@ code {
   font-weight: 700;
 }
 
+/* "At a glance" product journey block on the home page */
+.journey-glance {
+  margin-bottom: 2.75rem;
+}
+
+.journey-glance h2 {
+  margin-bottom: 0.35rem;
+}
+
+.journey-glance .wlm {
+  margin-top: 1.25rem;
+}
+
 /* Weekly-loop swim-lane journey map (scales to fit — never side-scrolls) */
 .wlm {
   width: 100%;
