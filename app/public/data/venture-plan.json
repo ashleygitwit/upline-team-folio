@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-07-13",
+  "lastUpdated": "2026-07-27",
   "venture": {
     "hypothesis": "If we help independent P&C agencies turn renewal season into a repeatable, agent-approved outreach-and-recommendation workflow by triaging which accounts need action, doing the shopping legwork, and drafting a clear client recommendation, then agencies will retain more at-risk households and convert more renewals into cross-sell or up-sell conversations across their existing book of business, because today that work is too manual and time-consuming for most teams to run account-by-account at scale.",
     "thesis": {
@@ -17,7 +17,7 @@
   "pilotSummary": {
     "agency": "Members 1st Insurance",
     "kickoffDate": "2026-06-17",
-    "asOfDate": "2026-07-13",
+    "asOfDate": "2026-07-27",
     "pilotWeek": 3,
     "outreachSendWeek": 4,
     "sessionRhythm": "Mon · Wed · Fri",
@@ -105,31 +105,31 @@
       "id": "prod-m1st-week3",
       "title": "Members 1st pilot — Week 3",
       "workstream": "Product",
-      "status": "In Flight",
+      "status": "Done",
       "owner": "Ashley + Agent",
       "start": "2026-07-13",
       "end": "2026-07-17",
-      "notes": "Sessions Jul 13, 15, 17."
+      "notes": "Sessions Jul 13, 15, 17 — complete."
     },
     {
       "id": "prod-m1st-week4-sends",
       "title": "Members 1st — outreach catch-up (Week 4)",
       "workstream": "Product",
-      "status": "Next",
+      "status": "Done",
       "owner": "Ashley + Agent",
       "start": "2026-07-20",
       "end": "2026-07-24",
-      "notes": "Send batch Jul 20, 22, 24 — ~1 week behind session rhythm."
+      "notes": "Send batch Jul 20, 22, 24 — complete. Outreach queue cleared."
     },
     {
       "id": "prod-pilot-break",
       "title": "Pilot break — iterate & Stockton prep",
       "workstream": "Product",
-      "status": "Next",
+      "status": "In Flight",
       "owner": "Ashley + Agent",
       "start": "2026-07-27",
       "end": "2026-08-02",
-      "notes": "One week off between pilots. Synthesize M1st learnings; set up Stockton Hill."
+      "notes": "Current week. One week off between pilots — synthesize M1st learnings; set up Stockton Hill."
     },
     {
       "id": "prod-stockton-hill",

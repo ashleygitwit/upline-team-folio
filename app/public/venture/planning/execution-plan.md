@@ -1,6 +1,6 @@
 # Upline Venture — Execution Plan
 
-*Last updated: 2026-07-13*
+*Last updated: 2026-07-27*
 
 Paste this into ChatGPT, Claude, or your preferred LLM to ask about timeline, priorities, pilot metrics, email copy, and what is in flight. Answers should synthesize at **team level** — see guidance below.
 
@@ -45,7 +45,7 @@ For real renewals in this pilot, we need proof that we can repeatedly generate a
 
 ## Pilot activity summary
 
-*Members 1st Insurance · kickoff 2026-06-17 · as of 2026-07-13*
+*Members 1st Insurance · kickoff 2026-06-17 · as of 2026-07-27*
 
 **Pilot week:** 3 · outreach sends catch-up week 4 · sessions 5 of 12 · rhythm Mon · Wed · Fri
 
@@ -127,10 +127,10 @@ Post-shop handoff: rate comparison in paragraph one, simple comparison table, co
 - **Workstream:** Ops
 - **Dates:** 2026-07-13 → 2026-11-20
 - **Notes:** Executive search and hiring process.
-### Members 1st pilot — Week 3
+### Pilot break — iterate & Stockton prep
 - **Workstream:** Product
-- **Dates:** 2026-07-13 → 2026-07-17
-- **Notes:** Sessions Jul 13, 15, 17.
+- **Dates:** 2026-07-27 → 2026-08-02
+- **Notes:** Current week. One week off between pilots — synthesize M1st learnings; set up Stockton Hill.
 ### No-AMS launch feasibility (background)
 - **Workstream:** Product
 - **Dates:** 2026-07-13 → 2026-09-04
@@ -138,14 +138,6 @@ Post-shop handoff: rate comparison in paragraph one, simple comparison table, co
 
 ## Next
 
-### Members 1st — outreach catch-up (Week 4)
-- **Workstream:** Product
-- **Dates:** 2026-07-20 → 2026-07-24
-- **Notes:** Send batch Jul 20, 22, 24 — ~1 week behind session rhythm.
-### Pilot break — iterate & Stockton prep
-- **Workstream:** Product
-- **Dates:** 2026-07-27 → 2026-08-02
-- **Notes:** One week off between pilots. Synthesize M1st learnings; set up Stockton Hill.
 ### Stockton Hill pilot
 - **Workstream:** Product
 - **Dates:** 2026-08-03 → 2026-08-19
@@ -180,6 +172,14 @@ Post-shop handoff: rate comparison in paragraph one, simple comparison table, co
 - **Workstream:** Product
 - **Dates:** 2026-07-06 → 2026-07-10
 - **Notes:** Sessions Jul 6, 8, 10.
+### Members 1st pilot — Week 3
+- **Workstream:** Product
+- **Dates:** 2026-07-13 → 2026-07-17
+- **Notes:** Sessions Jul 13, 15, 17 — complete.
+### Members 1st — outreach catch-up (Week 4)
+- **Workstream:** Product
+- **Dates:** 2026-07-20 → 2026-07-24
+- **Notes:** Send batch Jul 20, 22, 24 — complete. Outreach queue cleared.
 
 ---
 
@@ -190,9 +190,9 @@ Post-shop handoff: rate comparison in paragraph one, simple comparison table, co
 | CEO hiring | Ops | In Flight | 2026-07-13 | 2026-11-20 |
 | Members 1st pilot — Week 1 | Product | Done | 2026-06-17 | 2026-06-24 |
 | Members 1st pilot — Week 2 | Product | Done | 2026-07-06 | 2026-07-10 |
-| Members 1st pilot — Week 3 | Product | In Flight | 2026-07-13 | 2026-07-17 |
-| Members 1st — outreach catch-up (Week 4) | Product | Next | 2026-07-20 | 2026-07-24 |
-| Pilot break — iterate & Stockton prep | Product | Next | 2026-07-27 | 2026-08-02 |
+| Members 1st pilot — Week 3 | Product | Done | 2026-07-13 | 2026-07-17 |
+| Members 1st — outreach catch-up (Week 4) | Product | Done | 2026-07-20 | 2026-07-24 |
+| Pilot break — iterate & Stockton prep | Product | In Flight | 2026-07-27 | 2026-08-02 |
 | Stockton Hill pilot | Product | Next | 2026-08-03 | 2026-08-19 |
 | Sprint prep week | Product | Future | 2026-08-24 | 2026-08-28 |
 | Product strategy sprint | Product | Future | 2026-08-31 | 2026-09-04 |
