@@ -58,6 +58,9 @@ export function RoadmapPage({
 }: RoadmapPageProps) {
   const [copied, setCopied] = useState(false);
 
+  // Temporarily hidden per request — flip to true to restore the "Copy for your LLM" export.
+  const SHOW_LLM_EXPORT = false;
+
   async function copyExport() {
     await navigator.clipboard.writeText(exportMarkdown);
     setCopied(true);
@@ -110,6 +113,7 @@ export function RoadmapPage({
 
           <GanttSection plan={plan} onPlanChange={onPlanChange} />
 
+          {SHOW_LLM_EXPORT ? (
           <section className="card export-card">
             <div className="section-head">
               <div>
@@ -136,6 +140,7 @@ export function RoadmapPage({
             </div>
             <pre className="export-box">{exportMarkdown}</pre>
           </section>
+          ) : null}
         </>
       ) : (
         <p className="loading">Loading plan…</p>
