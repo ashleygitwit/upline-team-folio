@@ -137,9 +137,19 @@
       "workstream": "Product",
       "status": "Next",
       "owner": "Ashley + Agent",
-      "start": "2026-08-03",
-      "end": "2026-08-19",
-      "notes": "Sessions Aug 3, 5, 7, 10, 12, 14, 17, 19."
+      "start": "2026-08-05",
+      "end": "2026-08-26",
+      "notes": "~3 weeks. Mon/Wed/Fri sessions, Aug 5–26."
+    },
+    {
+      "id": "prod-pilot-retro",
+      "title": "Pilot retro",
+      "workstream": "Product",
+      "status": "Future",
+      "owner": "Ashley + Agent",
+      "start": "2026-08-26",
+      "end": "2026-09-02",
+      "notes": "Retro across both pilots — synthesize learnings before the sprint."
     },
     {
       "id": "prod-sprint-prep",
@@ -147,8 +157,8 @@
       "workstream": "Product",
       "status": "Future",
       "owner": "Ashley + Agent",
-      "start": "2026-08-24",
-      "end": "2026-08-28",
+      "start": "2026-09-03",
+      "end": "2026-09-10",
       "notes": "Learnings and prep for product strategy sprint."
     },
     {
@@ -157,9 +167,9 @@
       "workstream": "Product",
       "status": "Future",
       "owner": "Ashley + Agent",
-      "start": "2026-08-31",
-      "end": "2026-09-04",
-      "notes": "Sprint week — Aug 31 through Sep 4."
+      "start": "2026-09-14",
+      "end": "2026-09-18",
+      "notes": "Sprint week — Sep 14 through Sep 18."
     },
     {
       "id": "prod-mvp-planning",
@@ -167,8 +177,8 @@
       "workstream": "Product",
       "status": "Future",
       "owner": "Ashley + Agent",
-      "start": "2026-09-07",
-      "end": "2026-09-11",
+      "start": "2026-09-21",
+      "end": "2026-09-25",
       "notes": "Scope and plan MVP build."
     },
     {
@@ -177,9 +187,9 @@
       "workstream": "Product",
       "status": "Future",
       "owner": "Ashley + Agent",
-      "start": "2026-09-14",
-      "end": "2026-11-20",
-      "notes": "10-week build. Kickoff Sep 14."
+      "start": "2026-09-28",
+      "end": "2026-12-04",
+      "notes": "10-week build. Kickoff Sep 28."
     },
     {
       "id": "prod-no-ams",
@@ -188,7 +198,7 @@
       "status": "In Flight",
       "owner": "Agent",
       "start": "2026-07-13",
-      "end": "2026-09-04",
+      "end": "2026-09-18",
       "notes": "Background spare-cycles work through sprint week."
     }
   ]

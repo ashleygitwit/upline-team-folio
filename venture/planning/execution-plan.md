@@ -133,34 +133,38 @@ Post-shop handoff: rate comparison in paragraph one, simple comparison table, co
 - **Notes:** Current week. One week off between pilots — synthesize M1st learnings; set up Stockton Hill.
 ### No-AMS launch feasibility (background)
 - **Workstream:** Product
-- **Dates:** 2026-07-13 → 2026-09-04
+- **Dates:** 2026-07-13 → 2026-09-18
 - **Notes:** Background spare-cycles work through sprint week.
 
 ## Next
 
 ### Stockton Hill pilot
 - **Workstream:** Product
-- **Dates:** 2026-08-03 → 2026-08-19
-- **Notes:** Sessions Aug 3, 5, 7, 10, 12, 14, 17, 19.
+- **Dates:** 2026-08-05 → 2026-08-26
+- **Notes:** ~3 weeks. Mon/Wed/Fri sessions, Aug 5–26.
 
 ## Future
 
+### Pilot retro
+- **Workstream:** Product
+- **Dates:** 2026-08-26 → 2026-09-02
+- **Notes:** Retro across both pilots — synthesize learnings before the sprint.
 ### Sprint prep week
 - **Workstream:** Product
-- **Dates:** 2026-08-24 → 2026-08-28
+- **Dates:** 2026-09-03 → 2026-09-10
 - **Notes:** Learnings and prep for product strategy sprint.
 ### Product strategy sprint
 - **Workstream:** Product
-- **Dates:** 2026-08-31 → 2026-09-04
-- **Notes:** Sprint week — Aug 31 through Sep 4.
+- **Dates:** 2026-09-14 → 2026-09-18
+- **Notes:** Sprint week — Sep 14 through Sep 18.
 ### MVP planning week
 - **Workstream:** Product
-- **Dates:** 2026-09-07 → 2026-09-11
+- **Dates:** 2026-09-21 → 2026-09-25
 - **Notes:** Scope and plan MVP build.
 ### MVP build
 - **Workstream:** Product
-- **Dates:** 2026-09-14 → 2026-11-20
-- **Notes:** 10-week build. Kickoff Sep 14.
+- **Dates:** 2026-09-28 → 2026-12-04
+- **Notes:** 10-week build. Kickoff Sep 28.
 
 ## Done
 
@@ -193,9 +197,10 @@ Post-shop handoff: rate comparison in paragraph one, simple comparison table, co
 | Members 1st pilot — Week 3 | Product | Done | 2026-07-13 | 2026-07-17 |
 | Members 1st — outreach catch-up (Week 4) | Product | Done | 2026-07-20 | 2026-07-24 |
 | Pilot break — iterate & Stockton prep | Product | In Flight | 2026-07-27 | 2026-08-02 |
-| Stockton Hill pilot | Product | Next | 2026-08-03 | 2026-08-19 |
-| Sprint prep week | Product | Future | 2026-08-24 | 2026-08-28 |
-| Product strategy sprint | Product | Future | 2026-08-31 | 2026-09-04 |
-| MVP planning week | Product | Future | 2026-09-07 | 2026-09-11 |
-| MVP build | Product | Future | 2026-09-14 | 2026-11-20 |
-| No-AMS launch feasibility (background) | Product | In Flight | 2026-07-13 | 2026-09-04 |
+| Stockton Hill pilot | Product | Next | 2026-08-05 | 2026-08-26 |
+| Pilot retro | Product | Future | 2026-08-26 | 2026-09-02 |
+| Sprint prep week | Product | Future | 2026-09-03 | 2026-09-10 |
+| Product strategy sprint | Product | Future | 2026-09-14 | 2026-09-18 |
+| MVP planning week | Product | Future | 2026-09-21 | 2026-09-25 |
+| MVP build | Product | Future | 2026-09-28 | 2026-12-04 |
+| No-AMS launch feasibility (background) | Product | In Flight | 2026-07-13 | 2026-09-18 |
