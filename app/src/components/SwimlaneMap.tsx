@@ -135,31 +135,19 @@ export function SwimlaneMap({ lanes, steps, phases, ariaLabel }: SwimlaneMapProp
                   height: '100%',
                   display: 'flex',
                   flexDirection: 'column',
-                  gap: '2px',
+                  justifyContent: 'center',
                   border: `1.5px solid ${color}`,
                   borderLeft: `4px solid ${color}`,
                   borderRadius: '8px',
                   background: 'var(--card)',
-                  padding: '6px 8px',
+                  padding: '6px 9px',
                   overflow: 'hidden',
                 }}
               >
                 <span
                   style={{
-                    fontSize: '8px',
-                    fontWeight: 700,
-                    letterSpacing: '0.05em',
-                    textTransform: 'uppercase',
-                    color,
-                    fontFamily: 'var(--font-sans)',
-                  }}
-                >
-                  {lanes[s.lane].label}
-                </span>
-                <span
-                  style={{
-                    fontSize: '10.5px',
-                    lineHeight: 1.2,
+                    fontSize: '11px',
+                    lineHeight: 1.22,
                     color: 'var(--card-foreground)',
                     fontFamily: 'var(--font-sans)',
                   }}
