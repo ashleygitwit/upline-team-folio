@@ -15,13 +15,13 @@ const JOURNEY_LANES: SwimLane[] = [
 ];
 
 const JOURNEY_STEPS: SwimStep[] = [
-  { lane: 0, text: 'Pull the book + renewal numbers (RPA)' },
+  { lane: 0, text: 'Pull the book + renewals (RPA)' },
   { lane: 1, text: 'Refresh household data before outreach' },
   { lane: 0, text: 'Generate the outreach email' },
   { lane: 2, text: 'Send it — from the agent\u2019s own name' },
   { lane: 3, text: 'Complete the tailored questionnaire' },
   { lane: 1, text: 'Shop across multiple carriers' },
-  { lane: 0, text: 'Draft the recommendation + cross-sell' },
+  { lane: 0, text: 'Draft the recommendation' },
   { lane: 2, text: 'Review, adjust, and send' },
   { lane: 3, text: 'Schedule, meet, and decide' },
 ];

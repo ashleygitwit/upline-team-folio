@@ -32,12 +32,12 @@ export function SwimlaneMap({ lanes, steps, phases, ariaLabel }: SwimlaneMapProp
   const topPad = 6;
   const headerH = 24;
   const headerGap = 10;
-  const laneH = 88;
+  const laneH = 94;
   const laneGap = 10;
   const nStep = steps.length;
   const colW = (W - gutter) / nStep;
   const nodeW = colW - 12;
-  const nodeH = 66;
+  const nodeH = 74;
   const lanesTop = topPad + headerH + headerGap;
   const laneTop = (i: number) => lanesTop + i * (laneH + laneGap);
   const nodeX = (col: number) => gutter + col * colW + (colW - nodeW) / 2;
@@ -146,10 +146,13 @@ export function SwimlaneMap({ lanes, steps, phases, ariaLabel }: SwimlaneMapProp
               >
                 <span
                   style={{
-                    fontSize: '11px',
-                    lineHeight: 1.22,
+                    fontSize: '10.5px',
+                    lineHeight: 1.2,
                     color: 'var(--card-foreground)',
                     fontFamily: 'var(--font-sans)',
+                    overflowWrap: 'break-word',
+                    wordBreak: 'break-word',
+                    hyphens: 'auto',
                   }}
                 >
                   {s.text}
