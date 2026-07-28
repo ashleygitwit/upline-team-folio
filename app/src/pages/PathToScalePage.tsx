@@ -24,7 +24,7 @@ const SCENARIOS: Record<ScenarioKey, Scenario> = {
     label: 'Conservative',
     tag: 'VAs as a bridge',
     ramp: [1, 2, 2, 3, 5, 8, 11, 15],
-    vas: [1, 1, 1, 2, 2, 3, 4, 5],
+    vas: [1, 1, 1, 1, 2, 3, 4, 5],
     endCustomers: '~15',
     endVas: '~5',
     summary:
@@ -32,9 +32,9 @@ const SCENARIOS: Record<ScenarioKey, Scenario> = {
     automation: 'Push automated shopping hard and first — prioritized above other net-new features.',
     releases: [
       {
-        when: '~mid-Feb 2027',
+        when: 'Dec ’26 – mid-Feb ’27',
         title: 'Automated shopping (discovery → build)',
-        note: 'The killer feature — prioritized first so we can lift the customer ceiling.',
+        note: 'Runs in tandem with onboarding the first 2 customers. The killer feature — prioritized first so we can lift the customer ceiling.',
       },
       {
         when: '~late Mar 2027',
@@ -53,7 +53,7 @@ const SCENARIOS: Record<ScenarioKey, Scenario> = {
     label: 'Aggressive',
     tag: 'VAs as an Upline arm',
     ramp: [1, 2, 5, 10, 18, 28, 38, 48],
-    vas: [1, 1, 2, 4, 7, 10, 13, 16],
+    vas: [1, 2, 2, 4, 6, 10, 13, 16],
     endCustomers: '~45–50',
     endVas: '~15–17',
     summary:
@@ -61,9 +61,9 @@ const SCENARIOS: Record<ScenarioKey, Scenario> = {
     automation: 'Ease off automated shopping for 1–2 years — the VA arm covers shopping.',
     releases: [
       {
-        when: '~mid-Feb 2027',
+        when: 'Dec ’26 – mid-Feb ’27',
         title: 'Close-the-loop (record + write-back)',
-        note: 'Full end-to-end experience; first step toward eventually replacing the AMS.',
+        note: 'Runs in tandem with onboarding the first 2 customers. Full end-to-end experience; first step toward eventually replacing the AMS.',
       },
       {
         when: '~late Mar 2027',
@@ -80,20 +80,50 @@ const SCENARIOS: Record<ScenarioKey, Scenario> = {
 };
 
 interface WmtItem {
-  text: string;
   scope: 'both' | 'A' | 'B';
+  item: string;
+  implications: string;
 }
 
 const WHAT_MUST_BE_TRUE: WmtItem[] = [
-  { scope: 'both', text: 'A dedicated engineer (Gitwit or Upline) is hired before the strategy-sprint week — the linchpin. Miss it and the whole timeline slips.' },
-  { scope: 'both', text: 'VA #1 is hired and trained — job ad out ~now, trains during the Stockton Hill pilot, running shotgun by the MVP.' },
-  { scope: 'both', text: 'A per-agency quoting playbook is excavated at onboarding (~1–2 wks/agency, RPA-assisted rather than hand-keyed).' },
-  { scope: 'both', text: 'Automated-shopping discovery kicks off at the start of the MVP build — it is our biggest unknown, so we time-box it early.' },
-  { scope: 'A', text: 'Automated shopping proves feasible on a tight timeline — it is prioritized above other net-new features to lift the customer ceiling.' },
-  { scope: 'B', text: 'Davey leads a funded 15–17-person VA team, with "use your VAs or ours" as a priced line.' },
+  {
+    scope: 'both',
+    item: 'A dedicated engineer (Gitwit or Upline) is hired before the strategy-sprint week (~early–mid Sept).',
+    implications:
+      'If not hired by then, the timeline slips until they are — MVP start, Thanksgiving launch, and every ramp date on this page can no longer be held true.',
+  },
+  {
+    scope: 'both',
+    item: 'VA #1 is hired and trained by MVP launch (Thanksgiving). Ideally they get live reps with a real agency while we build; if not, we need another way to get them ready.',
+    implications:
+      'If we don’t have someone hired and trained by launch, we can’t onboard anyone yet — that piece of the timeline starts to slip until they are ready.',
+  },
+  {
+    scope: 'both',
+    item: 'A per-agency quoting playbook is excavated at onboarding (~1–2 weeks per agency, RPA-assisted).',
+    implications:
+      'Skipping it means more back-and-forth and hand-holding from the Upline team to hit our stride — riskier for how the agency perceives Upline’s value.',
+  },
+  {
+    scope: 'both',
+    item: 'Automated-shopping discovery kicks off as soon as No-AMS feasibility ends and runs through MVP launch.',
+    implications:
+      'We don’t yet know how hard automated shopping is, how long it’ll take, or how we’ll build it. The longer we wait to wrap our arms around it, the later we can firm up — or pivot — the A vs. B choice.',
+  },
+  {
+    scope: 'A',
+    item: 'Automated shopping proves feasible on a tight timeline and is prioritized above other net-new features.',
+    implications:
+      'If it’s not feasible on that timeline, we need another way to make money — or we pivot to Option B (stand up a VA arm).',
+  },
+  {
+    scope: 'B',
+    item: 'Davey (or an equivalent hire) leads a funded 15–17-person VA team, with “use your VAs or ours” as a priced line.',
+    implications:
+      'If that’s not true, it’s not sustainable for us to manage a 15-person VA team ourselves — we’d need someone hired specifically to run that arm.',
+  },
 ];
 
-// Side-by-side detail — the comparison table.
 interface CompareRow {
   label: string;
   a: string;
@@ -101,6 +131,11 @@ interface CompareRow {
 }
 
 const COMPARE: CompareRow[] = [
+  {
+    label: 'Risk type',
+    a: 'Automation-execution risk — we bet the ramp on cracking automated shopping fast. If it’s harder than hoped, growth and revenue stall while we keep grinding on it.',
+    b: 'Operational-overhead risk — we carry a 15–17-person VA arm (more to manage), but we get a revenue cushion that doesn’t depend on solving the hard automation problem on a deadline.',
+  },
   { label: 'End-Q2 ’27 ramp', a: '~15 customers', b: '~45–50 (15–17 VAs × ~3 agencies each)' },
   { label: 'VA posture', a: '~5 VAs max, temporary', b: 'Real managed team; Davey runs it; “use your VAs or ours” as a priced line' },
   { label: 'Automation posture', a: 'Push automated shopping hard & first', b: 'Ease off automation 1–2 yrs — VA arm covers shopping' },
@@ -109,92 +144,160 @@ const COMPARE: CompareRow[] = [
   { label: 'Cost / risk', a: 'Growth capped (~15) until automation lands (~late ’27); bets the ramp on a hard unknown', b: 'Heavy people management; a whole new ops business; more capital' },
 ];
 
-const OPEN_FOR_ENGINEER = [
-  'What has to be built first, and where can we pull work forward?',
-  'Is the October beta feasible — and is the ~2-week compression real?',
-  'How hard is automated shopping? (This decides A vs. B.)',
-];
-
-const OPEN_FOR_LEADERSHIP = [
-  'Sales-cycle length + how far ahead of each target sales must start (JV).',
-  'Pricing model + tiers, and the "use your VAs or ours" line.',
-  'Commission structure — what must be true for us to take commissions.',
-  'Capital plan to fund the chosen scenario (possible raise via JV).',
-  'The A vs. B call itself — the fork this whole plan tees up.',
-];
-
 function RampChart({ scenario }: { scenario: ScenarioKey }) {
   const active = SCENARIOS[scenario];
   const other = SCENARIOS[scenario === 'A' ? 'B' : 'A'];
-  const W = 760;
-  const H = 320;
-  const padL = 34;
-  const padR = 18;
-  const padT = 22;
-  const padB = 34;
+  const W = 780;
+  const H = 340;
+  const padL = 36;
+  const padR = 36;
+  const padT = 28;
+  const padB = 48;
   const plotW = W - padL - padR;
   const plotH = H - padT - padB;
-  const yMax = 50;
+  const custMax = 50;
+  const vaMax = 20;
   const x = (i: number) => padL + (i / (MONTHS.length - 1)) * plotW;
-  const y = (v: number) => padT + plotH * (1 - v / yMax);
-  const gridVals = [0, 10, 20, 30, 40, 50];
+  const yCust = (v: number) => padT + plotH * (1 - v / custMax);
+  const yVa = (v: number) => padT + plotH * (1 - v / vaMax);
+  const custGrid = [0, 10, 20, 30, 40, 50];
+  const vaGrid = [0, 5, 10, 15, 20];
 
-  const linePts = (data: number[]) => data.map((v, i) => `${x(i)},${y(v)}`).join(' ');
+  const linePts = (data: number[], yFn: (v: number) => number) =>
+    data.map((v, i) => `${x(i)},${yFn(v)}`).join(' ');
   const areaPath = (data: number[]) =>
-    `M ${x(0)},${y(0)} ` + data.map((v, i) => `L ${x(i)},${y(v)}`).join(' ') + ` L ${x(data.length - 1)},${y(0)} Z`;
+    `M ${x(0)},${yCust(0)} ` +
+    data.map((v, i) => `L ${x(i)},${yCust(v)}`).join(' ') +
+    ` L ${x(data.length - 1)},${yCust(0)} Z`;
 
   return (
     <svg
       className="ramp-chart"
       viewBox={`0 0 ${W} ${H}`}
       role="img"
-      aria-label={`Cumulative customer ramp, November 2026 through June 2027. ${active.label} scenario reaches ${active.endCustomers} customers by end of Q2 2027; the ${other.label} scenario is shown faintly for comparison.`}
+      aria-label={`Customer and VA ramp, November 2026 through June 2027. ${active.label} scenario reaches ${active.endCustomers} customers and ${active.endVas} VAs by end of Q2 2027.`}
     >
       <defs>
         <linearGradient id="rampFill" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="var(--primary)" stopOpacity="0.22" />
+          <stop offset="0%" stopColor="var(--primary)" stopOpacity="0.18" />
           <stop offset="100%" stopColor="var(--primary)" stopOpacity="0.02" />
         </linearGradient>
       </defs>
 
-      {/* gridlines + y labels */}
-      {gridVals.map((v) => (
-        <g key={v}>
-          <line x1={padL} y1={y(v)} x2={W - padR} y2={y(v)} stroke="var(--border)" strokeWidth={1} />
-          <text x={padL - 8} y={y(v) + 3} textAnchor="end" className="ramp-axis">
+      {/* Customer grid (left) */}
+      {custGrid.map((v) => (
+        <g key={`c-${v}`}>
+          <line
+            x1={padL}
+            y1={yCust(v)}
+            x2={W - padR}
+            y2={yCust(v)}
+            stroke="var(--border)"
+            strokeWidth={1}
+          />
+          <text x={padL - 8} y={yCust(v) + 3} textAnchor="end" className="ramp-axis">
             {v}
           </text>
         </g>
       ))}
 
-      {/* x labels */}
+      {/* VA axis labels (right) */}
+      {vaGrid.map((v) => (
+        <text key={`v-${v}`} x={W - padR + 8} y={yVa(v) + 3} textAnchor="start" className="ramp-axis ramp-axis-va">
+          {v}
+        </text>
+      ))}
+
+      {/* Axis titles */}
+      <text x={padL - 8} y={padT - 10} textAnchor="end" className="ramp-axis-title">
+        Customers
+      </text>
+      <text x={W - padR + 8} y={padT - 10} textAnchor="start" className="ramp-axis-title ramp-axis-va">
+        VAs
+      </text>
+
+      {/* Month labels */}
       {MONTHS.map((m, i) => (
-        <text key={m} x={x(i)} y={H - 12} textAnchor="middle" className="ramp-axis">
+        <text key={m} x={x(i)} y={H - 28} textAnchor="middle" className="ramp-axis">
           {m}
         </text>
       ))}
 
-      {/* comparison (other scenario) */}
+      {/* Legend */}
+      <g transform={`translate(${padL}, ${H - 12})`}>
+        <line x1={0} y1={0} x2={16} y2={0} stroke="var(--primary)" strokeWidth={2.5} />
+        <text x={20} y={3} className="ramp-legend">
+          Customers
+        </text>
+        <line
+          x1={90}
+          y1={0}
+          x2={106}
+          y2={0}
+          stroke="var(--chart-5)"
+          strokeWidth={2.5}
+          strokeDasharray="5 3"
+        />
+        <text x={110} y={3} className="ramp-legend ramp-axis-va">
+          VAs
+        </text>
+        <line
+          x1={150}
+          y1={0}
+          x2={166}
+          y2={0}
+          stroke="var(--muted-foreground)"
+          strokeWidth={1.5}
+          strokeDasharray="4 4"
+          opacity={0.6}
+        />
+        <text x={170} y={3} className="ramp-legend">
+          Other plan (customers)
+        </text>
+      </g>
+
+      {/* Other scenario customers (faint) */}
       <polyline
-        points={linePts(other.ramp)}
+        points={linePts(other.ramp, yCust)}
         fill="none"
         stroke="var(--muted-foreground)"
         strokeWidth={1.5}
         strokeDasharray="4 4"
-        opacity={0.5}
+        opacity={0.45}
       />
-      <text x={x(7) - 4} y={y(other.ramp[7]) - 6} textAnchor="end" className="ramp-compare-lbl">
-        {other.label}
-      </text>
 
-      {/* active scenario */}
+      {/* Active customers */}
       <path d={areaPath(active.ramp)} fill="url(#rampFill)" />
-      <polyline points={linePts(active.ramp)} fill="none" stroke="var(--primary)" strokeWidth={2.5} />
+      <polyline
+        points={linePts(active.ramp, yCust)}
+        fill="none"
+        stroke="var(--primary)"
+        strokeWidth={2.5}
+      />
       {active.ramp.map((v, i) => (
-        <g key={i}>
-          <circle cx={x(i)} cy={y(v)} r={3.5} fill="var(--primary)" />
+        <g key={`cust-${i}`}>
+          <circle cx={x(i)} cy={yCust(v)} r={3.5} fill="var(--primary)" />
           {(i === 0 || i === MONTHS.length - 1 || v !== active.ramp[i - 1]) && (
-            <text x={x(i)} y={y(v) - 9} textAnchor="middle" className="ramp-val">
+            <text x={x(i)} y={yCust(v) - 9} textAnchor="middle" className="ramp-val">
+              {v}
+            </text>
+          )}
+        </g>
+      ))}
+
+      {/* Active VAs */}
+      <polyline
+        points={linePts(active.vas, yVa)}
+        fill="none"
+        stroke="var(--chart-5)"
+        strokeWidth={2.5}
+        strokeDasharray="5 3"
+      />
+      {active.vas.map((v, i) => (
+        <g key={`va-${i}`}>
+          <circle cx={x(i)} cy={yVa(v)} r={3.5} fill="var(--chart-5)" />
+          {(i === 0 || i === MONTHS.length - 1 || v !== active.vas[i - 1]) && (
+            <text x={x(i)} y={yVa(v) - 9} textAnchor="middle" className="ramp-val ramp-val-va">
               {v}
             </text>
           )}
@@ -274,47 +377,19 @@ export function PathToScalePage() {
 
         <p className="scenario-summary">{active.summary}</p>
         <p className="ramp-note">
-          Numbers are directional — placeholders to confirm. Both plans start identically (2
-          customers Nov–Dec) and both begin automated-shopping discovery at the start of the MVP
-          build.
+          Solid line = customers (left axis). Dashed teal = VAs (right axis). Numbers are
+          directional — placeholders to confirm. Both plans start with 2 customers in Nov–Dec.
         </p>
       </section>
 
-      {/* THE REFRAME */}
-      <div className="phase-rule">
-        <span>Two kinds of risk</span>
-      </div>
-      <section className="card phase-card">
-        <p className="proof-statement">
-          Neither path is the “safe” one — they trade different risks. The right call is a
-          conversation to have with Justin, not a foregone conclusion.
-        </p>
-        <div className="risk-split">
-          <div className={`risk-col ${scenario === 'A' ? 'is-active' : ''}`}>
-            <p className="risk-h">A · Automation-execution risk</p>
-            <p>
-              We bet the ramp on cracking automated shopping fast. If it’s harder than hoped, growth
-              <em> and revenue</em> stall while we keep grinding on it.
-            </p>
-          </div>
-          <div className={`risk-col ${scenario === 'B' ? 'is-active' : ''}`}>
-            <p className="risk-h">B · Operational-overhead risk</p>
-            <p>
-              We carry a 15–17-person VA arm (more to manage), but we get a revenue cushion that
-              doesn’t depend on solving the hard automation problem on a deadline.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* SIDE BY SIDE */}
+      {/* SIDE BY SIDE (includes risk type as top row) */}
       <div className="phase-rule">
         <span>Side by side</span>
       </div>
       <section className="card phase-card">
         <p className="export-hint">
-          The two plans across the dimensions that matter. The selected scenario above is
-          highlighted.
+          Neither path is the “safe” one — they trade different risks. The selected scenario above
+          is highlighted in the table.
         </p>
         <div className="compare-wrap">
           <table className="compare-table">
@@ -333,7 +408,7 @@ export function PathToScalePage() {
             </thead>
             <tbody>
               {COMPARE.map((row) => (
-                <tr key={row.label}>
+                <tr key={row.label} className={row.label === 'Risk type' ? 'compare-risk-row' : undefined}>
                   <th scope="row">{row.label}</th>
                   <td className={scenario === 'A' ? 'is-active' : undefined}>{row.a}</td>
                   <td className={scenario === 'B' ? 'is-active' : undefined}>{row.b}</td>
@@ -349,16 +424,33 @@ export function PathToScalePage() {
         <span>What must be true</span>
       </div>
       <section className="card phase-card">
-        <ul className="wmt-list">
-          {WHAT_MUST_BE_TRUE.map((w) => (
-            <li key={w.text} className="wmt-item">
-              <span className={`wmt-pill scope-${w.scope}`}>
-                {w.scope === 'both' ? 'A & B' : w.scope}
-              </span>
-              <span>{w.text}</span>
-            </li>
-          ))}
-        </ul>
+        <p className="export-hint">
+          Conditions for the ramp to hold — and what slips if they don’t.
+        </p>
+        <div className="wmt-table-wrap">
+          <table className="wmt-table">
+            <thead>
+              <tr>
+                <th>Applies to</th>
+                <th>What must be true</th>
+                <th>If it’s not</th>
+              </tr>
+            </thead>
+            <tbody>
+              {WHAT_MUST_BE_TRUE.map((w) => (
+                <tr key={w.item}>
+                  <td>
+                    <span className={`wmt-pill scope-${w.scope}`}>
+                      {w.scope === 'both' ? 'A & B' : w.scope}
+                    </span>
+                  </td>
+                  <td>{w.item}</td>
+                  <td className="wmt-impl">{w.implications}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </section>
 
       {/* HOW WE BUILD */}
@@ -369,7 +461,9 @@ export function PathToScalePage() {
         <div className="rel-gate">
           <span className="rel-gate-badge">Gate</span>
           <div>
-            <p className="rel-title">Dedicated engineer hired — before the strategy-sprint week (~early-mid Sept)</p>
+            <p className="rel-title">
+              Dedicated engineer hired — before the strategy-sprint week (~early-mid Sept)
+            </p>
             <p className="rel-note">
               The linchpin for every number on this page. No engineer by then → MVP build slips →
               Thanksgiving slips → the whole ramp slips. (~2 weeks can be pulled forward if the
@@ -389,19 +483,21 @@ export function PathToScalePage() {
               </p>
             </div>
           </li>
-          <li className="rel-item is-shared">
-            <span className="rel-date">Jan ’27</span>
-            <div>
-              <p className="rel-title">Iterate on the MVP w/ first 2 customers</p>
-              <p className="rel-note">Fix what doesn’t test well; tighten the core experience.</p>
-            </div>
-          </li>
           {active.releases.map((r, i) => (
-            <li key={r.title} className="rel-item">
+            <li key={r.title} className={`rel-item${i === 0 ? ' is-shared' : ''}`}>
               <span className="rel-date">{r.when}</span>
               <div>
                 <p className="rel-title">
-                  <span className="rel-idx">R{i + 2}</span> {r.title}
+                  {i === 0 ? (
+                    <>
+                      <span className="rel-idx">R2</span> {r.title}
+                      <span className="rel-tandem"> · in tandem with first 2 customers</span>
+                    </>
+                  ) : (
+                    <>
+                      <span className="rel-idx">R{i + 2}</span> {r.title}
+                    </>
+                  )}
                 </p>
                 <p className="rel-note">{r.note}</p>
               </div>
@@ -409,33 +505,9 @@ export function PathToScalePage() {
           ))}
         </ol>
         <p className="ramp-note">
-          ~6-week release cadence. Release <em>ordering</em> flips by scenario — {active.automation}
+          Release 2 runs in tandem with onboarding the first 2 customers; then R3 → R4 on a ~6-week
+          cadence. Release <em>ordering</em> flips by scenario — {active.automation}
         </p>
-      </section>
-
-      {/* OPEN QUESTIONS */}
-      <div className="phase-rule">
-        <span>Open questions</span>
-      </div>
-      <section className="card phase-card">
-        <div className="open-qs">
-          <div className="oq-col">
-            <h3>For the lead engineer</h3>
-            <ul>
-              {OPEN_FOR_ENGINEER.map((q) => (
-                <li key={q}>{q}</li>
-              ))}
-            </ul>
-          </div>
-          <div className="oq-col">
-            <h3>For Justin / Mike / Patrick</h3>
-            <ul>
-              {OPEN_FOR_LEADERSHIP.map((q) => (
-                <li key={q}>{q}</li>
-              ))}
-            </ul>
-          </div>
-        </div>
       </section>
     </>
   );

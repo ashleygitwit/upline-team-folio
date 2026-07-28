@@ -2445,11 +2445,34 @@ code {
   font-family: var(--font-sans);
 }
 
+.ramp-axis-va {
+  fill: var(--chart-5);
+}
+
+.ramp-axis-title {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  fill: var(--muted-foreground);
+  font-family: var(--font-sans);
+}
+
+.ramp-legend {
+  font-size: 10px;
+  fill: var(--muted-foreground);
+  font-family: var(--font-sans);
+}
+
 .ramp-val {
   font-size: 11px;
   font-weight: 700;
   fill: var(--primary);
   font-family: var(--font-sans);
+}
+
+.ramp-val-va {
+  fill: var(--chart-5);
 }
 
 .ramp-compare-lbl {
@@ -2840,9 +2863,69 @@ code {
   border-bottom: none;
 }
 
-/* A/B scope pills on the "what must be true" list */
+.compare-table tbody tr.compare-risk-row th,
+.compare-table tbody tr.compare-risk-row td {
+  border-bottom: 2px solid var(--border);
+  font-size: 0.88rem;
+}
+
+.compare-table tbody tr.compare-risk-row td {
+  line-height: 1.5;
+}
+
+/* What must be true — implications table */
+.wmt-table-wrap {
+  overflow-x: auto;
+  margin-top: 0.75rem;
+}
+
+.wmt-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.wmt-table thead th {
+  text-align: left;
+  vertical-align: bottom;
+  padding: 0.55rem 0.75rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+  border-bottom: 2px solid var(--border);
+}
+
+.wmt-table tbody td {
+  vertical-align: top;
+  padding: 0.85rem 0.75rem;
+  line-height: 1.45;
+  border-bottom: 1px solid var(--border);
+  color: var(--foreground);
+}
+
+.wmt-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.wmt-table tbody td:first-child {
+  width: 1%;
+  white-space: nowrap;
+}
+
+.wmt-table tbody td:nth-child(2) {
+  width: 38%;
+  font-weight: 600;
+}
+
+.wmt-impl {
+  color: var(--muted-foreground) !important;
+  font-weight: 400 !important;
+}
+
 .wmt-pill {
-  flex: 0 0 auto;
+  display: inline-block;
   min-width: 44px;
   text-align: center;
   font-size: 0.68rem;
@@ -2851,7 +2934,6 @@ code {
   text-transform: uppercase;
   padding: 0.28rem 0.5rem;
   border-radius: 999px;
-  margin-top: 0.05rem;
 }
 
 .wmt-pill.scope-both {
@@ -2867,6 +2949,12 @@ code {
 .wmt-pill.scope-B {
   background: color-mix(in srgb, var(--chart-5) 16%, var(--card));
   color: var(--chart-5);
+}
+
+.rel-tandem {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--muted-foreground);
 }
 
 @media (max-width: 720px) {
