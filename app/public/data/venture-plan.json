@@ -198,8 +198,8 @@
       "status": "Future",
       "owner": "Ashley + Agent",
       "start": "2026-12-07",
-      "end": "2027-01-09",
-      "notes": "Onboard the first 2 customers (both scenarios). Learn deep; fix what doesn't test well before scaling."
+      "end": "2027-02-13",
+      "notes": "Runs in tandem with Release 2. Onboard the first 2 customers; learn deep and fix what doesn't test well."
     },
     {
       "id": "prod-release-2",
@@ -207,9 +207,9 @@
       "workstream": "Product",
       "status": "Future",
       "owner": "Ashley + Agent",
-      "start": "2027-01-12",
+      "start": "2026-12-07",
       "end": "2027-02-13",
-      "notes": "Ordering flips by scenario — A (Conservative): automated shopping · B (Aggressive): close-the-loop (record + write-back)."
+      "notes": "In tandem with MVP iteration. Ordering flips by scenario — A: automated shopping · B: close-the-loop (record + write-back)."
     },
     {
       "id": "prod-release-3",
@@ -237,9 +237,9 @@
       "workstream": "Product",
       "status": "Future",
       "owner": "Ashley + Agent",
-      "start": "2026-09-28",
-      "end": "2027-05-08",
-      "notes": "Biggest unknown — time-boxed from the MVP build start. How hard this is decides Conservative vs. Aggressive."
+      "start": "2026-09-21",
+      "end": "2026-12-04",
+      "notes": "Starts immediately after No-AMS feasibility ends; runs through the end of the MVP build (Thanksgiving). How hard this is decides Conservative vs. Aggressive."
     },
     {
       "id": "prod-no-ams",
