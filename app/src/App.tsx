@@ -6,6 +6,7 @@ import { RoadmapPage } from './pages/RoadmapPage';
 import { PocPage } from './pages/PocPage';
 import { SprintPage } from './pages/SprintPage';
 import { MvpPage } from './pages/MvpPage';
+import { PathToScalePage } from './pages/PathToScalePage';
 import { BrandPage } from './pages/BrandPage';
 import { TeamPage } from './pages/TeamPage';
 import {
@@ -16,7 +17,16 @@ import {
 } from './utils/planStorage';
 import './App.css';
 
-type RouteKey = 'home' | 'learnings' | 'roadmap' | 'poc' | 'sprint' | 'mvp' | 'brand' | 'team';
+type RouteKey =
+  | 'home'
+  | 'learnings'
+  | 'roadmap'
+  | 'poc'
+  | 'sprint'
+  | 'mvp'
+  | 'scale'
+  | 'brand'
+  | 'team';
 
 const NAV: { key: RouteKey; label: string; href: string }[] = [
   { key: 'home', label: 'What is Upline', href: '#/' },
@@ -27,7 +37,7 @@ const NAV: { key: RouteKey; label: string; href: string }[] = [
 ];
 
 // Roadmap detail pages highlight the Roadmap nav item.
-const ROADMAP_ROUTES: RouteKey[] = ['roadmap', 'poc', 'sprint', 'mvp'];
+const ROADMAP_ROUTES: RouteKey[] = ['roadmap', 'poc', 'sprint', 'mvp', 'scale'];
 
 // Sub-pages surfaced in the Roadmap nav dropdown.
 const ROADMAP_MENU: { key: RouteKey; label: string; href: string }[] = [
@@ -35,6 +45,7 @@ const ROADMAP_MENU: { key: RouteKey; label: string; href: string }[] = [
   { key: 'poc', label: 'Proof of Concept', href: '#/poc' },
   { key: 'sprint', label: 'Strategy Sprint', href: '#/sprint' },
   { key: 'mvp', label: 'MVP', href: '#/mvp' },
+  { key: 'scale', label: 'Path to Scale', href: '#/scale' },
 ];
 
 function routeFromHash(): RouteKey {
@@ -47,6 +58,7 @@ function routeFromHash(): RouteKey {
     hash === 'poc' ||
     hash === 'sprint' ||
     hash === 'mvp' ||
+    hash === 'scale' ||
     hash === 'brand' ||
     hash === 'team'
   ) {
@@ -203,6 +215,7 @@ function App() {
       {route === 'poc' ? <PocPage plan={plan} /> : null}
       {route === 'sprint' ? <SprintPage /> : null}
       {route === 'mvp' ? <MvpPage /> : null}
+      {route === 'scale' ? <PathToScalePage /> : null}
       {route === 'brand' ? <BrandPage /> : null}
       {route === 'team' ? <TeamPage /> : null}
 

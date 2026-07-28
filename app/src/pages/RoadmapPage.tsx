@@ -100,6 +100,20 @@ export function RoadmapPage({
           Running in the background: <strong>No-AMS launch feasibility</strong> — can we operate on
           a one-time data dump plus carrier portals, without ongoing AMS integration?
         </p>
+
+        <a className="scale-cta" href="#/scale">
+          <div>
+            <p className="scale-cta-eyebrow">Looking past the MVP</p>
+            <p className="scale-cta-title">Path to Scale — Nov ’26 → Q2 ’27</p>
+            <p className="scale-cta-sub">
+              Customer ramp, build cadence, and what has to be true — with an interactive
+              Conservative vs. Aggressive scenario view.
+            </p>
+          </div>
+          <span className="scale-cta-arrow" aria-hidden="true">
+            &rarr;
+          </span>
+        </a>
       </section>
 
       {plan ? (
