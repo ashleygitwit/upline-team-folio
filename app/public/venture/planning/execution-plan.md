@@ -164,7 +164,27 @@ Post-shop handoff: rate comparison in paragraph one, simple comparison table, co
 ### MVP build
 - **Workstream:** Product
 - **Dates:** 2026-09-28 → 2026-12-04
-- **Notes:** 10-week build. Kickoff Sep 28.
+- **Notes:** 10-week build. Kickoff Sep 28. Targets an MVP launch around Thanksgiving.
+### MVP iteration — first 2 customers
+- **Workstream:** Product
+- **Dates:** 2026-12-07 → 2027-01-09
+- **Notes:** Onboard the first 2 customers (both scenarios). Learn deep; fix what doesn't test well before scaling.
+### Release 2 (~6-wk cycle)
+- **Workstream:** Product
+- **Dates:** 2027-01-12 → 2027-02-13
+- **Notes:** Ordering flips by scenario — A (Conservative): automated shopping · B (Aggressive): close-the-loop (record + write-back).
+### Release 3 (~6-wk cycle)
+- **Workstream:** Product
+- **Dates:** 2027-02-16 → 2027-03-27
+- **Notes:** A: automated full-book upload · B: AMS read/write.
+### Release 4 (~6-wk cycle)
+- **Workstream:** Product
+- **Dates:** 2027-03-30 → 2027-05-08
+- **Notes:** A: close-the-loop + AMS write-back · B: team settings + broader feature set.
+### Automated-shopping discovery (background)
+- **Workstream:** Product
+- **Dates:** 2026-09-28 → 2027-05-08
+- **Notes:** Biggest unknown — time-boxed from the MVP build start. How hard this is decides Conservative vs. Aggressive.
 
 ## Done
 
@@ -203,4 +223,9 @@ Post-shop handoff: rate comparison in paragraph one, simple comparison table, co
 | Product strategy sprint | Product | Future | 2026-09-14 | 2026-09-18 |
 | MVP planning week | Product | Future | 2026-09-21 | 2026-09-25 |
 | MVP build | Product | Future | 2026-09-28 | 2026-12-04 |
+| MVP iteration — first 2 customers | Product | Future | 2026-12-07 | 2027-01-09 |
+| Release 2 (~6-wk cycle) | Product | Future | 2027-01-12 | 2027-02-13 |
+| Release 3 (~6-wk cycle) | Product | Future | 2027-02-16 | 2027-03-27 |
+| Release 4 (~6-wk cycle) | Product | Future | 2027-03-30 | 2027-05-08 |
+| Automated-shopping discovery (background) | Product | Future | 2026-09-28 | 2027-05-08 |
 | No-AMS launch feasibility (background) | Product | In Flight | 2026-07-13 | 2026-09-18 |

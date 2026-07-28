@@ -81,31 +81,32 @@ const SCENARIOS: Record<ScenarioKey, Scenario> = {
 
 interface WmtItem {
   text: string;
-  scenarioB?: boolean;
+  scope: 'both' | 'A' | 'B';
 }
 
 const WHAT_MUST_BE_TRUE: WmtItem[] = [
-  { text: 'A dedicated engineer (Gitwit or Upline) is hired before the strategy-sprint week — the linchpin. Miss it and the whole timeline slips.' },
-  { text: 'VA #1 is hired and trained — job ad out ~now, trains during the Stockton Hill pilot, running shotgun by the MVP.' },
-  { text: 'A per-agency quoting playbook is excavated at onboarding (~1–2 wks/agency, RPA-assisted rather than hand-keyed).' },
-  { text: 'Automated-shopping discovery kicks off at the start of the MVP build — it is our biggest unknown, so we time-box it early.' },
-  { text: 'Davey leads a funded 15–17-person VA team, with "use your VAs or ours" as a priced line.', scenarioB: true },
+  { scope: 'both', text: 'A dedicated engineer (Gitwit or Upline) is hired before the strategy-sprint week — the linchpin. Miss it and the whole timeline slips.' },
+  { scope: 'both', text: 'VA #1 is hired and trained — job ad out ~now, trains during the Stockton Hill pilot, running shotgun by the MVP.' },
+  { scope: 'both', text: 'A per-agency quoting playbook is excavated at onboarding (~1–2 wks/agency, RPA-assisted rather than hand-keyed).' },
+  { scope: 'both', text: 'Automated-shopping discovery kicks off at the start of the MVP build — it is our biggest unknown, so we time-box it early.' },
+  { scope: 'A', text: 'Automated shopping proves feasible on a tight timeline — it is prioritized above other net-new features to lift the customer ceiling.' },
+  { scope: 'B', text: 'Davey leads a funded 15–17-person VA team, with "use your VAs or ours" as a priced line.' },
 ];
 
-interface Role {
-  name: string;
-  owns: string;
-  when: string;
+// Side-by-side detail — the comparison table.
+interface CompareRow {
+  label: string;
+  a: string;
+  b: string;
 }
 
-const ROLES: Role[] = [
-  { name: 'Product / build lead', owns: 'Product strategy + technical feasibility', when: 'Now' },
-  { name: 'Venture lead', owns: 'Scope, learnings, quality bar', when: 'Now' },
-  { name: 'Dedicated engineer', owns: 'The build', when: 'GATE — before sprint week' },
-  { name: 'SME + design partner', owns: 'P&C domain grounding', when: 'Now' },
-  { name: 'Sales + fundraising', owns: 'Go-to-market + capital', when: 'Fractional now → full-bore Q1 ’27' },
-  { name: 'VA ops / onboarding', owns: 'Hiring, training, playbooks', when: 'Q1 ’27 (→ arm manager in B)' },
-  { name: 'Finance', owns: 'Model, pricing, revenue', when: 'Owned by Mike & Patrick' },
+const COMPARE: CompareRow[] = [
+  { label: 'End-Q2 ’27 ramp', a: '~15 customers', b: '~45–50 (15–17 VAs × ~3 agencies each)' },
+  { label: 'VA posture', a: '~5 VAs max, temporary', b: 'Real managed team; Davey runs it; “use your VAs or ours” as a priced line' },
+  { label: 'Automation posture', a: 'Push automated shopping hard & first', b: 'Ease off automation 1–2 yrs — VA arm covers shopping' },
+  { label: 'Feature focus', a: 'MVP + iterate → automated shopping ASAP', b: 'Full end-to-end: close-the-loop, AMS read/write, team settings' },
+  { label: 'Upside', a: 'Low burn, low hiring risk, deep learning', b: 'Faster revenue/logos, de-risks automation timeline, richer product' },
+  { label: 'Cost / risk', a: 'Growth capped (~15) until automation lands (~late ’27); bets the ramp on a hard unknown', b: 'Heavy people management; a whole new ops business; more capital' },
 ];
 
 const OPEN_FOR_ENGINEER = [
@@ -306,6 +307,60 @@ export function PathToScalePage() {
         </div>
       </section>
 
+      {/* SIDE BY SIDE */}
+      <div className="phase-rule">
+        <span>Side by side</span>
+      </div>
+      <section className="card phase-card">
+        <p className="export-hint">
+          The two plans across the dimensions that matter. The selected scenario above is
+          highlighted.
+        </p>
+        <div className="compare-wrap">
+          <table className="compare-table">
+            <thead>
+              <tr>
+                <th />
+                <th className={scenario === 'A' ? 'is-active' : undefined}>
+                  A · Conservative
+                  <span>VAs as a bridge</span>
+                </th>
+                <th className={scenario === 'B' ? 'is-active' : undefined}>
+                  B · Aggressive
+                  <span>VAs as an Upline arm</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {COMPARE.map((row) => (
+                <tr key={row.label}>
+                  <th scope="row">{row.label}</th>
+                  <td className={scenario === 'A' ? 'is-active' : undefined}>{row.a}</td>
+                  <td className={scenario === 'B' ? 'is-active' : undefined}>{row.b}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      {/* WHAT MUST BE TRUE */}
+      <div className="phase-rule">
+        <span>What must be true</span>
+      </div>
+      <section className="card phase-card">
+        <ul className="wmt-list">
+          {WHAT_MUST_BE_TRUE.map((w) => (
+            <li key={w.text} className="wmt-item">
+              <span className={`wmt-pill scope-${w.scope}`}>
+                {w.scope === 'both' ? 'A & B' : w.scope}
+              </span>
+              <span>{w.text}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+
       {/* HOW WE BUILD */}
       <div className="phase-rule">
         <span>How we build</span>
@@ -356,43 +411,6 @@ export function PathToScalePage() {
         <p className="ramp-note">
           ~6-week release cadence. Release <em>ordering</em> flips by scenario — {active.automation}
         </p>
-      </section>
-
-      {/* WHAT MUST BE TRUE */}
-      <div className="phase-rule">
-        <span>What must be true</span>
-      </div>
-      <section className="card phase-card">
-        <ul className="wmt-list">
-          {WHAT_MUST_BE_TRUE.map((w) => (
-            <li key={w.text} className="wmt-item">
-              <span className="wmt-check" aria-hidden="true">
-                ✓
-              </span>
-              <span>
-                {w.text}
-                {w.scenarioB ? <span className="wmt-tag">Scenario B only</span> : null}
-              </span>
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      {/* WHO & WHAT IT TAKES */}
-      <div className="phase-rule">
-        <span>Who &amp; what it takes</span>
-      </div>
-      <section className="card phase-card">
-        <p className="export-hint">Skills and ownership, framed by role rather than name.</p>
-        <div className="roles-grid">
-          {ROLES.map((r) => (
-            <div key={r.name} className="role-card">
-              <p className="role-name">{r.name}</p>
-              <p className="role-owns">{r.owns}</p>
-              <p className="role-when">{r.when}</p>
-            </div>
-          ))}
-        </div>
       </section>
 
       {/* OPEN QUESTIONS */}

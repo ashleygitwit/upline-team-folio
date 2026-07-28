@@ -189,7 +189,57 @@
       "owner": "Ashley + Agent",
       "start": "2026-09-28",
       "end": "2026-12-04",
-      "notes": "10-week build. Kickoff Sep 28."
+      "notes": "10-week build. Kickoff Sep 28. Targets an MVP launch around Thanksgiving."
+    },
+    {
+      "id": "prod-mvp-iterate",
+      "title": "MVP iteration — first 2 customers",
+      "workstream": "Product",
+      "status": "Future",
+      "owner": "Ashley + Agent",
+      "start": "2026-12-07",
+      "end": "2027-01-09",
+      "notes": "Onboard the first 2 customers (both scenarios). Learn deep; fix what doesn't test well before scaling."
+    },
+    {
+      "id": "prod-release-2",
+      "title": "Release 2 (~6-wk cycle)",
+      "workstream": "Product",
+      "status": "Future",
+      "owner": "Ashley + Agent",
+      "start": "2027-01-12",
+      "end": "2027-02-13",
+      "notes": "Ordering flips by scenario — A (Conservative): automated shopping · B (Aggressive): close-the-loop (record + write-back)."
+    },
+    {
+      "id": "prod-release-3",
+      "title": "Release 3 (~6-wk cycle)",
+      "workstream": "Product",
+      "status": "Future",
+      "owner": "Ashley + Agent",
+      "start": "2027-02-16",
+      "end": "2027-03-27",
+      "notes": "A: automated full-book upload · B: AMS read/write."
+    },
+    {
+      "id": "prod-release-4",
+      "title": "Release 4 (~6-wk cycle)",
+      "workstream": "Product",
+      "status": "Future",
+      "owner": "Ashley + Agent",
+      "start": "2027-03-30",
+      "end": "2027-05-08",
+      "notes": "A: close-the-loop + AMS write-back · B: team settings + broader feature set."
+    },
+    {
+      "id": "prod-auto-shopping-discovery",
+      "title": "Automated-shopping discovery (background)",
+      "workstream": "Product",
+      "status": "Future",
+      "owner": "Ashley + Agent",
+      "start": "2026-09-28",
+      "end": "2027-05-08",
+      "notes": "Biggest unknown — time-boxed from the MVP build start. How hard this is decides Conservative vs. Aggressive."
     },
     {
       "id": "prod-no-ams",

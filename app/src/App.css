@@ -2773,6 +2773,102 @@ code {
   color: var(--primary);
 }
 
+/* Side-by-side comparison table */
+.compare-wrap {
+  overflow-x: auto;
+  margin-top: 0.75rem;
+}
+
+.compare-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.compare-table thead th {
+  text-align: left;
+  vertical-align: top;
+  padding: 0.6rem 0.85rem;
+  font-weight: 700;
+  color: var(--muted-foreground);
+  border-bottom: 2px solid var(--border);
+}
+
+.compare-table thead th span {
+  display: block;
+  font-weight: 500;
+  font-size: 0.76rem;
+  color: var(--muted-foreground);
+  margin-top: 0.15rem;
+}
+
+.compare-table thead th.is-active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+}
+
+.compare-table thead th.is-active span {
+  color: var(--primary);
+}
+
+.compare-table tbody th {
+  text-align: left;
+  vertical-align: top;
+  padding: 0.7rem 0.85rem;
+  font-weight: 700;
+  color: var(--foreground);
+  white-space: nowrap;
+  width: 1%;
+  border-bottom: 1px solid var(--border);
+}
+
+.compare-table tbody td {
+  vertical-align: top;
+  padding: 0.7rem 0.85rem;
+  line-height: 1.45;
+  color: var(--muted-foreground);
+  border-bottom: 1px solid var(--border);
+}
+
+.compare-table tbody td.is-active {
+  color: var(--foreground);
+  background: color-mix(in srgb, var(--primary) 6%, var(--card));
+}
+
+.compare-table tbody tr:last-child th,
+.compare-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* A/B scope pills on the "what must be true" list */
+.wmt-pill {
+  flex: 0 0 auto;
+  min-width: 44px;
+  text-align: center;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 0.28rem 0.5rem;
+  border-radius: 999px;
+  margin-top: 0.05rem;
+}
+
+.wmt-pill.scope-both {
+  background: color-mix(in srgb, var(--primary) 12%, var(--card));
+  color: var(--primary);
+}
+
+.wmt-pill.scope-A {
+  background: color-mix(in srgb, var(--secondary) 40%, var(--card));
+  color: var(--secondary-foreground);
+}
+
+.wmt-pill.scope-B {
+  background: color-mix(in srgb, var(--chart-5) 16%, var(--card));
+  color: var(--chart-5);
+}
+
 @media (max-width: 720px) {
   .ramp-wrap {
     grid-template-columns: 1fr;
