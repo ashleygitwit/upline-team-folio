@@ -2393,6 +2393,24 @@ code {
   flex: 1 1 160px;
 }
 
+.scale-toggle-4 button {
+  flex: 1 1 140px;
+}
+
+.scale-toggle button.is-auto {
+  border-style: dashed;
+}
+
+.scale-toggle button.is-auto.active {
+  border-style: solid;
+  background: color-mix(in srgb, var(--chart-5) 10%, var(--card));
+  border-color: var(--chart-5);
+}
+
+.scale-toggle button.is-auto.active b {
+  color: var(--chart-5);
+}
+
 .scale-toggle button {
   flex: 1 1 200px;
   display: flex;
@@ -2839,6 +2857,19 @@ code {
   color: var(--primary);
 }
 
+.compare-table thead th.is-auto.is-active {
+  color: var(--chart-5);
+  border-bottom-color: var(--chart-5);
+}
+
+.compare-table thead th.is-auto.is-active span {
+  color: var(--chart-5);
+}
+
+.compare-table tbody td.is-auto-col.is-active {
+  background: color-mix(in srgb, var(--chart-5) 7%, var(--card));
+}
+
 .compare-table tbody th {
   text-align: left;
   vertical-align: top;
@@ -2953,9 +2984,15 @@ code {
   color: var(--secondary-foreground);
 }
 
-.wmt-pill.scope-B {
+.wmt-pill.scope-B,
+.wmt-pill.scope-auto {
   background: color-mix(in srgb, var(--chart-5) 16%, var(--card));
   color: var(--chart-5);
+}
+
+.wmt-pill.scope-va {
+  background: color-mix(in srgb, var(--primary) 12%, var(--card));
+  color: var(--primary);
 }
 
 .rel-tandem {
@@ -2964,9 +3001,89 @@ code {
   color: var(--muted-foreground);
 }
 
+/* How we build — two-column release order */
+.build-split-intro {
+  margin: 1.5rem 0 0.85rem;
+  font-size: 0.9rem;
+  color: var(--muted-foreground);
+  line-height: 1.45;
+}
+
+.build-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.build-col {
+  padding: 1rem 1.1rem;
+  border-radius: 12px;
+  border: 1.5px solid var(--border);
+  background: var(--card);
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.build-col.is-active {
+  border-color: var(--primary);
+  background: color-mix(in srgb, var(--primary) 5%, var(--card));
+}
+
+.build-col:last-child.is-active {
+  border-color: var(--chart-5);
+  background: color-mix(in srgb, var(--chart-5) 6%, var(--card));
+}
+
+.build-col h3 {
+  margin: 0 0 0.15rem;
+  font-size: 1rem;
+}
+
+.build-col-sub {
+  margin: 0 0 0.85rem;
+  font-size: 0.78rem;
+  color: var(--muted-foreground);
+}
+
+.build-release-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.build-release-list li {
+  display: flex;
+  gap: 0.65rem;
+  align-items: flex-start;
+}
+
+.build-rel-title {
+  margin: 0 0 0.1rem;
+  font-weight: 700;
+  font-size: 0.92rem;
+}
+
+.build-rel-when {
+  margin: 0 0 0.2rem;
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: var(--muted-foreground);
+}
+
+.build-rel-note {
+  margin: 0;
+  font-size: 0.84rem;
+  color: var(--muted-foreground);
+  line-height: 1.4;
+}
+
 @media (max-width: 720px) {
   .risk-split,
-  .open-qs {
+  .open-qs,
+  .build-split {
     grid-template-columns: 1fr;
   }
   .rel-item {
@@ -2976,7 +3093,8 @@ code {
   .rel-date {
     flex-basis: auto;
   }
-  .compare-table-3 {
-    font-size: 0.82rem;
+  .compare-table-3,
+  .compare-table-4 {
+    font-size: 0.78rem;
   }
 }

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-type ScenarioKey = 'conservative' | 'baseline' | 'aggressive';
+type ScenarioKey = 'conservative' | 'baseline' | 'aggressive' | 'auto';
 
 // Oct ’26 → Jun ’27. Index 2 = Dec = Dec 1 MVP launch marker.
 const MONTHS = ['Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
@@ -10,6 +10,7 @@ interface Scenario {
   key: ScenarioKey;
   label: string;
   tag: string;
+  family: 'va' | 'auto';
   ramp: number[];
   vas: number[];
   endCustomers: string;
@@ -17,74 +18,130 @@ interface Scenario {
   summary: string;
 }
 
-// Directional — ~1 VA per 1–1.5 agencies (Austin working assumption).
-// Oct: Aggressive = 2 (design-partner beta); Baseline & Conservative = 0 until Dec 1 MVP.
+// Directional — VA paths ~1 VA per 1–1.5 agencies; auto path caps VAs ~5.
 const SCENARIOS: Record<ScenarioKey, Scenario> = {
   conservative: {
     key: 'conservative',
-    label: 'Conservative',
+    label: 'Conservative VA',
     tag: '~1 new customer / week in Q1–Q2',
+    family: 'va',
     ramp: [0, 0, 2, 6, 10, 14, 18, 22, 26],
     vas: [0, 0, 2, 4, 7, 9, 12, 15, 17],
     endCustomers: '~26',
     endVas: '~17',
     summary:
-      'Zero logos until Dec 1 MVP launch, then the first two, then about one new agency a week into Q1–Q2. Same VA-arm model — slower add rate while we firm up onboarding and the gig workflow.',
+      'VA-led. Zero logos until Dec 1 MVP, then the first two, then about one new agency a week into Q1–Q2. Automated shopping stays deferred ~2 years.',
   },
   baseline: {
     key: 'baseline',
-    label: 'Baseline',
-    tag: 'The fundraising story · ~2 / week by Feb',
+    label: 'Baseline VA',
+    tag: 'Fundraising story · ~2 / week by Feb',
+    family: 'va',
     ramp: [0, 0, 2, 5, 10, 18, 28, 38, 48],
     vas: [0, 0, 2, 4, 7, 12, 19, 25, 32],
     endCustomers: '~45–50',
     endVas: '~30–32',
     summary:
-      'Zero until Dec 1 MVP, learn hard on the first two through year-end, then ramp toward ~two new customers a week by Feb–Apr. Scale with VAs (gig-style), collect data, automate later — or never, if carrier APIs show up.',
+      'VA-led. The plan we’d show investors: first two after Dec 1 MVP, then ~two new customers a week by Feb–Apr. Scale with VAs (gig-style); automate later — or never, if carrier APIs show up.',
   },
   aggressive: {
     key: 'aggressive',
-    label: 'Aggressive',
+    label: 'Aggressive VA',
     tag: 'Oct beta · timeline pulled forward',
+    family: 'va',
     ramp: [2, 2, 4, 12, 20, 30, 40, 50, 60],
     vas: [2, 2, 3, 8, 13, 20, 27, 33, 40],
     endCustomers: '~60',
     endVas: '~40',
     summary:
-      'Not “twice as many” — earlier. Two design partners live in October (Members 1st + Stockton beta), still two through November, then add through Dec and scale from a head start. Contingent on an engineer by strategy-sprint week.',
+      'VA-led, earlier. Two design partners live in October, still two through November, then add through Dec and scale from a head start. Contingent on an engineer by strategy-sprint week.',
+  },
+  auto: {
+    key: 'auto',
+    label: 'Auto-shopping priority',
+    tag: 'Small VA bridge · automate ASAP',
+    family: 'auto',
+    ramp: [0, 0, 2, 2, 3, 5, 8, 11, 15],
+    vas: [0, 0, 1, 1, 1, 2, 3, 4, 5],
+    endCustomers: '~15',
+    endVas: '~5',
+    summary:
+      'Different bet: keep the VA team tiny (~5 max), slow-roll customers, and sprint to automated shopping right after MVP so we’re not building a VA-ops company. Growth stays capped until automation lands — automation-execution risk if it takes longer than hoped.',
   },
 };
 
-const RELEASES: { when: string; title: string; note: string }[] = [
+const SCENARIO_ORDER: ScenarioKey[] = ['conservative', 'baseline', 'aggressive', 'auto'];
+
+/** Shared post-MVP release order for all VA-led paces */
+const VA_RELEASES: { when: string; title: string; note: string }[] = [
   {
     when: 'Dec ’26 – mid-Jan ’27',
     title: 'Close the loop',
-    note: 'Record calls / Zooms and write fresh detail back into the repository so the book stays current — first step toward eventually replacing the AMS.',
+    note: 'Record calls / Zooms; write fresh detail back into the repository.',
   },
   {
     when: '~late Jan – early Mar ’27',
     title: 'VA portal',
-    note: 'Internal surface for VAs: queues, upload, verification that submissions are complete. Can start as a lighter internal tool while the customer product stays engineer-built.',
+    note: 'Queues, upload, verification — internal surface for VAs.',
   },
   {
     when: '~Mar – mid-Apr ’27',
     title: 'RPA full-book AMS pull',
-    note: 'Automate extracting a whole book (EasyLinks / HawkSoft first). This is the onboarding unlock — without it, manual book download caps how fast we can add agencies.',
+    note: 'Onboarding unlock (EasyLinks / HawkSoft first).',
   },
   {
     when: '~mid-Apr – late May ’27',
     title: 'Gig-style VA onboarding',
-    note: 'Uber-like digital training and workflow so VAs can come online without Upline babysitting every hire. First VA may become the manager / trainer.',
+    note: 'Digital training + workflow; first VA may become manager / trainer.',
   },
   {
     when: '~Jun ’27 onward',
     title: 'AMS replacement (data visibility)',
-    note: 'Show the repository — internally first, then peel the veil for clients. Background track while we’re still signing and serving agencies.',
+    note: 'Show the repository internally, then to clients.',
+  },
+  {
+    when: '~2028',
+    title: 'Automated shopping',
+    note: 'Deferred ~2 years — or unlocked via carrier APIs once we have leverage.',
+  },
+];
+
+/** Alternate bet: prioritize cracking automated shopping */
+const AUTO_RELEASES: { when: string; title: string; note: string }[] = [
+  {
+    when: 'Dec ’26 – mid-Feb ’27',
+    title: 'Automated shopping',
+    note: 'The sprint — discovery into build. Prioritized above other net-new. Killer feature to lift the customer ceiling.',
+  },
+  {
+    when: '~late Feb – early Apr ’27',
+    title: 'RPA full-book AMS pull',
+    note: 'Still needed so onboarding isn’t a manual nightmare while shopping automates.',
+  },
+  {
+    when: '~Apr – mid-May ’27',
+    title: 'Close the loop',
+    note: 'Record + write-back once the shopping bet is in motion.',
+  },
+  {
+    when: '~mid-May – Jun ’27',
+    title: 'AMS visibility / team settings',
+    note: 'Broader product surface — VA portal stays light if headcount stays ~5.',
+  },
+  {
+    when: 'As needed',
+    title: 'Light VA tooling',
+    note: 'Only what’s required for a small bridge team — not a gig-ops product line.',
+  },
+  {
+    when: 'If automation slips',
+    title: 'Pivot to VA-led scale',
+    note: 'If shopping isn’t feasible on a tight timeline, this path collapses toward the VA ramps — with lost time.',
   },
 ];
 
 interface WmtItem {
-  scope: 'all' | 'aggressive';
+  scope: 'all' | 'aggressive' | 'va' | 'auto';
   item: string;
   implications: string;
 }
@@ -98,7 +155,7 @@ const WHAT_MUST_BE_TRUE: WmtItem[] = [
   },
   {
     scope: 'all',
-    item: 'VA #1 is hired and trained by Dec 1 MVP launch — ideally getting live reps during the build; first VA may become the manager / trainer.',
+    item: 'VA #1 is hired and trained by Dec 1 MVP launch — ideally getting live reps during the build.',
     implications:
       'Without someone ready at launch, we can’t onboard agencies yet. That slice of the timeline slips until training is done.',
   },
@@ -109,74 +166,90 @@ const WHAT_MUST_BE_TRUE: WmtItem[] = [
       'Skipping it means more hand-holding and back-and-forth — riskier for how the agency perceives Upline’s value day one.',
   },
   {
-    scope: 'all',
-    item: 'RPA full-book AMS pull lands early post-MVP so onboarding isn’t a manual nightmare.',
+    scope: 'va',
+    item: 'We can stand up a gig-style VA model (or hire someone to run a managed VA arm) at ~1–1.5 agencies per VA.',
     implications:
-      'If books stay hand-pulled, we’re capped at roughly one agency per week per VA — the ramps above stop being realistic.',
+      'Without a scalable ops model, a large VA headcount becomes a full-time job that pulls the product team off the plot.',
   },
   {
-    scope: 'all',
-    item: 'We can stand up a gig-style VA model (digital onboarding + queues) — or hire someone (e.g. Davey) to run a managed VA arm if gig doesn’t work.',
+    scope: 'va',
+    item: 'RPA full-book AMS pull lands early post-MVP so onboarding isn’t a manual nightmare.',
     implications:
-      'A 1:1–1.5 VA-to-agency ratio without a scalable ops model is a full-time job that pulls the product team off the plot.',
+      'If books stay hand-pulled, we’re capped at roughly one agency per week per VA — the VA ramps stop being realistic.',
+  },
+  {
+    scope: 'auto',
+    item: 'Automated shopping proves feasible on a tight post-MVP timeline and stays prioritized above other net-new.',
+    implications:
+      'If it isn’t, growth and revenue stall at ~15 customers / ~5 VAs — or we pivot late to the VA-led path having lost months.',
   },
   {
     scope: 'aggressive',
-    item: 'Engineer is in place by sprint week so we can pull the timeline forward — including an Oct / early-Nov beta with design partners.',
+    item: 'Engineer is in place by sprint week so we can pull the timeline forward — including an Oct beta with design partners.',
     implications:
-      'Without that hire, Aggressive collapses back to Baseline timing. The expedite only works if build capacity is real.',
+      'Without that hire, Aggressive VA collapses back to Baseline timing. The expedite only works if build capacity is real.',
   },
 ];
 
 interface CompareRow {
   label: string;
-  conservative: string;
-  baseline: string;
-  aggressive: string;
+  values: Record<ScenarioKey, string>;
 }
 
 const COMPARE: CompareRow[] = [
   {
     label: 'What it is',
-    conservative: 'Same VA-arm model — slower add rate (~1 new agency / week in Q1–Q2).',
-    baseline: 'The main plan / fundraising curve. ~2 new agencies / week by Feb–Apr.',
-    aggressive: 'Baseline shape, pulled forward — 2 design partners live in October.',
+    values: {
+      conservative: 'VA-led — slower add rate (~1 new agency / week in Q1–Q2).',
+      baseline: 'VA-led — main fundraising curve (~2 / week by Feb–Apr).',
+      aggressive: 'VA-led, pulled forward — 2 design partners live in October.',
+      auto: 'Different bet — tiny VA bridge; sprint to automated shopping after MVP.',
+    },
   },
   {
     label: 'Oct ’26 customers',
-    conservative: '0',
-    baseline: '0',
-    aggressive: '2 (Members 1st + Stockton beta)',
+    values: {
+      conservative: '0',
+      baseline: '0',
+      aggressive: '2 (Members 1st + Stockton beta)',
+      auto: '0',
+    },
   },
   {
     label: 'End-Q2 ’27 customers',
-    conservative: '~26',
-    baseline: '~45–50',
-    aggressive: '~60',
+    values: {
+      conservative: '~26',
+      baseline: '~45–50',
+      aggressive: '~60',
+      auto: '~15 (capped until automation lands)',
+    },
   },
   {
     label: 'VA posture',
-    conservative: 'Gig-style VA scale; ~1 VA per 1–1.5 agencies',
-    baseline: 'Gig-style VA scale; ~1 VA per 1–1.5 agencies',
-    aggressive: 'Same — just more VAs sooner because more agencies sooner',
+    values: {
+      conservative: 'Gig-style scale · ~1 VA / 1–1.5 agencies',
+      baseline: 'Gig-style scale · ~1 VA / 1–1.5 agencies',
+      aggressive: 'Same — more VAs sooner',
+      auto: '~5 VAs max — temporary bridge only',
+    },
   },
   {
     label: 'Product focus',
-    conservative: 'Close-the-loop → VA portal → RPA book pull → gig onboarding → AMS visibility',
-    baseline: 'Same release order — automation shopping deferred ~2 years',
-    aggressive: 'Same release order + Oct beta stress-test before Dec 1 MVP',
-  },
-  {
-    label: 'Why this pace',
-    conservative: 'More room to firm onboarding + gig ops before the faucet opens wide',
-    baseline: 'Momentum for fundraising without betting the venture on automated shopping',
-    aggressive: 'Max signal for investors / JV — only if engineer + Oct beta are real',
+    values: {
+      conservative: 'Close-loop → VA portal → RPA book → gig onboarding → AMS visibility',
+      baseline: 'Same VA release order · shopping deferred ~2 yrs',
+      aggressive: 'Same VA order + Oct beta before Dec 1 MVP',
+      auto: 'Automated shopping first → RPA book → close-loop · light VA tooling',
+    },
   },
   {
     label: 'Biggest risk',
-    conservative: 'Growth looks soft if we’re raising on the curve',
-    baseline: 'VA ops overhead (~$700–1,400 / agency / mo at current math) until efficiency or APIs land',
-    aggressive: 'Shipping a half-baked beta too early, or missing the engineer gate',
+    values: {
+      conservative: 'Growth looks soft if we’re raising on the curve',
+      baseline: 'VA ops overhead until efficiency or carrier APIs land',
+      aggressive: 'Half-baked Oct beta — or missing the engineer gate',
+      auto: 'Automation-execution risk — if shopping is harder than hoped, revenue stalls',
+    },
   },
 ];
 
@@ -216,7 +289,7 @@ function RampChart({ scenario }: { scenario: ScenarioKey }) {
         className="ramp-chart"
         viewBox={`0 0 ${W} ${H}`}
         role="img"
-        aria-label={`Customer and VA counts on the same scale, October 2026 through June 2027. Vertical marker at December 1 for MVP launch.${showOctBeta ? ' Aggressive path: onboard two beta customers in October.' : ''} ${active.label}: ${active.endCustomers} customers and ${active.endVas} VAs by end of Q2.`}
+        aria-label={`Customer and VA counts, October 2026 through June 2027. Dec 1 MVP launch marked.${showOctBeta ? ' Aggressive VA: onboard two beta customers in October.' : ''} ${active.label}: ${active.endCustomers} customers and ${active.endVas} VAs by end of Q2.`}
         onMouseLeave={() => setHover(null)}
       >
         <defs>
@@ -246,7 +319,6 @@ function RampChart({ scenario }: { scenario: ScenarioKey }) {
           Count
         </text>
 
-        {/* Aggressive only — Oct beta differentiator */}
         {showOctBeta ? (
           <g>
             <line
@@ -278,7 +350,6 @@ function RampChart({ scenario }: { scenario: ScenarioKey }) {
           </g>
         ) : null}
 
-        {/* Dec 1 · MVP launch — same marker on every scenario */}
         <line
           x1={mvpX}
           y1={padT}
@@ -289,14 +360,7 @@ function RampChart({ scenario }: { scenario: ScenarioKey }) {
           strokeDasharray="5 4"
           opacity={0.55}
         />
-        <rect
-          x={mvpX - 52}
-          y={8}
-          width={104}
-          height={18}
-          rx={4}
-          fill="var(--secondary)"
-        />
+        <rect x={mvpX - 52} y={8} width={104} height={18} rx={4} fill="var(--secondary)" />
         <text x={mvpX} y={21} textAnchor="middle" className="ramp-mvp-label">
           Dec 1 · MVP launch
         </text>
@@ -307,7 +371,6 @@ function RampChart({ scenario }: { scenario: ScenarioKey }) {
           </text>
         ))}
 
-        {/* Legend */}
         <g transform={`translate(${padL}, ${H - 10})`}>
           <line x1={0} y1={0} x2={18} y2={0} stroke="var(--primary)" strokeWidth={2.5} />
           <text x={22} y={3} className="ramp-legend">
@@ -327,20 +390,17 @@ function RampChart({ scenario }: { scenario: ScenarioKey }) {
           </text>
         </g>
 
-        {/* Faint baselines of other scenarios (customers only) */}
-        {(Object.keys(SCENARIOS) as ScenarioKey[])
-          .filter((k) => k !== scenario)
-          .map((k) => (
-            <polyline
-              key={k}
-              points={linePts(SCENARIOS[k].ramp)}
-              fill="none"
-              stroke="var(--muted-foreground)"
-              strokeWidth={1.25}
-              strokeDasharray="3 4"
-              opacity={0.28}
-            />
-          ))}
+        {SCENARIO_ORDER.filter((k) => k !== scenario).map((k) => (
+          <polyline
+            key={k}
+            points={linePts(SCENARIOS[k].ramp)}
+            fill="none"
+            stroke="var(--muted-foreground)"
+            strokeWidth={1.25}
+            strokeDasharray="3 4"
+            opacity={0.22}
+          />
+        ))}
 
         <path d={areaPath(active.ramp)} fill="url(#rampFill)" />
         <polyline
@@ -414,10 +474,16 @@ function RampChart({ scenario }: { scenario: ScenarioKey }) {
   );
 }
 
+const SCOPE_LABEL: Record<WmtItem['scope'], string> = {
+  all: 'All',
+  aggressive: 'Aggressive VA',
+  va: 'VA paths',
+  auto: 'Auto-shopping',
+};
+
 export function PathToScalePage() {
   const [scenario, setScenario] = useState<ScenarioKey>('baseline');
   const active = SCENARIOS[scenario];
-  const keys = Object.keys(SCENARIOS) as ScenarioKey[];
 
   return (
     <>
@@ -429,10 +495,10 @@ export function PathToScalePage() {
         <p className="eyebrow">Roadmap · The plan</p>
         <h1 className="hero-title">Path to Scale — Oct ’26 → Q2 ’27.</h1>
         <p className="hero-sub">
-          Scale with a VA arm (gig-style), ship the product end-to-end, and treat automated shopping
-          as a ~2-year bet — or a carrier-API unlock — not the thing we sprint to the day after MVP.
-          Three paces: Conservative, Baseline (the fundraising story), and Aggressive (Oct beta —
-          two design partners before Dec 1 MVP launch).
+          Two strategic bets, four paces. Three VA-led ramps (Conservative / Baseline / Aggressive)
+          scale with a gig-style VA arm and defer automated shopping ~2 years. A fourth path keeps
+          VAs tiny and prioritizes automated shopping right after MVP — back in the consideration
+          set so the tradeoff stays visible.
         </p>
       </section>
 
@@ -441,14 +507,19 @@ export function PathToScalePage() {
         <span>The ramp</span>
       </div>
       <section className="card phase-card">
-        <div className="scale-toggle scale-toggle-3" role="tablist" aria-label="Scenario">
-          {keys.map((k) => (
+        <div className="scale-toggle scale-toggle-4" role="tablist" aria-label="Scenario">
+          {SCENARIO_ORDER.map((k) => (
             <button
               key={k}
               type="button"
               role="tab"
               aria-selected={scenario === k}
-              className={scenario === k ? 'active' : undefined}
+              className={[
+                scenario === k ? 'active' : undefined,
+                SCENARIOS[k].family === 'auto' ? 'is-auto' : undefined,
+              ]
+                .filter(Boolean)
+                .join(' ')}
               onClick={() => setScenario(k)}
             >
               <b>{SCENARIOS[k].label}</b>
@@ -466,9 +537,9 @@ export function PathToScalePage() {
           by end of Q2 ’27. {active.summary}
         </p>
         <p className="ramp-note">
-          Chart runs Oct → Jun. The dashed marker is Dec 1 MVP launch on every scenario. Aggressive
-          alone has 2 customers in October (design-partner beta); Baseline and Conservative stay at
-          zero until that launch. Automated shopping is deferred ~2 years.
+          Chart runs Oct → Jun. Dashed marker = Dec 1 MVP launch on every scenario. Aggressive VA
+          alone has 2 customers in October. Auto-shopping priority caps growth until automation
+          lands.
         </p>
       </section>
 
@@ -478,15 +549,24 @@ export function PathToScalePage() {
       </div>
       <section className="card phase-card">
         <p className="export-hint">
-          Same strategic bet — three paces. Selected column highlights with the toggle above.
+          Three VA paces plus the automated-shopping-prioritized alternative. Selected column
+          highlights with the toggle above.
         </p>
         <div className="compare-wrap">
-          <table className="compare-table compare-table-3">
+          <table className="compare-table compare-table-4">
             <thead>
               <tr>
                 <th />
-                {keys.map((k) => (
-                  <th key={k} className={scenario === k ? 'is-active' : undefined}>
+                {SCENARIO_ORDER.map((k) => (
+                  <th
+                    key={k}
+                    className={[
+                      scenario === k ? 'is-active' : undefined,
+                      SCENARIOS[k].family === 'auto' ? 'is-auto' : undefined,
+                    ]
+                      .filter(Boolean)
+                      .join(' ')}
+                  >
                     {SCENARIOS[k].label}
                     <span>{SCENARIOS[k].tag}</span>
                   </th>
@@ -497,15 +577,19 @@ export function PathToScalePage() {
               {COMPARE.map((row) => (
                 <tr key={row.label}>
                   <th scope="row">{row.label}</th>
-                  <td className={scenario === 'conservative' ? 'is-active' : undefined}>
-                    {row.conservative}
-                  </td>
-                  <td className={scenario === 'baseline' ? 'is-active' : undefined}>
-                    {row.baseline}
-                  </td>
-                  <td className={scenario === 'aggressive' ? 'is-active' : undefined}>
-                    {row.aggressive}
-                  </td>
+                  {SCENARIO_ORDER.map((k) => (
+                    <td
+                      key={k}
+                      className={[
+                        scenario === k ? 'is-active' : undefined,
+                        SCENARIOS[k].family === 'auto' ? 'is-auto-col' : undefined,
+                      ]
+                        .filter(Boolean)
+                        .join(' ')}
+                    >
+                      {row.values[k]}
+                    </td>
+                  ))}
                 </tr>
               ))}
             </tbody>
@@ -518,7 +602,7 @@ export function PathToScalePage() {
         <span>What must be true</span>
       </div>
       <section className="card phase-card">
-        <p className="export-hint">Conditions for the ramp to hold — and what slips if they don’t.</p>
+        <p className="export-hint">Conditions for each path to hold — and what slips if they don’t.</p>
         <div className="wmt-table-wrap">
           <table className="wmt-table">
             <thead>
@@ -532,9 +616,7 @@ export function PathToScalePage() {
               {WHAT_MUST_BE_TRUE.map((w) => (
                 <tr key={w.item}>
                   <td>
-                    <span className={`wmt-pill scope-${w.scope}`}>
-                      {w.scope === 'all' ? 'All' : 'Aggressive'}
-                    </span>
+                    <span className={`wmt-pill scope-${w.scope}`}>{SCOPE_LABEL[w.scope]}</span>
                   </td>
                   <td>{w.item}</td>
                   <td className="wmt-impl">{w.implications}</td>
@@ -557,8 +639,8 @@ export function PathToScalePage() {
               Dedicated engineer hired — before the strategy-sprint week (~early-mid Sept)
             </p>
             <p className="rel-note">
-              Non-negotiable. No engineer by then → MVP slips past Dec 1 → every ramp number slips.
-              Aggressive’s Oct beta only exists if this gate clears.
+              Non-negotiable on every path. No engineer by then → MVP slips past Dec 1 → every ramp
+              number slips. Aggressive VA’s Oct beta only exists if this gate clears.
             </p>
           </div>
         </div>
@@ -568,11 +650,11 @@ export function PathToScalePage() {
             <span className="rel-date">Oct – early Nov ’26</span>
             <div>
               <p className="rel-title">
-                Optional beta <span className="rel-tandem">· Aggressive path</span>
+                Optional beta <span className="rel-tandem">· Aggressive VA only</span>
               </p>
               <p className="rel-note">
-                Simple slice in front of Members 1st + Stockton for VA reps and a stress-test before
-                paying logos — only if the engineer gate is met.
+                Simple slice in front of Members 1st + Stockton for VA reps before paying logos —
+                only if the engineer gate is met.
               </p>
             </div>
           </li>
@@ -583,36 +665,55 @@ export function PathToScalePage() {
               <p className="rel-note">
                 Repository + prioritize → draft outreach → white-labeled send → custom questionnaire
                 → ingest answers → drafted recommendation → agent review/approve/send. Shopping
-                stays VA-manual at launch.
-              </p>
-            </div>
-          </li>
-          {RELEASES.map((r, i) => (
-            <li key={r.title} className="rel-item">
-              <span className="rel-date">{r.when}</span>
-              <div>
-                <p className="rel-title">
-                  <span className="rel-idx">R{i + 2}</span> {r.title}
-                </p>
-                <p className="rel-note">{r.note}</p>
-              </div>
-            </li>
-          ))}
-          <li className="rel-item is-deferred">
-            <span className="rel-date">~2028</span>
-            <div>
-              <p className="rel-title">Automated shopping — deferred ~2 years</p>
-              <p className="rel-note">
-                Not critical-path after MVP. Scale VAs, collect observation data, improve models —
-                and with enough agencies, push carriers for APIs. May never need a scraper.
+                stays VA-manual at launch on every path.
               </p>
             </div>
           </li>
         </ol>
-        <p className="ramp-note">
-          ~6-week release cadence after MVP. Order is fixed across Conservative / Baseline /
-          Aggressive — pace of customer adds is what changes.
+
+        <p className="build-split-intro">
+          After MVP, release <em>order</em> forks by strategic bet — not by VA pace. Conservative /
+          Baseline / Aggressive VA share the left column; Auto-shopping priority is the right.
         </p>
+
+        <div className="build-split">
+          <div
+            className={`build-col ${active.family === 'va' ? 'is-active' : ''}`}
+          >
+            <h3>VA-led paths</h3>
+            <p className="build-col-sub">Conservative · Baseline · Aggressive</p>
+            <ol className="build-release-list">
+              {VA_RELEASES.map((r, i) => (
+                <li key={r.title}>
+                  <span className="rel-idx">R{i + 2}</span>
+                  <div>
+                    <p className="build-rel-title">{r.title}</p>
+                    <p className="build-rel-when">{r.when}</p>
+                    <p className="build-rel-note">{r.note}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </div>
+          <div
+            className={`build-col ${active.family === 'auto' ? 'is-active' : ''}`}
+          >
+            <h3>Auto-shopping priority</h3>
+            <p className="build-col-sub">Small VA bridge · automate ASAP</p>
+            <ol className="build-release-list">
+              {AUTO_RELEASES.map((r, i) => (
+                <li key={r.title}>
+                  <span className="rel-idx">R{i + 2}</span>
+                  <div>
+                    <p className="build-rel-title">{r.title}</p>
+                    <p className="build-rel-when">{r.when}</p>
+                    <p className="build-rel-note">{r.note}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </div>
       </section>
     </>
   );
