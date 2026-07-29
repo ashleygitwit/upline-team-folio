@@ -196,6 +196,8 @@ function RampChart({ scenario }: { scenario: ScenarioKey }) {
   const gridVals = [0, 10, 20, 30, 40, 50, 60];
   const [hover, setHover] = useState<number | null>(null);
   const mvpX = x(MVP_MONTH_INDEX);
+  const octX = x(0);
+  const showOctBeta = scenario === 'aggressive';
 
   const linePts = (data: number[]) => data.map((v, i) => `${x(i)},${y(v)}`).join(' ');
   const areaPath = (data: number[]) =>
@@ -214,7 +216,7 @@ function RampChart({ scenario }: { scenario: ScenarioKey }) {
         className="ramp-chart"
         viewBox={`0 0 ${W} ${H}`}
         role="img"
-        aria-label={`Customer and VA counts on the same scale, October 2026 through June 2027. Vertical marker at December 1 for MVP launch. ${active.label}: ${active.endCustomers} customers and ${active.endVas} VAs by end of Q2.`}
+        aria-label={`Customer and VA counts on the same scale, October 2026 through June 2027. Vertical marker at December 1 for MVP launch.${showOctBeta ? ' Aggressive path: onboard two beta customers in October.' : ''} ${active.label}: ${active.endCustomers} customers and ${active.endVas} VAs by end of Q2.`}
         onMouseLeave={() => setHover(null)}
       >
         <defs>
@@ -243,6 +245,38 @@ function RampChart({ scenario }: { scenario: ScenarioKey }) {
         <text x={padL - 8} y={14} textAnchor="end" className="ramp-axis-title">
           Count
         </text>
+
+        {/* Aggressive only — Oct beta differentiator */}
+        {showOctBeta ? (
+          <g>
+            <line
+              x1={octX}
+              y1={padT}
+              x2={octX}
+              y2={padT + plotH}
+              stroke="var(--primary)"
+              strokeWidth={2}
+              strokeDasharray="4 3"
+              opacity={0.85}
+            />
+            <rect
+              x={octX + 6}
+              y={padT + 8}
+              width={168}
+              height={34}
+              rx={6}
+              fill="color-mix(in srgb, var(--primary) 12%, var(--card))"
+              stroke="var(--primary)"
+              strokeWidth={1.25}
+            />
+            <text x={octX + 14} y={padT + 22} className="ramp-beta-label">
+              Onboard 2 beta customers
+            </text>
+            <text x={octX + 14} y={padT + 35} className="ramp-beta-label-sub">
+              in October · 2 VAs
+            </text>
+          </g>
+        ) : null}
 
         {/* Dec 1 · MVP launch — same marker on every scenario */}
         <line

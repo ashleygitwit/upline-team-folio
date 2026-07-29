@@ -2495,6 +2495,21 @@ code {
   font-family: var(--font-sans);
 }
 
+.ramp-beta-label {
+  font-size: 10.5px;
+  font-weight: 800;
+  fill: var(--primary);
+  font-family: var(--font-sans);
+}
+
+.ramp-beta-label-sub {
+  font-size: 9.5px;
+  font-weight: 600;
+  fill: var(--primary);
+  font-family: var(--font-sans);
+  opacity: 0.85;
+}
+
 .scenario-summary {
   margin: 1.5rem 0 0;
   font-size: 1rem;
