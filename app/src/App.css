@@ -3016,6 +3016,91 @@ code {
   color: var(--muted-foreground);
 }
 
+/* Strategic fork — VA vs auto-shopping */
+.strat-fork {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+
+.strat-col {
+  padding: 1.1rem 1.2rem;
+  border-radius: 12px;
+  border: 1.5px solid var(--border);
+  background: var(--card);
+}
+
+.strat-col.strat-rec {
+  border-color: color-mix(in srgb, var(--primary) 45%, var(--border));
+  background: color-mix(in srgb, var(--primary) 5%, var(--card));
+}
+
+.strat-col-head {
+  margin-bottom: 0.75rem;
+}
+
+.strat-col h3 {
+  margin: 0.4rem 0 0.15rem;
+  font-size: 1.1rem;
+}
+
+.strat-col-tag {
+  margin: 0;
+  font-size: 0.78rem;
+  color: var(--muted-foreground);
+}
+
+.strat-col > p {
+  margin: 0 0 0.75rem;
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+.strat-badge {
+  display: inline-block;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 0.25rem 0.55rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--muted-foreground) 12%, var(--card));
+  color: var(--muted-foreground);
+}
+
+.strat-badge-rec {
+  background: var(--secondary);
+  color: var(--secondary-foreground);
+}
+
+.strat-list {
+  margin: 0;
+  padding-left: 1.15rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.strat-list li {
+  font-size: 0.88rem;
+  line-height: 1.45;
+  color: var(--muted-foreground);
+}
+
+.strat-list li strong {
+  color: var(--foreground);
+  font-weight: 650;
+}
+
+.strat-footer {
+  margin: 1.15rem 0 0;
+  font-size: 0.88rem;
+  color: var(--muted-foreground);
+  line-height: 1.45;
+  font-style: italic;
+}
+
 /* How we build — two-column release order */
 .build-split-intro {
   margin: 1.5rem 0 0.85rem;
@@ -3098,7 +3183,8 @@ code {
 @media (max-width: 720px) {
   .risk-split,
   .open-qs,
-  .build-split {
+  .build-split,
+  .strat-fork {
     grid-template-columns: 1fr;
   }
   .rel-item {

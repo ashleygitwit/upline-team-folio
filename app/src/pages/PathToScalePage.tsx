@@ -581,6 +581,79 @@ export function PathToScalePage() {
         </p>
       </section>
 
+      {/* THE STRATEGIC FORK */}
+      <div className="phase-rule">
+        <span>The decision</span>
+      </div>
+      <section className="card phase-card">
+        <p className="proof-statement">
+          Above the ramps, one fork: how we treat shopping labor for the next 12–24 months. That
+          choice sets the product roadmap, the fundraising story, and how much risk we put on a
+          technology we haven’t proven yet.
+        </p>
+        <div className="strat-fork">
+          <div className="strat-col strat-rec">
+            <div className="strat-col-head">
+              <span className="strat-badge strat-badge-rec">Recommended</span>
+              <h3>VA-led path</h3>
+              <p className="strat-col-tag">Conservative · Baseline · Aggressive VA</p>
+            </div>
+            <p>
+              Treat VAs as a real arm of Upline — with management, process, and ideally a{' '}
+              <strong>gig-style “Uber for VAs”</strong> so hiring scales without building a
+              traditional ops org. We can grow logos and revenue without making automated shopping
+              the make-or-break moment.
+            </p>
+            <ul className="strat-list">
+              <li>
+                Multiple outs: scale the gig VA model, sell VA capacity as a{' '}
+                <strong>product within a product</strong>, or eventually lean on{' '}
+                <strong>carrier APIs / carrier-side shopping</strong> once we have leverage — we may
+                never need to build a scraper.
+              </li>
+              <li>
+                Buys 1–2 years to learn, collect observation data, and only then invest in
+                automation (or skip it).
+              </li>
+              <li>
+                Tradeoff: people and management overhead — a real business line to run, not a
+                temporary hack.
+              </li>
+            </ul>
+          </div>
+          <div className="strat-col">
+            <div className="strat-col-head">
+              <span className="strat-badge">Alternate bet</span>
+              <h3>Auto-shopping priority</h3>
+              <p className="strat-col-tag">Small VA bridge · automate ASAP</p>
+            </div>
+            <p>
+              Keep the VA team tiny (~5), avoid standing up a VA-ops business, and{' '}
+              <strong>sprint to automated shopping</strong> right after MVP so customer growth isn’t
+              gated on headcount.
+            </p>
+            <ul className="strat-list">
+              <li>
+                Puts a lot of eggs in one basket: if the tech isn’t ready by mid-April ’27, we’ve
+                spent <strong>December–April</strong> chasing a feature that may not land.
+              </li>
+              <li>
+                Failure mode is costly — delayed customer onboarding at the ~15 ceiling, then we
+                likely <strong>pivot to the VA path anyway</strong>, having lost months.
+              </li>
+              <li>
+                Upside if it works: lean ops, faster unit economics, no large VA arm to manage.
+              </li>
+            </ul>
+          </div>
+        </div>
+        <p className="strat-footer">
+          The three VA tabs differ by <em>pace</em>. The auto-shopping tab differs by{' '}
+          <em>strategy</em>. The side-by-side below lays out both so the tradeoff stays in the
+          conversation.
+        </p>
+      </section>
+
       {/* SIDE BY SIDE */}
       <div className="phase-rule">
         <span>Side by side</span>
