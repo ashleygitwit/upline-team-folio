@@ -2487,6 +2487,14 @@ code {
   fill: var(--chart-5);
 }
 
+.ramp-mvp-label {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  fill: var(--secondary-foreground);
+  font-family: var(--font-sans);
+}
+
 .scenario-summary {
   margin: 1.5rem 0 0;
   font-size: 1rem;

@@ -2,7 +2,9 @@ import { useState } from 'react';
 
 type ScenarioKey = 'conservative' | 'baseline' | 'aggressive';
 
-const MONTHS = ['Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
+// Oct ’26 → Jun ’27. Index 2 = Dec = Dec 1 MVP launch marker.
+const MONTHS = ['Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
+const MVP_MONTH_INDEX = 2; // December
 
 interface Scenario {
   key: ScenarioKey;
@@ -16,39 +18,40 @@ interface Scenario {
 }
 
 // Directional — ~1 VA per 1–1.5 agencies (Austin working assumption).
+// Oct: Aggressive = 2 (design-partner beta); Baseline & Conservative = 0 until Dec 1 MVP.
 const SCENARIOS: Record<ScenarioKey, Scenario> = {
   conservative: {
     key: 'conservative',
     label: 'Conservative',
     tag: '~1 new customer / week in Q1–Q2',
-    ramp: [1, 2, 6, 10, 14, 18, 22, 26],
-    vas: [1, 2, 4, 7, 9, 12, 15, 17],
+    ramp: [0, 0, 2, 6, 10, 14, 18, 22, 26],
+    vas: [0, 0, 2, 4, 7, 9, 12, 15, 17],
     endCustomers: '~26',
     endVas: '~17',
     summary:
-      'Steady after the first two: about one new agency a week once we’re into Q1. Same VA-arm model — just a slower add rate while we firm up onboarding and the gig workflow.',
+      'Zero logos until Dec 1 MVP launch, then the first two, then about one new agency a week into Q1–Q2. Same VA-arm model — slower add rate while we firm up onboarding and the gig workflow.',
   },
   baseline: {
     key: 'baseline',
     label: 'Baseline',
     tag: 'The fundraising story · ~2 / week by Feb',
-    ramp: [1, 2, 5, 10, 18, 28, 38, 48],
-    vas: [1, 2, 4, 7, 12, 19, 25, 32],
+    ramp: [0, 0, 2, 5, 10, 18, 28, 38, 48],
+    vas: [0, 0, 2, 4, 7, 12, 19, 25, 32],
     endCustomers: '~45–50',
     endVas: '~30–32',
     summary:
-      'The plan we’d show investors: learn hard on the first two in Nov–Dec, then ramp toward ~two new customers a week by Feb–Apr. Scale with VAs (gig-style), collect data, automate later — or never, if carrier APIs show up.',
+      'Zero until Dec 1 MVP, learn hard on the first two through year-end, then ramp toward ~two new customers a week by Feb–Apr. Scale with VAs (gig-style), collect data, automate later — or never, if carrier APIs show up.',
   },
   aggressive: {
     key: 'aggressive',
     label: 'Aggressive',
-    tag: 'Same shape · timeline pulled forward',
-    ramp: [2, 4, 12, 20, 30, 40, 50, 60],
-    vas: [2, 3, 8, 13, 20, 27, 33, 40],
+    tag: 'Oct beta · timeline pulled forward',
+    ramp: [2, 2, 4, 12, 20, 30, 40, 50, 60],
+    vas: [2, 2, 3, 8, 13, 20, 27, 33, 40],
     endCustomers: '~60',
     endVas: '~40',
     summary:
-      'Not “twice as many” — earlier. Members 1st + Stockton on a simple beta in Oct / early Nov, maybe two more in December, then the same weekly add rate from a head start. Contingent on an engineer by strategy-sprint week.',
+      'Not “twice as many” — earlier. Two design partners live in October (Members 1st + Stockton beta), still two through November, then add through Dec and scale from a head start. Contingent on an engineer by strategy-sprint week.',
   },
 };
 
@@ -91,11 +94,11 @@ const WHAT_MUST_BE_TRUE: WmtItem[] = [
     scope: 'all',
     item: 'A dedicated engineer (Gitwit or Upline) is hired before the strategy-sprint week (~early–mid Sept).',
     implications:
-      'If not, MVP start, Thanksgiving launch, and every ramp date on this page slip until they are hired. Non-negotiable for the build.',
+      'If not, MVP start (Dec 1), and every ramp date on this page slip until they are hired. Non-negotiable for the build.',
   },
   {
     scope: 'all',
-    item: 'VA #1 is hired and trained by MVP launch — ideally getting live reps during the build; first VA may become the manager / trainer.',
+    item: 'VA #1 is hired and trained by Dec 1 MVP launch — ideally getting live reps during the build; first VA may become the manager / trainer.',
     implications:
       'Without someone ready at launch, we can’t onboard agencies yet. That slice of the timeline slips until training is done.',
   },
@@ -137,7 +140,13 @@ const COMPARE: CompareRow[] = [
     label: 'What it is',
     conservative: 'Same VA-arm model — slower add rate (~1 new agency / week in Q1–Q2).',
     baseline: 'The main plan / fundraising curve. ~2 new agencies / week by Feb–Apr.',
-    aggressive: 'Baseline shape, timeline pulled forward (Oct beta → more logos sooner).',
+    aggressive: 'Baseline shape, pulled forward — 2 design partners live in October.',
+  },
+  {
+    label: 'Oct ’26 customers',
+    conservative: '0',
+    baseline: '0',
+    aggressive: '2 (Members 1st + Stockton beta)',
   },
   {
     label: 'End-Q2 ’27 customers',
@@ -155,7 +164,7 @@ const COMPARE: CompareRow[] = [
     label: 'Product focus',
     conservative: 'Close-the-loop → VA portal → RPA book pull → gig onboarding → AMS visibility',
     baseline: 'Same release order — automation shopping deferred ~2 years',
-    aggressive: 'Same release order + earlier beta stress-test of the MVP slice',
+    aggressive: 'Same release order + Oct beta stress-test before Dec 1 MVP',
   },
   {
     label: 'Why this pace',
@@ -173,11 +182,11 @@ const COMPARE: CompareRow[] = [
 
 function RampChart({ scenario }: { scenario: ScenarioKey }) {
   const active = SCENARIOS[scenario];
-  const W = 860;
-  const H = 360;
+  const W = 900;
+  const H = 380;
   const padL = 40;
   const padR = 24;
-  const padT = 28;
+  const padT = 36;
   const padB = 56;
   const plotW = W - padL - padR;
   const plotH = H - padT - padB;
@@ -186,6 +195,7 @@ function RampChart({ scenario }: { scenario: ScenarioKey }) {
   const y = (v: number) => padT + plotH * (1 - v / yMax);
   const gridVals = [0, 10, 20, 30, 40, 50, 60];
   const [hover, setHover] = useState<number | null>(null);
+  const mvpX = x(MVP_MONTH_INDEX);
 
   const linePts = (data: number[]) => data.map((v, i) => `${x(i)},${y(v)}`).join(' ');
   const areaPath = (data: number[]) =>
@@ -195,7 +205,7 @@ function RampChart({ scenario }: { scenario: ScenarioKey }) {
 
   const tipI = hover ?? MONTHS.length - 1;
   const tipX = x(tipI);
-  const tipY = y(active.ramp[tipI]);
+  const tipY = y(Math.max(active.ramp[tipI], 1));
   const tipFlip = tipI > MONTHS.length - 3;
 
   return (
@@ -204,7 +214,7 @@ function RampChart({ scenario }: { scenario: ScenarioKey }) {
         className="ramp-chart"
         viewBox={`0 0 ${W} ${H}`}
         role="img"
-        aria-label={`Customer and VA counts on the same scale, November 2026 through June 2027. ${active.label}: ${active.endCustomers} customers and ${active.endVas} VAs by end of Q2.`}
+        aria-label={`Customer and VA counts on the same scale, October 2026 through June 2027. Vertical marker at December 1 for MVP launch. ${active.label}: ${active.endCustomers} customers and ${active.endVas} VAs by end of Q2.`}
         onMouseLeave={() => setHover(null)}
       >
         <defs>
@@ -230,8 +240,31 @@ function RampChart({ scenario }: { scenario: ScenarioKey }) {
           </g>
         ))}
 
-        <text x={padL - 8} y={padT - 12} textAnchor="end" className="ramp-axis-title">
+        <text x={padL - 8} y={14} textAnchor="end" className="ramp-axis-title">
           Count
+        </text>
+
+        {/* Dec 1 · MVP launch — same marker on every scenario */}
+        <line
+          x1={mvpX}
+          y1={padT}
+          x2={mvpX}
+          y2={padT + plotH}
+          stroke="var(--foreground)"
+          strokeWidth={1.75}
+          strokeDasharray="5 4"
+          opacity={0.55}
+        />
+        <rect
+          x={mvpX - 52}
+          y={8}
+          width={104}
+          height={18}
+          rx={4}
+          fill="var(--secondary)"
+        />
+        <text x={mvpX} y={21} textAnchor="middle" className="ramp-mvp-label">
+          Dec 1 · MVP launch
         </text>
 
         {MONTHS.map((m, i) => (
@@ -292,7 +325,6 @@ function RampChart({ scenario }: { scenario: ScenarioKey }) {
 
         {active.ramp.map((v, i) => (
           <g key={i}>
-            {/* Hit target */}
             <circle
               cx={x(i)}
               cy={y(v)}
@@ -318,10 +350,9 @@ function RampChart({ scenario }: { scenario: ScenarioKey }) {
           </g>
         ))}
 
-        {/* Tooltip */}
         {hover !== null && (
           <g
-            transform={`translate(${tipFlip ? tipX - 148 : tipX + 12}, ${Math.max(padT, tipY - 48)})`}
+            transform={`translate(${tipFlip ? tipX - 148 : tipX + 12}, ${Math.max(padT + 4, tipY - 48)})`}
             style={{ pointerEvents: 'none' }}
           >
             <rect
@@ -362,24 +393,14 @@ export function PathToScalePage() {
 
       <section className="hero">
         <p className="eyebrow">Roadmap · The plan</p>
-        <h1 className="hero-title">Path to Scale — Nov ’26 → Q2 ’27.</h1>
+        <h1 className="hero-title">Path to Scale — Oct ’26 → Q2 ’27.</h1>
         <p className="hero-sub">
           Scale with a VA arm (gig-style), ship the product end-to-end, and treat automated shopping
           as a ~2-year bet — or a carrier-API unlock — not the thing we sprint to the day after MVP.
-          Three paces: Conservative, Baseline (the fundraising story), and Aggressive (same shape,
-          earlier).
+          Three paces: Conservative, Baseline (the fundraising story), and Aggressive (Oct beta —
+          two design partners before Dec 1 MVP launch).
         </p>
       </section>
-
-      <div className="mini-callout handoff-note">
-        <p className="mini-callout-t">What this covers — and what it doesn’t</p>
-        <p>
-          This is the <strong>product &amp; operational plan</strong>. Pricing, commissions,
-          revenue, and capital are owned by <strong>Mike &amp; Patrick</strong> (with JV) — the ramp
-          here is the input their revenue model backs into. VA cost math is directional (~$700–1,400
-          / agency / mo at ~1–1.5 agencies per VA).
-        </p>
-      </div>
 
       {/* THE RAMP */}
       <div className="phase-rule">
@@ -411,9 +432,9 @@ export function PathToScalePage() {
           by end of Q2 ’27. {active.summary}
         </p>
         <p className="ramp-note">
-          Customers and VAs share one scale so the lines diverge as we grow. All three plans use the
-          VA-arm model; they differ by pace (and Aggressive by start date). Automated shopping is
-          deferred ~2 years.
+          Chart runs Oct → Jun. The dashed marker is Dec 1 MVP launch on every scenario. Aggressive
+          alone has 2 customers in October (design-partner beta); Baseline and Conservative stay at
+          zero until that launch. Automated shopping is deferred ~2 years.
         </p>
       </section>
 
@@ -502,8 +523,8 @@ export function PathToScalePage() {
               Dedicated engineer hired — before the strategy-sprint week (~early-mid Sept)
             </p>
             <p className="rel-note">
-              Non-negotiable. No engineer by then → MVP slips → Thanksgiving slips → every ramp
-              number slips. Aggressive’s Oct beta only exists if this gate clears.
+              Non-negotiable. No engineer by then → MVP slips past Dec 1 → every ramp number slips.
+              Aggressive’s Oct beta only exists if this gate clears.
             </p>
           </div>
         </div>
@@ -522,7 +543,7 @@ export function PathToScalePage() {
             </div>
           </li>
           <li className="rel-item is-shared">
-            <span className="rel-date">Thanksgiving ’26</span>
+            <span className="rel-date">Dec 1 ’26</span>
             <div>
               <p className="rel-title">MVP launch</p>
               <p className="rel-note">
