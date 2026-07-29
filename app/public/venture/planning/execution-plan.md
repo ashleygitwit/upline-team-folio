@@ -165,26 +165,34 @@ Post-shop handoff: rate comparison in paragraph one, simple comparison table, co
 - **Workstream:** Product
 - **Dates:** 2026-09-28 → 2026-12-04
 - **Notes:** 10-week build. Kickoff Sep 28. Targets an MVP launch around Thanksgiving.
-### MVP iteration — first 2 customers
+### Optional Oct beta — design partners (Aggressive path)
 - **Workstream:** Product
-- **Dates:** 2026-12-07 → 2027-02-13
-- **Notes:** Runs in tandem with Release 2. Onboard the first 2 customers; learn deep and fix what doesn't test well.
-### Release 2 (~6-wk cycle)
+- **Dates:** 2026-10-12 → 2026-11-20
+- **Notes:** Only if engineer gate clears. Simple MVP slice with Members 1st + Stockton for VA reps before paying logos.
+### MVP iteration — first customers
 - **Workstream:** Product
-- **Dates:** 2026-12-07 → 2027-02-13
-- **Notes:** In tandem with MVP iteration. Ordering flips by scenario — A: automated shopping · B: close-the-loop (record + write-back).
-### Release 3 (~6-wk cycle)
+- **Dates:** 2026-12-07 → 2027-01-15
+- **Notes:** Runs in tandem with Release 2 (close the loop). Learn deep on the first logos.
+### R2 — Close the loop
 - **Workstream:** Product
-- **Dates:** 2027-02-16 → 2027-03-27
-- **Notes:** A: automated full-book upload · B: AMS read/write.
-### Release 4 (~6-wk cycle)
+- **Dates:** 2026-12-07 → 2027-01-15
+- **Notes:** Record calls/Zooms; write fresh detail back into the repository.
+### R3 — VA portal
 - **Workstream:** Product
-- **Dates:** 2027-03-30 → 2027-05-08
-- **Notes:** A: close-the-loop + AMS write-back · B: team settings + broader feature set.
-### Automated-shopping discovery (background)
+- **Dates:** 2027-01-18 → 2027-02-26
+- **Notes:** Internal VA queues, upload, verification. Can start lighter / internal-tool while customer product stays engineer-built.
+### R4 — RPA full-book AMS pull
 - **Workstream:** Product
-- **Dates:** 2026-09-21 → 2026-12-04
-- **Notes:** Starts immediately after No-AMS feasibility ends; runs through the end of the MVP build (Thanksgiving). How hard this is decides Conservative vs. Aggressive.
+- **Dates:** 2027-03-01 → 2027-04-09
+- **Notes:** Onboarding unlock — EasyLinks / HawkSoft first. Without this, manual book download caps add rate.
+### R5 — Gig-style VA onboarding
+- **Workstream:** Product
+- **Dates:** 2027-04-12 → 2027-05-21
+- **Notes:** Digital training + workflow so VAs come online without heavy babysitting. First VA may become manager/trainer.
+### R6 — AMS replacement (data visibility)
+- **Workstream:** Product
+- **Dates:** 2027-05-24 → 2027-07-02
+- **Notes:** Show the repository internally, then to clients. Automated shopping deferred ~2 years (not on this near-term track).
 
 ## Done
 
@@ -223,9 +231,11 @@ Post-shop handoff: rate comparison in paragraph one, simple comparison table, co
 | Product strategy sprint | Product | Future | 2026-09-14 | 2026-09-18 |
 | MVP planning week | Product | Future | 2026-09-21 | 2026-09-25 |
 | MVP build | Product | Future | 2026-09-28 | 2026-12-04 |
-| MVP iteration — first 2 customers | Product | Future | 2026-12-07 | 2027-02-13 |
-| Release 2 (~6-wk cycle) | Product | Future | 2026-12-07 | 2027-02-13 |
-| Release 3 (~6-wk cycle) | Product | Future | 2027-02-16 | 2027-03-27 |
-| Release 4 (~6-wk cycle) | Product | Future | 2027-03-30 | 2027-05-08 |
-| Automated-shopping discovery (background) | Product | Future | 2026-09-21 | 2026-12-04 |
+| Optional Oct beta — design partners (Aggressive path) | Product | Future | 2026-10-12 | 2026-11-20 |
+| MVP iteration — first customers | Product | Future | 2026-12-07 | 2027-01-15 |
+| R2 — Close the loop | Product | Future | 2026-12-07 | 2027-01-15 |
+| R3 — VA portal | Product | Future | 2027-01-18 | 2027-02-26 |
+| R4 — RPA full-book AMS pull | Product | Future | 2027-03-01 | 2027-04-09 |
+| R5 — Gig-style VA onboarding | Product | Future | 2027-04-12 | 2027-05-21 |
+| R6 — AMS replacement (data visibility) | Product | Future | 2027-05-24 | 2027-07-02 |
 | No-AMS launch feasibility (background) | Product | In Flight | 2026-07-13 | 2026-09-18 |

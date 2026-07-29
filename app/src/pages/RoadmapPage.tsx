@@ -106,8 +106,8 @@ export function RoadmapPage({
             <p className="scale-cta-eyebrow">Looking past the MVP</p>
             <p className="scale-cta-title">Path to Scale — Nov ’26 → Q2 ’27</p>
             <p className="scale-cta-sub">
-              Customer ramp, build cadence, and what has to be true — with an interactive
-              Conservative vs. Aggressive scenario view.
+              Customer + VA ramp, VA-first release order, and what has to be true — Conservative /
+              Baseline / Aggressive.
             </p>
           </div>
           <span className="scale-cta-arrow" aria-hidden="true">

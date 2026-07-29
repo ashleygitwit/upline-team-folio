@@ -192,54 +192,74 @@
       "notes": "10-week build. Kickoff Sep 28. Targets an MVP launch around Thanksgiving."
     },
     {
+      "id": "prod-oct-beta",
+      "title": "Optional Oct beta — design partners (Aggressive path)",
+      "workstream": "Product",
+      "status": "Future",
+      "owner": "Ashley + Agent",
+      "start": "2026-10-12",
+      "end": "2026-11-20",
+      "notes": "Only if engineer gate clears. Simple MVP slice with Members 1st + Stockton for VA reps before paying logos."
+    },
+    {
       "id": "prod-mvp-iterate",
-      "title": "MVP iteration — first 2 customers",
+      "title": "MVP iteration — first customers",
       "workstream": "Product",
       "status": "Future",
       "owner": "Ashley + Agent",
       "start": "2026-12-07",
-      "end": "2027-02-13",
-      "notes": "Runs in tandem with Release 2. Onboard the first 2 customers; learn deep and fix what doesn't test well."
+      "end": "2027-01-15",
+      "notes": "Runs in tandem with Release 2 (close the loop). Learn deep on the first logos."
     },
     {
       "id": "prod-release-2",
-      "title": "Release 2 (~6-wk cycle)",
+      "title": "R2 — Close the loop",
       "workstream": "Product",
       "status": "Future",
       "owner": "Ashley + Agent",
       "start": "2026-12-07",
-      "end": "2027-02-13",
-      "notes": "In tandem with MVP iteration. Ordering flips by scenario — A: automated shopping · B: close-the-loop (record + write-back)."
+      "end": "2027-01-15",
+      "notes": "Record calls/Zooms; write fresh detail back into the repository."
     },
     {
       "id": "prod-release-3",
-      "title": "Release 3 (~6-wk cycle)",
+      "title": "R3 — VA portal",
       "workstream": "Product",
       "status": "Future",
       "owner": "Ashley + Agent",
-      "start": "2027-02-16",
-      "end": "2027-03-27",
-      "notes": "A: automated full-book upload · B: AMS read/write."
+      "start": "2027-01-18",
+      "end": "2027-02-26",
+      "notes": "Internal VA queues, upload, verification. Can start lighter / internal-tool while customer product stays engineer-built."
     },
     {
       "id": "prod-release-4",
-      "title": "Release 4 (~6-wk cycle)",
+      "title": "R4 — RPA full-book AMS pull",
       "workstream": "Product",
       "status": "Future",
       "owner": "Ashley + Agent",
-      "start": "2027-03-30",
-      "end": "2027-05-08",
-      "notes": "A: close-the-loop + AMS write-back · B: team settings + broader feature set."
+      "start": "2027-03-01",
+      "end": "2027-04-09",
+      "notes": "Onboarding unlock — EasyLinks / HawkSoft first. Without this, manual book download caps add rate."
     },
     {
-      "id": "prod-auto-shopping-discovery",
-      "title": "Automated-shopping discovery (background)",
+      "id": "prod-release-5",
+      "title": "R5 — Gig-style VA onboarding",
       "workstream": "Product",
       "status": "Future",
       "owner": "Ashley + Agent",
-      "start": "2026-09-21",
-      "end": "2026-12-04",
-      "notes": "Starts immediately after No-AMS feasibility ends; runs through the end of the MVP build (Thanksgiving). How hard this is decides Conservative vs. Aggressive."
+      "start": "2027-04-12",
+      "end": "2027-05-21",
+      "notes": "Digital training + workflow so VAs come online without heavy babysitting. First VA may become manager/trainer."
+    },
+    {
+      "id": "prod-release-6",
+      "title": "R6 — AMS replacement (data visibility)",
+      "workstream": "Product",
+      "status": "Future",
+      "owner": "Ashley + Agent",
+      "start": "2027-05-24",
+      "end": "2027-07-02",
+      "notes": "Show the repository internally, then to clients. Automated shopping deferred ~2 years (not on this near-term track)."
     },
     {
       "id": "prod-no-ams",
