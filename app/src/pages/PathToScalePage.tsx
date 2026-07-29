@@ -145,7 +145,7 @@ const AUTO_RELEASES: { when: string; title: string; note: string }[] = [
 ];
 
 interface WmtItem {
-  scope: 'all' | 'aggressive' | 'va' | 'auto';
+  scope: 'all' | 'va' | 'auto';
   item: string;
   implications: string;
 }
@@ -186,12 +186,6 @@ const WHAT_MUST_BE_TRUE: WmtItem[] = [
     item: 'Automated shopping proves feasible on a tight post-MVP timeline and stays prioritized above other net-new.',
     implications:
       'If it isn’t, growth and revenue stall at ~15 customers / ~5 VAs — or we pivot late to the VA-led path having lost months.',
-  },
-  {
-    scope: 'aggressive',
-    item: 'Engineer is in place by sprint week so we can pull the timeline forward — including an Oct beta with design partners.',
-    implications:
-      'Without that hire, Aggressive VA collapses back to Baseline timing. The expedite only works if build capacity is real.',
   },
 ];
 
@@ -514,7 +508,6 @@ function RampChart({ scenario }: { scenario: ScenarioKey }) {
 
 const SCOPE_LABEL: Record<WmtItem['scope'], string> = {
   all: 'All',
-  aggressive: 'Aggressive VA',
   va: 'VA paths',
   auto: 'Auto-shopping',
 };
