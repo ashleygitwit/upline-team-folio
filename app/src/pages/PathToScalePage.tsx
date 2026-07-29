@@ -61,14 +61,18 @@ const SCENARIOS: Record<ScenarioKey, Scenario> = {
     label: 'Auto-shopping priority',
     tag: 'Small VA bridge · automate ASAP',
     family: 'auto',
-    ramp: [0, 0, 2, 2, 3, 5, 8, 11, 15],
-    vas: [0, 0, 1, 1, 1, 2, 3, 4, 5],
-    endCustomers: '~15',
-    endVas: '~5',
+    // Dec +2, Jan +2 → 4/2 VAs; Feb–Apr +4/+4/+3 → 15 max pre-launch; then VAs flat, customers grow
+    ramp: [0, 0, 2, 4, 8, 12, 15, 20, 30],
+    vas: [0, 0, 1, 2, 3, 4, 5, 5, 5],
+    endCustomers: '~30',
+    endVas: '~5 (flat after launch)',
     summary:
-      'Different bet: keep the VA team tiny (~5 max), slow-roll customers, and sprint to automated shopping right after MVP so we’re not building a VA-ops company. Growth stays capped until automation lands — automation-execution risk if it takes longer than hoped.',
+      'Different bet: Dec–Jan bring on the first four logos (2 VAs), then ~four new agencies a month through mid-April to a 15-customer ceiling. Auto-shopping feature launches mid-April — VAs stay at ~5 while customers can keep growing (e.g. +5 in May, +10 in June). Automation-execution risk if that launch slips.',
   },
 };
+
+/** Mid-April — between Mar (5) and Apr (6) month ticks */
+const AUTO_LAUNCH_MONTH_FRAC = 5.5;
 
 const SCENARIO_ORDER: ScenarioKey[] = ['conservative', 'baseline', 'aggressive', 'auto'];
 
@@ -109,34 +113,34 @@ const VA_RELEASES: { when: string; title: string; note: string }[] = [
 /** Alternate bet: prioritize cracking automated shopping */
 const AUTO_RELEASES: { when: string; title: string; note: string }[] = [
   {
-    when: 'Dec ’26 – mid-Feb ’27',
-    title: 'Automated shopping',
-    note: 'The sprint — discovery into build. Prioritized above other net-new. Killer feature to lift the customer ceiling.',
+    when: 'Dec ’26 – mid-Apr ’27',
+    title: 'Automated shopping (build → launch)',
+    note: 'The sprint — discovery into build. Feature launches mid-April. Until then: +2/+2 in Dec–Jan, then ~+4/mo to a 15-customer ceiling with ~5 VAs.',
   },
   {
-    when: '~late Feb – early Apr ’27',
+    when: 'Alongside shopping build',
     title: 'RPA full-book AMS pull',
     note: 'Still needed so onboarding isn’t a manual nightmare while shopping automates.',
   },
   {
-    when: '~Apr – mid-May ’27',
-    title: 'Close the loop',
-    note: 'Record + write-back once the shopping bet is in motion.',
+    when: 'Post mid-Apr launch',
+    title: 'Scale customers · VAs stay flat',
+    note: 'With shopping automated, add customers without adding VAs (e.g. +5 in May, +10 in June).',
   },
   {
-    when: '~mid-May – Jun ’27',
-    title: 'AMS visibility / team settings',
-    note: 'Broader product surface — VA portal stays light if headcount stays ~5.',
+    when: '~May – Jun ’27',
+    title: 'Close the loop + AMS visibility',
+    note: 'Record + write-back and broader product surface once the shopping bet is live.',
   },
   {
     when: 'As needed',
     title: 'Light VA tooling',
-    note: 'Only what’s required for a small bridge team — not a gig-ops product line.',
+    note: 'Only what’s required for a ~5-person bridge — not a gig-ops product line.',
   },
   {
-    when: 'If automation slips',
+    when: 'If mid-Apr launch slips',
     title: 'Pivot to VA-led scale',
-    note: 'If shopping isn’t feasible on a tight timeline, this path collapses toward the VA ramps — with lost time.',
+    note: 'Stuck near the 15-customer / growing-VA ceiling — or collapse toward the VA ramps with lost time.',
   },
 ];
 
@@ -221,7 +225,7 @@ const COMPARE: CompareRow[] = [
       conservative: '~26',
       baseline: '~45–50',
       aggressive: '~60',
-      auto: '~15 (capped until automation lands)',
+      auto: '~30 (15 by mid-Apr launch, then grow with VAs flat)',
     },
   },
   {
@@ -230,7 +234,7 @@ const COMPARE: CompareRow[] = [
       conservative: 'Gig-style scale · ~1 VA / 1–1.5 agencies',
       baseline: 'Gig-style scale · ~1 VA / 1–1.5 agencies',
       aggressive: 'Same — more VAs sooner',
-      auto: '~5 VAs max — temporary bridge only',
+      auto: 'Grow to ~5 by mid-Apr, then flat — shopping feature carries the load',
     },
   },
   {
@@ -239,7 +243,7 @@ const COMPARE: CompareRow[] = [
       conservative: 'Close-loop → VA portal → RPA book → gig onboarding → AMS visibility',
       baseline: 'Same VA release order · shopping deferred ~2 yrs',
       aggressive: 'Same VA order + Oct beta before Dec 1 MVP',
-      auto: 'Automated shopping first → RPA book → close-loop · light VA tooling',
+      auto: 'Automated shopping first → mid-Apr feature launch → then scale customers',
     },
   },
   {
@@ -248,7 +252,7 @@ const COMPARE: CompareRow[] = [
       conservative: 'Growth looks soft if we’re raising on the curve',
       baseline: 'VA ops overhead until efficiency or carrier APIs land',
       aggressive: 'Half-baked Oct beta — or missing the engineer gate',
-      auto: 'Automation-execution risk — if shopping is harder than hoped, revenue stalls',
+      auto: 'Automation-execution risk — if mid-Apr launch slips, stuck at ~15 / growing VAs again',
     },
   },
 ];
@@ -270,7 +274,9 @@ function RampChart({ scenario }: { scenario: ScenarioKey }) {
   const [hover, setHover] = useState<number | null>(null);
   const mvpX = x(MVP_MONTH_INDEX);
   const octX = x(0);
+  const autoLaunchX = padL + (AUTO_LAUNCH_MONTH_FRAC / (MONTHS.length - 1)) * plotW;
   const showOctBeta = scenario === 'aggressive';
+  const showAutoLaunch = scenario === 'auto';
 
   const linePts = (data: number[]) => data.map((v, i) => `${x(i)},${y(v)}`).join(' ');
   const areaPath = (data: number[]) =>
@@ -289,7 +295,7 @@ function RampChart({ scenario }: { scenario: ScenarioKey }) {
         className="ramp-chart"
         viewBox={`0 0 ${W} ${H}`}
         role="img"
-        aria-label={`Customer and VA counts, October 2026 through June 2027. Dec 1 MVP launch marked.${showOctBeta ? ' Aggressive VA: onboard two beta customers in October.' : ''} ${active.label}: ${active.endCustomers} customers and ${active.endVas} VAs by end of Q2.`}
+        aria-label={`Customer and VA counts, October 2026 through June 2027. Dec 1 MVP launch marked.${showOctBeta ? ' Aggressive VA: onboard two beta customers in October.' : ''}${showAutoLaunch ? ' Auto-shopping feature launch mid-April; VAs stay flat while customers grow.' : ''} ${active.label}: ${active.endCustomers} customers and ${active.endVas} VAs by end of Q2.`}
         onMouseLeave={() => setHover(null)}
       >
         <defs>
@@ -364,6 +370,38 @@ function RampChart({ scenario }: { scenario: ScenarioKey }) {
         <text x={mvpX} y={21} textAnchor="middle" className="ramp-mvp-label">
           Dec 1 · MVP launch
         </text>
+
+        {/* Auto-shopping path only — mid-April feature launch; VAs flat after */}
+        {showAutoLaunch ? (
+          <g>
+            <line
+              x1={autoLaunchX}
+              y1={padT}
+              x2={autoLaunchX}
+              y2={padT + plotH}
+              stroke="var(--chart-5)"
+              strokeWidth={2}
+              strokeDasharray="4 3"
+              opacity={0.9}
+            />
+            <rect
+              x={autoLaunchX - 78}
+              y={padT + 8}
+              width={156}
+              height={34}
+              rx={6}
+              fill="color-mix(in srgb, var(--chart-5) 14%, var(--card))"
+              stroke="var(--chart-5)"
+              strokeWidth={1.25}
+            />
+            <text x={autoLaunchX} y={padT + 22} textAnchor="middle" className="ramp-auto-label">
+              Auto-shopping launch
+            </text>
+            <text x={autoLaunchX} y={padT + 35} textAnchor="middle" className="ramp-auto-label-sub">
+              mid-April · VAs stay flat
+            </text>
+          </g>
+        ) : null}
 
         {MONTHS.map((m, i) => (
           <text key={m} x={x(i)} y={H - 30} textAnchor="middle" className="ramp-axis">
@@ -537,9 +575,9 @@ export function PathToScalePage() {
           by end of Q2 ’27. {active.summary}
         </p>
         <p className="ramp-note">
-          Chart runs Oct → Jun. Dashed marker = Dec 1 MVP launch on every scenario. Aggressive VA
-          alone has 2 customers in October. Auto-shopping priority caps growth until automation
-          lands.
+          Chart runs Oct → Jun. Dec 1 MVP launch is marked on every scenario. Aggressive VA alone
+          has 2 customers in October. On Auto-shopping priority, mid-April marks the feature launch
+          — customers can keep growing while VAs stay flat at ~5.
         </p>
       </section>
 

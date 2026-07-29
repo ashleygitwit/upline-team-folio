@@ -2528,6 +2528,21 @@ code {
   opacity: 0.85;
 }
 
+.ramp-auto-label {
+  font-size: 10.5px;
+  font-weight: 800;
+  fill: var(--chart-5);
+  font-family: var(--font-sans);
+}
+
+.ramp-auto-label-sub {
+  font-size: 9.5px;
+  font-weight: 600;
+  fill: var(--chart-5);
+  font-family: var(--font-sans);
+  opacity: 0.9;
+}
+
 .scenario-summary {
   margin: 1.5rem 0 0;
   font-size: 1rem;
