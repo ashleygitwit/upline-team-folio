@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-07-22",
+  "lastUpdated": "2026-08-07",
   "intro": "How our thinking has changed over time — the evolution from an initial concept toward what will become the MVP. The learning log below is added to constantly as each pilot teaches us more; the open questions up top are the ones we're still pressure-testing.",
   "questions": [
     {
@@ -7,42 +7,42 @@
       "question": "Would an agent actually send what Upline drafts?",
       "status": "Emerging",
       "lens": "desirability",
-      "note": "Agency rapport is warming and back-channel signals say the team is 'way more excited than they're letting on.' The real test is still the post-shop recommendation email."
+      "note": "Pilot yes: Members 1st reviewed and sent recommendations with light edits, and at the Aug 3 retro said they'd use Upline day-to-day once built. Trust is real for this agency; we still need the same signal from a second design partner (reset to Version A, not M1's voice)."
     },
     {
       "id": "customer-engagement",
       "question": "Do customers respond and opt in?",
-      "status": "Emerging",
+      "status": "Answered",
       "lens": "desirability",
-      "note": "Early yes: questionnaires completed fast (under 8 minutes), ~25% response on a batch, and a life-insurance opt-in already booked a meeting. Directionally meaningful, not crickets."
+      "note": "Yes on Members 1st: 42 emailed → 18 questionnaires (43%) → 18 recommendations sent → 7 switched, 5 stayed, 6 still pending. Questionnaires complete fast; engagement is not crickets."
     },
     {
       "id": "shopping-wedge",
       "question": "Is automated shopping the wedge?",
       "status": "Answered",
       "lens": "viability",
-      "note": "No. Shopping is a ~$6 task; retention and cross-sell are the ~$800 tasks — and only they serve the mantra. Lead with those; let VAs shop for now."
+      "note": "No. Shopping is a ~$6 task; retention and cross-sell are the ~$800 tasks — and only they serve the mantra. Lead with those; let VAs shop for now. Aug 3 retro reinforced: quote prep + short rec saves time; the phone close stays in-house (~30 min/policy when the client answers)."
     },
     {
       "id": "scalability",
       "question": "Can this become a real, scalable product?",
       "status": "Evolved",
       "lens": "viability",
-      "note": "Path changed rather than closed: VAs shop in the near term while we build the data repository; full shopping automation is a 2-year horizon, not a blocker."
+      "note": "Path changed rather than closed: VAs shop in the near term while we build the data repository; full shopping automation is a 2-year horizon, not a blocker. Without the product, M1 expects to go reactive again during the build — proof the workflow doesn't stick as a habit alone."
     },
     {
       "id": "pricing",
       "question": "How do we price when agencies control the copy and the cohort?",
       "status": "Open",
       "lens": "viability",
-      "note": "Both outcome-only and book-based pricing have failure modes. Pricing must assume agencies won't use the product exactly as we recommend."
+      "note": "Both outcome-only and book-based pricing have failure modes. Pricing must assume agencies won't use the product exactly as we recommend. M1 value frame that landed: time savings + retention (~30 min/policy when client answers) — no price discussed on-record yet."
     },
     {
       "id": "no-ams",
       "question": "Can we operate without ongoing AMS integration?",
-      "status": "Open",
+      "status": "Emerging",
       "lens": "feasibility",
-      "note": "Working hypothesis: a one-time AMS dump on onboarding, then carrier portals + email/questionnaire extraction keep our own system of record current. Research in progress."
+      "note": "Launch plan is Path 2 (bypass): light CSV onboard + weekly renewal report into an inbox + shortlist RPA — not a full-book AMS API. Path 1 partner talks (EZLynx → HawkSoft) run in parallel. Aug 3 retro made EZLynx write-back a must-have for day-to-day use (Zapier note/doc or deposit pack)."
     }
   ],
   "entries": [
@@ -121,6 +121,12 @@
       "learning": "First real end-to-end signal: a client went all the way through shopping, beyond just draft review. Engagement is landing too — questionnaires complete in under 8 minutes, and even the plain boilerplate email draws responses (arguably a cleaner signal, since the copy isn't doing the persuading)."
     },
     {
+      "date": "2026-07-13",
+      "kind": "learning",
+      "source": "Members 1st pilot",
+      "learning": "Cross-sell interest shows up in the questionnaire — life and umbrella asks are easy to surface — but closing them is a different motion. Early life-batch signal (opt-ins / a booked meeting) was real; by end of pilot, 35 households got a cross-sell/upsell touch and 0 bound."
+    },
+    {
       "date": "2026-07-14",
       "kind": "learning",
       "source": "Internal team",
@@ -136,16 +142,75 @@
       "learning": "The mantra settles the strategy. Automated shopping just saves the agent time — a ~$6 task — while retention and cross-sell are the ~$800 tasks that actually prove the agent is in the customer's corner. Lead with those, and build the data repository as a byproduct of using Upline; after ~24 months of accumulated data it can surface as a superior alternative to the AMS."
     },
     {
-      "date": "2026-07-13",
-      "kind": "learning",
-      "source": "Members 1st pilot",
-      "learning": "Cross-sell is a real revenue line, not a someday idea. A life-insurance batch drew ~25% responses; 4 of 5 questionnaire respondents asked about life and one booked a meeting — and agencies pay ~$200 per shown appointment."
-    },
-    {
       "date": "2026-07-15",
       "kind": "learning",
       "source": "Members 1st pilot",
       "learning": "Preliminary quotes aren't bind-ready. An MVR/CLUE pull surfaced an accident that accident-forgiveness had masked, wiping out a client's savings and keeping them put. Recommendation quality still depends on the agent's verification call: automation preps the renewal, the agent closes it."
+    },
+    {
+      "date": "2026-07-15",
+      "kind": "learning",
+      "source": "Internal team",
+      "learning": "AMS strategy locks dual-track: Path 2 (bypass) to launch — one-time book load + weekly renewal pulls via RPA, VA shops only — while Path 1 (official AMS partner, EZLynx first) runs in parallel and must not block shipping."
+    },
+    {
+      "date": "2026-07-22",
+      "kind": "learning",
+      "source": "Members 1st pilot",
+      "learning": "The same 'less is more' instinct that collapsed outreach into one boilerplate now locks the recommendation email: short steer (switch/stay + dollars), no coverage jargon or multi-carrier tables, depth on the phone. Predictably short beats occasionally brilliant for a retention-anxious agency.",
+      "detail": [
+        "Recommendation email ~60% rewritten from v1 once real shops hit the agency; OUTPUT CONTRACT caps body length and forces a pre-send self-check.",
+        "Flag a higher deductible plainly; match the client's actual pay cadence in the savings number."
+      ]
+    },
+    {
+      "date": "2026-07-27",
+      "kind": "learning",
+      "source": "Members 1st pilot",
+      "learning": "Agency second pass is a product requirement, not a nice-to-have. Bundle/MULP math, term (6 vs 12 month), escrow vs pay-in-full, and pay-cadence honesty all needed corrections before client send — 90–95% quote accuracy with a human double-check is enough."
+    },
+    {
+      "date": "2026-08-03",
+      "kind": "milestone",
+      "title": "Members 1st pilot wrapped — final retro",
+      "learning": "Ten working sessions (Jun 17 – Jul 27) plus the Aug 3 retro closed the first design-partner pilot. Outreach stayed at v8 (~85% rewrite from v1); recommendation locked short; questionnaire pruned by more than half."
+    },
+    {
+      "date": "2026-08-03",
+      "kind": "learning",
+      "source": "Members 1st pilot",
+      "learning": "Without the product, proactive disappears. Members 1st will go reactive during the build pause — not because the idea failed, but because they can't run the play without tooling. Intent to adopt day-to-day was clear; the pilot proved need, not lasting habit change.",
+      "detail": [
+        "Time unit they described: ~30 minutes per policy when the client answers (mostly the phone review).",
+        "Must-haves named for day-to-day use: EZLynx write-back, weekly batch + questionnaire notifications, 15%+ shop priority, short client surfaces, manual mid-term add.",
+        "Preferred cadence: Mon send / Tue questionnaire prompts / Fri check — not daily drips."
+      ]
+    },
+    {
+      "date": "2026-08-05",
+      "kind": "learning",
+      "source": "Sales demo",
+      "learning": "First paid-ad inbound (Meta/Instagram) joined the waitlist after a walkthrough: a ~2-person Central Mississippi shop with no AMS today (cancelled EZLynx), prioritizing renewal quoting and getting time back. Strongest product-fit moment was renewal-increase → 'want to requote?' — and portal quoting (not multi-rater) matched how he already thinks about accuracy.",
+      "detail": [
+        "Seasonal buy window: Thanksgiving → mid-Jan; miss it and interest may cool until the next lull.",
+        "Cross-sell / mono-line bundling lit up once the renewal story landed; hesitations are stack/timing, not value-prop skepticism."
+      ]
+    },
+    {
+      "date": "2026-08-07",
+      "kind": "learning",
+      "source": "Members 1st pilot",
+      "learning": "End-of-pilot funnel from Austin's disposition sheet: 48 households on the sheet → 42 emailed → 18 questionnaires (43%) → 18 recommendations sent → 7 switched, 5 stayed, 6 pending. Among shopped households, ~$474/yr average savings found; ~$665/yr among known switchers.",
+      "detail": [
+        "Client objections that kill switches: effort vs. modest savings, and loyalty/comfort — not coverage tables.",
+        "Next design customer should reset outreach to Version A, not inherit Members 1st's v8 wording."
+      ]
+    },
+    {
+      "date": "2026-08-07",
+      "kind": "learning",
+      "source": "Internal team",
+      "learning": "October ops architecture for Path 2 gets concrete: light CSV roster on onboard (no full-book RPA), weekly EZLynx renewal/retention report into an inbox, deep-pull RPA only on the shortlist, write-back via Zapier Create Note/Document when Sales Center is available (deposit pack fallback)."
     }
   ]
 }

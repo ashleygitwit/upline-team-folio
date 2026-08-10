@@ -47,7 +47,7 @@ export function SprintPage() {
         <p className="eyebrow">Roadmap · Next</p>
         <h1 className="hero-title">Product strategy sprint.</h1>
         <p className="hero-sub">
-          An in-person sprint in late August (prep week Aug 24–28, sprint Aug 31–Sep 4). Because it
+          An in-person sprint mid-September (prep week Sep 3–10, sprint Sep 14–18). Because it
           follows two real pilots, it should be far better informed than a typical design sprint —
           we come in knowing which features work, the limits, and the logic. The output is a scoped
           MVP.
@@ -79,8 +79,8 @@ export function SprintPage() {
         <div className="empty-state">
           <p className="empty-state-t">The sprint plan isn&rsquo;t mapped yet</p>
           <p className="empty-state-b">
-            We&rsquo;ll design the week (agenda, exercises, who&rsquo;s in the room) closer to late
-            August, once both pilots have wrapped. Placeholder for now.
+            We&rsquo;ll design the week (agenda, exercises, who&rsquo;s in the room) closer to early
+            September, once both pilots have wrapped. Placeholder for now.
           </p>
         </div>
       </section>

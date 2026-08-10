@@ -60,13 +60,12 @@ const SUCCESS_METRICS: SuccessMetric[] = [
 ];
 
 const PILOT_FACTS: [string, string][] = [
-  ['Design partners', 'Members 1st + Stockton Hill'],
-  ['Length', '~3 weeks each — staggered, 1-week synthesis between'],
+  ['Design partners', 'Members 1st (done) + Stockton Hill (next)'],
+  ['Members 1st', 'Jun 17 – Aug 3 · 10 sessions + retro · 42 emailed'],
   ['Session rhythm', 'Mon · Wed · Fri, ~30 min, on Zoom, recorded'],
-  ['Total sessions', '~18 across both pilots'],
+  ['M1st outcomes', '18 QQ (43%) · 7 switched · 5 stayed · 6 pending'],
   ['Volume', '~15 households / week, 5 reviewed per session'],
 ];
-
 const LANES: { key: string; label: string; color: string }[] = [
   { key: 'upline', label: 'Upline', color: 'var(--primary)' },
   { key: 'agent', label: 'Agent', color: 'var(--chart-5)' },

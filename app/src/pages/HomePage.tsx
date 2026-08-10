@@ -51,7 +51,7 @@ const ARC: ArcStep[] = [
   },
   {
     beat: 'What we\u2019ve learned',
-    text: 'Just getting the right client in front of an agent at the right moment is already a big win. Doing the shopping is the biggest wow \u2014 but drafting the outreach and the recommendation strips out the grunt labor that makes \u201creach out on every renewal\u201d impossible today. We turn a nice-to-have into something actually feasible.',
+    text: 'Members 1st proved it: short outreach in the agency\u2019s voice, shop the big jumps first, keep the phone close in-house. 43% of emailed households completed a questionnaire; seven switched carriers. Without the product they go reactive again \u2014 so the win is making proactive renewal work actually feasible, not just desirable.',
     href: '#/learnings',
     cta: 'Read the learnings',
   },

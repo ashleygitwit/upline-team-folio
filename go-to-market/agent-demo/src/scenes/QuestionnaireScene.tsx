@@ -127,16 +127,11 @@ export default function QuestionnaireScene({ onNext }: SceneProps) {
               <h2 className="q-prompt">Thanks {client.first} — we've got what we need</h2>
               <p className="q-help">Your agent at {agency.name} will follow up shortly with your renewal options. You can close this window.</p>
               <button className="btn btn-ghost btn-lg mt-24" onClick={onNext}>
-                Back to {agency.agent.name}'s view <Icon.arrowRight size={16} />
+                Close <Icon.arrowRight size={16} />
               </button>
             </div>
           )}
         </div>
-      </div>
-
-      <div className="cockpit-topbar" style={{ background: "var(--muted)", color: "var(--muted-foreground)", fontSize: 12 }}>
-        <Icon.sparkle size={14} />
-        Presenter note: the client only ever sees the <strong style={{ margin: "0 4px" }}>{agency.name}</strong> brand here — Upline runs quietly underneath.
       </div>
     </div>
   );

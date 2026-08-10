@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { SceneProps } from "../App";
-import { Badge, Cockpit, Icon, SceneHead, UplineMark, money } from "../components/ui";
+import { Badge, Cockpit, Icon, SceneHead, money } from "../components/ui";
 import { agency, client, recommendationEmail, savings } from "../data";
 
 export default function RecommendationScene({ onNext }: SceneProps) {
@@ -9,9 +9,9 @@ export default function RecommendationScene({ onNext }: SceneProps) {
   return (
     <Cockpit crumb={`${client.name} · Recommendation`}>
       <SceneHead
-        eyebrow="Step 4 · The payoff"
-        title="A short, plain-English email — the call does the rest"
-        sub="Upline drafts the client email the way the pilot proved works: lead with the recommendation and the number, keep coverage jargon off the page, and tee up a call. All the technical detail stays on your side."
+        eyebrow={`${client.name} · Recommendation`}
+        title="Recommendation email"
+        sub="Draft for review — coverage detail stays on your side for the call."
       />
 
       <div className="grid grid-main mt-20">
@@ -67,20 +67,20 @@ export default function RecommendationScene({ onNext }: SceneProps) {
           </div>
 
           {!sent ? (
-            <button className="btn btn-primary btn-block btn-lg" onClick={() => setSent(true)}>
-              <Icon.send size={16} /> Send recommendation
+            <button
+              className="btn btn-primary btn-block btn-lg"
+              onClick={() => {
+                setSent(true);
+                onNext();
+              }}
+            >
+              <Icon.send size={16} /> Send recommendation email
             </button>
           ) : (
-            <div className="upline-callout fade-in">
-              <span className="tag eyebrow"><UplineMark size={15} /> Sent — now the human part</span>
-              <div className="row gap-8 mt-12" style={{ fontSize: 14 }}>
-                <Icon.phone size={18} /> <span>Jolene calls Corey, walks the two deductible changes, and binds both lines together.</span>
-              </div>
-              <p className="muted mt-12" style={{ fontSize: 13 }}>
-                Upline did the watching, the writing, and the shopping. The relationship closes it — exactly how the pilot runs today.
-              </p>
-              <button className="btn btn-ghost btn-block mt-16" onClick={onNext}>
-                See the outcome <Icon.arrowRight size={15} />
+            <div className="card fade-in" style={{ borderColor: "var(--green)", background: "var(--green-soft)" }}>
+              <div className="row gap-8 strong"><Icon.checkCircle size={18} /> Sent · logged to account</div>
+              <button className="btn btn-primary btn-block mt-12" onClick={onNext}>
+                View updated client profile <Icon.arrowRight size={15} />
               </button>
             </div>
           )}

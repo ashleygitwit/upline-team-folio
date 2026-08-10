@@ -60,6 +60,18 @@ export const Icon = {
   lock: ({ size, className }: IconProps) => (
     <svg {...S(size)} className={className}><rect x="5" y="11" width="14" height="9" rx="2" /><path d="M8 11V8a4 4 0 0 1 8 0v3" /></svg>
   ),
+  x: ({ size, className }: IconProps) => (
+    <svg {...S(size)} className={className}><path d="M18 6 6 18M6 6l12 12" /></svg>
+  ),
+  spinner: ({ size, className }: IconProps) => (
+    <svg {...S(size)} className={`spin ${className ?? ""}`}><path d="M12 3a9 9 0 1 0 9 9" /></svg>
+  ),
+  plus: ({ size, className }: IconProps) => (
+    <svg {...S(size)} className={className}><path d="M12 5v14M5 12h14" /></svg>
+  ),
+  filter: ({ size, className }: IconProps) => (
+    <svg {...S(size)} className={className}><path d="M4 5h16l-6 8v5l-4 2v-7Z" /></svg>
+  ),
 };
 
 export function UplineMark({ size = 16, className }: IconProps) {
@@ -81,9 +93,20 @@ export function Badge({ children, tone, dot }: { children: ReactNode; tone?: str
 }
 
 /* ---------------- Cockpit frame ---------------- */
-export function Cockpit({ crumb, children, customer }: { crumb: string; children: ReactNode; customer?: boolean }) {
+export function Cockpit({
+  crumb,
+  children,
+  customer,
+  shell,
+}: {
+  crumb: string;
+  children: ReactNode;
+  customer?: boolean;
+  /** Extra shell class — e.g. "queue-shell" for full-bleed list pages */
+  shell?: string;
+}) {
   return (
-    <div className={`cockpit ${customer ? "customer-surface" : ""}`}>
+    <div className={`cockpit ${customer ? "customer-surface" : ""} ${shell ?? ""}`.trim()}>
       <div className="cockpit-topbar">
         <img src="/upline-logo.png" alt="Upline" className="cockpit-logo" />
         <span className="divider" />

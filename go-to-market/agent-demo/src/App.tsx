@@ -4,23 +4,25 @@ import { Icon, UplineMark } from "./components/ui";
 import QueueScene from "./scenes/QueueScene";
 import Client360Scene from "./scenes/Client360Scene";
 import OutreachScene from "./scenes/OutreachScene";
+import InboxScene from "./scenes/InboxScene";
 import QuestionnaireScene from "./scenes/QuestionnaireScene";
 import ResponsesScene from "./scenes/ResponsesScene";
 import ShoppingScene from "./scenes/ShoppingScene";
 import RecommendationScene from "./scenes/RecommendationScene";
-import OutcomeScene from "./scenes/OutcomeScene";
+import EndStateScene from "./scenes/EndStateScene";
 
 export type SceneProps = { onNext: () => void; onBack: () => void };
 
 const SCENES: { label: string; short: string; Comp: (p: SceneProps) => JSX.Element }[] = [
   { label: "Renewal queue", short: "Queue", Comp: QueueScene },
   { label: "Client view", short: "Client", Comp: Client360Scene },
-  { label: "Outreach", short: "Outreach", Comp: OutreachScene },
-  { label: "Questionnaire", short: "Questionnaire", Comp: QuestionnaireScene },
-  { label: "Responses", short: "Responses", Comp: ResponsesScene },
+  { label: "Outreach & questionnaire", short: "Outreach", Comp: OutreachScene },
+  { label: "Corey's inbox", short: "Inbox", Comp: InboxScene },
+  { label: "Questionnaire", short: "Form", Comp: QuestionnaireScene },
+  { label: "Client (after questionnaire)", short: "Profile", Comp: ResponsesScene },
   { label: "Shopping", short: "Shopping", Comp: ShoppingScene },
   { label: "Recommendation", short: "Recommend", Comp: RecommendationScene },
-  { label: "Outcome", short: "Outcome", Comp: OutcomeScene },
+  { label: "Client (after recommendation)", short: "Updated", Comp: EndStateScene },
 ];
 
 export default function App() {
@@ -58,7 +60,7 @@ export default function App() {
       <nav className="stepper">
         <div className="stepper-inner">
           <span className="presenter-tag">
-            <UplineMark size={14} /> Demo walkthrough
+            <UplineMark size={14} /> Upline
           </span>
           <div className="stepper-steps">
             {SCENES.map((s, n) => (

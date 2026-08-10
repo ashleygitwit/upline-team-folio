@@ -21,21 +21,23 @@ interface Milestone {
 
 const MILESTONES: Milestone[] = [
   {
-    tag: 'Now',
+    tag: 'Done',
     title: 'Members 1st pilot',
-    body: 'Our first live pilot with an independent agency — weekly Mon/Wed/Fri sessions, small-batch outreach paced to shopping capacity, and end-to-end runs from outreach → questionnaire → shop → agent-reviewed recommendation.',
+    body: 'First live pilot wrapped (Jun 17 – Aug 3 retro). 42 emailed → 18 questionnaires (43%) → 18 recommendations → 7 switched, 5 stayed, 6 pending. Outreach and recommendation locked short; agency wants the product day-to-day once built.',
+    href: '#/learnings',
+    cta: 'Read the learnings',
+  },
+  {
+    tag: 'Now',
+    title: 'Stockton Hill pilot',
+    body: 'Second design partner next. Outreach resets to Version A so we can compare how copy and workflow evolve across two very different agencies — and pressure-test what generalizes.',
     href: '#/poc',
     cta: 'View POC details',
   },
   {
-    tag: 'Next',
-    title: 'Stockton Hill pilot',
-    body: 'A second design partner. Outreach restarts from Version A so we can compare how copy and workflow evolve across two very different agencies — and pressure-test what generalizes.',
-  },
-  {
     tag: 'Then',
     title: 'Product strategy sprint',
-    body: 'An in-person sprint in late August. Because it follows two real pilots, it should be far better informed than a typical design sprint — we\u2019ll come in knowing which features work, the limits, and the logic. Output: a scoped MVP.',
+    body: 'An in-person sprint mid-September (prep week Sep 3–10, sprint Sep 14–18). Because it follows two real pilots, it should be far better informed than a typical design sprint — we\u2019ll come in knowing which features work, the limits, and the logic. Output: a scoped MVP.',
     href: '#/sprint',
     cta: 'View strategy sprint details',
   },
@@ -97,8 +99,9 @@ export function RoadmapPage({
           ))}
         </ol>
         <p className="edit-hint">
-          Running in the background: <strong>No-AMS launch feasibility</strong> — can we operate on
-          a one-time data dump plus carrier portals, without ongoing AMS integration?
+          Running in the background: <strong>Path 2 (no AMS API) launch ops</strong> — light CSV
+          onboard, weekly renewal report, shortlist RPA, and Zapier write-back — while Path 1 AMS
+          partner talks continue in parallel.
         </p>
 
         <a className="scale-cta" href="#/scale">

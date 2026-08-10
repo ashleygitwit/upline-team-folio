@@ -55,12 +55,24 @@ Edit thesis, mantra, and proof point in `data/venture-plan.json` under the `vent
 
 ## Structure
 
+Two primary **content** folders, plus a thin **deploy shell** at the root:
+
 ```
 Team Folio/
-├── app/                    # Web app (React + Vite)
-├── assets/                 # Brand assets
-├── data/venture-plan.json  # Source of truth for Gantt data
-├── venture/planning/       # Generated execution-plan.md
-├── scripts/                # Generators
-└── .cursor/rules/          # Workspace guardrails
+├── venture/                      # PRIMARY — venture / product strategy
+│   ├── README.md
+│   └── planning/execution-plan.md
+├── go-to-market/                 # PRIMARY — sales + GTM motions
+│   ├── agent-demo/               # Clickable Ultra Plan waitlist demo
+│   └── sales-demos/              # Prospect demo transcripts / notes
+│
+├── app/                          # Live site shell (React + Vite) — stays at root for Vercel
+├── data/                         # venture-plan.json + learnings.json (site source of truth)
+├── scripts/                      # Generators (generate-plan, sync-data)
+├── assets/                       # Brand assets
+└── .cursor/rules/                # Workspace guardrails
 ```
+
+- **Venture strategy signal** → `venture/` and/or `data/`
+- **Sales / GTM signal** → `go-to-market/`
+

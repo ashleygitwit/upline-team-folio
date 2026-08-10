@@ -48,12 +48,12 @@ interface FunnelNode {
 
 const FN_NODES: FunnelNode[] = [
   {
-    x: 20, y: 85, w: 150, h: 280, count: '50', color: FN_GRAY, ty: 108,
-    label: ['In the pilot'],
-    desc: ['Renewals pulled', 'into the pilot'],
+    x: 20, y: 85, w: 150, h: 280, count: '48', color: FN_GRAY, ty: 108,
+    label: ['On the sheet'],
+    desc: ['Households on the', 'disposition roster'],
   },
   {
-    x: 250, y: 70, w: 150, h: 185, count: '44', color: FN_GREEN,
+    x: 250, y: 70, w: 150, h: 185, count: '42', color: FN_GREEN,
     label: ['Outreach sent'],
     desc: ['Renewal email sent'],
   },
@@ -65,27 +65,22 @@ const FN_NODES: FunnelNode[] = [
   {
     x: 480, y: 70, w: 150, h: 140, count: '18', color: FN_GREEN,
     label: ['Responded'],
-    desc: ['Questionnaire in', 'or further'],
+    desc: ['Questionnaire', 'completed · 43%'],
   },
   {
-    x: 480, y: 230, w: 150, h: 135, count: '26', color: FN_GRAY, ty: 34,
-    label: ['No response yet'],
-    desc: ['Received, awaiting', 'reply'],
+    x: 480, y: 230, w: 150, h: 135, count: '24', color: FN_GRAY, ty: 34,
+    label: ['No response'],
+    desc: ['Emailed, no', 'questionnaire'],
   },
   {
-    x: 710, y: 55, w: 150, h: 90, count: '3', color: FN_GREEN,
-    label: ['Carriers shopped'],
-    desc: ['Draft ready,', 'not yet sent'],
+    x: 710, y: 70, w: 150, h: 140, count: '18', color: FN_GREEN,
+    label: ['Rec sent'],
+    desc: ['Shopped + rec', 'email · 100% of QQ'],
   },
   {
-    x: 710, y: 160, w: 150, h: 80, count: '2', color: FN_GRAY,
-    label: ['In questionnaire'],
-    desc: ['Q done —', 'shopping now'],
-  },
-  {
-    x: 940, y: 55, w: 175, h: 310, count: '13', color: FN_PURPLE, ty: 8,
-    label: ['Rec to client'],
-    desc: ['Rewritten — 7', 'Stayed — 3', 'Unknown — 2', 'Rec sent — 1'],
+    x: 940, y: 55, w: 175, h: 310, count: '18', color: FN_PURPLE, ty: 8,
+    label: ['Closed / open'],
+    desc: ['Switched — 7', 'Stayed — 5', 'Pending — 6'],
   },
 ];
 
@@ -93,7 +88,7 @@ const FN_STAGES: { x: number; label: string }[] = [
   { x: 95, label: 'In pilot' },
   { x: 325, label: 'Outreach' },
   { x: 555, label: 'Response' },
-  { x: 785, label: 'Shop' },
+  { x: 785, label: 'Recommend' },
   { x: 1027, label: 'Outcome' },
 ];
 
@@ -107,15 +102,14 @@ const FN_LINKS: FunnelLink[] = [
   // In pilot -> outreach sent / not emailed
   { x1: 170, y1: 170, t1: 110, x2: 250, y2: 162, t2: 110, color: FN_GREEN },
   { x1: 170, y1: 300, t1: 18, x2: 250, y2: 320, t2: 18, color: FN_GRAY },
-  // Outreach sent -> responded / no response yet
-  { x1: 400, y1: 115, t1: 40, x2: 480, y2: 140, t2: 40, color: FN_GREEN },
-  { x1: 400, y1: 195, t1: 62, x2: 480, y2: 297, t2: 62, color: FN_GRAY },
-  // Responded -> carriers shopped (draft) / in questionnaire (shopping) / rec+closed
-  { x1: 630, y1: 100, t1: 8, x2: 710, y2: 100, t2: 8, color: FN_GREEN },
-  { x1: 630, y1: 122, t1: 6, x2: 710, y2: 200, t2: 6, color: FN_GRAY },
-  { x1: 630, y1: 175, t1: 28, x2: 940, y2: 210, t2: 28, color: FN_PURPLE },
+  // Outreach sent -> responded / no response
+  { x1: 400, y1: 115, t1: 42, x2: 480, y2: 140, t2: 42, color: FN_GREEN },
+  { x1: 400, y1: 195, t1: 56, x2: 480, y2: 297, t2: 56, color: FN_GRAY },
+  // Responded -> rec sent (all 18)
+  { x1: 630, y1: 140, t1: 42, x2: 710, y2: 140, t2: 42, color: FN_GREEN },
+  // Rec sent -> outcomes
+  { x1: 860, y1: 140, t1: 42, x2: 940, y2: 210, t2: 42, color: FN_PURPLE },
 ];
-
 function ribbonPath(l: FunnelLink): string {
   const cx = (l.x1 + l.x2) / 2;
   const a = l.y1 - l.t1 / 2;
@@ -132,7 +126,7 @@ function PilotFunnel() {
         className="funnel-svg"
         viewBox="0 0 1130 400"
         role="img"
-        aria-label="Members 1st pilot funnel snapshot: 50 households in the pilot; 44 outreach emails sent and 6 held (not emailed); 18 responded, 26 awaiting reply; 2 questionnaire complete and being shopped, 3 with a draft recommendation not yet sent; 13 to the client — 7 rewritten, 3 stayed, 2 unknown, 1 recommendation sent and still open."
+        aria-label="Members 1st pilot funnel snapshot: 48 households on the disposition sheet; 42 outreach emails sent and 6 held (not emailed); 18 questionnaires completed (43%) and 24 with no response; all 18 responders received a recommendation email; outcomes — 7 switched, 5 stayed, 6 pending."
       >
         {FN_STAGES.map((s) => (
           <text key={s.label} x={s.x} y={22} textAnchor="middle" className="fn-stage">
@@ -182,10 +176,10 @@ function PilotFunnel() {
         })}
       </svg>
       <figcaption>
-        Current snapshot from the Pilot Customer Funnel board (Members 1st, Aug 3, 2026). Outreach and
-        response greens are cumulative; Shop and Outcome match the board columns — in questionnaire =
-        Q done and shopping now; carriers shopped = draft ready, not sent; rec to client includes
-        closed outcomes (rewritten / stayed / unknown) plus recommendations already sent.
+        End-of-pilot snapshot from Austin&rsquo;s disposition sheet (Members 1st, as of Aug 7, 2026).
+        Outreach and response are cumulative; every questionnaire responder received a recommendation
+        email (18/18). Outcomes: switched carriers, stayed with current carrier, or still pending a
+        response to the recommendation.
       </figcaption>
     </figure>
   );
@@ -281,10 +275,10 @@ export function LearningsPage({ learnings }: LearningsPageProps) {
       </section>
 
       <section className="card">
-        <h2>Pilot customer funnel — where households sit now</h2>
+        <h2>Pilot customer funnel — end of Members 1st</h2>
         <p className="export-hint">
-          A live snapshot of the Members 1st pilot: all 50 households traced from outreach through
-          response, shopping, and recommendation / close-out.
+          Closed snapshot of the Members 1st pilot: 48 households on the disposition sheet, traced
+          from outreach through questionnaire, recommendation, and close-out.
         </p>
         <PilotFunnel />
       </section>

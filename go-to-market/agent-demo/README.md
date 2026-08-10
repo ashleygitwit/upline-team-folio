@@ -11,7 +11,7 @@ dressed in the current Upline brand.
 ## Run it
 
 ```bash
-cd agent-demo
+cd go-to-market/agent-demo
 npm install
 npm run dev
 ```
@@ -22,14 +22,14 @@ Then open the printed local URL (defaults to `http://localhost:5173`).
 
 - Use the **step pills** at the bottom to jump around, or **Next / Back** (also `←` / `→` keys).
 - The scenes:
-  1. **Queue** — renewals ranked by increase; Corey floats to the top.
+  1. **Queue** — renewals for the week; statuses: Outreach Ready / Shopping Carriers / Recommendation Ready.
   2. **Client** — Corey's 360 view + Upline's suggested action.
-  3. **Outreach** — the Members 1st boilerplate email, auto-filled.
-  4. **Questionnaire** — the customer's view (Members 1st branded; Upline stays hidden).
-  5. **Responses** — answers land on the card; what changed is highlighted.
-  6. **Shopping** — carriers compared, coverage-matched; Travelers recommended.
-  7. **Recommendation** — short client email; detail kept for the call.
-  8. **Outcome** — the payoff + the one-line pitch.
+  3. **Outreach** — email draft + questionnaire questions (approve / remove).
+  4. **Inbox** — what Corey sees on his phone (Members 1st branded).
+  5. **Form** — the customer questionnaire (agency-branded; Upline hidden).
+  6. **Responses** — answers land on the card; what changed is highlighted.
+  7. **Shopping** — in-progress state, then shop-complete comparison table; Travelers recommended.
+  8. **Recommendation** — short client email; detail kept for the call.
 
 ## Notes
 

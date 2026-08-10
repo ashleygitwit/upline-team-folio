@@ -1,6 +1,6 @@
 # Upline Venture — Execution Plan
 
-*Last updated: 2026-07-27*
+*Last updated: 2026-08-07*
 
 Paste this into ChatGPT, Claude, or your preferred LLM to ask about timeline, priorities, pilot metrics, email copy, and what is in flight. Answers should synthesize at **team level** — see guidance below.
 
@@ -37,7 +37,7 @@ If we help independent P&C agencies turn renewal season into a repeatable, agent
 
 ## Upcoming proof point
 
-For real renewals in this pilot, we need proof that we can repeatedly generate a proposal moment that agents trust enough to send and that customers respond to.
+Members 1st proved agent trust and customer engagement on a real book. Next proof: the same proposal moment with a second design partner (Stockton Hill), reset to Version A outreach — plus Path 2 ops that can onboard without an AMS API.
 
 **Success:** Agent Trust · Customer Engagement · Scalability Confidence
 
@@ -45,11 +45,11 @@ For real renewals in this pilot, we need proof that we can repeatedly generate a
 
 ## Pilot activity summary
 
-*Members 1st Insurance · kickoff 2026-06-17 · as of 2026-07-27*
+*Members 1st Insurance · kickoff 2026-06-17 · as of 2026-08-07*
 
-**Pilot week:** 3 · outreach sends catch-up week 4 · sessions 5 of 12 · rhythm Mon · Wed · Fri
+**Pilot week:** 6 · sessions 11 of 11 · rhythm Mon · Wed · Fri
 
-**Schedule:** Kickoff Jun 17 (Wed). Week 1: Jun 17, 22, 24. Gap (no sessions Jun 26–Jul 3). Week 2: Jul 6, 8, 10. Week 3 starts Jul 13 (Mon): Jul 13, 15, 17. Outreach sends ~1 week behind sessions — catch-up Jul 20, 22, 24. Break week Jul 27 for iteration + Stockton Hill prep.
+**Schedule:** Pilot complete. 10 working sessions Jun 17 – Jul 27 + Final Retro Aug 3. Outreach catch-up Jul 20–24. Disposition sheet closed Aug 7: 48 households · 42 emailed · 18 QQ (43%) · 18 recs · 7 switched · 5 stayed · 6 pending. Next: Stockton Hill (Version A reset) + MVP build prep.
 
 **Client naming (team-safe):** First name + last initial only (e.g. Daniel P). Never full last names in team-facing exports.
 
@@ -57,13 +57,13 @@ For real renewals in this pilot, we need proof that we can repeatedly generate a
 
 | Metric | Count |
 | --- | --- |
-| Outreach emails drafted | 20 |
-| Outreach emails sent | 0 |
-| Total emails sent (all types) | 0 |
-| Questionnaires completed | 1 |
-| Quotes reviewed with agency | 1 |
-| Recommendation emails sent | 0 |
-| Completed end-to-end (sent → questionnaire → quote → rec → client action) | 0 |
+| Outreach emails drafted | 42 |
+| Outreach emails sent | 42 |
+| Total emails sent (all types) | 42 |
+| Questionnaires completed | 18 |
+| Quotes reviewed with agency | 18 |
+| Recommendation emails sent | 18 |
+| Completed end-to-end (sent → questionnaire → quote → rec → client action) | 12 |
 
 ### Roster
 
@@ -72,9 +72,9 @@ For real renewals in this pilot, we need proof that we can repeatedly generate a
 
 ### Recommended outreach email copy
 
-**Version:** v8 (Jul 6 2026)
+**Version:** v8 / vFINAL (held through Aug 3 retro)
 
-One boilerplate for every renewal. Only variables: first name, renewal date, new premium (dollars only — no %, no old price, no increase language), and questionnaire link. Premium is never in the first sentence.
+One boilerplate for every renewal. Only variables: first name, renewal date, new premium (dollars only — no %, no old price, no increase language), and questionnaire link. Premium is never in the first sentence. ~85% rewrite from v1; zero further copy changes after Session 4.
 
 **Subject:** A quick review of your upcoming renewal
 
@@ -96,28 +96,31 @@ Thank you for being a valued member of Members 1st Insurance. We're committed to
 
 ### Recommendation email (post-shop)
 
-**Version:** v6.1
+**Version:** v8 / vFINAL + output contract
 
-Post-shop handoff: rate comparison in paragraph one, simple comparison table, coverage reassurance, CTA to schedule a call (switch) or confirm stay (no shop). Agent reviews every quote before client contact.
+Post-shop handoff locked short: steer (switch/stay + $) in paragraph one, premium-only recommended-vs-current table at most, coverage reassurance, soft CTA to a call. No jargon, no multi-carrier coverage tables. Agent reviews every quote before client contact. ~60% rewrite from v1.
 
-**Status:** Active design target. Daniel P is the gold-standard switch example; first recommendation email draft pending agency review.
+**Status:** Locked at Aug 3 retro — no further template changes. Gerardo S is the canonical short switch example; next design partner resets to Version A.
 
-**Gold-standard example client:** Daniel P
+**Gold-standard example client:** Gerardo S
 
 ### Key findings so far
 
-- Outreach collapsed to a single boilerplate (v8) — agency wants one email for everyone, not per-bucket variants. Questionnaire carries nuance; recommendation email is the next frontier.
-- New premium only — never show % increase, old price, or cause diagnosis. Clients flee sticker shock; broker-identity opener (valued member + seven carriers) is required.
-- Shop threshold: prioritize ≥15% increases, ranked biggest-first. Email everyone on renewal as a relationship touch; concentrate shopping on big jumps.
-- Small-batch sends (5–6/week) paced to quoting capacity — not all 15 at once.
-- Quoting workflow: Upline quotes → Members 1st reviews before any client email → service team closes. Donegal→Travelers rewrite contract governs first move.
-- Phone follow-up stays in-house — agency wants the personal touch on non-responders.
-- First live quoting walkthrough (Jul 7): Daniel P test case across Travelers, Safeco, Nationwide, Progressive. Home + auto quoted together.
-- Sends ~1 week behind session rhythm — Week 4 catch-up Jul 20–24. Week 3 sessions start Jul 13.
+- End-of-pilot funnel (disposition sheet Aug 7): 48 on sheet → 42 emailed → 18 QQ (43%) → 18 recs sent → 7 switched · 5 stayed · 6 pending. Avg savings found ~$474/yr among shopped; ~$665/yr among known switchers.
+- Outreach collapsed to a single boilerplate (v8, ~85% from v1) — one email for everyone. Held with zero further copy changes through the Aug 3 retro.
+- Recommendation email locked short (~60% from v1): steer + dollars; depth on the phone. OUTPUT CONTRACT caps length; flag higher deductible; match pay cadence.
+- Shop threshold held: prioritize ≥15% increases, ranked biggest-first. Preferred product cadence: weekly batch (Mon send / Tue QQ prompts / Fri check), not daily drips.
+- Upline drafts; agency closes — ~30 min/policy when the client answers (mostly phone). 90–95% quote accuracy with a human double-check is enough; preliminary ≠ bind-ready.
+- Without the product, proactive disappears — M1 will go reactive during the build pause. Strong intent to adopt day-to-day once built.
+- Must-haves for day-to-day: EZLynx write-back, weekly batch + QQ notifications, 15%+ priority, short client surfaces, manual mid-term add.
+- Cross-sell/upsell: 35 households touched; 0 bound by end of pilot — interest surfaces easily; closing is a different motion.
+- Next design customer resets outreach to Version A — do not inherit Members 1st v8 wording.
 
 ### Notable client progress
 
-- **Daniel P:** First questionnaire response received. Live quoting walkthrough complete Jul 7. Recommendation email draft is next team deliverable.
+- **Gerardo S:** Canonical short switch: auto to Travelers (~$977 vs Donegal ~$1,630) bundled with Camp Hill home. Agency accepted; email kept short.
+- **Donald K:** Travelers looked ~$665 under until a forgiven at-fault accident hit the report — stayed Donegal. Preliminary ≠ bind-ready.
+- **Kimberly S:** Switch confirmed with agency corrections (12-mo term, escrow, pay-cadence honesty). Second set of eyes as product requirement.
 
 ---
 
@@ -127,28 +130,24 @@ Post-shop handoff: rate comparison in paragraph one, simple comparison table, co
 - **Workstream:** Ops
 - **Dates:** 2026-07-13 → 2026-11-20
 - **Notes:** Executive search and hiring process.
-### Pilot break — iterate & Stockton prep
-- **Workstream:** Product
-- **Dates:** 2026-07-27 → 2026-08-02
-- **Notes:** Current week. One week off between pilots — synthesize M1st learnings; set up Stockton Hill.
 ### No-AMS launch feasibility (background)
 - **Workstream:** Product
 - **Dates:** 2026-07-13 → 2026-09-18
-- **Notes:** Background spare-cycles work through sprint week.
+- **Notes:** Path 2 ops architecture drafted (Aug 7): light CSV onboard + weekly renewal report + shortlist RPA + Zapier write-back. Continues through sprint week.
 
 ## Next
 
 ### Stockton Hill pilot
 - **Workstream:** Product
-- **Dates:** 2026-08-05 → 2026-08-26
-- **Notes:** ~3 weeks. Mon/Wed/Fri sessions, Aug 5–26.
+- **Dates:** 2026-08-17 → 2026-09-04
+- **Notes:** Second design partner. Reset outreach to Version A (do not inherit M1 v8). ~3 weeks Mon/Wed/Fri — dates tentative after M1 wrap.
 
 ## Future
 
-### Pilot retro
+### Cross-pilot retro
 - **Workstream:** Product
-- **Dates:** 2026-08-26 → 2026-09-02
-- **Notes:** Retro across both pilots — synthesize learnings before the sprint.
+- **Dates:** 2026-09-04 → 2026-09-11
+- **Notes:** Retro across both pilots — synthesize learnings before the sprint. (M1-only retro already done Aug 3.)
 ### Sprint prep week
 - **Workstream:** Product
 - **Dates:** 2026-09-03 → 2026-09-10
@@ -212,6 +211,14 @@ Post-shop handoff: rate comparison in paragraph one, simple comparison table, co
 - **Workstream:** Product
 - **Dates:** 2026-07-20 → 2026-07-24
 - **Notes:** Send batch Jul 20, 22, 24 — complete. Outreach queue cleared.
+### Pilot break — iterate & Stockton prep
+- **Workstream:** Product
+- **Dates:** 2026-07-27 → 2026-08-02
+- **Notes:** Complete. M1st learnings synthesized; disposition sheet closed Aug 7; Aug 3 final retro held.
+### Members 1st final retro
+- **Workstream:** Product
+- **Dates:** 2026-08-03 → 2026-08-03
+- **Notes:** Final session / retro Aug 3. Locked v8 emails, weekly cadence, EZLynx write-back + mid-term add as must-haves.
 
 ---
 
@@ -224,9 +231,10 @@ Post-shop handoff: rate comparison in paragraph one, simple comparison table, co
 | Members 1st pilot — Week 2 | Product | Done | 2026-07-06 | 2026-07-10 |
 | Members 1st pilot — Week 3 | Product | Done | 2026-07-13 | 2026-07-17 |
 | Members 1st — outreach catch-up (Week 4) | Product | Done | 2026-07-20 | 2026-07-24 |
-| Pilot break — iterate & Stockton prep | Product | In Flight | 2026-07-27 | 2026-08-02 |
-| Stockton Hill pilot | Product | Next | 2026-08-05 | 2026-08-26 |
-| Pilot retro | Product | Future | 2026-08-26 | 2026-09-02 |
+| Pilot break — iterate & Stockton prep | Product | Done | 2026-07-27 | 2026-08-02 |
+| Members 1st final retro | Product | Done | 2026-08-03 | 2026-08-03 |
+| Stockton Hill pilot | Product | Next | 2026-08-17 | 2026-09-04 |
+| Cross-pilot retro | Product | Future | 2026-09-04 | 2026-09-11 |
 | Sprint prep week | Product | Future | 2026-09-03 | 2026-09-10 |
 | Product strategy sprint | Product | Future | 2026-09-14 | 2026-09-18 |
 | MVP planning week | Product | Future | 2026-09-21 | 2026-09-25 |
