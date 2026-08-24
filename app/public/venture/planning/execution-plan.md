@@ -1,6 +1,6 @@
 # Upline Venture — Execution Plan
 
-*Last updated: 2026-08-07*
+*Last updated: 2026-08-24*
 
 Paste this into ChatGPT, Claude, or your preferred LLM to ask about timeline, priorities, pilot metrics, email copy, and what is in flight. Answers should synthesize at **team level** — see guidance below.
 
@@ -37,7 +37,7 @@ If we help independent P&C agencies turn renewal season into a repeatable, agent
 
 ## Upcoming proof point
 
-Members 1st proved agent trust and customer engagement on a real book. Next proof: the same proposal moment with a second design partner (Stockton Hill), reset to Version A outreach — plus Path 2 ops that can onboard without an AMS API.
+Members 1st proved agent trust and customer engagement on a real book. Next proof: the same proposal moment with Stockton Hill (Version A outreach), assumed to kick off Aug 26. Path 2 no-AMS ops are in place.
 
 **Success:** Agent Trust · Customer Engagement · Scalability Confidence
 
@@ -45,11 +45,11 @@ Members 1st proved agent trust and customer engagement on a real book. Next proo
 
 ## Pilot activity summary
 
-*Members 1st Insurance · kickoff 2026-06-17 · as of 2026-08-07*
+*Members 1st Insurance · kickoff 2026-06-17 · as of 2026-08-24*
 
 **Pilot week:** 6 · sessions 11 of 11 · rhythm Mon · Wed · Fri
 
-**Schedule:** Pilot complete. 10 working sessions Jun 17 – Jul 27 + Final Retro Aug 3. Outreach catch-up Jul 20–24. Disposition sheet closed Aug 7: 48 households · 42 emailed · 18 QQ (43%) · 18 recs · 7 switched · 5 stayed · 6 pending. Next: Stockton Hill (Version A reset) + MVP build prep.
+**Schedule:** Pilot complete. 10 working sessions Jun 17 – Jul 27 + Final Retro Aug 3. Outreach catch-up Jul 20–24. Disposition sheet closed Aug 7: 48 households · 42 emailed · 18 QQ (43%) · 18 recs · 7 switched · 5 stayed · 6 pending. Aug 5–24: Stockton Hill setup / holding. Assumed kickoff Aug 26 for three weeks.
 
 **Client naming (team-safe):** First name + last initial only (e.g. Daniel P). Never full last names in team-facing exports.
 
@@ -130,40 +130,40 @@ Post-shop handoff locked short: steer (switch/stay + $) in paragraph one, premiu
 - **Workstream:** Ops
 - **Dates:** 2026-07-13 → 2026-11-20
 - **Notes:** Executive search and hiring process.
-### No-AMS launch feasibility (background)
+### Stockton Hill setup / holding
 - **Workstream:** Product
-- **Dates:** 2026-07-13 → 2026-09-18
-- **Notes:** Path 2 ops architecture drafted (Aug 7): light CSV onboard + weekly renewal report + shortlist RPA + Zapier write-back. Continues through sprint week.
+- **Dates:** 2026-08-05 → 2026-08-24
+- **Notes:** Waiting on Stockton Hill materials. Assumption: they land today (Aug 24) so the pilot can start Aug 26.
 
 ## Next
 
 ### Stockton Hill pilot
 - **Workstream:** Product
-- **Dates:** 2026-08-17 → 2026-09-04
-- **Notes:** Second design partner. Reset outreach to Version A (do not inherit M1 v8). ~3 weeks Mon/Wed/Fri — dates tentative after M1 wrap.
+- **Dates:** 2026-08-26 → 2026-09-16
+- **Notes:** Second design partner. Reset outreach to Version A (do not inherit M1 v8). Three weeks starting Aug 26.
 
 ## Future
 
-### Cross-pilot retro
+### Sprint prep
 - **Workstream:** Product
-- **Dates:** 2026-09-04 → 2026-09-11
-- **Notes:** Retro across both pilots — synthesize learnings before the sprint. (M1-only retro already done Aug 3.)
-### Sprint prep week
-- **Workstream:** Product
-- **Dates:** 2026-09-03 → 2026-09-10
-- **Notes:** Learnings and prep for product strategy sprint.
+- **Dates:** 2026-09-17 → 2026-09-18
+- **Notes:** One to two days of prep after Stockton wraps — not a full prep week.
 ### Product strategy sprint
 - **Workstream:** Product
-- **Dates:** 2026-09-14 → 2026-09-18
-- **Notes:** Sprint week — Sep 14 through Sep 18.
-### MVP planning week
+- **Dates:** 2026-09-21 → 2026-09-23
+- **Notes:** Three in-person days — Sep 21 through Sep 23.
+### MVP planning
 - **Workstream:** Product
-- **Dates:** 2026-09-21 → 2026-09-25
-- **Notes:** Scope and plan MVP build.
+- **Dates:** 2026-09-24 → 2026-09-25
+- **Notes:** Two days to scope and sequence the 10-week build.
 ### MVP build
 - **Workstream:** Product
 - **Dates:** 2026-09-28 → 2026-12-04
 - **Notes:** 10-week build. Kickoff Sep 28. Targets an MVP launch around Thanksgiving.
+### MVP launch
+- **Workstream:** Product
+- **Dates:** 2026-12-04 → 2026-12-04
+- **Notes:** Ship date — the day the 10-week build lands. Around Thanksgiving.
 ### Optional Oct beta — design partners (Aggressive path)
 - **Workstream:** Product
 - **Dates:** 2026-10-12 → 2026-11-20
@@ -219,6 +219,10 @@ Post-shop handoff locked short: steer (switch/stay + $) in paragraph one, premiu
 - **Workstream:** Product
 - **Dates:** 2026-08-03 → 2026-08-03
 - **Notes:** Final session / retro Aug 3. Locked v8 emails, weekly cadence, EZLynx write-back + mid-term add as must-haves.
+### No-AMS launch feasibility (background)
+- **Workstream:** Product
+- **Dates:** 2026-07-13 → 2026-08-24
+- **Notes:** Path 2 ops architecture drafted (Aug 7): light CSV onboard + weekly renewal report + shortlist RPA + Zapier write-back. Feasibility closed — we can launch without an AMS API.
 
 ---
 
@@ -233,12 +237,13 @@ Post-shop handoff locked short: steer (switch/stay + $) in paragraph one, premiu
 | Members 1st — outreach catch-up (Week 4) | Product | Done | 2026-07-20 | 2026-07-24 |
 | Pilot break — iterate & Stockton prep | Product | Done | 2026-07-27 | 2026-08-02 |
 | Members 1st final retro | Product | Done | 2026-08-03 | 2026-08-03 |
-| Stockton Hill pilot | Product | Next | 2026-08-17 | 2026-09-04 |
-| Cross-pilot retro | Product | Future | 2026-09-04 | 2026-09-11 |
-| Sprint prep week | Product | Future | 2026-09-03 | 2026-09-10 |
-| Product strategy sprint | Product | Future | 2026-09-14 | 2026-09-18 |
-| MVP planning week | Product | Future | 2026-09-21 | 2026-09-25 |
+| Stockton Hill setup / holding | Product | In Flight | 2026-08-05 | 2026-08-24 |
+| Stockton Hill pilot | Product | Next | 2026-08-26 | 2026-09-16 |
+| Sprint prep | Product | Future | 2026-09-17 | 2026-09-18 |
+| Product strategy sprint | Product | Future | 2026-09-21 | 2026-09-23 |
+| MVP planning | Product | Future | 2026-09-24 | 2026-09-25 |
 | MVP build | Product | Future | 2026-09-28 | 2026-12-04 |
+| MVP launch | Product | Future | 2026-12-04 | 2026-12-04 |
 | Optional Oct beta — design partners (Aggressive path) | Product | Future | 2026-10-12 | 2026-11-20 |
 | MVP iteration — first customers | Product | Future | 2026-12-07 | 2027-01-15 |
 | R2 — Close the loop | Product | Future | 2026-12-07 | 2027-01-15 |
@@ -246,4 +251,4 @@ Post-shop handoff locked short: steer (switch/stay + $) in paragraph one, premiu
 | R4 — RPA full-book AMS pull | Product | Future | 2027-03-01 | 2027-04-09 |
 | R5 — Gig-style VA onboarding | Product | Future | 2027-04-12 | 2027-05-21 |
 | R6 — AMS replacement (data visibility) | Product | Future | 2027-05-24 | 2027-07-02 |
-| No-AMS launch feasibility (background) | Product | In Flight | 2026-07-13 | 2026-09-18 |
+| No-AMS launch feasibility (background) | Product | Done | 2026-07-13 | 2026-08-24 |

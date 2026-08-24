@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { VenturePlan } from '../types';
 import { GanttSection } from '../components/GanttSection';
+import { ScenarioGanttSection } from '../components/ScenarioGanttSection';
 
 interface RoadmapPageProps {
   plan: VenturePlan | null;
@@ -30,21 +31,28 @@ const MILESTONES: Milestone[] = [
   {
     tag: 'Now',
     title: 'Stockton Hill pilot',
-    body: 'Second design partner next. Outreach resets to Version A so we can compare how copy and workflow evolve across two very different agencies — and pressure-test what generalizes.',
+    body: 'Setup and holding ran Aug 5–24, waiting on their materials. Assumed kickoff Aug 26 for three weeks. Outreach resets to Version A so we can compare how copy and workflow evolve across two very different agencies.',
     href: '#/poc',
     cta: 'View POC details',
   },
   {
     tag: 'Then',
     title: 'Product strategy sprint',
-    body: 'An in-person sprint mid-September (prep week Sep 3–10, sprint Sep 14–18). Because it follows two real pilots, it should be far better informed than a typical design sprint — we\u2019ll come in knowing which features work, the limits, and the logic. Output: a scoped MVP.',
+    body: 'After Stockton wraps: one to two days of prep (Sep 17–18), a three-day in-person sprint (Sep 21–23), then two days of MVP planning (Sep 24–25). Because it follows two real pilots, it should be far better informed than a typical design sprint. Output: a scoped MVP.',
     href: '#/sprint',
     cta: 'View strategy sprint details',
   },
   {
     tag: 'Then',
     title: 'MVP build',
-    body: 'A ~10-week build of the first sellable front-end experience, even if some steps stay manual (VAs shopping) at launch. Target first commercial customer around mid-November.',
+    body: 'A ~10-week build of the first sellable front-end experience, even if some steps stay manual (VAs shopping) at launch. Kickoff Sep 28. Target launch around Dec 4 / Thanksgiving.',
+    href: '#/mvp',
+    cta: 'View MVP details',
+  },
+  {
+    tag: 'Then',
+    title: 'MVP launch',
+    body: 'The day the 10-week build lands. Current plan: Dec 4. If we start building next week, that date moves to Nov 6.',
     href: '#/mvp',
     cta: 'View MVP details',
   },
@@ -99,9 +107,9 @@ export function RoadmapPage({
           ))}
         </ol>
         <p className="edit-hint">
-          Running in the background: <strong>Path 2 (no AMS API) launch ops</strong> — light CSV
-          onboard, weekly renewal report, shortlist RPA, and Zapier write-back — while Path 1 AMS
-          partner talks continue in parallel.
+          Path 2 (no AMS API) launch ops are in place — light CSV onboard, weekly renewal report,
+          shortlist RPA, and Zapier write-back — while Path 1 AMS partner talks continue in
+          parallel.
         </p>
 
         <a className="scale-cta" href="#/scale">
@@ -128,6 +136,8 @@ export function RoadmapPage({
           ) : null}
 
           <GanttSection plan={plan} onPlanChange={onPlanChange} />
+
+          <ScenarioGanttSection compact />
 
           {SHOW_LLM_EXPORT ? (
           <section className="card export-card">

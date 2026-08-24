@@ -47,10 +47,10 @@ export function SprintPage() {
         <p className="eyebrow">Roadmap · Next</p>
         <h1 className="hero-title">Product strategy sprint.</h1>
         <p className="hero-sub">
-          An in-person sprint mid-September (prep week Sep 3–10, sprint Sep 14–18). Because it
-          follows two real pilots, it should be far better informed than a typical design sprint —
-          we come in knowing which features work, the limits, and the logic. The output is a scoped
-          MVP.
+          After Stockton Hill wraps: one to two days of prep (Sep 17–18), then three in-person
+          days (Sep 21–23) and two days of MVP planning (Sep 24–25). Because it follows two real
+          pilots, it should be far better informed than a typical design sprint — we come in
+          knowing which features work, the limits, and the logic. The output is a scoped MVP.
         </p>
       </section>
 

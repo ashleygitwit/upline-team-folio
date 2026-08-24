@@ -93,7 +93,7 @@ export function GanttSection({ plan, onPlanChange }: GanttSectionProps) {
   return (
     <section className="card gantt-card">
       <div className="section-head">
-        <h2>Plan</h2>
+        <h2>Current Plan</h2>
         <div className="toolbar">
           <div className="view-toggle" role="tablist" aria-label="Plan view">
             <button

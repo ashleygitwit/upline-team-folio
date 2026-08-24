@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-08-07",
+  "lastUpdated": "2026-08-24",
   "venture": {
     "hypothesis": "If we help independent P&C agencies turn renewal season into a repeatable, agent-approved outreach-and-recommendation workflow by triaging which accounts need action, doing the shopping legwork, and drafting a clear client recommendation, then agencies will retain more at-risk households and convert more renewals into cross-sell or up-sell conversations across their existing book of business, because today that work is too manual and time-consuming for most teams to run account-by-account at scale.",
     "thesis": {
@@ -9,7 +9,7 @@
     },
     "mantra": "Make every renewal prove the agent is in my corner.",
     "upcomingProofPoint": {
-      "description": "Members 1st proved agent trust and customer engagement on a real book. Next proof: the same proposal moment with a second design partner (Stockton Hill), reset to Version A outreach — plus Path 2 ops that can onboard without an AMS API.",
+      "description": "Members 1st proved agent trust and customer engagement on a real book. Next proof: the same proposal moment with Stockton Hill (Version A outreach), assumed to kick off Aug 26. Path 2 no-AMS ops are in place.",
       "successCriteria": ["Agent Trust", "Customer Engagement", "Scalability Confidence"]
     }
   },
@@ -17,12 +17,12 @@
   "pilotSummary": {
     "agency": "Members 1st Insurance",
     "kickoffDate": "2026-06-17",
-    "asOfDate": "2026-08-07",
+    "asOfDate": "2026-08-24",
     "pilotWeek": 6,
     "sessionRhythm": "Mon · Wed · Fri",
     "sessionsCompleted": 11,
     "sessionsPlanned": 11,
-    "scheduleNote": "Pilot complete. 10 working sessions Jun 17 – Jul 27 + Final Retro Aug 3. Outreach catch-up Jul 20–24. Disposition sheet closed Aug 7: 48 households · 42 emailed · 18 QQ (43%) · 18 recs · 7 switched · 5 stayed · 6 pending. Next: Stockton Hill (Version A reset) + MVP build prep.",
+    "scheduleNote": "Pilot complete. 10 working sessions Jun 17 – Jul 27 + Final Retro Aug 3. Outreach catch-up Jul 20–24. Disposition sheet closed Aug 7: 48 households · 42 emailed · 18 QQ (43%) · 18 recs · 7 switched · 5 stayed · 6 pending. Aug 5–24: Stockton Hill setup / holding. Assumed kickoff Aug 26 for three weeks.",
     "clientNamingRule": "First name + last initial only (e.g. Daniel P). Never full last names in team-facing exports.",
     "funnel": {
       "outreachEmailsDrafted": 42,
@@ -150,34 +150,34 @@
       "notes": "Final session / retro Aug 3. Locked v8 emails, weekly cadence, EZLynx write-back + mid-term add as must-haves."
     },
     {
+      "id": "prod-stockton-holding",
+      "title": "Stockton Hill setup / holding",
+      "workstream": "Product",
+      "status": "In Flight",
+      "owner": "Ashley + Agent",
+      "start": "2026-08-05",
+      "end": "2026-08-24",
+      "notes": "Waiting on Stockton Hill materials. Assumption: they land today (Aug 24) so the pilot can start Aug 26."
+    },
+    {
       "id": "prod-stockton-hill",
       "title": "Stockton Hill pilot",
       "workstream": "Product",
       "status": "Next",
       "owner": "Ashley + Agent",
-      "start": "2026-08-17",
-      "end": "2026-09-04",
-      "notes": "Second design partner. Reset outreach to Version A (do not inherit M1 v8). ~3 weeks Mon/Wed/Fri — dates tentative after M1 wrap."
-    },
-    {
-      "id": "prod-pilot-retro",
-      "title": "Cross-pilot retro",
-      "workstream": "Product",
-      "status": "Future",
-      "owner": "Ashley + Agent",
-      "start": "2026-09-04",
-      "end": "2026-09-11",
-      "notes": "Retro across both pilots — synthesize learnings before the sprint. (M1-only retro already done Aug 3.)"
+      "start": "2026-08-26",
+      "end": "2026-09-16",
+      "notes": "Second design partner. Reset outreach to Version A (do not inherit M1 v8). Three weeks starting Aug 26."
     },
     {
       "id": "prod-sprint-prep",
-      "title": "Sprint prep week",
+      "title": "Sprint prep",
       "workstream": "Product",
       "status": "Future",
       "owner": "Ashley + Agent",
-      "start": "2026-09-03",
-      "end": "2026-09-10",
-      "notes": "Learnings and prep for product strategy sprint."
+      "start": "2026-09-17",
+      "end": "2026-09-18",
+      "notes": "One to two days of prep after Stockton wraps — not a full prep week."
     },
     {
       "id": "prod-strategy-sprint",
@@ -185,19 +185,19 @@
       "workstream": "Product",
       "status": "Future",
       "owner": "Ashley + Agent",
-      "start": "2026-09-14",
-      "end": "2026-09-18",
-      "notes": "Sprint week — Sep 14 through Sep 18."
+      "start": "2026-09-21",
+      "end": "2026-09-23",
+      "notes": "Three in-person days — Sep 21 through Sep 23."
     },
     {
       "id": "prod-mvp-planning",
-      "title": "MVP planning week",
+      "title": "MVP planning",
       "workstream": "Product",
       "status": "Future",
       "owner": "Ashley + Agent",
-      "start": "2026-09-21",
+      "start": "2026-09-24",
       "end": "2026-09-25",
-      "notes": "Scope and plan MVP build."
+      "notes": "Two days to scope and sequence the 10-week build."
     },
     {
       "id": "prod-mvp-build",
@@ -208,6 +208,17 @@
       "start": "2026-09-28",
       "end": "2026-12-04",
       "notes": "10-week build. Kickoff Sep 28. Targets an MVP launch around Thanksgiving."
+    },
+    {
+      "id": "prod-mvp-launch",
+      "title": "MVP launch",
+      "workstream": "Product",
+      "status": "Future",
+      "owner": "Ashley + Agent",
+      "start": "2026-12-04",
+      "end": "2026-12-04",
+      "milestone": true,
+      "notes": "Ship date — the day the 10-week build lands. Around Thanksgiving."
     },
     {
       "id": "prod-oct-beta",
@@ -283,11 +294,11 @@
       "id": "prod-no-ams",
       "title": "No-AMS launch feasibility (background)",
       "workstream": "Product",
-      "status": "In Flight",
+      "status": "Done",
       "owner": "Agent",
       "start": "2026-07-13",
-      "end": "2026-09-18",
-      "notes": "Path 2 ops architecture drafted (Aug 7): light CSV onboard + weekly renewal report + shortlist RPA + Zapier write-back. Continues through sprint week."
+      "end": "2026-08-24",
+      "notes": "Path 2 ops architecture drafted (Aug 7): light CSV onboard + weekly renewal report + shortlist RPA + Zapier write-back. Feasibility closed — we can launch without an AMS API."
     }
   ]
 }

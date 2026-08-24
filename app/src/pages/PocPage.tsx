@@ -60,7 +60,7 @@ const SUCCESS_METRICS: SuccessMetric[] = [
 ];
 
 const PILOT_FACTS: [string, string][] = [
-  ['Design partners', 'Members 1st (done) + Stockton Hill (next)'],
+  ['Design partners', 'Members 1st (done) + Stockton Hill (assumed Aug 26)'],
   ['Members 1st', 'Jun 17 – Aug 3 · 10 sessions + retro · 42 emailed'],
   ['Session rhythm', 'Mon · Wed · Fri, ~30 min, on Zoom, recorded'],
   ['M1st outcomes', '18 QQ (43%) · 7 switched · 5 stayed · 6 pending'],

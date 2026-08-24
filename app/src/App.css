@@ -2382,6 +2382,44 @@ code {
   margin: 0 0 1.5rem;
 }
 
+.ramp-view-toggle {
+  display: flex;
+  justify-content: flex-end;
+  margin: 0 0 1rem;
+}
+
+.ramp-view-toggle button {
+  padding: 0.4rem 0.85rem;
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 650;
+  color: var(--muted-foreground);
+  background: var(--card);
+  border: 1.5px solid var(--border);
+  cursor: pointer;
+}
+
+.ramp-view-toggle button:first-child {
+  border-radius: 8px 0 0 8px;
+}
+
+.ramp-view-toggle button:last-child {
+  border-radius: 0 8px 8px 0;
+  margin-left: -1.5px;
+}
+
+.ramp-view-toggle button:hover {
+  color: var(--foreground);
+  border-color: color-mix(in srgb, var(--primary) 45%, var(--border));
+}
+
+.ramp-view-toggle button.active {
+  color: var(--primary);
+  background: color-mix(in srgb, var(--primary) 8%, var(--card));
+  border-color: var(--primary);
+  z-index: 1;
+}
+
 .scale-toggle {
   display: flex;
   gap: 0.5rem;
@@ -2447,6 +2485,15 @@ code {
 .scale-toggle button span {
   font-size: 0.8rem;
   color: var(--muted-foreground);
+}
+
+.scale-toggle button em {
+  display: block;
+  margin-top: 0.2rem;
+  font-size: 0.78rem;
+  font-style: normal;
+  font-weight: 700;
+  color: var(--primary);
 }
 
 .ramp-chart-wrap {
@@ -2541,6 +2588,13 @@ code {
   fill: var(--chart-5);
   font-family: var(--font-sans);
   opacity: 0.9;
+}
+
+.ramp-million-label {
+  font-size: 10px;
+  font-weight: 700;
+  fill: var(--muted-foreground);
+  font-family: var(--font-sans);
 }
 
 .scenario-summary {
@@ -3093,6 +3147,18 @@ code {
   font-weight: 650;
 }
 
+.price-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem 1.75rem;
+  margin-top: 1.35rem;
+}
+
+.price-split h3 {
+  margin: 0 0 0.45rem;
+  font-size: 0.95rem;
+}
+
 .strat-footer {
   margin: 1.15rem 0 0;
   font-size: 0.88rem;
@@ -3184,7 +3250,8 @@ code {
   .risk-split,
   .open-qs,
   .build-split,
-  .strat-fork {
+  .strat-fork,
+  .price-split {
     grid-template-columns: 1fr;
   }
   .rel-item {
@@ -3197,5 +3264,92 @@ code {
   .compare-table-3,
   .compare-table-4 {
     font-size: 0.78rem;
+  }
+}
+
+/* ---- Simulated scenarios ---- */
+.scenario-card {
+  margin-top: 1.25rem;
+}
+
+.scenario-card .custom-gantt-scroll {
+  max-height: 640px;
+}
+
+.scenario-kicker {
+  margin: 0.2rem 0 0;
+  font-size: 0.95rem;
+  font-weight: 650;
+  color: var(--foreground);
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.overlay-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--foreground);
+  cursor: pointer;
+  user-select: none;
+}
+
+.overlay-toggle input {
+  accent-color: var(--primary);
+}
+
+.scenario-launch-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.85rem;
+  margin: 0 0 1.1rem;
+}
+
+.scenario-launch-stat {
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--muted);
+}
+
+.scenario-launch-value {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: 1.35rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--foreground);
+}
+
+.scenario-launch-value.is-muted {
+  color: var(--muted-foreground);
+}
+
+.scenario-launch-note {
+  margin: 0.25rem 0 0;
+  font-size: 0.8rem;
+  color: var(--muted-foreground);
+}
+
+.scenario-swatch {
+  background: var(--chart-5);
+}
+
+.overlay-swatch {
+  background: color-mix(in oklch, var(--muted-foreground) 42%, var(--muted));
+}
+
+.scenario-implication {
+  display: block;
+  margin-top: 0.25rem;
+  color: var(--muted-foreground);
+  font-weight: 400;
+}
+
+@media (max-width: 720px) {
+  .scenario-launch-row {
+    grid-template-columns: 1fr;
   }
 }

@@ -129,8 +129,8 @@ export function MvpPage() {
         <p className="eyebrow">Roadmap · Then</p>
         <h1 className="hero-title">MVP build.</h1>
         <p className="hero-sub">
-          A ~10-week build of the first sellable front-end experience (roughly mid-September through
-          mid-November), even if some steps stay manual — VAs shopping — at launch.
+          A ~10-week build of the first sellable front-end experience (Sep 28 through Dec 4), even
+          if some steps stay manual — VAs shopping — at launch.
         </p>
       </section>
 
@@ -142,7 +142,7 @@ export function MvpPage() {
         <p className="proof-statement">
           Ship the first sellable front-end experience the agent actually touches — review and send
           — with some steps still manual (VAs shopping) behind the scenes at launch. The target is a
-          first paying customer around mid-November.
+          first paying customer around Dec 4 / Thanksgiving.
         </p>
       </section>
 
@@ -291,8 +291,8 @@ export function MvpPage() {
         <div className="empty-state is-tall">
           <p className="empty-state-t">Build hasn&rsquo;t started yet — outcome TBD</p>
           <p className="empty-state-b">
-            The MVP build kicks off in mid-September. The outcome we&rsquo;re after: a first
-            commercial customer live on the product around mid-November.
+            The MVP build kicks off Sep 28. The outcome we&rsquo;re after: a first commercial
+            customer live on the product around Dec 4 / Thanksgiving.
           </p>
         </div>
       </section>

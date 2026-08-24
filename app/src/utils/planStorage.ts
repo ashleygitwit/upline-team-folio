@@ -1,7 +1,7 @@
 import type { Initiative, VenturePlan } from '../types';
 import { buildExecutionPlanMarkdown } from './planMarkdown';
 
-const STORAGE_KEY = 'upline-venture-plan';
+const STORAGE_KEY = 'upline-venture-plan-2026-08-24-launch';
 
 export function formatDateInput(date: Date): string {
   return date.toISOString().slice(0, 10);

@@ -7,6 +7,7 @@ import { PocPage } from './pages/PocPage';
 import { SprintPage } from './pages/SprintPage';
 import { MvpPage } from './pages/MvpPage';
 import { PathToScalePage } from './pages/PathToScalePage';
+import { ScenarioBuildNowPage } from './pages/ScenarioBuildNowPage';
 import { BrandPage } from './pages/BrandPage';
 import { TeamPage } from './pages/TeamPage';
 import {
@@ -25,6 +26,7 @@ type RouteKey =
   | 'sprint'
   | 'mvp'
   | 'scale'
+  | 'scenario-build-now'
   | 'brand'
   | 'team';
 
@@ -37,7 +39,14 @@ const NAV: { key: RouteKey; label: string; href: string }[] = [
 ];
 
 // Roadmap detail pages highlight the Roadmap nav item.
-const ROADMAP_ROUTES: RouteKey[] = ['roadmap', 'poc', 'sprint', 'mvp', 'scale'];
+const ROADMAP_ROUTES: RouteKey[] = [
+  'roadmap',
+  'poc',
+  'sprint',
+  'mvp',
+  'scale',
+  'scenario-build-now',
+];
 
 // Sub-pages surfaced in the Roadmap nav dropdown.
 const ROADMAP_MENU: { key: RouteKey; label: string; href: string }[] = [
@@ -46,6 +55,7 @@ const ROADMAP_MENU: { key: RouteKey; label: string; href: string }[] = [
   { key: 'sprint', label: 'Strategy Sprint', href: '#/sprint' },
   { key: 'mvp', label: 'MVP', href: '#/mvp' },
   { key: 'scale', label: 'Path to Scale', href: '#/scale' },
+  { key: 'scenario-build-now', label: 'Build next week', href: '#/scenario-build-now' },
 ];
 
 function routeFromHash(): RouteKey {
@@ -59,6 +69,7 @@ function routeFromHash(): RouteKey {
     hash === 'sprint' ||
     hash === 'mvp' ||
     hash === 'scale' ||
+    hash === 'scenario-build-now' ||
     hash === 'brand' ||
     hash === 'team'
   ) {
@@ -94,23 +105,30 @@ function App() {
   }, []);
 
   useEffect(() => {
-    const stored = loadPlanFromStorage();
-    if (stored) {
-      setPlan(stored);
-      setHasLocalEdits(true);
-      setExportMarkdown(generateExportMarkdown(stored));
-    } else {
-      fetch('/data/venture-plan.json')
-        .then((res) => {
-          if (!res.ok) throw new Error('Could not load venture plan');
-          return res.json() as Promise<VenturePlan>;
-        })
-        .then((planData) => {
+    fetch('/data/venture-plan.json')
+      .then((res) => {
+        if (!res.ok) throw new Error('Could not load venture plan');
+        return res.json() as Promise<VenturePlan>;
+      })
+      .then((planData) => {
+        const stored = loadPlanFromStorage();
+        const storedIsCurrent = Boolean(
+          stored &&
+            typeof stored.lastUpdated === 'string' &&
+            stored.lastUpdated >= planData.lastUpdated,
+        );
+        if (stored && storedIsCurrent) {
+          setPlan(stored);
+          setHasLocalEdits(true);
+          setExportMarkdown(generateExportMarkdown(stored));
+        } else {
+          if (stored) clearPlanStorage();
           setPlan(planData);
           setExportMarkdown(generateExportMarkdown(planData));
-        })
-        .catch((err: Error) => setError(err.message));
-    }
+          setHasLocalEdits(false);
+        }
+      })
+      .catch((err: Error) => setError(err.message));
 
     fetch('/data/learnings.json')
       .then((res) => {
@@ -216,6 +234,7 @@ function App() {
       {route === 'sprint' ? <SprintPage /> : null}
       {route === 'mvp' ? <MvpPage /> : null}
       {route === 'scale' ? <PathToScalePage /> : null}
+      {route === 'scenario-build-now' ? <ScenarioBuildNowPage /> : null}
       {route === 'brand' ? <BrandPage /> : null}
       {route === 'team' ? <TeamPage /> : null}
 

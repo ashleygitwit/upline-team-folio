@@ -9,6 +9,7 @@ export interface Initiative {
   start: string;
   end: string;
   notes?: string;
+  milestone?: boolean;
 }
 
 export interface VentureThesis {

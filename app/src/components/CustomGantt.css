@@ -121,6 +121,10 @@
   min-height: 44px;
 }
 
+.cg-task-row.has-overlay .cg-timeline {
+  min-height: 52px;
+}
+
 .cg-task-bar {
   position: absolute;
   top: 10px;
@@ -128,6 +132,20 @@
   border-radius: calc(var(--radius) - 2px);
   cursor: grab;
   box-shadow: var(--shadow-sm);
+  z-index: 1;
+}
+
+.cg-task-bar.readonly {
+  cursor: default;
+}
+
+.cg-task-bar-overlay {
+  top: 16px;
+  z-index: 0;
+  background: color-mix(in oklch, var(--muted-foreground) 42%, var(--muted));
+  opacity: 0.45;
+  cursor: default;
+  box-shadow: none;
 }
 
 .cg-task-bar:active {
@@ -157,4 +175,35 @@
   color: var(--foreground);
   white-space: nowrap;
   pointer-events: none;
+}
+
+.cg-milestone {
+  position: absolute;
+  top: 12px;
+  width: 14px;
+  height: 14px;
+  margin-left: -7px;
+  border-radius: 2px;
+  transform: rotate(45deg);
+  z-index: 2;
+  cursor: grab;
+}
+
+.cg-milestone.readonly {
+  cursor: default;
+}
+
+.cg-milestone-overlay {
+  background: color-mix(in oklch, var(--muted-foreground) 50%, var(--muted));
+  opacity: 0.55;
+  cursor: default;
+  z-index: 1;
+}
+
+.cg-milestone-label {
+  font-weight: 700;
+}
+
+.cg-task-row.is-milestone .cg-timeline {
+  min-height: 48px;
 }
