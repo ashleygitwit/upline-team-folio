@@ -2500,10 +2500,23 @@ code {
   width: 100%;
 }
 
+.ramp-chart-scroll {
+  overflow-x: auto;
+  overflow-y: hidden;
+  margin: 0 -0.15rem;
+  padding-bottom: 0.2rem;
+}
+
 .ramp-chart {
   width: 100%;
   height: auto;
   display: block;
+}
+
+.ramp-chart-wide {
+  width: auto;
+  max-width: none;
+  height: 380px;
 }
 
 .ramp-hover-hint {

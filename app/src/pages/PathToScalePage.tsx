@@ -6,6 +6,64 @@ type ScenarioKey = 'conservative' | 'baseline' | 'aggressive' | 'auto';
 const MONTHS = ['Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
 const MVP_MONTH_INDEX = 2; // December
 
+/** Working offer used to paint ARR on the ramp. See Pricing strategy at the bottom. */
+const SUB_MONTHLY = 699;
+const SHOP_FEE = 18;
+const SHOPS_PER_MONTH = 43;
+const ARPU = SUB_MONTHLY * 12 + SHOPS_PER_MONTH * 12 * SHOP_FEE;
+
+function arrFor(customers: number): number {
+  return customers * ARPU;
+}
+
+function arrK(customers: number): number {
+  return arrFor(customers) / 1000;
+}
+
+function formatArr(customers: number): string {
+  const n = arrFor(customers);
+  if (n >= 1_000_000) return `$${(n / 1_000_000).toFixed(2)}M`;
+  if (n >= 1_000) return `$${Math.round(n / 1_000)}k`;
+  return `$${Math.round(n)}`;
+}
+
+function formatAxisK(k: number): string {
+  if (k >= 1000) return `$${(k / 1000).toFixed(1)}M`;
+  if (k === 0) return '$0';
+  return `$${k}k`;
+}
+
+const AGENCIES_FOR_1M = Math.ceil(1_000_000 / ARPU);
+const MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const PUBLISHED_LEN = MONTHS.length;
+const CHART_STEP = 102;
+
+function monthTick(index: number): string {
+  const abs = 9 + index;
+  const name = MONTH_NAMES[abs % 12];
+  const year = 2026 + Math.floor(abs / 12);
+  if (index < PUBLISHED_LEN) return name;
+  return `${name} ’${String(year).slice(2)}`;
+}
+
+function monthTickWithYear(index: number): string {
+  const abs = 9 + index;
+  const name = MONTH_NAMES[abs % 12];
+  const year = 2026 + Math.floor(abs / 12);
+  return `${name} ’${String(year).slice(2)}`;
+}
+
+function seriesToMillion(key: ScenarioKey): { months: string[]; customers: number[] } {
+  const customers = [...SCENARIOS[key].ramp];
+  const months = MONTHS.slice();
+  const add = SCENARIOS[key].addAfter;
+  while (customers[customers.length - 1] < AGENCIES_FOR_1M) {
+    customers.push(customers[customers.length - 1] + add);
+    months.push(monthTick(months.length));
+  }
+  return { months, customers };
+}
+
 interface Scenario {
   key: ScenarioKey;
   label: string;
@@ -13,6 +71,8 @@ interface Scenario {
   family: 'va' | 'auto';
   ramp: number[];
   vas: number[];
+  /** Logos added per month after Jun ’27 when projecting to $1M ARR. */
+  addAfter: number;
   endCustomers: string;
   endVas: string;
   summary: string;
@@ -27,6 +87,7 @@ const SCENARIOS: Record<ScenarioKey, Scenario> = {
     family: 'va',
     ramp: [0, 0, 2, 6, 10, 14, 18, 22, 26],
     vas: [0, 0, 2, 4, 7, 9, 12, 15, 17],
+    addAfter: 4,
     endCustomers: '~26',
     endVas: '~17',
     summary:
@@ -39,6 +100,7 @@ const SCENARIOS: Record<ScenarioKey, Scenario> = {
     family: 'va',
     ramp: [0, 0, 2, 5, 10, 18, 28, 38, 48],
     vas: [0, 0, 2, 4, 7, 12, 19, 25, 32],
+    addAfter: 10,
     endCustomers: '~45–50',
     endVas: '~30–32',
     summary:
@@ -51,6 +113,7 @@ const SCENARIOS: Record<ScenarioKey, Scenario> = {
     family: 'va',
     ramp: [2, 2, 4, 12, 20, 30, 40, 50, 60],
     vas: [2, 2, 3, 8, 13, 20, 27, 33, 40],
+    addAfter: 10,
     endCustomers: '~60',
     endVas: '~40',
     summary:
@@ -64,6 +127,7 @@ const SCENARIOS: Record<ScenarioKey, Scenario> = {
     // Dec +2, Jan +2 → 4/2 VAs; Feb–Apr +4/+4/+3 → 15 max pre-launch; then VAs flat, customers grow
     ramp: [0, 0, 2, 4, 8, 12, 15, 20, 30],
     vas: [0, 0, 1, 2, 3, 4, 5, 5, 5],
+    addAfter: 10,
     endCustomers: '~30',
     endVas: '~5 (flat after launch)',
     summary:
@@ -251,24 +315,51 @@ const COMPARE: CompareRow[] = [
   },
 ];
 
-function RampChart({ scenario }: { scenario: ScenarioKey }) {
+const COMPARE_ARR: CompareRow = {
+  label: 'End-Q2 ’27 ARR',
+  values: {
+    conservative: `${formatArr(26)} · 26 agencies`,
+    baseline: `${formatArr(48)} · 48 agencies`,
+    aggressive: `${formatArr(60)} · $1M ARR in June`,
+    auto: `${formatArr(30)} · 30 agencies`,
+  },
+};
+
+const COMPARE_1M: CompareRow = {
+  label: '$1M ARR when',
+  values: {
+    conservative: monthTickWithYear(seriesToMillion('conservative').months.length - 1),
+    baseline: monthTickWithYear(seriesToMillion('baseline').months.length - 1),
+    aggressive: monthTickWithYear(seriesToMillion('aggressive').months.length - 1),
+    auto: monthTickWithYear(seriesToMillion('auto').months.length - 1),
+  },
+};
+
+function RampChart({ scenario, showMoney }: { scenario: ScenarioKey; showMoney: boolean }) {
   const active = SCENARIOS[scenario];
-  const W = 900;
+  const moneySeries = seriesToMillion(scenario);
+  const months = showMoney ? moneySeries.months : MONTHS;
+  const customers = showMoney ? moneySeries.customers : active.ramp;
+  const extended = showMoney && months.length > PUBLISHED_LEN;
   const H = 380;
-  const padL = 40;
-  const padR = 24;
+  const padL = showMoney ? 56 : 40;
+  const padR = 28;
   const padT = 36;
   const padB = 56;
-  const plotW = W - padL - padR;
+  const plotW = CHART_STEP * Math.max(months.length - 1, 1);
+  const W = padL + padR + plotW;
   const plotH = H - padT - padB;
-  const yMax = 60;
-  const x = (i: number) => padL + (i / (MONTHS.length - 1)) * plotW;
+  const yMax = showMoney ? 1200 : 60;
+  const plotRamp = showMoney ? customers.map(arrK) : customers;
+  const x = (i: number) => padL + i * CHART_STEP;
   const y = (v: number) => padT + plotH * (1 - v / yMax);
-  const gridVals = [0, 10, 20, 30, 40, 50, 60];
+  const gridVals = showMoney ? [0, 200, 400, 600, 800, 1000, 1200] : [0, 10, 20, 30, 40, 50, 60];
   const [hover, setHover] = useState<number | null>(null);
   const mvpX = x(MVP_MONTH_INDEX);
   const octX = x(0);
-  const autoLaunchX = padL + (AUTO_LAUNCH_MONTH_FRAC / (MONTHS.length - 1)) * plotW;
+  const autoLaunchX = padL + AUTO_LAUNCH_MONTH_FRAC * CHART_STEP;
+  const juneX = x(PUBLISHED_LEN - 1);
+  const hitI = customers.length - 1;
   const showOctBeta = scenario === 'aggressive';
   const showAutoLaunch = scenario === 'auto';
 
@@ -278,18 +369,25 @@ function RampChart({ scenario }: { scenario: ScenarioKey }) {
     data.map((v, i) => `L ${x(i)},${y(v)}`).join(' ') +
     ` L ${x(data.length - 1)},${y(0)} Z`;
 
-  const tipI = hover ?? MONTHS.length - 1;
+  const tipI = hover ?? months.length - 1;
   const tipX = x(tipI);
-  const tipY = y(Math.max(active.ramp[tipI], 1));
-  const tipFlip = tipI > MONTHS.length - 3;
+  const tipY = y(Math.max(plotRamp[tipI], showMoney ? 20 : 1));
+  const tipFlip = tipI > months.length - 3;
 
   return (
     <div className="ramp-chart-wrap">
+      <div className={extended ? 'ramp-chart-scroll' : undefined}>
       <svg
-        className="ramp-chart"
+        className={extended ? 'ramp-chart ramp-chart-wide' : 'ramp-chart'}
         viewBox={`0 0 ${W} ${H}`}
+        width={extended ? W : undefined}
+        height={extended ? H : undefined}
         role="img"
-        aria-label={`Customer and VA counts, October 2026 through June 2027. Dec 1 MVP launch marked.${showOctBeta ? ' Aggressive VA: onboard two beta customers in October.' : ''}${showAutoLaunch ? ' Auto-shopping feature launch mid-April; VAs stay flat while customers grow.' : ''} ${active.label}: ${active.endCustomers} customers and ${active.endVas} VAs by end of Q2.`}
+        aria-label={
+          showMoney
+            ? `Annual run-rate at $699 per month plus $18 per shop. ${active.label} reaches $1M ARR in ${monthTickWithYear(hitI)}.`
+            : `Customer and VA counts, October 2026 through June 2027. Dec 1 MVP launch marked.${showOctBeta ? ' Aggressive VA: onboard two beta customers in October.' : ''}${showAutoLaunch ? ' Auto-shopping feature launch mid-April; VAs stay flat while customers grow.' : ''} ${active.label}: ${active.endCustomers} customers and ${active.endVas} VAs by end of Q2.`
+        }
         onMouseLeave={() => setHover(null)}
       >
         <defs>
@@ -310,13 +408,13 @@ function RampChart({ scenario }: { scenario: ScenarioKey }) {
               strokeWidth={1}
             />
             <text x={padL - 8} y={y(v) + 3} textAnchor="end" className="ramp-axis">
-              {v}
+              {showMoney ? formatAxisK(v) : v}
             </text>
           </g>
         ))}
 
         <text x={padL - 8} y={14} textAnchor="end" className="ramp-axis-title">
-          Count
+          {showMoney ? 'ARR' : 'Count'}
         </text>
 
         {showOctBeta ? (
@@ -365,6 +463,57 @@ function RampChart({ scenario }: { scenario: ScenarioKey }) {
           Dec 1 · MVP launch
         </text>
 
+        {extended ? (
+          <rect
+            x={juneX}
+            y={padT}
+            width={W - padR - juneX}
+            height={plotH}
+            fill="color-mix(in srgb, var(--primary) 5%, transparent)"
+          />
+        ) : null}
+
+        {showMoney ? (
+          <g>
+            <line
+              x1={padL}
+              y1={y(1000)}
+              x2={W - padR}
+              y2={y(1000)}
+              stroke="var(--foreground)"
+              strokeWidth={1.25}
+              strokeDasharray="3 3"
+              opacity={0.4}
+            />
+            <text
+              x={Math.min(x(hitI) - 8, W - padR)}
+              y={y(1000) - 6}
+              textAnchor="end"
+              className="ramp-million-label"
+            >
+              $1M ARR · {monthTickWithYear(hitI)}
+            </text>
+          </g>
+        ) : null}
+
+        {extended ? (
+          <g>
+            <line
+              x1={juneX}
+              y1={padT}
+              x2={juneX}
+              y2={padT + plotH}
+              stroke="var(--foreground)"
+              strokeWidth={1.25}
+              strokeDasharray="4 3"
+              opacity={0.35}
+            />
+            <text x={juneX + 8} y={padT + 14} className="ramp-million-label">
+              If add-rate continues
+            </text>
+          </g>
+        ) : null}
+
         {/* Auto-shopping path only — mid-April feature launch; VAs flat after */}
         {showAutoLaunch ? (
           <g>
@@ -397,8 +546,8 @@ function RampChart({ scenario }: { scenario: ScenarioKey }) {
           </g>
         ) : null}
 
-        {MONTHS.map((m, i) => (
-          <text key={m} x={x(i)} y={H - 30} textAnchor="middle" className="ramp-axis">
+        {months.map((m, i) => (
+          <text key={`${m}-${i}`} x={x(i)} y={H - 30} textAnchor="middle" className="ramp-axis">
             {m}
           </text>
         ))}
@@ -406,26 +555,30 @@ function RampChart({ scenario }: { scenario: ScenarioKey }) {
         <g transform={`translate(${padL}, ${H - 10})`}>
           <line x1={0} y1={0} x2={18} y2={0} stroke="var(--primary)" strokeWidth={2.5} />
           <text x={22} y={3} className="ramp-legend">
-            Customers
+            {showMoney ? 'ARR at $699 + $18/shop' : 'Customers'}
           </text>
-          <line
-            x1={100}
-            y1={0}
-            x2={118}
-            y2={0}
-            stroke="var(--chart-5)"
-            strokeWidth={2.5}
-            strokeDasharray="5 3"
-          />
-          <text x={122} y={3} className="ramp-legend">
-            VAs (same scale — watch them diverge)
-          </text>
+          {showMoney ? null : (
+            <>
+              <line
+                x1={100}
+                y1={0}
+                x2={118}
+                y2={0}
+                stroke="var(--chart-5)"
+                strokeWidth={2.5}
+                strokeDasharray="5 3"
+              />
+              <text x={122} y={3} className="ramp-legend">
+                VAs (same scale — watch them diverge)
+              </text>
+            </>
+          )}
         </g>
 
         {SCENARIO_ORDER.filter((k) => k !== scenario).map((k) => (
           <polyline
             key={k}
-            points={linePts(SCENARIOS[k].ramp)}
+            points={linePts(showMoney ? SCENARIOS[k].ramp.map(arrK) : SCENARIOS[k].ramp)}
             fill="none"
             stroke="var(--muted-foreground)"
             strokeWidth={1.25}
@@ -434,26 +587,28 @@ function RampChart({ scenario }: { scenario: ScenarioKey }) {
           />
         ))}
 
-        <path d={areaPath(active.ramp)} fill="url(#rampFill)" />
+        <path d={areaPath(plotRamp)} fill="url(#rampFill)" />
         <polyline
-          points={linePts(active.ramp)}
+          points={linePts(plotRamp)}
           fill="none"
           stroke="var(--primary)"
           strokeWidth={2.5}
         />
-        <polyline
-          points={linePts(active.vas)}
-          fill="none"
-          stroke="var(--chart-5)"
-          strokeWidth={2.5}
-          strokeDasharray="5 3"
-        />
+        {showMoney ? null : (
+          <polyline
+            points={linePts(active.vas)}
+            fill="none"
+            stroke="var(--chart-5)"
+            strokeWidth={2.5}
+            strokeDasharray="5 3"
+          />
+        )}
 
-        {active.ramp.map((v, i) => (
+        {customers.map((_v, i) => (
           <g key={i}>
             <circle
               cx={x(i)}
-              cy={y(v)}
+              cy={y(plotRamp[i])}
               r={14}
               fill="transparent"
               style={{ cursor: 'pointer' }}
@@ -461,47 +616,62 @@ function RampChart({ scenario }: { scenario: ScenarioKey }) {
             />
             <circle
               cx={x(i)}
-              cy={y(v)}
+              cy={y(plotRamp[i])}
               r={hover === i ? 5 : 3.5}
               fill="var(--primary)"
               style={{ pointerEvents: 'none' }}
             />
-            <circle
-              cx={x(i)}
-              cy={y(active.vas[i])}
-              r={hover === i ? 5 : 3.5}
-              fill="var(--chart-5)"
-              style={{ pointerEvents: 'none' }}
-            />
+            {showMoney || active.vas[i] === undefined ? null : (
+              <circle
+                cx={x(i)}
+                cy={y(active.vas[i])}
+                r={hover === i ? 5 : 3.5}
+                fill="var(--chart-5)"
+                style={{ pointerEvents: 'none' }}
+              />
+            )}
           </g>
         ))}
 
         {hover !== null && (
           <g
-            transform={`translate(${tipFlip ? tipX - 148 : tipX + 12}, ${Math.max(padT + 4, tipY - 48)})`}
+            transform={`translate(${tipFlip ? tipX - 160 : tipX + 12}, ${Math.max(padT + 4, tipY - (showMoney ? 56 : 48))})`}
             style={{ pointerEvents: 'none' }}
           >
             <rect
-              width={136}
-              height={52}
+              width={showMoney ? 152 : 136}
+              height={showMoney ? 64 : 52}
               rx={8}
               fill="var(--card)"
               stroke="var(--border)"
               strokeWidth={1.5}
             />
             <text x={12} y={20} className="ramp-tip-month">
-              {MONTHS[hover]}
+              {months[hover]}
             </text>
             <text x={12} y={36} className="ramp-tip-line">
-              {active.ramp[hover]} customers
+              {customers[hover]} customers
             </text>
-            <text x={12} y={48} className="ramp-tip-line ramp-tip-va">
-              {active.vas[hover]} VAs
-            </text>
+            {showMoney ? (
+              <text x={12} y={50} className="ramp-tip-line">
+                {formatArr(customers[hover])} ARR
+              </text>
+            ) : (
+              <text x={12} y={48} className="ramp-tip-line ramp-tip-va">
+                {active.vas[hover]} VAs
+              </text>
+            )}
           </g>
         )}
       </svg>
-      <p className="ramp-hover-hint">Hover a point for customers + VAs</p>
+      </div>
+      <p className="ramp-hover-hint">
+        {showMoney
+          ? extended
+            ? 'Scroll right to $1M ARR · hover a point for customers + dollars'
+            : 'Hover a point for customers + ARR'
+          : 'Hover a point for customers + VAs'}
+      </p>
     </div>
   );
 }
@@ -514,7 +684,12 @@ const SCOPE_LABEL: Record<WmtItem['scope'], string> = {
 
 export function PathToScalePage() {
   const [scenario, setScenario] = useState<ScenarioKey>('baseline');
+  const [showMoney, setShowMoney] = useState(false);
   const active = SCENARIOS[scenario];
+  const moneySeries = seriesToMillion(scenario);
+  const hitCustomers = moneySeries.customers[moneySeries.customers.length - 1];
+  const hitDate = monthTickWithYear(moneySeries.months.length - 1);
+  const compareRows = showMoney ? [...COMPARE, COMPARE_ARR, COMPARE_1M] : COMPARE;
 
   return (
     <>
@@ -538,40 +713,80 @@ export function PathToScalePage() {
         <span>The ramp</span>
       </div>
       <section className="card phase-card">
-        <div className="scale-toggle scale-toggle-4" role="tablist" aria-label="Scenario">
-          {SCENARIO_ORDER.map((k) => (
-            <button
-              key={k}
-              type="button"
-              role="tab"
-              aria-selected={scenario === k}
-              className={[
-                scenario === k ? 'active' : undefined,
-                SCENARIOS[k].family === 'auto' ? 'is-auto' : undefined,
-              ]
-                .filter(Boolean)
-                .join(' ')}
-              onClick={() => setScenario(k)}
-            >
-              <b>{SCENARIOS[k].label}</b>
-              <span>{SCENARIOS[k].tag}</span>
-            </button>
-          ))}
+        <div className="ramp-view-toggle" role="group" aria-label="Chart view">
+          <button
+            type="button"
+            className={showMoney ? undefined : 'active'}
+            aria-pressed={!showMoney}
+            onClick={() => setShowMoney(false)}
+          >
+            Customers + VAs
+          </button>
+          <button
+            type="button"
+            className={showMoney ? 'active' : undefined}
+            aria-pressed={showMoney}
+            onClick={() => setShowMoney(true)}
+          >
+            With revenue
+          </button>
         </div>
 
-        <RampChart scenario={scenario} />
+        <div className="scale-toggle scale-toggle-4" role="tablist" aria-label="Scenario">
+          {SCENARIO_ORDER.map((k) => {
+            const hit = seriesToMillion(k);
+            return (
+              <button
+                key={k}
+                type="button"
+                role="tab"
+                aria-selected={scenario === k}
+                className={[
+                  scenario === k ? 'active' : undefined,
+                  SCENARIOS[k].family === 'auto' ? 'is-auto' : undefined,
+                ]
+                  .filter(Boolean)
+                  .join(' ')}
+                onClick={() => setScenario(k)}
+              >
+                <b>{SCENARIOS[k].label}</b>
+                <span>{SCENARIOS[k].tag}</span>
+                {showMoney ? (
+                  <em>
+                    $1M in {monthTickWithYear(hit.months.length - 1)}
+                  </em>
+                ) : null}
+              </button>
+            );
+          })}
+        </div>
+
+        <RampChart scenario={scenario} showMoney={showMoney} />
 
         <p className="scenario-summary">
-          <strong>
-            {active.endCustomers} customers · {active.endVas} VAs
-          </strong>{' '}
-          by end of Q2 ’27. {active.summary}
+          {showMoney ? (
+            <>
+              <strong>
+                Hits $1 million in {hitDate}
+              </strong>
+              , with {hitCustomers} agencies.
+            </>
+          ) : (
+            <>
+              <strong>
+                {active.endCustomers} customers · {active.endVas} VAs
+              </strong>{' '}
+              by end of Q2 ’27. {active.summary}
+            </>
+          )}
         </p>
-        <p className="ramp-note">
-          Chart runs Oct → Jun. Dec 1 MVP launch is marked on every scenario. Aggressive VA alone
-          has 2 customers in October. On Auto-shopping priority, mid-April marks the feature launch
-          — customers can keep growing while VAs stay flat at ~5.
-        </p>
+        {showMoney ? null : (
+          <p className="ramp-note">
+            Chart runs Oct → Jun. Dec 1 MVP launch is marked on every scenario. Aggressive VA alone
+            has 2 customers in October. On Auto-shopping priority, mid-April marks the feature launch
+            — customers can keep growing while VAs stay flat at ~5.
+          </p>
+        )}
       </section>
 
       {/* THE STRATEGIC FORK */}
@@ -678,7 +893,7 @@ export function PathToScalePage() {
               </tr>
             </thead>
             <tbody>
-              {COMPARE.map((row) => (
+              {compareRows.map((row) => (
                 <tr key={row.label}>
                   <th scope="row">{row.label}</th>
                   {SCENARIO_ORDER.map((k) => (
@@ -817,6 +1032,61 @@ export function PathToScalePage() {
               ))}
             </ol>
           </div>
+        </div>
+      </section>
+
+      {/* PRICING STRATEGY */}
+      <div className="phase-rule">
+        <span>Pricing strategy</span>
+      </div>
+      <section className="card phase-card">
+        <p className="proof-statement">
+          $699 a month. $18 when we shop. If we save you one customer a month, this pays for
+          itself.
+        </p>
+
+        <div className="price-split">
+          <div>
+            <h3>Customer pricing</h3>
+            <ul className="strat-list">
+              <li>
+                <strong>$699 a month</strong> — we reach every renewal, in your voice, and send
+                a short questionnaire so you’re not chasing people for updates. Cross-sell and
+                referrals sit in that same outreach. Unlimited users. We set you up.
+              </li>
+              <li>
+                <strong>$18 when we shop</strong> — we run the quote work and get it back fast.
+                If your team or VAs already shop, skip this and just pay the $699.
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h3>Assumptions behind the numbers</h3>
+            <ul className="strat-list">
+              <li>
+                We treat every customer as a midsize book: about <strong>1,500 households</strong>.
+              </li>
+              <li>
+                That agency pays us about <strong>$18,000 a year</strong> — $699 × 12, plus 43
+                shops a month at $18 (the reply rate we saw at Members 1st).
+              </li>
+              <li>
+                $1 million ÷ $18,000 = <strong>57 agencies</strong>. That’s the date on each
+                chart.
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div className="mini-callout">
+          <p className="mini-callout-t">Not in the first pitch</p>
+          <p>
+            <strong>Life commission</strong> — we’re not hanging the price on it. The upside
+            for Upline is too small and too unproven. Keep it as a later extra, or drop it.
+            <br />
+            <strong>AMS</strong> — we do want this, but not as the open. Switching systems
+            sounds painful. Bring it later, once they’re already in Upline.
+          </p>
         </div>
       </section>
     </>
