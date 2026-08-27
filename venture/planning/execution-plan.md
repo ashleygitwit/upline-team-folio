@@ -1,6 +1,6 @@
 # Upline Venture — Execution Plan
 
-*Last updated: 2026-08-24*
+*Last updated: 2026-08-26*
 
 Paste this into ChatGPT, Claude, or your preferred LLM to ask about timeline, priorities, pilot metrics, email copy, and what is in flight. Answers should synthesize at **team level** — see guidance below.
 
@@ -37,7 +37,7 @@ If we help independent P&C agencies turn renewal season into a repeatable, agent
 
 ## Upcoming proof point
 
-Members 1st proved agent trust and customer engagement on a real book. Next proof: the same proposal moment with Stockton Hill (Version A outreach), assumed to kick off Aug 26. Path 2 no-AMS ops are in place.
+Members 1st proved agent trust and customer engagement on a real book. Next proof: the same proposal moment with Stockton Hill (Version A outreach), kicking off the week of Aug 31. Path 2 no-AMS ops are in place. Stockton Hill, strategy sprint week (Sep 8), and the MVP build run in tandem — launch Nov 6.
 
 **Success:** Agent Trust · Customer Engagement · Scalability Confidence
 
@@ -45,11 +45,11 @@ Members 1st proved agent trust and customer engagement on a real book. Next proo
 
 ## Pilot activity summary
 
-*Members 1st Insurance · kickoff 2026-06-17 · as of 2026-08-24*
+*Members 1st Insurance · kickoff 2026-06-17 · as of 2026-08-26*
 
 **Pilot week:** 6 · sessions 11 of 11 · rhythm Mon · Wed · Fri
 
-**Schedule:** Pilot complete. 10 working sessions Jun 17 – Jul 27 + Final Retro Aug 3. Outreach catch-up Jul 20–24. Disposition sheet closed Aug 7: 48 households · 42 emailed · 18 QQ (43%) · 18 recs · 7 switched · 5 stayed · 6 pending. Aug 5–24: Stockton Hill setup / holding. Assumed kickoff Aug 26 for three weeks.
+**Schedule:** Members 1st complete. 10 working sessions Jun 17 – Jul 27 + Final Retro Aug 3. Outreach catch-up Jul 20–24. Disposition sheet closed Aug 7: 48 households · 42 emailed · 18 QQ (43%) · 18 recs · 7 switched · 5 stayed · 6 pending. Stockton Hill setup / holding Aug 5–28. Pilot kicks off the week of Aug 31 for three weeks.
 
 **Client naming (team-safe):** First name + last initial only (e.g. Daniel P). Never full last names in team-facing exports.
 
@@ -130,67 +130,79 @@ Post-shop handoff locked short: steer (switch/stay + $) in paragraph one, premiu
 - **Workstream:** Ops
 - **Dates:** 2026-07-13 → 2026-11-20
 - **Notes:** Executive search and hiring process.
+
 ### Stockton Hill setup / holding
 - **Workstream:** Product
-- **Dates:** 2026-08-05 → 2026-08-24
-- **Notes:** Waiting on Stockton Hill materials. Assumption: they land today (Aug 24) so the pilot can start Aug 26.
+- **Dates:** 2026-08-05 → 2026-08-28
+- **Notes:** Holding through this week. Pilot kicks off the week of Aug 31.
 
 ## Next
 
 ### Stockton Hill pilot
 - **Workstream:** Product
-- **Dates:** 2026-08-26 → 2026-09-16
-- **Notes:** Second design partner. Reset outreach to Version A (do not inherit M1 v8). Three weeks starting Aug 26.
+- **Dates:** 2026-08-31 → 2026-09-18
+- **Notes:** Second design partner. Reset outreach to Version A (do not inherit M1 v8). Three weeks starting the week of Aug 31. Runs in tandem with sprint week and the start of the MVP build.
 
 ## Future
 
 ### Sprint prep
 - **Workstream:** Product
-- **Dates:** 2026-09-17 → 2026-09-18
-- **Notes:** One to two days of prep after Stockton wraps — not a full prep week.
+- **Dates:** 2026-09-08 → 2026-09-08
+- **Notes:** Prep at the open of sprint week — not after Stockton wraps.
+
 ### Product strategy sprint
 - **Workstream:** Product
-- **Dates:** 2026-09-21 → 2026-09-23
-- **Notes:** Three in-person days — Sep 21 through Sep 23.
+- **Dates:** 2026-09-08 → 2026-09-11
+- **Notes:** Sprint week of Sep 8. Runs in tandem with Stockton Hill, then goes straight into the MVP build.
+
 ### MVP planning
 - **Workstream:** Product
-- **Dates:** 2026-09-24 → 2026-09-25
-- **Notes:** Two days to scope and sequence the 10-week build.
+- **Dates:** 2026-09-10 → 2026-09-11
+- **Notes:** Closes sprint week and opens the build.
+
 ### MVP build
 - **Workstream:** Product
-- **Dates:** 2026-09-28 → 2026-12-04
-- **Notes:** 10-week build. Kickoff Sep 28. Targets an MVP launch around Thanksgiving.
+- **Dates:** 2026-09-14 → 2026-11-06
+- **Notes:** Build starts coming out of sprint week. Runs in tandem with Stockton Hill. Launch Friday Nov 6.
+
 ### MVP launch
 - **Workstream:** Product
-- **Dates:** 2026-12-04 → 2026-12-04
-- **Notes:** Ship date — the day the 10-week build lands. Around Thanksgiving.
+- **Dates:** 2026-11-06 → 2026-11-06
+- **Notes:** Ship date — Friday Nov 6. Stockton, the sprint, and the build run in tandem.
+
 ### Optional Oct beta — design partners (Aggressive path)
 - **Workstream:** Product
-- **Dates:** 2026-10-12 → 2026-11-20
-- **Notes:** Only if engineer gate clears. Simple MVP slice with Members 1st + Stockton for VA reps before paying logos.
+- **Dates:** 2026-10-12 → 2026-11-06
+- **Notes:** Only if engineer gate clears. Simple MVP slice with Members 1st + Stockton for VA reps before paying logos. Ends at the Nov 6 launch.
+
 ### MVP iteration — first customers
 - **Workstream:** Product
-- **Dates:** 2026-12-07 → 2027-01-15
+- **Dates:** 2026-11-09 → 2026-12-18
 - **Notes:** Runs in tandem with Release 2 (close the loop). Learn deep on the first logos.
+
 ### R2 — Close the loop
 - **Workstream:** Product
-- **Dates:** 2026-12-07 → 2027-01-15
+- **Dates:** 2026-11-09 → 2026-12-18
 - **Notes:** Record calls/Zooms; write fresh detail back into the repository.
+
 ### R3 — VA portal
 - **Workstream:** Product
-- **Dates:** 2027-01-18 → 2027-02-26
+- **Dates:** 2026-12-21 → 2027-01-29
 - **Notes:** Internal VA queues, upload, verification. Can start lighter / internal-tool while customer product stays engineer-built.
+
 ### R4 — RPA full-book AMS pull
 - **Workstream:** Product
-- **Dates:** 2027-03-01 → 2027-04-09
+- **Dates:** 2027-02-01 → 2027-03-12
 - **Notes:** Onboarding unlock — EasyLinks / HawkSoft first. Without this, manual book download caps add rate.
+
 ### R5 — Gig-style VA onboarding
 - **Workstream:** Product
-- **Dates:** 2027-04-12 → 2027-05-21
+- **Dates:** 2027-03-15 → 2027-04-23
 - **Notes:** Digital training + workflow so VAs come online without heavy babysitting. First VA may become manager/trainer.
+
 ### R6 — AMS replacement (data visibility)
 - **Workstream:** Product
-- **Dates:** 2027-05-24 → 2027-07-02
+- **Dates:** 2027-04-26 → 2027-06-04
 - **Notes:** Show the repository internally, then to clients. Automated shopping deferred ~2 years (not on this near-term track).
 
 ## Done
@@ -199,26 +211,32 @@ Post-shop handoff locked short: steer (switch/stay + $) in paragraph one, premiu
 - **Workstream:** Product
 - **Dates:** 2026-06-17 → 2026-06-24
 - **Notes:** Sessions Jun 17 (Wed), 22, 24.
+
 ### Members 1st pilot — Week 2
 - **Workstream:** Product
 - **Dates:** 2026-07-06 → 2026-07-10
 - **Notes:** Sessions Jul 6, 8, 10.
+
 ### Members 1st pilot — Week 3
 - **Workstream:** Product
 - **Dates:** 2026-07-13 → 2026-07-17
 - **Notes:** Sessions Jul 13, 15, 17 — complete.
+
 ### Members 1st — outreach catch-up (Week 4)
 - **Workstream:** Product
 - **Dates:** 2026-07-20 → 2026-07-24
 - **Notes:** Send batch Jul 20, 22, 24 — complete. Outreach queue cleared.
+
 ### Pilot break — iterate & Stockton prep
 - **Workstream:** Product
 - **Dates:** 2026-07-27 → 2026-08-02
 - **Notes:** Complete. M1st learnings synthesized; disposition sheet closed Aug 7; Aug 3 final retro held.
+
 ### Members 1st final retro
 - **Workstream:** Product
 - **Dates:** 2026-08-03 → 2026-08-03
 - **Notes:** Final session / retro Aug 3. Locked v8 emails, weekly cadence, EZLynx write-back + mid-term add as must-haves.
+
 ### No-AMS launch feasibility (background)
 - **Workstream:** Product
 - **Dates:** 2026-07-13 → 2026-08-24
@@ -237,18 +255,18 @@ Post-shop handoff locked short: steer (switch/stay + $) in paragraph one, premiu
 | Members 1st — outreach catch-up (Week 4) | Product | Done | 2026-07-20 | 2026-07-24 |
 | Pilot break — iterate & Stockton prep | Product | Done | 2026-07-27 | 2026-08-02 |
 | Members 1st final retro | Product | Done | 2026-08-03 | 2026-08-03 |
-| Stockton Hill setup / holding | Product | In Flight | 2026-08-05 | 2026-08-24 |
-| Stockton Hill pilot | Product | Next | 2026-08-26 | 2026-09-16 |
-| Sprint prep | Product | Future | 2026-09-17 | 2026-09-18 |
-| Product strategy sprint | Product | Future | 2026-09-21 | 2026-09-23 |
-| MVP planning | Product | Future | 2026-09-24 | 2026-09-25 |
-| MVP build | Product | Future | 2026-09-28 | 2026-12-04 |
-| MVP launch | Product | Future | 2026-12-04 | 2026-12-04 |
-| Optional Oct beta — design partners (Aggressive path) | Product | Future | 2026-10-12 | 2026-11-20 |
-| MVP iteration — first customers | Product | Future | 2026-12-07 | 2027-01-15 |
-| R2 — Close the loop | Product | Future | 2026-12-07 | 2027-01-15 |
-| R3 — VA portal | Product | Future | 2027-01-18 | 2027-02-26 |
-| R4 — RPA full-book AMS pull | Product | Future | 2027-03-01 | 2027-04-09 |
-| R5 — Gig-style VA onboarding | Product | Future | 2027-04-12 | 2027-05-21 |
-| R6 — AMS replacement (data visibility) | Product | Future | 2027-05-24 | 2027-07-02 |
+| Stockton Hill setup / holding | Product | In Flight | 2026-08-05 | 2026-08-28 |
+| Stockton Hill pilot | Product | Next | 2026-08-31 | 2026-09-18 |
+| Sprint prep | Product | Future | 2026-09-08 | 2026-09-08 |
+| Product strategy sprint | Product | Future | 2026-09-08 | 2026-09-11 |
+| MVP planning | Product | Future | 2026-09-10 | 2026-09-11 |
+| MVP build | Product | Future | 2026-09-14 | 2026-11-06 |
+| MVP launch | Product | Future | 2026-11-06 | 2026-11-06 |
+| Optional Oct beta — design partners (Aggressive path) | Product | Future | 2026-10-12 | 2026-11-06 |
+| MVP iteration — first customers | Product | Future | 2026-11-09 | 2026-12-18 |
+| R2 — Close the loop | Product | Future | 2026-11-09 | 2026-12-18 |
+| R3 — VA portal | Product | Future | 2026-12-21 | 2027-01-29 |
+| R4 — RPA full-book AMS pull | Product | Future | 2027-02-01 | 2027-03-12 |
+| R5 — Gig-style VA onboarding | Product | Future | 2027-03-15 | 2027-04-23 |
+| R6 — AMS replacement (data visibility) | Product | Future | 2027-04-26 | 2027-06-04 |
 | No-AMS launch feasibility (background) | Product | Done | 2026-07-13 | 2026-08-24 |

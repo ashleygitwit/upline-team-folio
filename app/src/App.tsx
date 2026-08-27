@@ -8,7 +8,6 @@ import { SprintPage } from './pages/SprintPage';
 import { MvpJourneyPage } from './pages/MvpJourneyPage';
 import { MvpPage } from './pages/MvpPage';
 import { PathToScalePage } from './pages/PathToScalePage';
-import { ScenarioBuildNowPage } from './pages/ScenarioBuildNowPage';
 import { BrandPage } from './pages/BrandPage';
 import { TeamPage } from './pages/TeamPage';
 import {
@@ -28,7 +27,6 @@ type RouteKey =
   | 'mvp-journey'
   | 'mvp'
   | 'scale'
-  | 'scenario-build-now'
   | 'brand'
   | 'team';
 
@@ -48,7 +46,6 @@ const ROADMAP_ROUTES: RouteKey[] = [
   'mvp-journey',
   'mvp',
   'scale',
-  'scenario-build-now',
 ];
 
 // Sub-pages surfaced in the Roadmap nav dropdown.
@@ -56,16 +53,13 @@ const ROADMAP_MENU: { key: RouteKey; label: string; href: string }[] = [
   { key: 'roadmap', label: 'Roadmap overview', href: '#/roadmap' },
   { key: 'poc', label: 'Proof of Concept', href: '#/poc' },
   { key: 'sprint', label: 'Strategy Sprint', href: '#/sprint' },
-  { key: 'mvp-journey', label: 'MVP journey map', href: '#/mvp-journey' },
   { key: 'mvp', label: 'MVP', href: '#/mvp' },
-  { key: 'scale', label: 'Path to Scale', href: '#/scale' },
-  { key: 'scenario-build-now', label: 'Build next week', href: '#/scenario-build-now' },
 ];
 
 function routeFromHash(): RouteKey {
   const hash = window.location.hash.replace(/^#\/?/, '').split('/')[0];
-  // Legacy link support: #/milestones now resolves to the Roadmap page.
-  if (hash === 'milestones') return 'roadmap';
+  // Legacy link support: old hashes resolve to the Roadmap page.
+  if (hash === 'milestones' || hash === 'scenario-build-now') return 'roadmap';
   if (
     hash === 'learnings' ||
     hash === 'roadmap' ||
@@ -74,7 +68,6 @@ function routeFromHash(): RouteKey {
     hash === 'mvp-journey' ||
     hash === 'mvp' ||
     hash === 'scale' ||
-    hash === 'scenario-build-now' ||
     hash === 'brand' ||
     hash === 'team'
   ) {
@@ -240,7 +233,6 @@ function App() {
       {route === 'mvp-journey' ? <MvpJourneyPage /> : null}
       {route === 'mvp' ? <MvpPage /> : null}
       {route === 'scale' ? <PathToScalePage /> : null}
-      {route === 'scenario-build-now' ? <ScenarioBuildNowPage /> : null}
       {route === 'brand' ? <BrandPage /> : null}
       {route === 'team' ? <TeamPage /> : null}
 

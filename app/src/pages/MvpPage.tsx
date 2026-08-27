@@ -129,8 +129,9 @@ export function MvpPage() {
         <p className="eyebrow">Roadmap · Then</p>
         <h1 className="hero-title">MVP build.</h1>
         <p className="hero-sub">
-          A ~10-week build of the first sellable front-end experience (Sep 28 through Dec 4), even
-          if some steps stay manual — VAs shopping — at launch.
+          The first sellable front-end experience (Sep 14 through Nov 6), even if some steps stay
+          manual — VAs shopping — at launch. Starts coming out of sprint week, in tandem with
+          Stockton Hill.
         </p>
       </section>
 
@@ -142,7 +143,7 @@ export function MvpPage() {
         <p className="proof-statement">
           Ship the first sellable front-end experience the agent actually touches — review and send
           — with some steps still manual (VAs shopping) behind the scenes at launch. The target is a
-          first paying customer around Dec 4 / Thanksgiving.
+          first paying customer around Nov 6.
         </p>
       </section>
 
@@ -286,6 +287,19 @@ export function MvpPage() {
             </div>
           </div>
         </details>
+
+        <a className="scale-cta" href="#/scale">
+          <div>
+            <p className="scale-cta-eyebrow">Looking past the MVP</p>
+            <p className="scale-cta-title">Path to Scale — Oct ’26 → Q2 ’27</p>
+            <p className="scale-cta-sub">
+              Customer + VA ramp, VA-led vs auto-shopping priority, and what has to be true.
+            </p>
+          </div>
+          <span className="scale-cta-arrow" aria-hidden="true">
+            &rarr;
+          </span>
+        </a>
       </section>
 
       {/* OUTCOME */}
@@ -296,8 +310,8 @@ export function MvpPage() {
         <div className="empty-state is-tall">
           <p className="empty-state-t">Build hasn&rsquo;t started yet — outcome TBD</p>
           <p className="empty-state-b">
-            The MVP build kicks off Sep 28. The outcome we&rsquo;re after: a first commercial
-            customer live on the product around Dec 4 / Thanksgiving.
+            The MVP build starts Sep 14, coming out of sprint week. The outcome we&rsquo;re after:
+            a first commercial customer live on the product around Nov 6.
           </p>
         </div>
       </section>

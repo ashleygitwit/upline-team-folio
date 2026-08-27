@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import type { VenturePlan } from '../types';
 import { GanttSection } from '../components/GanttSection';
-import { ScenarioGanttSection } from '../components/ScenarioGanttSection';
 
 interface RoadmapPageProps {
   plan: VenturePlan | null;
@@ -31,28 +30,28 @@ const MILESTONES: Milestone[] = [
   {
     tag: 'Now',
     title: 'Stockton Hill pilot',
-    body: 'Setup and holding ran Aug 5–24, waiting on their materials. Assumed kickoff Aug 26 for three weeks. Outreach resets to Version A so we can compare how copy and workflow evolve across two very different agencies.',
+    body: 'Kicks off the week of Aug 31 for three weeks (through Sep 18). Outreach resets to Version A so we can compare how copy and workflow evolve across two very different agencies. Runs in tandem with sprint week and the start of the MVP build.',
     href: '#/poc',
     cta: 'View POC details',
   },
   {
     tag: 'Then',
     title: 'Product strategy sprint',
-    body: 'After Stockton wraps: one to two days of prep (Sep 17–18), a three-day in-person sprint (Sep 21–23), then two days of MVP planning (Sep 24–25). Because it follows two real pilots, it should be far better informed than a typical design sprint. Output: a scoped MVP.',
+    body: 'Week of Sep 8. Three room days, Monday through Wednesday. Thursday and Friday are company-wide. We go in with Members 1st complete and Stockton Hill underway, then write the short build spec the week after.',
     href: '#/sprint',
     cta: 'View strategy sprint details',
   },
   {
     tag: 'Then',
     title: 'MVP build',
-    body: 'A ~10-week build of the first sellable front-end experience, even if some steps stay manual (VAs shopping) at launch. Kickoff Sep 28. Target launch around Dec 4 / Thanksgiving.',
+    body: 'The first sellable front-end experience, even if some steps stay manual (VAs shopping) at launch. Starts coming out of sprint week (Sep 14). Target launch Nov 6.',
     href: '#/mvp',
     cta: 'View MVP details',
   },
   {
     tag: 'Then',
     title: 'MVP launch',
-    body: 'The day the 10-week build lands. Current plan: Dec 4. If we start building next week, that date moves to Nov 6.',
+    body: 'November 6. Stockton Hill, the sprint, and the build run in tandem — we are not waiting for one to finish before the next starts.',
     href: '#/mvp',
     cta: 'View MVP details',
   },
@@ -136,8 +135,6 @@ export function RoadmapPage({
           ) : null}
 
           <GanttSection plan={plan} onPlanChange={onPlanChange} />
-
-          <ScenarioGanttSection compact />
 
           {SHOW_LLM_EXPORT ? (
           <section className="card export-card">

@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-08-24",
+  "lastUpdated": "2026-08-26",
   "venture": {
     "hypothesis": "If we help independent P&C agencies turn renewal season into a repeatable, agent-approved outreach-and-recommendation workflow by triaging which accounts need action, doing the shopping legwork, and drafting a clear client recommendation, then agencies will retain more at-risk households and convert more renewals into cross-sell or up-sell conversations across their existing book of business, because today that work is too manual and time-consuming for most teams to run account-by-account at scale.",
     "thesis": {
@@ -9,20 +9,28 @@
     },
     "mantra": "Make every renewal prove the agent is in my corner.",
     "upcomingProofPoint": {
-      "description": "Members 1st proved agent trust and customer engagement on a real book. Next proof: the same proposal moment with Stockton Hill (Version A outreach), assumed to kick off Aug 26. Path 2 no-AMS ops are in place.",
-      "successCriteria": ["Agent Trust", "Customer Engagement", "Scalability Confidence"]
+      "description": "Members 1st proved agent trust and customer engagement on a real book. Next proof: the same proposal moment with Stockton Hill (Version A outreach), kicking off the week of Aug 31. Path 2 no-AMS ops are in place. Stockton Hill, strategy sprint week (Sep 8), and the MVP build run in tandem \u2014 launch Nov 6.",
+      "successCriteria": [
+        "Agent Trust",
+        "Customer Engagement",
+        "Scalability Confidence"
+      ]
     }
   },
-  "workstreams": ["Ops", "Product", "Go-to-market"],
+  "workstreams": [
+    "Ops",
+    "Product",
+    "Go-to-market"
+  ],
   "pilotSummary": {
     "agency": "Members 1st Insurance",
     "kickoffDate": "2026-06-17",
-    "asOfDate": "2026-08-24",
+    "asOfDate": "2026-08-26",
     "pilotWeek": 6,
-    "sessionRhythm": "Mon · Wed · Fri",
+    "sessionRhythm": "Mon \u00b7 Wed \u00b7 Fri",
     "sessionsCompleted": 11,
     "sessionsPlanned": 11,
-    "scheduleNote": "Pilot complete. 10 working sessions Jun 17 – Jul 27 + Final Retro Aug 3. Outreach catch-up Jul 20–24. Disposition sheet closed Aug 7: 48 households · 42 emailed · 18 QQ (43%) · 18 recs · 7 switched · 5 stayed · 6 pending. Aug 5–24: Stockton Hill setup / holding. Assumed kickoff Aug 26 for three weeks.",
+    "scheduleNote": "Members 1st complete. 10 working sessions Jun 17 \u2013 Jul 27 + Final Retro Aug 3. Outreach catch-up Jul 20\u201324. Disposition sheet closed Aug 7: 48 households \u00b7 42 emailed \u00b7 18 QQ (43%) \u00b7 18 recs \u00b7 7 switched \u00b7 5 stayed \u00b7 6 pending. Stockton Hill setup / holding Aug 5\u201328. Pilot kicks off the week of Aug 31 for three weeks.",
     "clientNamingRule": "First name + last initial only (e.g. Daniel P). Never full last names in team-facing exports.",
     "funnel": {
       "outreachEmailsDrafted": 42,
@@ -35,26 +43,26 @@
     },
     "outreachEmail": {
       "version": "v8 / vFINAL (held through Aug 3 retro)",
-      "summary": "One boilerplate for every renewal. Only variables: first name, renewal date, new premium (dollars only — no %, no old price, no increase language), and questionnaire link. Premium is never in the first sentence. ~85% rewrite from v1; zero further copy changes after Session 4.",
+      "summary": "One boilerplate for every renewal. Only variables: first name, renewal date, new premium (dollars only \u2014 no %, no old price, no increase language), and questionnaire link. Premium is never in the first sentence. ~85% rewrite from v1; zero further copy changes after Session 4.",
       "subject": "A quick review of your upcoming renewal",
-      "body": "Hi [First Name],\n\nAt Members 1st Insurance, we value you as a member, not just a policyholder. As your renewal on [renewal date] approaches, we'd like to take a few minutes to review your coverage and make sure everything still fits your needs. Sometimes we find our members are missing out on discounts, because over time the information we have no longer reflects your current situation. Your renewal premium for this term is $[new premium].\n\nOne of the advantages of working with Members 1st Insurance is that we partner with seven different insurance companies. That means we're able to compare options across multiple carriers to help ensure you're receiving competitive rates and the coverage that's right for you. There's no need to shop your insurance with other carriers when we can do that for you right here. We work on behalf of our members to find the best rates — let us take the guesswork and the multiple phone calls off your plate.\n\nTo make sure you're not missing any available discounts or carrying coverage that may no longer match your situation, I've put together a brief questionnaire. Your responses will help us identify potential savings opportunities, verify your current information, and make sure you're properly protected.\n\n[Complete the questionnaire here →]([QUESTIONNAIRE_LINK])\n\nThank you for being a valued member of Members 1st Insurance. We're committed to helping you protect what matters most while making sure your insurance continues to work for you.\n\n[agent]"
+      "body": "Hi [First Name],\n\nAt Members 1st Insurance, we value you as a member, not just a policyholder. As your renewal on [renewal date] approaches, we'd like to take a few minutes to review your coverage and make sure everything still fits your needs. Sometimes we find our members are missing out on discounts, because over time the information we have no longer reflects your current situation. Your renewal premium for this term is $[new premium].\n\nOne of the advantages of working with Members 1st Insurance is that we partner with seven different insurance companies. That means we're able to compare options across multiple carriers to help ensure you're receiving competitive rates and the coverage that's right for you. There's no need to shop your insurance with other carriers when we can do that for you right here. We work on behalf of our members to find the best rates \u2014 let us take the guesswork and the multiple phone calls off your plate.\n\nTo make sure you're not missing any available discounts or carrying coverage that may no longer match your situation, I've put together a brief questionnaire. Your responses will help us identify potential savings opportunities, verify your current information, and make sure you're properly protected.\n\n[Complete the questionnaire here \u2192]([QUESTIONNAIRE_LINK])\n\nThank you for being a valued member of Members 1st Insurance. We're committed to helping you protect what matters most while making sure your insurance continues to work for you.\n\n[agent]"
     },
     "recommendationEmail": {
       "version": "v8 / vFINAL + output contract",
       "summary": "Post-shop handoff locked short: steer (switch/stay + $) in paragraph one, premium-only recommended-vs-current table at most, coverage reassurance, soft CTA to a call. No jargon, no multi-carrier coverage tables. Agent reviews every quote before client contact. ~60% rewrite from v1.",
-      "status": "Locked at Aug 3 retro — no further template changes. Gerardo S is the canonical short switch example; next design partner resets to Version A.",
+      "status": "Locked at Aug 3 retro \u2014 no further template changes. Gerardo S is the canonical short switch example; next design partner resets to Version A.",
       "goldStandardClient": "Gerardo S"
     },
     "keyFindings": [
-      "End-of-pilot funnel (disposition sheet Aug 7): 48 on sheet → 42 emailed → 18 QQ (43%) → 18 recs sent → 7 switched · 5 stayed · 6 pending. Avg savings found ~$474/yr among shopped; ~$665/yr among known switchers.",
-      "Outreach collapsed to a single boilerplate (v8, ~85% from v1) — one email for everyone. Held with zero further copy changes through the Aug 3 retro.",
+      "End-of-pilot funnel (disposition sheet Aug 7): 48 on sheet \u2192 42 emailed \u2192 18 QQ (43%) \u2192 18 recs sent \u2192 7 switched \u00b7 5 stayed \u00b7 6 pending. Avg savings found ~$474/yr among shopped; ~$665/yr among known switchers.",
+      "Outreach collapsed to a single boilerplate (v8, ~85% from v1) \u2014 one email for everyone. Held with zero further copy changes through the Aug 3 retro.",
       "Recommendation email locked short (~60% from v1): steer + dollars; depth on the phone. OUTPUT CONTRACT caps length; flag higher deductible; match pay cadence.",
-      "Shop threshold held: prioritize ≥15% increases, ranked biggest-first. Preferred product cadence: weekly batch (Mon send / Tue QQ prompts / Fri check), not daily drips.",
-      "Upline drafts; agency closes — ~30 min/policy when the client answers (mostly phone). 90–95% quote accuracy with a human double-check is enough; preliminary ≠ bind-ready.",
-      "Without the product, proactive disappears — M1 will go reactive during the build pause. Strong intent to adopt day-to-day once built.",
+      "Shop threshold held: prioritize \u226515% increases, ranked biggest-first. Preferred product cadence: weekly batch (Mon send / Tue QQ prompts / Fri check), not daily drips.",
+      "Upline drafts; agency closes \u2014 ~30 min/policy when the client answers (mostly phone). 90\u201395% quote accuracy with a human double-check is enough; preliminary \u2260 bind-ready.",
+      "Without the product, proactive disappears \u2014 M1 will go reactive during the build pause. Strong intent to adopt day-to-day once built.",
       "Must-haves for day-to-day: EZLynx write-back, weekly batch + QQ notifications, 15%+ priority, short client surfaces, manual mid-term add.",
-      "Cross-sell/upsell: 35 households touched; 0 bound by end of pilot — interest surfaces easily; closing is a different motion.",
-      "Next design customer resets outreach to Version A — do not inherit Members 1st v8 wording."
+      "Cross-sell/upsell: 35 households touched; 0 bound by end of pilot \u2014 interest surfaces easily; closing is a different motion.",
+      "Next design customer resets outreach to Version A \u2014 do not inherit Members 1st v8 wording."
     ],
     "notableProgress": [
       {
@@ -63,7 +71,7 @@
       },
       {
         "client": "Donald K",
-        "note": "Travelers looked ~$665 under until a forgiven at-fault accident hit the report — stayed Donegal. Preliminary ≠ bind-ready."
+        "note": "Travelers looked ~$665 under until a forgiven at-fault accident hit the report \u2014 stayed Donegal. Preliminary \u2260 bind-ready."
       },
       {
         "client": "Kimberly S",
@@ -91,7 +99,7 @@
     },
     {
       "id": "prod-m1st-week1",
-      "title": "Members 1st pilot — Week 1",
+      "title": "Members 1st pilot \u2014 Week 1",
       "workstream": "Product",
       "status": "Done",
       "owner": "Ashley + Agent",
@@ -101,7 +109,7 @@
     },
     {
       "id": "prod-m1st-week2",
-      "title": "Members 1st pilot — Week 2",
+      "title": "Members 1st pilot \u2014 Week 2",
       "workstream": "Product",
       "status": "Done",
       "owner": "Ashley + Agent",
@@ -111,27 +119,27 @@
     },
     {
       "id": "prod-m1st-week3",
-      "title": "Members 1st pilot — Week 3",
+      "title": "Members 1st pilot \u2014 Week 3",
       "workstream": "Product",
       "status": "Done",
       "owner": "Ashley + Agent",
       "start": "2026-07-13",
       "end": "2026-07-17",
-      "notes": "Sessions Jul 13, 15, 17 — complete."
+      "notes": "Sessions Jul 13, 15, 17 \u2014 complete."
     },
     {
       "id": "prod-m1st-week4-sends",
-      "title": "Members 1st — outreach catch-up (Week 4)",
+      "title": "Members 1st \u2014 outreach catch-up (Week 4)",
       "workstream": "Product",
       "status": "Done",
       "owner": "Ashley + Agent",
       "start": "2026-07-20",
       "end": "2026-07-24",
-      "notes": "Send batch Jul 20, 22, 24 — complete. Outreach queue cleared."
+      "notes": "Send batch Jul 20, 22, 24 \u2014 complete. Outreach queue cleared."
     },
     {
       "id": "prod-pilot-break",
-      "title": "Pilot break — iterate & Stockton prep",
+      "title": "Pilot break \u2014 iterate & Stockton prep",
       "workstream": "Product",
       "status": "Done",
       "owner": "Ashley + Agent",
@@ -156,8 +164,8 @@
       "status": "In Flight",
       "owner": "Ashley + Agent",
       "start": "2026-08-05",
-      "end": "2026-08-24",
-      "notes": "Waiting on Stockton Hill materials. Assumption: they land today (Aug 24) so the pilot can start Aug 26."
+      "end": "2026-08-28",
+      "notes": "Holding through this week. Pilot kicks off the week of Aug 31."
     },
     {
       "id": "prod-stockton-hill",
@@ -165,9 +173,9 @@
       "workstream": "Product",
       "status": "Next",
       "owner": "Ashley + Agent",
-      "start": "2026-08-26",
-      "end": "2026-09-16",
-      "notes": "Second design partner. Reset outreach to Version A (do not inherit M1 v8). Three weeks starting Aug 26."
+      "start": "2026-08-31",
+      "end": "2026-09-18",
+      "notes": "Second design partner. Reset outreach to Version A (do not inherit M1 v8). Three weeks starting the week of Aug 31. Runs in tandem with sprint week and the start of the MVP build."
     },
     {
       "id": "prod-sprint-prep",
@@ -175,9 +183,9 @@
       "workstream": "Product",
       "status": "Future",
       "owner": "Ashley + Agent",
-      "start": "2026-09-17",
-      "end": "2026-09-18",
-      "notes": "One to two days of prep after Stockton wraps — not a full prep week."
+      "start": "2026-09-08",
+      "end": "2026-09-08",
+      "notes": "Prep at the open of sprint week \u2014 not after Stockton wraps."
     },
     {
       "id": "prod-strategy-sprint",
@@ -185,9 +193,9 @@
       "workstream": "Product",
       "status": "Future",
       "owner": "Ashley + Agent",
-      "start": "2026-09-21",
-      "end": "2026-09-23",
-      "notes": "Three in-person days — Sep 21 through Sep 23."
+      "start": "2026-09-08",
+      "end": "2026-09-11",
+      "notes": "Sprint week of Sep 8. Runs in tandem with Stockton Hill, then goes straight into the MVP build."
     },
     {
       "id": "prod-mvp-planning",
@@ -195,9 +203,9 @@
       "workstream": "Product",
       "status": "Future",
       "owner": "Ashley + Agent",
-      "start": "2026-09-24",
-      "end": "2026-09-25",
-      "notes": "Two days to scope and sequence the 10-week build."
+      "start": "2026-09-10",
+      "end": "2026-09-11",
+      "notes": "Closes sprint week and opens the build."
     },
     {
       "id": "prod-mvp-build",
@@ -205,9 +213,9 @@
       "workstream": "Product",
       "status": "Future",
       "owner": "Ashley + Agent",
-      "start": "2026-09-28",
-      "end": "2026-12-04",
-      "notes": "10-week build. Kickoff Sep 28. Targets an MVP launch around Thanksgiving."
+      "start": "2026-09-14",
+      "end": "2026-11-06",
+      "notes": "Build starts coming out of sprint week. Runs in tandem with Stockton Hill. Launch Friday Nov 6."
     },
     {
       "id": "prod-mvp-launch",
@@ -215,79 +223,79 @@
       "workstream": "Product",
       "status": "Future",
       "owner": "Ashley + Agent",
-      "start": "2026-12-04",
-      "end": "2026-12-04",
+      "start": "2026-11-06",
+      "end": "2026-11-06",
       "milestone": true,
-      "notes": "Ship date — the day the 10-week build lands. Around Thanksgiving."
+      "notes": "Ship date \u2014 Friday Nov 6. Stockton, the sprint, and the build run in tandem."
     },
     {
       "id": "prod-oct-beta",
-      "title": "Optional Oct beta — design partners (Aggressive path)",
+      "title": "Optional Oct beta \u2014 design partners (Aggressive path)",
       "workstream": "Product",
       "status": "Future",
       "owner": "Ashley + Agent",
       "start": "2026-10-12",
-      "end": "2026-11-20",
-      "notes": "Only if engineer gate clears. Simple MVP slice with Members 1st + Stockton for VA reps before paying logos."
+      "end": "2026-11-06",
+      "notes": "Only if engineer gate clears. Simple MVP slice with Members 1st + Stockton for VA reps before paying logos. Ends at the Nov 6 launch."
     },
     {
       "id": "prod-mvp-iterate",
-      "title": "MVP iteration — first customers",
+      "title": "MVP iteration \u2014 first customers",
       "workstream": "Product",
       "status": "Future",
       "owner": "Ashley + Agent",
-      "start": "2026-12-07",
-      "end": "2027-01-15",
+      "start": "2026-11-09",
+      "end": "2026-12-18",
       "notes": "Runs in tandem with Release 2 (close the loop). Learn deep on the first logos."
     },
     {
       "id": "prod-release-2",
-      "title": "R2 — Close the loop",
+      "title": "R2 \u2014 Close the loop",
       "workstream": "Product",
       "status": "Future",
       "owner": "Ashley + Agent",
-      "start": "2026-12-07",
-      "end": "2027-01-15",
+      "start": "2026-11-09",
+      "end": "2026-12-18",
       "notes": "Record calls/Zooms; write fresh detail back into the repository."
     },
     {
       "id": "prod-release-3",
-      "title": "R3 — VA portal",
+      "title": "R3 \u2014 VA portal",
       "workstream": "Product",
       "status": "Future",
       "owner": "Ashley + Agent",
-      "start": "2027-01-18",
-      "end": "2027-02-26",
+      "start": "2026-12-21",
+      "end": "2027-01-29",
       "notes": "Internal VA queues, upload, verification. Can start lighter / internal-tool while customer product stays engineer-built."
     },
     {
       "id": "prod-release-4",
-      "title": "R4 — RPA full-book AMS pull",
+      "title": "R4 \u2014 RPA full-book AMS pull",
       "workstream": "Product",
       "status": "Future",
       "owner": "Ashley + Agent",
-      "start": "2027-03-01",
-      "end": "2027-04-09",
-      "notes": "Onboarding unlock — EasyLinks / HawkSoft first. Without this, manual book download caps add rate."
+      "start": "2027-02-01",
+      "end": "2027-03-12",
+      "notes": "Onboarding unlock \u2014 EasyLinks / HawkSoft first. Without this, manual book download caps add rate."
     },
     {
       "id": "prod-release-5",
-      "title": "R5 — Gig-style VA onboarding",
+      "title": "R5 \u2014 Gig-style VA onboarding",
       "workstream": "Product",
       "status": "Future",
       "owner": "Ashley + Agent",
-      "start": "2027-04-12",
-      "end": "2027-05-21",
+      "start": "2027-03-15",
+      "end": "2027-04-23",
       "notes": "Digital training + workflow so VAs come online without heavy babysitting. First VA may become manager/trainer."
     },
     {
       "id": "prod-release-6",
-      "title": "R6 — AMS replacement (data visibility)",
+      "title": "R6 \u2014 AMS replacement (data visibility)",
       "workstream": "Product",
       "status": "Future",
       "owner": "Ashley + Agent",
-      "start": "2027-05-24",
-      "end": "2027-07-02",
+      "start": "2027-04-26",
+      "end": "2027-06-04",
       "notes": "Show the repository internally, then to clients. Automated shopping deferred ~2 years (not on this near-term track)."
     },
     {
@@ -298,7 +306,7 @@
       "owner": "Agent",
       "start": "2026-07-13",
       "end": "2026-08-24",
-      "notes": "Path 2 ops architecture drafted (Aug 7): light CSV onboard + weekly renewal report + shortlist RPA + Zapier write-back. Feasibility closed — we can launch without an AMS API."
+      "notes": "Path 2 ops architecture drafted (Aug 7): light CSV onboard + weekly renewal report + shortlist RPA + Zapier write-back. Feasibility closed \u2014 we can launch without an AMS API."
     }
   ]
 }

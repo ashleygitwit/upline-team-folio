@@ -2,9 +2,9 @@ import { useState } from 'react';
 
 type ScenarioKey = 'conservative' | 'baseline' | 'aggressive' | 'auto';
 
-// Oct ’26 → Jun ’27. Index 2 = Dec = Dec 1 MVP launch marker.
+// Oct ’26 → Jun ’27. Index 1 = Nov = Nov 6 MVP launch marker.
 const MONTHS = ['Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
-const MVP_MONTH_INDEX = 2; // December
+const MVP_MONTH_INDEX = 1; // November
 
 /** Working offer used to paint ARR on the ramp. See Pricing strategy at the bottom. */
 const SUB_MONTHLY = 699;
@@ -91,7 +91,7 @@ const SCENARIOS: Record<ScenarioKey, Scenario> = {
     endCustomers: '~26',
     endVas: '~17',
     summary:
-      'VA-led. Zero logos until Dec 1 MVP, then the first two, then about one new agency a week into Q1–Q2. Automated shopping stays deferred ~2 years.',
+      'VA-led. Zero logos until Nov 6 MVP, then the first two, then about one new agency a week into Q1–Q2. Automated shopping stays deferred ~2 years.',
   },
   baseline: {
     key: 'baseline',
@@ -104,7 +104,7 @@ const SCENARIOS: Record<ScenarioKey, Scenario> = {
     endCustomers: '~45–50',
     endVas: '~30–32',
     summary:
-      'VA-led. The plan we’d show investors: first two after Dec 1 MVP, then ~two new customers a week by Feb–Apr. Scale with VAs (gig-style); automate later — or never, if carrier APIs show up.',
+      'VA-led. The plan we’d show investors: first two after Nov 6 MVP, then ~two new customers a week by Feb–Apr. Scale with VAs (gig-style); automate later — or never, if carrier APIs show up.',
   },
   aggressive: {
     key: 'aggressive',
@@ -131,7 +131,7 @@ const SCENARIOS: Record<ScenarioKey, Scenario> = {
     endCustomers: '~30',
     endVas: '~5 (flat after launch)',
     summary:
-      'Different bet: Dec–Jan bring on the first four logos (2 VAs), then ~four new agencies a month through mid-April to a 15-customer ceiling. Auto-shopping feature launches mid-April — VAs stay at ~5 while customers can keep growing (e.g. +5 in May, +10 in June). Automation-execution risk if that launch slips.',
+      'Different bet: Nov–Dec bring on the first four logos (2 VAs), then ~four new agencies a month through mid-April to a 15-customer ceiling. Auto-shopping feature launches mid-April — VAs stay at ~5 while customers can keep growing (e.g. +5 in May, +10 in June). Automation-execution risk if that launch slips.',
   },
 };
 
@@ -143,7 +143,7 @@ const SCENARIO_ORDER: ScenarioKey[] = ['conservative', 'baseline', 'aggressive',
 /** Shared post-MVP release order for all VA-led paces */
 const VA_RELEASES: { when: string; title: string; note: string }[] = [
   {
-    when: 'Dec ’26 – mid-Jan ’27',
+    when: 'Nov ’26 – mid-Dec ’26',
     title: 'Close the loop',
     note: 'Record calls / Zooms; write fresh detail back into the repository.',
   },
@@ -217,13 +217,13 @@ interface WmtItem {
 const WHAT_MUST_BE_TRUE: WmtItem[] = [
   {
     scope: 'all',
-    item: 'A dedicated engineer (Gitwit or Upline) is hired before the strategy-sprint week (~early–mid Sept).',
+    item: 'A dedicated engineer (Gitwit or Upline) is hired before the strategy-sprint week (week of Sep 8).',
     implications:
-      'If not, MVP start (Dec 1), and every ramp date on this page slip until they are hired. Non-negotiable for the build.',
+      'If not, MVP launch (Nov 6) and every ramp date on this page slip until they are hired. Non-negotiable for the build.',
   },
   {
     scope: 'all',
-    item: 'VA #1 is hired and trained by Dec 1 MVP launch — ideally getting live reps during the build.',
+    item: 'VA #1 is hired and trained by Nov 6 MVP launch — ideally getting live reps during the build.',
     implications:
       'Without someone ready at launch, we can’t onboard agencies yet. That slice of the timeline slips until training is done.',
   },
@@ -300,7 +300,7 @@ const COMPARE: CompareRow[] = [
     values: {
       conservative: 'Close-loop → VA portal → RPA book → gig onboarding → AMS visibility',
       baseline: 'Same VA release order · shopping deferred ~2 yrs',
-      aggressive: 'Same VA order + Oct beta before Dec 1 MVP',
+      aggressive: 'Same VA order + Oct beta before Nov 6 MVP',
       auto: 'Automated shopping first → mid-Apr feature launch → then scale customers',
     },
   },
@@ -386,7 +386,7 @@ function RampChart({ scenario, showMoney }: { scenario: ScenarioKey; showMoney: 
         aria-label={
           showMoney
             ? `Annual run-rate at $699 per month plus $18 per shop. ${active.label} reaches $1M ARR in ${monthTickWithYear(hitI)}.`
-            : `Customer and VA counts, October 2026 through June 2027. Dec 1 MVP launch marked.${showOctBeta ? ' Aggressive VA: onboard two beta customers in October.' : ''}${showAutoLaunch ? ' Auto-shopping feature launch mid-April; VAs stay flat while customers grow.' : ''} ${active.label}: ${active.endCustomers} customers and ${active.endVas} VAs by end of Q2.`
+            : `Customer and VA counts, October 2026 through June 2027. Nov 6 MVP launch marked.${showOctBeta ? ' Aggressive VA: onboard two beta customers in October.' : ''}${showAutoLaunch ? ' Auto-shopping feature launch mid-April; VAs stay flat while customers grow.' : ''} ${active.label}: ${active.endCustomers} customers and ${active.endVas} VAs by end of Q2.`
         }
         onMouseLeave={() => setHover(null)}
       >
@@ -460,7 +460,7 @@ function RampChart({ scenario, showMoney }: { scenario: ScenarioKey; showMoney: 
         />
         <rect x={mvpX - 52} y={8} width={104} height={18} rx={4} fill="var(--secondary)" />
         <text x={mvpX} y={21} textAnchor="middle" className="ramp-mvp-label">
-          Dec 1 · MVP launch
+          Nov 6 · MVP launch
         </text>
 
         {extended ? (
@@ -693,8 +693,8 @@ export function PathToScalePage() {
 
   return (
     <>
-      <a className="page-back" href="#/roadmap">
-        &larr; Back to roadmap
+      <a className="page-back" href="#/mvp">
+        &larr; Back to MVP
       </a>
 
       <section className="hero">
@@ -782,7 +782,7 @@ export function PathToScalePage() {
         </p>
         {showMoney ? null : (
           <p className="ramp-note">
-            Chart runs Oct → Jun. Dec 1 MVP launch is marked on every scenario. Aggressive VA alone
+            Chart runs Oct → Jun. Nov 6 MVP launch is marked on every scenario. Aggressive VA alone
             has 2 customers in October. On Auto-shopping priority, mid-April marks the feature launch
             — customers can keep growing while VAs stay flat at ~5.
           </p>
@@ -955,10 +955,10 @@ export function PathToScalePage() {
           <span className="rel-gate-badge">Gate</span>
           <div>
             <p className="rel-title">
-              Dedicated engineer hired — before the strategy-sprint week (~early-mid Sept)
+              Dedicated engineer hired — before the strategy-sprint week (week of Sep 8)
             </p>
             <p className="rel-note">
-              Non-negotiable on every path. No engineer by then → MVP slips past Dec 1 → every ramp
+              Non-negotiable on every path. No engineer by then → MVP slips past Nov 6 → every ramp
               number slips. Aggressive VA’s Oct beta only exists if this gate clears.
             </p>
           </div>
@@ -978,7 +978,7 @@ export function PathToScalePage() {
             </div>
           </li>
           <li className="rel-item is-shared">
-            <span className="rel-date">Dec 1 ’26</span>
+            <span className="rel-date">Nov 6 ’26</span>
             <div>
               <p className="rel-title">MVP launch</p>
               <p className="rel-note">

@@ -1,39 +1,66 @@
-interface DecisionBlock {
-  title: string;
-  items: string[];
-}
-
 const INPUTS = [
-  'Two full pilots run end-to-end — Members 1st and Stockton Hill — across two very different agencies',
-  'A validated outreach → questionnaire → shop → recommendation motion (and where it breaks)',
+  'Members 1st run end-to-end, plus Stockton Hill in flight — two very different agencies',
+  'A drafted MVP experience and an early pricing approach treated as a constraint',
   'Real funnel and engagement data: response rates, opt-ins, and what actually drove a shop',
   'A clear read on which work is VA-assisted vs. automatable, and the cost to run it',
 ];
 
-const DECISIONS: DecisionBlock[] = [
+const DAYS: {
+  when: string;
+  theme: string;
+  beats: { label: string; text: string }[];
+}[] = [
   {
-    title: 'Product scope',
-    items: [
-      'What is in the first sellable experience — and what stays manual at launch',
-      'Which surface the agent actually touches (review + send) vs. what runs behind the scenes',
-      'The shortest path to a proposal an agent trusts enough to send',
+    when: 'Monday',
+    theme: 'Lock the bet, then turn it into a path.',
+    beats: [
+      {
+        label: 'Morning',
+        text: 'Start with the evidence. Pressure-test the bet, define the 90-day win, and draw the MVP line — what is above the line versus on ice.',
+      },
+      {
+        label: 'Afternoon',
+        text: 'Walk the drafted journey and rebuild it together. The map stays off the wall until this session.',
+      },
     ],
   },
   {
-    title: 'Data & architecture',
-    items: [
-      'Whether we can operate on a one-time AMS dump plus carrier portals (no ongoing integration)',
-      'What the household data repository must hold to keep itself current',
-      'Where RPA vs. VA sits in the shopping loop for year one',
+    when: 'Tuesday',
+    theme: 'Make the three moments concrete.',
+    beats: [
+      {
+        label: 'Morning',
+        text: 'Pick the three most important touchpoints and breadboard each one: what lives here, what someone can do, and what decision it supports.',
+      },
+      {
+        label: 'Afternoon',
+        text: 'Ashley and Amanda sketch those breadboards. Austin and the engineer work logistics, data, and feasibility against the same three moments. End of day: hold or revise the direction.',
+      },
     ],
   },
   {
-    title: 'Business model',
-    items: [
-      'How we price when agencies control the copy and the cohort',
-      'What a first paid engagement looks like and who signs it',
+    when: 'Wednesday',
+    theme: 'Go heads-down and make the experience legible.',
+    beats: [
+      {
+        label: 'Morning',
+        text: 'Ashley and Amanda keep going on wires and visual direction. Austin and the engineer keep going on research, logistics, and onboarding.',
+      },
+      {
+        label: 'Afternoon',
+        text: 'Same split. Reviews stay sparse. Leave with enough to write the spec the following week.',
+      },
     ],
   },
+];
+
+const LEAVE_WITH = [
+  'A product bet we either held or revised',
+  '90-day success criteria',
+  'A clear above-the-line MVP scope and an on-ice list',
+  'A shared user journey map',
+  'Three breadboarded touchpoints',
+  'First-pass wires and design direction',
 ];
 
 export function SprintPage() {
@@ -47,10 +74,10 @@ export function SprintPage() {
         <p className="eyebrow">Roadmap · Next</p>
         <h1 className="hero-title">Product strategy sprint.</h1>
         <p className="hero-sub">
-          After Stockton Hill wraps: one to two days of prep (Sep 17–18), then three in-person
-          days (Sep 21–23) and two days of MVP planning (Sep 24–25). Because it follows two real
-          pilots, it should be far better informed than a typical design sprint — we come in
-          knowing which features work, the limits, and the logic. The output is a scoped MVP.
+          Week of September 8. Three days in the room, Monday through Wednesday. Thursday and Friday
+          are company-wide — no Upline work those days. We are not starting discovery from zero.
+          The job is to decide what we believe, check the experience against that belief, and leave
+          ready to write a short build spec the following week.
         </p>
       </section>
 
@@ -66,8 +93,9 @@ export function SprintPage() {
           ))}
         </ul>
         <p className="proof-statement" style={{ marginTop: '1.4rem' }}>
-          Turn everything two real pilots taught us into a scoped, buildable MVP — settled in one
-          focused week.
+          Lock product strategy for the MVP so we can build. If the bet is wrong, we change the bet.
+          If the experience does not serve the bet, we change the experience. We do not do both at
+          once.
         </p>
       </section>
 
@@ -76,13 +104,28 @@ export function SprintPage() {
         <span>Plan</span>
       </div>
       <section className="card phase-card">
-        <p className="sub-label">Strawman going into the room</p>
         <p className="proof-statement" style={{ marginBottom: '1rem' }}>
-          The layered MVP journey is the artifact we hash on Tuesday — not a blank wall.
+          The strawman journey map is what we bring to the room.
         </p>
         <a className="arc-cta" href="#/mvp-journey">
           Open the MVP journey map &rarr;
         </a>
+
+        <hr className="soft-rule" />
+        <p className="sub-label">Week at a glance</p>
+        <div className="sprint-days">
+          {DAYS.map((d) => (
+            <div key={d.when} className="sprint-day">
+              <p className="sprint-day-when">{d.when}</p>
+              <h3>{d.theme}</h3>
+              {d.beats.map((b) => (
+                <p key={b.label}>
+                  <b>{b.label}.</b> {b.text}
+                </p>
+              ))}
+            </div>
+          ))}
+        </div>
       </section>
 
       {/* OUTCOME */}
@@ -90,19 +133,17 @@ export function SprintPage() {
         <span>Outcome</span>
       </div>
       <section className="card phase-card">
-        <p className="sub-label">The output of the week will include</p>
-        <div className="decision-grid">
-          {DECISIONS.map((d) => (
-            <div key={d.title} className="decision-block">
-              <h3>{d.title}</h3>
-              <ul>
-                {d.items.map((it) => (
-                  <li key={it}>{it}</li>
-                ))}
-              </ul>
-            </div>
+        <p className="sub-label">By Wednesday night</p>
+        <ul className="check-list">
+          {LEAVE_WITH.map((i) => (
+            <li key={i}>{i}</li>
           ))}
-        </div>
+        </ul>
+        <p className="proof-statement" style={{ marginTop: '1.4rem' }}>
+          The week after, we write a short build spec from the sprint output — what to build, how
+          we know it is done, what is in, and what is on ice. Readable by an engineer and a
+          designer. Not a hundred tickets.
+        </p>
       </section>
     </>
   );

@@ -60,7 +60,7 @@ const SUCCESS_METRICS: SuccessMetric[] = [
 ];
 
 const PILOT_FACTS: [string, string][] = [
-  ['Design partners', 'Members 1st (done) + Stockton Hill (assumed Aug 26)'],
+  ['Design partners', 'Members 1st (done) + Stockton Hill (week of Aug 31)'],
   ['Members 1st', 'Jun 17 – Aug 3 · 10 sessions + retro · 42 emailed'],
   ['Session rhythm', 'Mon · Wed · Fri, ~30 min, on Zoom, recorded'],
   ['M1st outcomes', '18 QQ (43%) · 7 switched · 5 stayed · 6 pending'],
@@ -255,35 +255,48 @@ function WeeklyLoopMap() {
   );
 }
 
-const WHAT_WE_TEST: string[] = [
+const WHAT_WE_TESTED: string[] = [
   'Does proactive outreach actually happen?',
   'Are the recommendations accurate and useful?',
   'Does this save the team time?',
   'Can it become part of the day-to-day workflow?',
 ];
 
-interface OutcomeNote {
-  title: string;
-  sub: string;
-  tone: 'win' | 'learn' | 'risk';
-}
+const CLEARED: { title: string; frame: string; result: string }[] = [
+  {
+    title: 'Agent trust',
+    frame: 'Internal acceptance',
+    result:
+      'They sent with light edits and said they want this day-to-day once it is built. Review before any client email stayed load-bearing — preliminary quotes are not bind-ready.',
+  },
+  {
+    title: 'Customer engagement',
+    frame: 'External validation',
+    result:
+      '43% of emailed households completed the questionnaire. Eighteen recommendations went out. Seven switched. Not crickets.',
+  },
+  {
+    title: 'Scalability confidence',
+    frame: 'Path to a product',
+    result:
+      'Shopping was messy but learnable. Path 2 (no AMS API) ops are in place. The blockers are time and tooling — not a broken idea.',
+  },
+];
 
-const OUTCOMES: OutcomeNote[] = [
-  {
-    title: 'Big victory',
-    sub: 'Our scope and approach are right — we move forward and start scoping the MVP.',
-    tone: 'win',
-  },
-  {
-    title: 'Successful failure',
-    sub: 'We learned a lot, but enough needs to change that we’re not ready to scope the MVP yet.',
-    tone: 'learn',
-  },
-  {
-    title: 'False positive',
-    sub: 'Good signals, but real risks and open questions remain — we pause and discuss before committing.',
-    tone: 'risk',
-  },
+const FINDINGS: string[] = [
+  'Less written information protects the relationship. Outreach, the questionnaire, and the rec all got shorter because extra detail in writing is flight risk.',
+  'Shop the biggest jumps first — 15%+ , highest to lowest. Under-threshold renewals are relationship touches, not shopping priorities.',
+  'Upline drafts; the agency closes. The phone stays sacred. Coverage, deductibles, and the relationship belong on the call.',
+  'Without the product, proactive disappears. They will go reactive again until this is built — not because the idea failed, but because they cannot run the play alone.',
+  'Cross-sell interest is easy; closing it is a different motion. 35 households touched, 0 bound by the end of the pilot.',
+  'Must-haves for day-to-day: EZLynx write-back, weekly batch + questionnaire notifications, the 15%+ queue, short client surfaces, and a manual mid-term add.',
+];
+
+const OUTCOME_STATS: { value: string; label: string }[] = [
+  { value: '42', label: 'Households emailed' },
+  { value: '43%', label: 'Completed the questionnaire' },
+  { value: '7', label: 'Switched carriers' },
+  { value: '~$474', label: 'Avg savings found when shopped' },
 ];
 
 export function PocPage({ plan }: PocPageProps) {
@@ -294,13 +307,13 @@ export function PocPage({ plan }: PocPageProps) {
       </a>
 
       <section className="hero">
-        <p className="eyebrow">Roadmap · Now</p>
+        <p className="eyebrow">Roadmap · Proof</p>
         <h1 className="hero-title">Proof of concept — the Members 1st pilot.</h1>
         <p className="hero-sub">
-          Our first live pilot with an independent agency. Weekly Mon/Wed/Fri sessions, small-batch
-          outreach paced to shopping capacity, and end-to-end runs from outreach &rarr; questionnaire
-          &rarr; shop &rarr; agent-reviewed recommendation. This is where we prove the proposal
-          moment is real.
+          Our first live pilot with an independent agency is complete. Weekly Mon/Wed/Fri sessions,
+          small-batch outreach paced to shopping capacity, and end-to-end runs from outreach &rarr;
+          questionnaire &rarr; shop &rarr; agent-reviewed recommendation. It tested well. Stockton
+          Hill is next.
         </p>
       </section>
 
@@ -374,10 +387,10 @@ export function PocPage({ plan }: PocPageProps) {
           <div className="plan-divider" aria-hidden="true" />
           <div className="plan-col">
             <h3 className="plan-subhead" style={{ marginTop: 0 }}>
-              What we&rsquo;re testing
+              What we tested
             </h3>
             <ul className="check-list">
-              {WHAT_WE_TEST.map((t) => (
+              {WHAT_WE_TESTED.map((t) => (
                 <li key={t}>{t}</li>
               ))}
             </ul>
@@ -395,31 +408,62 @@ export function PocPage({ plan }: PocPageProps) {
         <span>Outcome</span>
       </div>
       <section className="card phase-card">
-        <div className="empty-state">
-          <span className="spinner" aria-hidden="true" />
-          <p className="empty-state-t">Proof of concept in progress</p>
-          <p className="empty-state-b">
-            The pilot is still running — the outcome lands here once it wraps.
+        <div className="outcome-verdict tone-win">
+          <span className="outcome-verdict-kicker">How we read it</span>
+          <p className="outcome-verdict-title">It tested well. Big victory — we move forward.</p>
+          <p className="outcome-verdict-body">
+            Members 1st proved the proposal moment on a real book. Agents trusted the rec enough to
+            send it. Customers answered. Seven households switched. The agency wants this as the
+            day-to-day once it is built — and was clear that without the product, they go reactive
+            again.
           </p>
         </div>
 
-        <div className="outcome-note-wrap">
-          <p className="outcome-note-intro">
-            <b>How we&rsquo;ll read it</b> — borrowed from the design-sprint playbook, but applied to
-            the pilot:
-          </p>
-          <div className="outcome-notes">
-            {OUTCOMES.map((o) => (
-              <div key={o.title} className={`outcome-note tone-${o.tone}`}>
-                <span className="outcome-note-h">
-                  <span className="outcome-note-dot" aria-hidden="true" />
-                  {o.title}
-                </span>
-                <p className="outcome-note-sub">{o.sub}</p>
-              </div>
-            ))}
-          </div>
+        <div className="outcome-stats">
+          {OUTCOME_STATS.map((s) => (
+            <div key={s.label} className="outcome-stat">
+              <p className="outcome-stat-value">{s.value}</p>
+              <p className="outcome-stat-label">{s.label}</p>
+            </div>
+          ))}
         </div>
+        <p className="export-hint">
+          Disposition sheet closed Aug 7: 48 households on the roster &rarr; 42 emailed &rarr; 18
+          questionnaires (43%) &rarr; 18 recommendations &rarr; 7 switched &middot; 5 stayed &middot;
+          6 pending. Average savings found among shopped households ~$474/yr; ~$665/yr among known
+          switchers.
+        </p>
+
+        <p className="sub-label">Against the three bars</p>
+        <div className="metric-grid">
+          {CLEARED.map((m, i) => (
+            <div key={m.title} className="metric-card">
+              <div className="metric-head">
+                <span className="metric-n">{i + 1}</span>
+                <div>
+                  <h3>{m.title}</h3>
+                  <span className="metric-frame">{m.frame}</span>
+                </div>
+              </div>
+              <p className="metric-q">{m.result}</p>
+            </div>
+          ))}
+        </div>
+
+        <p className="sub-label">What we learned</p>
+        <ul className="check-list">
+          {FINDINGS.map((f) => (
+            <li key={f}>{f}</li>
+          ))}
+        </ul>
+
+        <hr className="soft-rule" />
+        <p className="sub-label">What&rsquo;s next</p>
+        <p className="proof-statement" style={{ marginTop: 0 }}>
+          Stockton Hill kicks off the week of August 31. Same proposal moment, Version A outreach
+          — we do not inherit the Members 1st v8 copy. That is the second proof, running in tandem
+          with strategy sprint week (week of Sep 8) and the start of the MVP build.
+        </p>
       </section>
     </>
   );
