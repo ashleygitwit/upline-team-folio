@@ -80,6 +80,12 @@ h2 {
   color: var(--muted-foreground) !important;
 }
 
+/* Brand tab sections sit open on the page — no card background — so their
+   content lines up with the hero and page title rather than in white panels. */
+.brand-section {
+  margin-bottom: var(--space-section);
+}
+
 .mantra-card blockquote {
   margin: 0;
   padding: 0;
