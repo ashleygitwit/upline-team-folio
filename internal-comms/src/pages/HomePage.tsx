@@ -41,6 +41,7 @@ const JOURNEY_PHASES: SwimPhase[] = [
 
 interface ArcStep {
   beat: string;
+  heading: string;
   text: string;
   href?: string;
   cta?: string;
@@ -50,14 +51,18 @@ interface ArcStep {
 const ARC: ArcStep[] = [
   {
     beat: 'The insight that started it all',
-    text: 'A renewal is an agent\u2019s best chance to reconnect with a client \u2014 to shop for a better rate, add coverage, and open cross-sell and up-sell conversations. But books are too big to reach everyone in time, so clients quietly churn (often 8\u20139%) when a renewal lands, especially with an increase. The unlock: catch every renewal, and be able to offer to shop every single one.',
+    heading:
+      'A renewal is an agent\u2019s best chance to reconnect with a client \u2014 to shop for a better rate, add coverage, and open cross-sell and up-sell conversations.',
+    text: 'But books are too big to reach everyone in time, so clients quietly churn (often 8\u20139%) when a renewal lands, especially with an increase. The unlock: catch every renewal, and be able to offer to shop every single one.',
     href: 'https://upline-members1st-investor-demo.netlify.app/',
     cta: 'The original concept demo',
     external: true,
   },
   {
     beat: 'What we\u2019ve learned',
-    text: 'Members 1st proved it: short outreach in the agency\u2019s voice, shop the big jumps first, keep the phone close in-house. 43% of emailed households completed a questionnaire; seven switched carriers. Without the product they go reactive again \u2014 so the win is making proactive renewal work actually feasible, not just desirable.',
+    heading:
+      'Members 1st proved it: short outreach in the agency\u2019s voice, shop the big jumps first, keep the phone close in-house.',
+    text: '43% of emailed households completed a questionnaire; seven switched carriers. Without the product they go reactive again \u2014 so the win is making proactive renewal work actually feasible, not just desirable.',
     href: '#/learnings',
     cta: 'Read the learnings',
   },
@@ -91,6 +96,7 @@ export function HomePage({ plan }: HomePageProps) {
                 <div key={step.beat} className="arc-cell">
                   <div className="arc-step">
                     <p className="arc-beat">{step.beat}</p>
+                    <h3 className="arc-heading">{step.heading}</h3>
                     <p className="arc-text">{step.text}</p>
                     {step.cta && step.href ? (
                       <a
