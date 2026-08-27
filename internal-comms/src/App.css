@@ -40,8 +40,8 @@
 h2 {
   margin: 0 0 0.65rem;
   font-size: 0.8rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
+  font-weight: 600;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--primary);
 }
@@ -64,7 +64,7 @@ h2 {
 .thesis-grid dt {
   margin: 0 0 0.25rem;
   font-size: 0.7rem;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--muted-foreground);
@@ -92,7 +92,7 @@ h2 {
   border: none;
   font-family: var(--font-display);
   font-size: 1.25rem;
-  font-weight: 600;
+  font-weight: 500;
   line-height: 1.5;
   color: var(--foreground);
 }
@@ -384,7 +384,7 @@ h2 {
 .list-view th {
   background: var(--muted);
   font-size: 0.7rem;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--muted-foreground);
@@ -483,7 +483,7 @@ h2 {
 
 .wordmark {
   font-family: var(--font-display);
-  font-weight: 600;
+  font-weight: 500;
   /* Cap height ~16.6px, matching the white U glyph inside the badge. */
   font-size: 1.42rem;
   line-height: 1;
@@ -603,10 +603,10 @@ h2 {
 .hero-title {
   margin: 0.5rem 0 0;
   font-family: var(--font-display);
-  font-size: clamp(1.75rem, 4vw, 2.75rem);
-  font-weight: 600;
-  line-height: 1.12;
-  letter-spacing: -0.015em;
+  font-size: clamp(1.9rem, 4.5vw, 3rem);
+  font-weight: 500;
+  line-height: 1.05;
+  letter-spacing: normal;
   color: var(--foreground);
 }
 
@@ -699,9 +699,12 @@ h2 {
   color: var(--secondary);
 }
 
-.feature-band .arc-text,
-.feature-band .bet-block > p:not(.tile-label) {
+.feature-band .arc-text {
   color: color-mix(in srgb, var(--primary-foreground) 70%, var(--primary));
+}
+
+.feature-band .bet-block > p:not(.tile-label) {
+  color: var(--primary-foreground);
 }
 
 .feature-band .bet-approach {
@@ -750,8 +753,8 @@ h2 {
 .arc-beat {
   margin: 0 0 0.55rem;
   font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.05em;
+  font-weight: 600;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--primary);
 }
@@ -761,8 +764,8 @@ h2 {
 .arc-heading {
   margin: 0 0 0.55rem;
   font-family: var(--font-display);
-  font-size: 1.05rem;
-  font-weight: 600;
+  font-size: 1.4rem;
+  font-weight: 500;
   line-height: 1.3;
   color: var(--foreground);
 }
@@ -830,14 +833,17 @@ h2 {
 
 .bet-block > p:not(.tile-label) {
   margin: 0;
-  line-height: 1.55;
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 500;
+  line-height: 1.3;
   color: var(--card-foreground);
 }
 
 .tile-label {
   margin: 0 0 0.4rem;
   font-size: 0.7rem;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--primary);
@@ -848,7 +854,7 @@ h2 {
 }
 
 .bet-hypothesis > p:not(.tile-label) {
-  font-size: 1.05rem;
+  font-size: 1.4rem;
 }
 
 .bet-problem {
@@ -980,7 +986,7 @@ h2 {
 
 .funnel-stat-v {
   font-size: 1.5rem;
-  font-weight: 600;
+  font-weight: 500;
   font-family: var(--font-display);
 }
 
@@ -1190,7 +1196,7 @@ h2 {
 .table-scroll th {
   background: var(--muted);
   font-size: 0.7rem;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--muted-foreground);
@@ -1301,7 +1307,7 @@ h2 {
 .venn-center {
   font-family: var(--font-display);
   font-size: 15px;
-  font-weight: 600;
+  font-weight: 500;
   fill: var(--foreground);
 }
 
@@ -1403,7 +1409,7 @@ h2 {
 .milestone-flag {
   display: inline-block;
   font-size: 0.62rem;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--primary-foreground);
@@ -1416,7 +1422,7 @@ h2 {
 
 .milestone-title {
   font-family: var(--font-display);
-  font-weight: 600;
+  font-weight: 500;
   font-size: 1rem;
   color: var(--foreground);
   vertical-align: middle;
@@ -1456,7 +1462,7 @@ h2 {
   background: var(--primary);
   color: var(--primary-foreground);
   font-size: 0.7rem;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   text-align: center;
@@ -1466,7 +1472,7 @@ h2 {
   margin: 0 0 0.35rem;
   font-family: var(--font-display);
   font-size: 1.2rem;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--foreground);
 }
 
@@ -1589,7 +1595,7 @@ h2 {
 .type-display {
   font-family: var(--font-display);
   font-size: 1.9rem;
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .type-sans {
@@ -1732,7 +1738,7 @@ code {
   margin: 0;
   font-family: var(--font-display);
   font-size: 1.05rem;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--foreground);
 }
 
@@ -1765,7 +1771,7 @@ code {
 .metric-guardrail-label {
   margin: 0 0 0.35rem;
   font-size: 0.68rem;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--muted-foreground);
@@ -1802,7 +1808,7 @@ code {
   margin: 0 0 0.5rem;
   font-family: var(--font-display);
   font-size: 1.05rem;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--foreground);
 }
 
@@ -1834,7 +1840,7 @@ code {
 .sprint-day-when {
   margin: 0 0 0.25rem;
   font-size: 0.72rem;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--muted-foreground);
@@ -1844,7 +1850,7 @@ code {
   margin: 0 0 0.45rem;
   font-family: var(--font-display);
   font-size: 1.05rem;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--foreground);
 }
 
@@ -1933,7 +1939,7 @@ code {
 .phase-rule > span {
   flex-shrink: 0;
   font-size: 0.72rem;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--foreground);
@@ -1956,8 +1962,8 @@ code {
 .sub-label {
   margin: 0 0 0.7rem;
   font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
+  font-weight: 600;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--muted-foreground);
 }
@@ -1980,7 +1986,7 @@ code {
 .proof-lead-label {
   margin: 1.1rem 0 0;
   font-size: 0.72rem;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--muted-foreground);
@@ -1990,7 +1996,7 @@ code {
   margin: 0;
   font-family: var(--font-display);
   font-size: 1.2rem;
-  font-weight: 600;
+  font-weight: 500;
   line-height: 1.5;
   color: var(--foreground);
 }
@@ -2000,7 +2006,7 @@ code {
   margin: 1.5rem 0 0.7rem;
   font-family: var(--font-display);
   font-size: 1.05rem;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--foreground);
 }
 
@@ -2047,7 +2053,7 @@ code {
   padding: 0.16rem 0.55rem;
   border-radius: 999px;
   font-size: 0.66rem;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
@@ -2196,7 +2202,7 @@ code {
 
 .pilot-fact dt {
   font-size: 0.72rem;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--muted-foreground);
@@ -2279,7 +2285,7 @@ code {
   margin: 1rem 0 0;
   font-family: var(--font-display);
   font-size: 1.2rem;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--foreground);
 }
 
@@ -2325,7 +2331,7 @@ code {
 .outcome-verdict-kicker {
   display: block;
   font-size: 0.72rem;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--muted-foreground);
@@ -2336,7 +2342,7 @@ code {
   margin: 0 0 0.45rem;
   font-family: var(--font-display);
   font-size: 1.25rem;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--foreground);
 }
 
@@ -2365,7 +2371,7 @@ code {
   margin: 0;
   font-family: var(--font-display);
   font-size: 1.55rem;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--foreground);
 }
 
@@ -2479,7 +2485,7 @@ code {
   list-style: none;
   font-family: var(--font-display);
   font-size: 1.05rem;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--foreground);
 }
 
@@ -2529,7 +2535,7 @@ code {
 .kanban-col-head {
   padding: 0.65rem 0.9rem;
   font-size: 0.78rem;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
@@ -2599,14 +2605,14 @@ code {
   margin: 0;
   font-family: var(--font-display);
   font-size: 1.1rem;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--foreground);
 }
 
 .team-role {
   margin: 0.1rem 0 0;
   font-size: 0.72rem;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--muted-foreground);
@@ -2628,7 +2634,7 @@ code {
 .team-focus-label {
   display: block;
   font-size: 0.66rem;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.07em;
   text-transform: uppercase;
   color: var(--primary);
@@ -2845,7 +2851,7 @@ code {
 
 .ramp-axis-title {
   font-size: 10px;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   fill: var(--muted-foreground);
@@ -3095,7 +3101,7 @@ code {
   display: inline-block;
   margin-left: 0.5rem;
   font-size: 0.7rem;
-  font-weight: 700;
+  font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   padding: 0.18rem 0.5rem;
@@ -3186,7 +3192,7 @@ code {
 .scale-cta-eyebrow {
   margin: 0 0 0.15rem;
   font-size: 0.72rem;
-  font-weight: 700;
+  font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: var(--primary);
@@ -3319,7 +3325,7 @@ code {
   vertical-align: bottom;
   padding: 0.55rem 0.75rem;
   font-size: 0.72rem;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--muted-foreground);
@@ -3642,7 +3648,7 @@ code {
   margin: 0;
   font-family: var(--font-display);
   font-size: 1.35rem;
-  font-weight: 600;
+  font-weight: 500;
   letter-spacing: -0.02em;
   color: var(--foreground);
 }
@@ -3766,7 +3772,7 @@ code {
   padding: 0.28rem 0.5rem;
   border-radius: 6px;
   font-size: 0.66rem;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.07em;
   text-transform: uppercase;
   text-align: center;
@@ -3824,7 +3830,7 @@ code {
 
 .ljm-updated {
   font-size: 0.62rem;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--warn-strong);
@@ -3845,7 +3851,7 @@ code {
 
 .ljm-lane span {
   font-size: 0.72rem;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.05em;
   text-transform: uppercase;
 }
@@ -3924,7 +3930,7 @@ code {
 .ljm-how,
 .ljm-open {
   font-size: 0.6rem;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   padding: 0.08rem 0.35rem;
@@ -3997,7 +4003,7 @@ code {
 .ljm-layer-kicker {
   margin: 0 0 0.2rem;
   font-size: 0.6rem;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--muted-foreground);
@@ -4125,7 +4131,7 @@ code {
   padding: 0 0.4rem 0 0;
   background: var(--background);
   font-size: 0.6rem;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--muted-foreground);
@@ -4149,7 +4155,7 @@ code {
 .ljm-detail-kicker {
   margin: 0 0 0.2rem;
   font-size: 0.7rem;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--muted-foreground);
@@ -4159,7 +4165,7 @@ code {
   margin: 0;
   font-family: var(--font-display);
   font-size: 1.45rem;
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .ljm-close {
@@ -4205,7 +4211,7 @@ code {
 .ljm-detail-col h4 {
   margin: 0 0 0.35rem;
   font-size: 0.72rem;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
 }
