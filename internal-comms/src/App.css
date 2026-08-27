@@ -33,7 +33,7 @@
 .card {
   background: var(--card);
   border-radius: var(--radius);
-  padding: 1.25rem 1.5rem;
+  padding: var(--card-pad);
   margin-bottom: var(--space-block);
 }
 
@@ -745,13 +745,13 @@ h2 {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding: 1.6rem 1.6rem 1.5rem;
+  padding: var(--card-pad);
   border-radius: var(--radius);
   background: var(--card);
 }
 
 .arc-beat {
-  margin: 0 0 0.55rem;
+  margin: 0 0 0.75rem;
   font-size: 0.72rem;
   font-weight: 600;
   letter-spacing: 0.08em;
@@ -762,7 +762,7 @@ h2 {
 /* First line of each band card, promoted to the design's h3 style. Lives on the
    glass card, so it reverses to white; dark elsewhere for safety. */
 .arc-heading {
-  margin: 0 0 0.55rem;
+  margin: 0 0 0.85rem;
   font-family: var(--font-display);
   font-size: 1.4rem;
   font-weight: 500;
@@ -821,7 +821,7 @@ h2 {
 }
 
 .bet-card {
-  padding: 1.75rem 1.85rem;
+  padding: var(--card-pad);
 }
 
 .bet-grid {
@@ -841,7 +841,7 @@ h2 {
 }
 
 .tile-label {
-  margin: 0 0 0.4rem;
+  margin: 0 0 0.65rem;
   font-size: 0.7rem;
   font-weight: 600;
   letter-spacing: 0.06em;
@@ -1141,7 +1141,7 @@ h2 {
 .repo-domain {
   border-radius: var(--radius);
   background: var(--card);
-  padding: 0.9rem 1rem;
+  padding: 1.25rem;
 }
 
 .repo-domain h3 {
@@ -1448,7 +1448,7 @@ h2 {
   display: grid;
   grid-template-columns: 84px 1fr;
   gap: 1rem;
-  padding: 1rem;
+  padding: 1.5rem;
   border: 1px solid var(--border);
   border-radius: var(--radius);
   background: var(--card);
@@ -1711,7 +1711,7 @@ code {
 .metric-card {
   border-radius: var(--radius);
   background: var(--card);
-  padding: 1.1rem 1.1rem 1.2rem;
+  padding: 1.5rem;
 }
 
 .metric-head {
@@ -1960,7 +1960,7 @@ code {
 }
 
 .sub-label {
-  margin: 0 0 0.7rem;
+  margin: 0 0 0.85rem;
   font-size: 0.72rem;
   font-weight: 600;
   letter-spacing: 0.08em;
@@ -2584,7 +2584,7 @@ code {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   background: var(--card);
-  padding: 1.25rem 1.35rem;
+  padding: 1.5rem;
 }
 
 .team-photo {
@@ -4142,7 +4142,7 @@ code {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   background: var(--card);
-  padding: 1.15rem 1.25rem 1.35rem;
+  padding: 1.5rem;
 }
 
 .ljm-detail-head {
