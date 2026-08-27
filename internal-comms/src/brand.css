@@ -1,36 +1,138 @@
-/* Upline brand tokens — from tweakcn.com theme */
+/* Upline brand tokens — from the Upline Brand Guide (Figma) and the
+   shadcncraft Base 2.0.1 library. Values are the brand guide's palette ramps;
+   role names match the shadcn token set used by uplineinsurance.com. */
 
 :root {
-  --background: oklch(0.9759 0.0013 106.4236);
-  --foreground: oklch(0.3293 0.0037 84.5776);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.3293 0.0037 84.5776);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.3293 0.0037 84.5776);
-  --primary: oklch(0.3811 0.196 279.1717);
-  --primary-foreground: oklch(0.9759 0.0013 106.4236);
-  --secondary: oklch(0.9757 0.0921 114.5593);
-  --secondary-foreground: oklch(0.3293 0.0037 84.5776);
-  --muted: oklch(0.9556 0.0057 84.5665);
-  --muted-foreground: oklch(0.5309 0.0063 95.1706);
-  --accent: oklch(0.9556 0.0057 84.5665);
-  --accent-foreground: oklch(0.3293 0.0037 84.5776);
-  --destructive: oklch(0.5305 0.1766 33.8349);
-  --destructive-foreground: oklch(0.9759 0.0013 106.4236);
-  --border: oklch(0.8894 0.0035 67.7786);
-  --input: oklch(0.8894 0.0035 67.7786);
-  --ring: oklch(0.3811 0.196 279.1717);
-  --chart-1: oklch(0.3811 0.196 279.1717);
-  --chart-2: oklch(0.8249 0.061 260.0792);
-  --chart-3: oklch(0.8246 0.1351 89.6359);
-  --chart-4: oklch(0.8242 0.0413 79.4236);
-  --chart-5: oklch(0.6791 0.1292 149.9093);
-  --font-sans: 'DM Sans', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
-    Roboto, 'Helvetica Neue', Arial, sans-serif;
-  --font-serif: 'Fraunces', Georgia, Cambria, 'Times New Roman', Times, serif;
-  --font-mono: 'DM Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono',
-    'Courier New', monospace;
-  --radius: 0.5rem;
-  --shadow-sm: 0 1px 3px 0px hsl(40 2.8571% 20.5882% / 0.05),
-    0 1px 2px -1px hsl(40 2.8571% 20.5882% / 0.05);
+  /* --- Core surfaces --- */
+  --background: #f7f7f6; /* Gray 50  — "light background" */
+  --foreground: #363533; /* Gray 900 — "foreground" */
+  --card: #ffffff;
+  --card-foreground: #363533;
+  --popover: #ffffff;
+  --popover-foreground: #363533;
+
+  /* --- Brand --- */
+  --primary: #3721a6; /* Indigo 600 — "primary" */
+  --primary-foreground: #ffffff;
+  --secondary: #f1f68e; /* Lime 300   — "gradient 02" */
+  --secondary-foreground: #363533;
+
+  /* Buttons carry their own roles in the brand guide: Indigo 500 is the
+     button for light backgrounds, Indigo 400 the one for dark backgrounds.
+     Both are lighter than --primary, which stays reserved for type and rules. */
+  --button: #483ac7; /* Indigo 500 — "button light" */
+  --button-hover: #3721a6; /* Indigo 600 */
+  --button-on-dark: #5c58dc; /* Indigo 400 — "button dark" */
+
+  /* --- Neutrals --- */
+  /* The guide's Gray 100 (#ecebe9) drops muted-foreground text to 4.41:1 — just
+     under AA. #f2f0ec is what both uplineinsurance.com and this site already
+     used for the role, and restores it to 4.62:1. */
+  --muted: #f2f0ec;
+  --muted-foreground: #6d6c68; /* Gray 700 — "muted foreground" */
+  --accent: #f2f0ec;
+  --accent-foreground: #363533;
+  --border: #dcdad8; /* Gray 200 — "border and input" */
+  --input: #dcdad8;
+  --ring: #3721a6;
+
+  /* --- Status --- */
+  --destructive: #f83634; /* Red 500 */
+  --destructive-foreground: #ffffff;
+  --success: #4db360; /* Green 500 */
+  --success-strong: #377f44; /* Green 700 — text on light */
+  --success-soft: #c8e7ce; /* Green 100 — fills */
+  --warn: #ff7f35; /* Coral 500 */
+  --warn-strong: #b55a26; /* Coral 700 — text on light */
+  --warn-soft: #ffd7c0; /* Coral 100 — fills */
+  --info: #483ac7; /* Indigo 500 */
+  --info-strong: #3721a6; /* Indigo 600 — text on light */
+  --info-soft: #c0c3f4; /* Indigo 100 — fills */
+  --amber: #ffd24a; /* Yellow 500 */
+  --amber-strong: #8c7429; /* Yellow 800 — text on light */
+  --amber-soft: #fff1c7; /* Yellow 100 — fills */
+
+  /* --- Charts / journey maps — one 500 from each brand ramp --- */
+  --chart-1: #483ac7; /* Indigo 500 */
+  --chart-2: #a2b3fb; /* Light Blue 500 */
+  --chart-3: #ffd24a; /* Yellow 500 */
+  --chart-4: #ff7f35; /* Coral 500 */
+  --chart-5: #4db360; /* Green 500 */
+  --chart-6: #ad8bd5; /* Lavender 500 */
+
+  /* --- Decorative wash (body::before / body::after) --- */
+  --blob-a: #e0ecff80;
+  --blob-b: #f1f68e6b; /* Lime 300 @ 42% */
+
+  /* --- Type --- */
+  --font-sans: 'Radio Canada', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-display: 'Radio Canada Big', 'Radio Canada', ui-sans-serif, system-ui, -apple-system,
+    BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: 'Reddit Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    'Liberation Mono', 'Courier New', monospace;
+
+  --radius: 1rem;
+  --radius-pill: 999px;
+  --shadow-sm: 0 1px 3px 0px rgb(54 53 51 / 0.05), 0 1px 2px -1px rgb(54 53 51 / 0.05);
+}
+
+/* Soft brand wash — two blurred blobs drifting behind the page, matching the
+   treatment on uplineinsurance.com. */
+body::before,
+body::after {
+  content: '';
+  position: fixed;
+  z-index: -1;
+  width: min(760px, 85vw);
+  height: min(760px, 85vw);
+  border-radius: 9999px;
+  filter: blur(140px);
+  pointer-events: none;
+  will-change: transform;
+}
+
+body::before {
+  top: -220px;
+  left: -220px;
+  background: var(--blob-a);
+  animation: upline-blob-a 22s ease-in-out infinite alternate;
+}
+
+body::after {
+  top: 30vh;
+  right: -220px;
+  background: var(--blob-b);
+  animation: upline-blob-b 26s ease-in-out infinite alternate;
+}
+
+@keyframes upline-blob-a {
+  0% {
+    transform: translate(0) scale(1);
+  }
+  50% {
+    transform: translate(20%, 15%) scale(1.15);
+  }
+  100% {
+    transform: translate(-10%, 25%) scale(0.9);
+  }
+}
+
+@keyframes upline-blob-b {
+  0% {
+    transform: translate(0) scale(1);
+  }
+  50% {
+    transform: translate(-18%, -12%) scale(1.12);
+  }
+  100% {
+    transform: translate(12%, -22%) scale(0.92);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body::before,
+  body::after {
+    animation: none;
+  }
 }

@@ -9,9 +9,9 @@ interface HomePageProps {
 // left-to-right flow, minus the deep detail in the embedded version below.
 const JOURNEY_LANES: SwimLane[] = [
   { key: 'upline', label: 'Upline', color: 'var(--primary)' },
-  { key: 'va', label: 'VA', color: 'oklch(0.62 0.14 40)' },
-  { key: 'agent', label: 'Agent', color: 'var(--chart-5)' },
-  { key: 'customer', label: 'Customer', color: 'oklch(0.55 0.12 262)' },
+  { key: 'va', label: 'VA', color: 'var(--chart-4)' },
+  { key: 'agent', label: 'Agent', color: 'var(--success-strong)' },
+  { key: 'customer', label: 'Customer', color: 'var(--info)' },
 ];
 
 const JOURNEY_STEPS: SwimStep[] = [
@@ -27,10 +27,10 @@ const JOURNEY_STEPS: SwimStep[] = [
 ];
 
 const JOURNEY_PHASES: SwimPhase[] = [
-  { start: 0, span: 2, label: 'Set up the data', bg: 'var(--primary)', fg: '#fff' },
-  { start: 2, span: 3, label: 'Reach out & intake', bg: 'var(--chart-3)', fg: '#3a3320' },
-  { start: 5, span: 2, label: 'Shop & recommend', bg: 'var(--chart-5)', fg: '#fff' },
-  { start: 7, span: 2, label: 'Review & close', bg: 'oklch(0.55 0.12 262)', fg: '#fff' },
+  { start: 0, span: 2, label: 'Set up the data', bg: 'var(--primary)', fg: 'var(--primary-foreground)' },
+  { start: 2, span: 3, label: 'Reach out & intake', bg: 'var(--chart-3)', fg: 'var(--foreground)' },
+  { start: 5, span: 2, label: 'Shop & recommend', bg: 'var(--chart-5)', fg: 'var(--primary-foreground)' },
+  { start: 7, span: 2, label: 'Review & close', bg: 'var(--info)', fg: 'var(--primary-foreground)' },
 ];
 
 interface ArcStep {

@@ -113,8 +113,8 @@ interface KanbanCol {
 }
 
 const KANBAN_COLS: KanbanCol[] = [
-  { title: 'Feature backlog', color: 'var(--primary)', text: '#fff', placeholder: true },
-  { title: 'MVP scope', color: 'var(--chart-5)', text: '#fff' },
+  { title: 'Feature backlog', color: 'var(--primary)', text: 'var(--primary-foreground)', placeholder: true },
+  { title: 'MVP scope', color: 'var(--success-strong)', text: 'var(--primary-foreground)' },
   { title: 'Future features', color: 'var(--chart-3)', text: 'var(--foreground)' },
 ];
 
