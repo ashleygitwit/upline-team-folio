@@ -1471,10 +1471,6 @@ h2 {
   max-height: 42px;
 }
 
-.logo-mark-reversed {
-  filter: brightness(0) invert(1);
-}
-
 .logo-cell-label {
   margin: 0.55rem 0 0;
   font-size: 0.78rem;

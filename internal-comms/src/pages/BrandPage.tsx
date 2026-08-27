@@ -72,10 +72,13 @@ const RAMPS: Ramp[] = [
   },
 ];
 
-const LOGO_CELLS: { key: string; label: string; bg: string; invert: boolean; border: boolean }[] = [
-  { key: 'light', label: 'On white', bg: 'var(--card)', invert: false, border: true },
-  { key: 'primary', label: 'On indigo', bg: 'var(--primary)', invert: true, border: false },
-  { key: 'dark', label: 'On black', bg: 'var(--foreground)', invert: true, border: false },
+const LOGO_LIGHT = '/upline-logo.svg';
+const LOGO_WHITE = '/upline-logo-white.svg';
+
+const LOGO_CELLS: { key: string; label: string; bg: string; src: string; border: boolean }[] = [
+  { key: 'light', label: 'On white', bg: 'var(--card)', src: LOGO_LIGHT, border: true },
+  { key: 'primary', label: 'On indigo', bg: 'var(--primary)', src: LOGO_WHITE, border: false },
+  { key: 'dark', label: 'On black', bg: 'var(--foreground)', src: LOGO_WHITE, border: false },
 ];
 
 // ---- Color math: resolve the computed swatch color (oklab/oklch/rgb) to a hex code ----
@@ -184,11 +187,7 @@ export function BrandPage() {
                 className={c.border ? 'logo-well logo-well-bordered' : 'logo-well'}
                 style={{ background: c.bg }}
               >
-                <img
-                  src="/upline-logo.png"
-                  alt="Upline logo"
-                  className={c.invert ? 'logo-mark logo-mark-reversed' : 'logo-mark'}
-                />
+                <img src={c.src} alt="Upline logo" className="logo-mark" />
               </div>
               <p className="logo-cell-label">{c.label}</p>
             </div>

@@ -167,7 +167,7 @@ function App() {
       <header className={isWide ? 'site-header is-wide' : 'site-header'}>
         <div className="site-header-inner">
           <a className="brand-lockup" href="#/" aria-label="The Upline Through Line — home">
-            <img src="/upline-logo.png" alt="Upline" className="logo" />
+            <img src="/upline-logo.svg" alt="Upline" className="logo" />
             <span className="wordmark">The Through Line</span>
           </a>
           <nav className="site-nav" aria-label="Primary">
