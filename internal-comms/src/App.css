@@ -676,6 +676,31 @@ h2 {
   color: var(--primary-foreground);
 }
 
+/* Content cards on the indigo band use the translucent "glass" style from the
+   uplineinsurance.com About page: 5% white fill, 15% white hairline, white text.
+   The journey diagram and embed stay on white surfaces — their labels use brand
+   colors that would disappear on indigo. */
+.feature-band .arc-step,
+.feature-band .bet-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: var(--primary-foreground);
+}
+
+.feature-band .arc-beat,
+.feature-band .tile-label {
+  color: var(--secondary);
+}
+
+.feature-band .arc-text,
+.feature-band .bet-block > p:not(.tile-label) {
+  color: color-mix(in srgb, var(--primary-foreground) 70%, var(--primary));
+}
+
+.feature-band .bet-approach {
+  border-top-color: rgba(255, 255, 255, 0.15);
+}
+
 .arc-section {
   margin-bottom: var(--space-section);
 }
