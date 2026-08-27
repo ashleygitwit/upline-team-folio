@@ -81,6 +81,7 @@
   --space-section: 5rem; /* 80px — between major sections */
   --space-block: 2rem; /* 32px — between cards within a section */
   --space-tight: 1.5rem; /* 24px — gap-6 */
+  --card-label-gap: 1.85rem; /* gap from a section label to the card below it — matches the bet-grid row rhythm */
 
   --radius: 1rem;
   --radius-pill: 999px;
