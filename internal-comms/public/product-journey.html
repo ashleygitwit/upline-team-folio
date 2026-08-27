@@ -130,7 +130,7 @@
   .stepcard {
     position: relative;
     border: 1px solid var(--border); border-top: 4px solid var(--accent);
-    border-radius: 10px; background: var(--elevated); padding: 16px;
+    border-radius: 0; background: var(--elevated); padding: 16px;
     display: flex; flex-direction: column;
   }
   .stepcard h3 { margin: 12px 0 8px; }
@@ -144,7 +144,7 @@
     border: 1px solid var(--border-soft); border-radius: 10px;
     background: var(--elevated); padding: 14px;
   }
-  .cell-data { background: var(--panel); border-left: 3px solid var(--accent); }
+  .cell-data { background: var(--panel); border-left: 3px solid var(--accent); border-radius: 0; }
   .cell-future { background: var(--panel); border-style: dashed; }
   .cell-empty {
     border: 1px dashed var(--border-soft); border-radius: 10px;
@@ -161,12 +161,12 @@
   .cell ul.sub li::before { content: "–"; position: absolute; left: 0; color: var(--faint); }
   .cell-future .note {
     border-left: 3px solid var(--va);
-    background: var(--elevated); border-radius: 8px; padding: 10px 12px;
+    background: var(--elevated); border-radius: 0; padding: 10px 12px;
     color: var(--muted); font-size: 13px; margin-bottom: 8px;
   }
   .cell-future .note:last-child { margin-bottom: 0; }
 
-  .cell-review { background: var(--panel); border-left: 3px solid var(--warn); }
+  .cell-review { background: var(--panel); border-left: 3px solid var(--warn); border-radius: 0; }
   .cell-review .ri { font-size: 13px; color: var(--muted); margin-bottom: 8px; padding-left: 15px; position: relative; }
   .cell-review .ri:last-child { margin-bottom: 0; }
   .cell-review .ri::before { content: "•"; position: absolute; left: 0; color: var(--faint); }
@@ -190,7 +190,7 @@
   .review-banner li { font-size: 13px; color: var(--muted); margin-bottom: 4px; }
 
   .block { border: 1px solid var(--border); border-radius: 12px; padding: 18px; margin-top: 24px; }
-  .block.repo-anchor { border-left: 4px solid var(--accent); background: var(--panel); }
+  .block.repo-anchor { border-left: 4px solid var(--accent); background: var(--panel); border-radius: 0; }
   .breadcrumb { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: 14px 0 12px; }
   .chip { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--panel); font-size: 13px; }
   .chip b { font-weight: 600; }

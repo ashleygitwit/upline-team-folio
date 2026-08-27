@@ -138,7 +138,7 @@ export function SwimlaneMap({ lanes, steps, phases, ariaLabel }: SwimlaneMapProp
                   justifyContent: 'center',
                   border: `1.5px solid ${color}`,
                   borderLeft: `4px solid ${color}`,
-                  borderRadius: '8px',
+                  borderRadius: '0',
                   background: 'var(--card)',
                   padding: '6px 9px',
                   overflow: 'hidden',

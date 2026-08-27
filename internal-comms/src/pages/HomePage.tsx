@@ -158,13 +158,13 @@ export function HomePage({ plan }: HomePageProps) {
             <div className="embed-frame embed-frame-tall">
               <iframe
                 title="Upline — the product journey"
-                src="/product-journey.html?v=4"
+                src="/product-journey.html?v=6"
                 loading="lazy"
               />
             </div>
             <a
               className="arc-link"
-              href="/product-journey.html?v=4"
+              href="/product-journey.html?v=6"
               target="_blank"
               rel="noreferrer"
             >

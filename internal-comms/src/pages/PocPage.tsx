@@ -224,7 +224,7 @@ function WeeklyLoopMap() {
                   gap: '2px',
                   border: `1.5px solid ${color}`,
                   borderLeft: `4px solid ${color}`,
-                  borderRadius: '8px',
+                  borderRadius: '0',
                   background: 'var(--card)',
                   padding: '6px 8px',
                   overflow: 'hidden',

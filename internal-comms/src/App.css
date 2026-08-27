@@ -942,7 +942,7 @@ h2 {
   border: 1px solid var(--border);
   border-left: 4px solid var(--primary);
   background: color-mix(in srgb, var(--primary) 6%, var(--card));
-  border-radius: var(--radius);
+  border-radius: 0;
   padding: 0.85rem 1rem;
 }
 
@@ -1837,7 +1837,7 @@ code {
 .sprint-fork {
   border: 1px solid var(--border);
   border-left: 3px solid var(--chart-5);
-  border-radius: var(--radius);
+  border-radius: 0;
   padding: 0.7rem 0.85rem;
   background: var(--card);
 }
@@ -2167,7 +2167,7 @@ code {
   margin-top: 0.4rem;
   border: 1px solid var(--border);
   border-left: 4px solid var(--chart-5);
-  border-radius: var(--radius);
+  border-radius: 0;
   background: color-mix(in srgb, var(--chart-5) 7%, var(--card));
   padding: 0.9rem 1.1rem;
 }
@@ -2263,7 +2263,7 @@ code {
 .outcome-verdict {
   border: 1px solid var(--border);
   border-left: 4px solid var(--chart-5);
-  border-radius: var(--radius);
+  border-radius: 0;
   background: color-mix(in srgb, var(--chart-5) 7%, var(--card));
   padding: 1.1rem 1.2rem 1.15rem;
   margin-bottom: 1.25rem;
@@ -2353,7 +2353,7 @@ code {
 .outcome-note {
   border: 1px solid var(--border);
   border-left: 3px solid var(--border);
-  border-radius: var(--radius);
+  border-radius: 0;
   background: var(--card);
   padding: 0.65rem 0.8rem;
 }
@@ -3836,6 +3836,7 @@ code {
   font: inherit;
   cursor: pointer;
   border-top-width: 3px;
+  border-radius: 0;
 }
 
 .ljm-card.is-upline,
