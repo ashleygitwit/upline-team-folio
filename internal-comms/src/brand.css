@@ -72,6 +72,18 @@
   --font-mono: 'Reddit Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
     'Liberation Mono', 'Courier New', monospace;
 
+  /* --- Layout — container and rhythm from uplineinsurance.com ---
+     The live site centres content in a 1024px shell with 1.25/2/3rem side
+     padding by breakpoint. Its sections each carry 80px of block padding, so
+     neighbours sit 160px apart; that suits a marketing page but doubles the
+     length of a dense document, so here one 80px gap separates major sections
+     and 32px (the live site's gap-8) separates blocks inside one. */
+  --shell-max: 1024px;
+  --shell-pad: 1.25rem;
+  --space-section: 5rem; /* 80px — between major sections */
+  --space-block: 2rem; /* 32px — between cards within a section */
+  --space-tight: 1.5rem; /* 24px — gap-6 */
+
   --radius: 1rem;
   --radius-pill: 999px;
   --shadow-sm: 0 1px 3px 0px rgb(54 53 51 / 0.05), 0 1px 2px -1px rgb(54 53 51 / 0.05);
@@ -127,6 +139,19 @@ body::after {
   }
   100% {
     transform: translate(12%, -22%) scale(0.92);
+  }
+}
+
+/* Side padding steps with the viewport, matching the live site's shell. */
+@media (min-width: 640px) {
+  :root {
+    --shell-pad: 2rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --shell-pad: 3rem;
   }
 }
 
