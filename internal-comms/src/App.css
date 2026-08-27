@@ -1,7 +1,7 @@
 .page {
   max-width: var(--shell-max);
   margin: 0 auto;
-  padding: 2rem var(--shell-pad) var(--space-section);
+  padding: calc(var(--nav-h) + var(--space-block)) var(--shell-pad) var(--space-section);
   color: var(--foreground);
 }
 
@@ -431,20 +431,31 @@ h2 {
 }
 
 /* ---- Site nav ---- */
+/* Fixed full-bleed bar with the content centred in the page shell — the
+   treatment on uplineinsurance.com. Opaque background, no backdrop blur. */
 .site-header {
-  position: sticky;
+  position: fixed;
   top: 0;
-  z-index: 20;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  background: var(--background);
+  border-bottom: 1px solid var(--border);
+}
+
+.site-header-inner {
+  max-width: var(--shell-max);
+  margin: 0 auto;
+  padding: 0 var(--shell-pad);
+  height: var(--nav-h);
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 0.75rem 1.5rem;
-  margin: -2rem calc(var(--shell-pad) * -1) var(--space-block);
-  padding: 0.85rem var(--shell-pad);
-  background: color-mix(in oklch, var(--background) 88%, transparent);
-  backdrop-filter: saturate(1.4) blur(8px);
-  border-bottom: 1px solid var(--border);
+  gap: 1.5rem;
+}
+
+.site-header.is-wide .site-header-inner {
+  max-width: none;
 }
 
 .brand-lockup {
@@ -470,26 +481,32 @@ h2 {
 
 .site-nav {
   display: flex;
+  align-items: center;
   flex-wrap: wrap;
-  gap: 0.25rem;
+  gap: 1.5rem;
 }
 
 .nav-link {
-  padding: 0.4rem 0.75rem;
-  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  height: 2.25rem;
+  padding: 0;
   text-decoration: none;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--muted-foreground);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--foreground);
   white-space: nowrap;
 }
 
 .nav-link:hover {
-  background: var(--accent);
-  color: var(--foreground);
+  color: var(--primary);
 }
 
+/* The live site sets one nav item apart as a pill (its CTA); the same shape
+   marks the current page here, in the brand's secondary rather than indigo. */
 .nav-link.active {
+  padding: 0 1.25rem;
+  border-radius: var(--radius-pill);
   background: var(--secondary);
   color: var(--secondary-foreground);
 }
@@ -521,7 +538,9 @@ h2 {
   position: absolute;
   top: 100%;
   right: 0;
-  margin-top: 0.35rem;
+  /* Hang below the bar, not the nav item: the item is centred in the bar, so
+     clear the remaining half plus a small gap. */
+  margin-top: calc((var(--nav-h) - 2.25rem) / 2 + 0.5rem);
   min-width: 200px;
   display: flex;
   flex-direction: column;
@@ -1519,8 +1538,23 @@ code {
 }
 
 @media (max-width: 640px) {
+  /* Too narrow for a single row: let the bar flow with the page and wrap,
+     rather than overflowing a fixed 80px strip. */
   .site-header {
-    margin: -1.25rem -1rem 1.25rem;
+    position: static;
+  }
+
+  .site-header-inner {
+    height: auto;
+    min-height: var(--nav-h);
+    flex-wrap: wrap;
+    gap: 0.75rem 1.5rem;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+  }
+
+  .page {
+    padding-top: var(--space-block);
   }
 
   .milestone {
@@ -3554,7 +3588,6 @@ code {
   max-width: none;
 }
 
-.page.is-wide .site-header,
 .page.is-wide .site-footer {
   max-width: none;
 }

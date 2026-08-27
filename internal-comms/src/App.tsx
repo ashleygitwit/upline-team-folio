@@ -160,14 +160,17 @@ function App() {
     window.location.reload();
   }
 
+  const isWide = route === 'mvp-journey';
+
   return (
-    <div className={route === 'mvp-journey' ? 'page is-wide' : 'page'}>
-      <header className="site-header">
-        <a className="brand-lockup" href="#/" aria-label="The Upline Through Line — home">
-          <img src="/upline-logo.png" alt="Upline" className="logo" />
-          <span className="wordmark">The Through Line</span>
-        </a>
-        <nav className="site-nav" aria-label="Primary">
+    <>
+      <header className={isWide ? 'site-header is-wide' : 'site-header'}>
+        <div className="site-header-inner">
+          <a className="brand-lockup" href="#/" aria-label="The Upline Through Line — home">
+            <img src="/upline-logo.png" alt="Upline" className="logo" />
+            <span className="wordmark">The Through Line</span>
+          </a>
+          <nav className="site-nav" aria-label="Primary">
           {NAV.map((item) => {
             if (item.key === 'roadmap') {
               const isActive = ROADMAP_ROUTES.includes(route);
@@ -211,38 +214,41 @@ function App() {
               </a>
             );
           })}
-        </nav>
+          </nav>
+        </div>
       </header>
 
-      {error ? <p className="error">{error}</p> : null}
+      <div className={isWide ? 'page is-wide' : 'page'}>
+        {error ? <p className="error">{error}</p> : null}
 
-      {route === 'home' ? <HomePage plan={plan} /> : null}
-      {route === 'learnings' ? <LearningsPage learnings={learnings} /> : null}
-      {route === 'roadmap' ? (
-        <RoadmapPage
-          plan={plan}
-          exportMarkdown={exportMarkdown}
-          hasLocalEdits={hasLocalEdits}
-          onPlanChange={applyPlan}
-          onDownload={downloadPlanJson}
-          onReset={resetToServerPlan}
-        />
-      ) : null}
-      {route === 'poc' ? <PocPage plan={plan} /> : null}
-      {route === 'sprint' ? <SprintPage /> : null}
-      {route === 'mvp-journey' ? <MvpJourneyPage /> : null}
-      {route === 'mvp' ? <MvpPage /> : null}
-      {route === 'scale' ? <PathToScalePage /> : null}
-      {route === 'brand' ? <BrandPage /> : null}
-      {route === 'team' ? <TeamPage /> : null}
+        {route === 'home' ? <HomePage plan={plan} /> : null}
+        {route === 'learnings' ? <LearningsPage learnings={learnings} /> : null}
+        {route === 'roadmap' ? (
+          <RoadmapPage
+            plan={plan}
+            exportMarkdown={exportMarkdown}
+            hasLocalEdits={hasLocalEdits}
+            onPlanChange={applyPlan}
+            onDownload={downloadPlanJson}
+            onReset={resetToServerPlan}
+          />
+        ) : null}
+        {route === 'poc' ? <PocPage plan={plan} /> : null}
+        {route === 'sprint' ? <SprintPage /> : null}
+        {route === 'mvp-journey' ? <MvpJourneyPage /> : null}
+        {route === 'mvp' ? <MvpPage /> : null}
+        {route === 'scale' ? <PathToScalePage /> : null}
+        {route === 'brand' ? <BrandPage /> : null}
+        {route === 'team' ? <TeamPage /> : null}
 
-      <footer className="site-footer">
-        <p>
-          The Upline Through Line · Upline's home base. Present, learnings, and where we're headed —
-          one roof.
-        </p>
-      </footer>
-    </div>
+          <footer className="site-footer">
+            <p>
+              The Upline Through Line · Upline's home base. Present, learnings, and where we're
+              headed — one roof.
+            </p>
+          </footer>
+      </div>
+    </>
   );
 }
 

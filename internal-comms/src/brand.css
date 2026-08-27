@@ -79,6 +79,7 @@
      length of a dense document, so here one 80px gap separates major sections
      and 32px (the live site's gap-8) separates blocks inside one. */
   --shell-max: 1024px;
+  --nav-h: 5rem; /* 80px — the live site's h-20 nav bar */
   --shell-pad: 1.25rem;
   --space-section: 5rem; /* 80px — between major sections */
   --space-block: 2rem; /* 32px — between cards within a section */
