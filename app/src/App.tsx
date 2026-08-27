@@ -5,6 +5,7 @@ import { LearningsPage } from './pages/LearningsPage';
 import { RoadmapPage } from './pages/RoadmapPage';
 import { PocPage } from './pages/PocPage';
 import { SprintPage } from './pages/SprintPage';
+import { MvpJourneyPage } from './pages/MvpJourneyPage';
 import { MvpPage } from './pages/MvpPage';
 import { PathToScalePage } from './pages/PathToScalePage';
 import { ScenarioBuildNowPage } from './pages/ScenarioBuildNowPage';
@@ -24,6 +25,7 @@ type RouteKey =
   | 'roadmap'
   | 'poc'
   | 'sprint'
+  | 'mvp-journey'
   | 'mvp'
   | 'scale'
   | 'scenario-build-now'
@@ -43,6 +45,7 @@ const ROADMAP_ROUTES: RouteKey[] = [
   'roadmap',
   'poc',
   'sprint',
+  'mvp-journey',
   'mvp',
   'scale',
   'scenario-build-now',
@@ -53,6 +56,7 @@ const ROADMAP_MENU: { key: RouteKey; label: string; href: string }[] = [
   { key: 'roadmap', label: 'Roadmap overview', href: '#/roadmap' },
   { key: 'poc', label: 'Proof of Concept', href: '#/poc' },
   { key: 'sprint', label: 'Strategy Sprint', href: '#/sprint' },
+  { key: 'mvp-journey', label: 'MVP journey map', href: '#/mvp-journey' },
   { key: 'mvp', label: 'MVP', href: '#/mvp' },
   { key: 'scale', label: 'Path to Scale', href: '#/scale' },
   { key: 'scenario-build-now', label: 'Build next week', href: '#/scenario-build-now' },
@@ -67,6 +71,7 @@ function routeFromHash(): RouteKey {
     hash === 'roadmap' ||
     hash === 'poc' ||
     hash === 'sprint' ||
+    hash === 'mvp-journey' ||
     hash === 'mvp' ||
     hash === 'scale' ||
     hash === 'scenario-build-now' ||
@@ -163,7 +168,7 @@ function App() {
   }
 
   return (
-    <div className="page">
+    <div className={route === 'mvp-journey' ? 'page is-wide' : 'page'}>
       <header className="site-header">
         <a className="brand-lockup" href="#/" aria-label="The Upline Through Line — home">
           <img src="/upline-logo.png" alt="Upline" className="logo" />
@@ -232,6 +237,7 @@ function App() {
       ) : null}
       {route === 'poc' ? <PocPage plan={plan} /> : null}
       {route === 'sprint' ? <SprintPage /> : null}
+      {route === 'mvp-journey' ? <MvpJourneyPage /> : null}
       {route === 'mvp' ? <MvpPage /> : null}
       {route === 'scale' ? <PathToScalePage /> : null}
       {route === 'scenario-build-now' ? <ScenarioBuildNowPage /> : null}

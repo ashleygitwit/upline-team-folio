@@ -76,13 +76,13 @@ export function SprintPage() {
         <span>Plan</span>
       </div>
       <section className="card phase-card">
-        <div className="empty-state">
-          <p className="empty-state-t">The sprint plan isn&rsquo;t mapped yet</p>
-          <p className="empty-state-b">
-            We&rsquo;ll design the week (agenda, exercises, who&rsquo;s in the room) closer to early
-            September, once both pilots have wrapped. Placeholder for now.
-          </p>
-        </div>
+        <p className="sub-label">Strawman going into the room</p>
+        <p className="proof-statement" style={{ marginBottom: '1rem' }}>
+          The layered MVP journey is the artifact we hash on Tuesday — not a blank wall.
+        </p>
+        <a className="arc-cta" href="#/mvp-journey">
+          Open the MVP journey map &rarr;
+        </a>
       </section>
 
       {/* OUTCOME */}

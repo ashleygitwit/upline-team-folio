@@ -151,6 +151,11 @@ export function MvpPage() {
         <span>Scope</span>
       </div>
       <section className="card phase-card">
+        <p className="export-hint" style={{ marginTop: 0 }}>
+          Working strawman of the first sellable week lives on the{' '}
+          <a href="#/mvp-journey">layered MVP journey map</a> — experience, UX, data, and
+          features on the same grid. Feature cards below stay until that map is locked.
+        </p>
         <p className="sub-label">Feature backlog</p>
         <div className="kanban">
           {KANBAN_COLS.map((col) => (

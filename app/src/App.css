@@ -3366,3 +3366,551 @@ code {
     grid-template-columns: 1fr;
   }
 }
+
+/* ---- MVP layered journey map ---- */
+.page.is-wide {
+  max-width: none;
+}
+
+.page.is-wide .site-header,
+.page.is-wide .site-footer {
+  max-width: none;
+}
+
+.mvp-journey-hero {
+  max-width: 46rem;
+}
+
+.ljm {
+  margin: 0.4rem 0 2rem;
+}
+
+.ljm-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 0.85rem 1.5rem;
+  margin-bottom: 0.9rem;
+}
+
+.ljm-layers {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.ljm-chip {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.1rem;
+  padding: 0.45rem 0.75rem 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--card);
+  color: var(--foreground);
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+}
+
+.ljm-chip small {
+  font-size: 0.68rem;
+  color: var(--muted-foreground);
+}
+
+.ljm-chip.is-on {
+  border-color: var(--primary);
+  background: color-mix(in srgb, var(--primary) 8%, var(--card));
+}
+
+.ljm-hint {
+  margin: 0;
+  max-width: 22rem;
+  font-size: 0.78rem;
+  line-height: 1.4;
+  color: var(--muted-foreground);
+}
+
+.ljm-scroll {
+  overflow-x: auto;
+  padding-bottom: 0.6rem;
+}
+
+.ljm-grid {
+  display: grid;
+  gap: 0.45rem 0.45rem;
+  min-width: 92rem;
+  align-items: stretch;
+}
+
+.ljm-corner {
+  position: sticky;
+  left: 0;
+  z-index: 3;
+  background: var(--background);
+}
+
+.ljm-phase {
+  padding: 0.28rem 0.5rem;
+  border-radius: 6px;
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  text-align: center;
+  color: var(--muted-foreground);
+  background: var(--muted);
+}
+
+.ljm-phase.is-setup {
+  background: color-mix(in srgb, var(--primary) 14%, var(--muted));
+  color: var(--primary);
+}
+.ljm-phase.is-reach {
+  background: color-mix(in srgb, var(--chart-3) 28%, var(--muted));
+}
+.ljm-phase.is-intake,
+.ljm-phase.is-close {
+  background: color-mix(in srgb, oklch(0.55 0.12 262) 16%, var(--muted));
+  color: oklch(0.42 0.1 262);
+}
+.ljm-phase.is-shop {
+  background: color-mix(in srgb, var(--chart-5) 18%, var(--muted));
+}
+
+.ljm-colhead {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.2rem;
+  padding: 0.45rem 0.55rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.ljm-colhead.is-selected {
+  border-color: var(--foreground);
+  background: var(--card);
+}
+
+.ljm-n {
+  font-size: 0.66rem;
+  font-weight: 700;
+  color: var(--muted-foreground);
+}
+
+.ljm-colname {
+  font-size: 0.84rem;
+  font-weight: 650;
+  line-height: 1.25;
+}
+
+.ljm-updated {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: oklch(0.5 0.1 70);
+}
+
+.ljm-lane {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 0.25rem;
+  padding: 0.65rem 0.7rem 0.65rem 0.75rem;
+  border-left: 3px solid var(--border);
+  background: var(--background);
+}
+
+.ljm-lane span {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.ljm-lane small {
+  font-size: 0.66rem;
+  line-height: 1.3;
+  color: var(--muted-foreground);
+}
+
+.ljm-lane.is-upline,
+.ljm-lane.is-va {
+  border-left-color: var(--primary);
+  color: var(--primary);
+}
+.ljm-lane.is-agent {
+  border-left-color: var(--chart-5);
+  color: color-mix(in srgb, var(--chart-5) 70%, black);
+}
+.ljm-lane.is-customer {
+  border-left-color: oklch(0.55 0.12 262);
+  color: oklch(0.42 0.1 262);
+}
+
+.ljm-card,
+.ljm-empty {
+  min-height: 8.5rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--card);
+  text-align: left;
+}
+
+.ljm-card {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.35rem;
+  padding: 0.65rem 0.7rem 0.75rem;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  border-top-width: 3px;
+}
+
+.ljm-card.is-upline,
+.ljm-card.is-va {
+  border-top-color: var(--primary);
+}
+.ljm-card.is-agent {
+  border-top-color: var(--chart-5);
+}
+.ljm-card.is-customer {
+  border-top-color: oklch(0.55 0.12 262);
+}
+
+.ljm-card.is-selected,
+.ljm-empty.is-selected,
+.ljm-colhead.is-selected {
+  outline: 1px solid var(--foreground);
+}
+
+.ljm-empty {
+  background: color-mix(in srgb, var(--muted) 55%, transparent);
+  border-style: dashed;
+  cursor: pointer;
+}
+
+.ljm-card-top {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.ljm-how,
+.ljm-open {
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 0.08rem 0.35rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  color: var(--muted-foreground);
+}
+
+.ljm-how.is-rpa,
+.ljm-how.is-va,
+.ljm-how.is-product {
+  color: var(--primary);
+  border-color: color-mix(in srgb, var(--primary) 35%, var(--border));
+}
+
+.ljm-open {
+  color: oklch(0.48 0.11 70);
+  border-color: color-mix(in srgb, oklch(0.7 0.12 70) 50%, var(--border));
+}
+
+.ljm-card-title {
+  margin: 0;
+  font-size: 0.82rem;
+  font-weight: 650;
+  line-height: 1.3;
+}
+
+.ljm-note {
+  margin: 0;
+  font-size: 0.68rem;
+  line-height: 1.35;
+  color: var(--muted-foreground);
+}
+
+.ljm-card .ljm-copy {
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.ljm-card .ljm-list {
+  max-height: 8.5rem;
+  overflow: hidden;
+}
+
+.ljm-copy {
+  margin: 0;
+  font-size: 0.72rem;
+  line-height: 1.4;
+  color: var(--muted-foreground);
+}
+
+.ljm-copy.is-muted {
+  font-style: italic;
+}
+
+.ljm-list {
+  margin: 0;
+  padding-left: 0.95rem;
+}
+
+.ljm-list li {
+  font-size: 0.72rem;
+  line-height: 1.35;
+  color: var(--muted-foreground);
+  margin-bottom: 0.2rem;
+}
+
+.ljm-layer-kicker {
+  margin: 0 0 0.2rem;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+
+.ljm-layer-block + .ljm-layer-block {
+  margin-top: 0.35rem;
+  padding-top: 0.35rem;
+  border-top: 1px solid var(--border);
+}
+
+.ljm-ux {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.ljm-wire {
+  display: grid;
+  gap: 0.22rem;
+  padding: 0.4rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--muted);
+}
+
+.ljm-wire-drop {
+  display: grid;
+  place-items: center;
+  height: 2rem;
+  border: 1px dashed color-mix(in srgb, var(--muted-foreground) 35%, var(--border));
+  border-radius: 4px;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--muted-foreground);
+}
+
+.ljm-wire-line,
+.ljm-wire-row,
+.ljm-wire-field {
+  display: block;
+  height: 4px;
+  border-radius: 99px;
+  background: color-mix(in srgb, var(--muted-foreground) 22%, var(--border));
+}
+
+.ljm-wire-line.is-short,
+.ljm-wire-line.is-tiny {
+  width: 62%;
+}
+.ljm-wire-line.is-tiny {
+  width: 38%;
+}
+
+.ljm-wire-row.is-on,
+.ljm-wire-btn,
+.ljm-wire-cal i.is-on,
+.ljm-wire-compare span.is-on {
+  background: color-mix(in srgb, var(--primary) 45%, var(--border));
+}
+
+.ljm-wire-btn {
+  width: 2.4rem;
+  height: 7px;
+  border-radius: 99px;
+  margin-top: 0.1rem;
+}
+
+.ljm-wire-cols,
+.ljm-wire-pills,
+.ljm-wire-compare,
+.ljm-wire-cal {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.ljm-wire-cols {
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+.ljm-wire-cols span,
+.ljm-wire-pills i,
+.ljm-wire-ticket,
+.ljm-wire-compare span,
+.ljm-wire-cal i {
+  display: block;
+  height: 6px;
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--muted-foreground) 18%, var(--border));
+}
+
+.ljm-wire-pills {
+  grid-template-columns: repeat(3, 1.1rem);
+}
+
+.ljm-wire-compare {
+  grid-template-columns: 1fr 1fr 1fr;
+  height: 1.6rem;
+}
+
+.ljm-wire-compare span {
+  height: 100%;
+}
+
+.ljm-wire-cal {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.ljm-wire-cal i {
+  height: 0.7rem;
+}
+
+.ljm-wire-ticket.is-mid {
+  width: 78%;
+}
+
+.ljm-rule {
+  display: flex;
+  align-items: center;
+  min-height: 1.1rem;
+  border-top: 1px dashed var(--border);
+}
+
+.ljm-rule span {
+  padding: 0 0.4rem 0 0;
+  background: var(--background);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+
+.ljm-detail {
+  margin-top: 1.4rem;
+  border: 1px solid var(--border);
+  border-radius: calc(var(--radius) + 4px);
+  background: var(--card);
+  padding: 1.15rem 1.25rem 1.35rem;
+}
+
+.ljm-detail-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.ljm-detail-kicker {
+  margin: 0 0 0.2rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+
+.ljm-detail h3 {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: 1.45rem;
+  font-weight: 600;
+}
+
+.ljm-close {
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--background);
+  padding: 0.3rem 0.75rem;
+  font: inherit;
+  font-size: 0.78rem;
+  cursor: pointer;
+}
+
+.ljm-change {
+  margin: 0.7rem 0 0;
+  padding: 0.55rem 0.7rem;
+  border-left: 3px solid oklch(0.7 0.12 70);
+  background: color-mix(in srgb, oklch(0.85 0.08 70) 35%, var(--muted));
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+.ljm-detail-col.is-solo {
+  margin-top: 1.1rem;
+  max-width: 42rem;
+}
+
+.ljm-detail-col {
+  border-top: 3px solid var(--border);
+  padding-top: 0.7rem;
+}
+
+.ljm-detail-col.is-upline,
+.ljm-detail-col.is-va {
+  border-top-color: var(--primary);
+}
+.ljm-detail-col.is-agent {
+  border-top-color: var(--chart-5);
+}
+.ljm-detail-col.is-customer {
+  border-top-color: oklch(0.55 0.12 262);
+}
+
+.ljm-detail-col h4 {
+  margin: 0 0 0.35rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.ljm-detail-title {
+  margin: 0 0 0.5rem;
+  font-size: 1rem;
+  font-weight: 650;
+}
+
+.ljm-detail-layer {
+  margin-top: 0.75rem;
+}
+
+.ljm-detail-build {
+  margin-top: 1.15rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--border);
+}
