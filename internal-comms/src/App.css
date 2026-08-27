@@ -484,7 +484,9 @@ h2 {
 .wordmark {
   font-family: var(--font-display);
   font-weight: 600;
-  font-size: 1.15rem;
+  /* Cap height ~28px, matching the height of the former Upline wordmark logo. */
+  font-size: 2.38rem;
+  line-height: 1;
   letter-spacing: -0.01em;
 }
 
