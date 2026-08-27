@@ -130,7 +130,6 @@ Post-shop handoff locked short: steer (switch/stay + $) in paragraph one, premiu
 - **Workstream:** Ops
 - **Dates:** 2026-07-13 → 2026-11-20
 - **Notes:** Executive search and hiring process.
-
 ### Stockton Hill setup / holding
 - **Workstream:** Product
 - **Dates:** 2026-08-05 → 2026-08-28
@@ -149,57 +148,46 @@ Post-shop handoff locked short: steer (switch/stay + $) in paragraph one, premiu
 - **Workstream:** Product
 - **Dates:** 2026-09-08 → 2026-09-08
 - **Notes:** Prep at the open of sprint week — not after Stockton wraps.
-
 ### Product strategy sprint
 - **Workstream:** Product
 - **Dates:** 2026-09-08 → 2026-09-11
 - **Notes:** Sprint week of Sep 8. Runs in tandem with Stockton Hill, then goes straight into the MVP build.
-
 ### MVP planning
 - **Workstream:** Product
 - **Dates:** 2026-09-10 → 2026-09-11
 - **Notes:** Closes sprint week and opens the build.
-
 ### MVP build
 - **Workstream:** Product
 - **Dates:** 2026-09-14 → 2026-11-06
 - **Notes:** Build starts coming out of sprint week. Runs in tandem with Stockton Hill. Launch Friday Nov 6.
-
 ### MVP launch
 - **Workstream:** Product
 - **Dates:** 2026-11-06 → 2026-11-06
 - **Notes:** Ship date — Friday Nov 6. Stockton, the sprint, and the build run in tandem.
-
 ### Optional Oct beta — design partners (Aggressive path)
 - **Workstream:** Product
 - **Dates:** 2026-10-12 → 2026-11-06
 - **Notes:** Only if engineer gate clears. Simple MVP slice with Members 1st + Stockton for VA reps before paying logos. Ends at the Nov 6 launch.
-
 ### MVP iteration — first customers
 - **Workstream:** Product
 - **Dates:** 2026-11-09 → 2026-12-18
 - **Notes:** Runs in tandem with Release 2 (close the loop). Learn deep on the first logos.
-
 ### R2 — Close the loop
 - **Workstream:** Product
 - **Dates:** 2026-11-09 → 2026-12-18
 - **Notes:** Record calls/Zooms; write fresh detail back into the repository.
-
 ### R3 — VA portal
 - **Workstream:** Product
 - **Dates:** 2026-12-21 → 2027-01-29
 - **Notes:** Internal VA queues, upload, verification. Can start lighter / internal-tool while customer product stays engineer-built.
-
 ### R4 — RPA full-book AMS pull
 - **Workstream:** Product
 - **Dates:** 2027-02-01 → 2027-03-12
 - **Notes:** Onboarding unlock — EasyLinks / HawkSoft first. Without this, manual book download caps add rate.
-
 ### R5 — Gig-style VA onboarding
 - **Workstream:** Product
 - **Dates:** 2027-03-15 → 2027-04-23
 - **Notes:** Digital training + workflow so VAs come online without heavy babysitting. First VA may become manager/trainer.
-
 ### R6 — AMS replacement (data visibility)
 - **Workstream:** Product
 - **Dates:** 2027-04-26 → 2027-06-04
@@ -211,32 +199,26 @@ Post-shop handoff locked short: steer (switch/stay + $) in paragraph one, premiu
 - **Workstream:** Product
 - **Dates:** 2026-06-17 → 2026-06-24
 - **Notes:** Sessions Jun 17 (Wed), 22, 24.
-
 ### Members 1st pilot — Week 2
 - **Workstream:** Product
 - **Dates:** 2026-07-06 → 2026-07-10
 - **Notes:** Sessions Jul 6, 8, 10.
-
 ### Members 1st pilot — Week 3
 - **Workstream:** Product
 - **Dates:** 2026-07-13 → 2026-07-17
 - **Notes:** Sessions Jul 13, 15, 17 — complete.
-
 ### Members 1st — outreach catch-up (Week 4)
 - **Workstream:** Product
 - **Dates:** 2026-07-20 → 2026-07-24
 - **Notes:** Send batch Jul 20, 22, 24 — complete. Outreach queue cleared.
-
 ### Pilot break — iterate & Stockton prep
 - **Workstream:** Product
 - **Dates:** 2026-07-27 → 2026-08-02
 - **Notes:** Complete. M1st learnings synthesized; disposition sheet closed Aug 7; Aug 3 final retro held.
-
 ### Members 1st final retro
 - **Workstream:** Product
 - **Dates:** 2026-08-03 → 2026-08-03
 - **Notes:** Final session / retro Aug 3. Locked v8 emails, weekly cadence, EZLynx write-back + mid-term add as must-haves.
-
 ### No-AMS launch feasibility (background)
 - **Workstream:** Product
 - **Dates:** 2026-07-13 → 2026-08-24

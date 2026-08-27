@@ -1,0 +1,10 @@
+---
+description: Welcome people who are new to Team Folio or just got access. Do not run this on ordinary Ashley work sessions.
+alwaysApply: false
+---
+
+# New collaborator
+
+If the user is new, just got access, asks for a tour, or says **Welcome me**, follow `.cursor/skills/welcome-to-folio/SKILL.md` and `WELCOME.md`.
+
+Greet them by name. Point at one folder. Do not dump the whole repo.

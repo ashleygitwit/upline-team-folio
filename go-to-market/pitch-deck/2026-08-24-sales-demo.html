@@ -1,0 +1,628 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Upline Sales Demo — August 2026</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #f6f3eb;
+        --paper: #fffcf6;
+        --ink: #2c2a24;
+        --muted: #6f6a5e;
+        --line: #d9d3c4;
+        --violet: #3d2f8c;
+        --violet-soft: #ece8f7;
+        --gold: #c4a035;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        background: #1c1b17;
+        color: var(--ink);
+        font-family: "DM Sans", system-ui, sans-serif;
+        font-feature-settings: "ss01";
+      }
+
+      .stage {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 28px 28px 56px;
+      }
+
+      .frame {
+        width: min(1280px, calc(100vw - 48px));
+        aspect-ratio: 16 / 9;
+        background: var(--bg);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .slide {
+        display: none;
+        position: absolute;
+        inset: 0;
+        padding: 56px 72px 64px;
+      }
+
+      .slide.active {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .slide.center {
+        justify-content: center;
+      }
+
+      kicker {
+        display: block;
+        font-size: 13px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--violet);
+        font-weight: 600;
+        margin-bottom: 16px;
+      }
+
+      h1,
+      h2 {
+        font-family: Fraunces, Georgia, serif;
+        font-weight: 500;
+        letter-spacing: -0.02em;
+        margin: 0 0 16px;
+        line-height: 1.12;
+      }
+
+      h1 {
+        font-size: 64px;
+      }
+
+      h2 {
+        font-size: 42px;
+        max-width: 18ch;
+      }
+
+      .lede {
+        font-size: 22px;
+        line-height: 1.4;
+        color: var(--muted);
+        max-width: 36ch;
+        margin: 0;
+      }
+
+      .body {
+        font-size: 20px;
+        line-height: 1.45;
+        max-width: 46ch;
+        margin: 0 0 18px;
+      }
+
+      .muted {
+        color: var(--muted);
+      }
+
+      .quote {
+        font-family: Fraunces, Georgia, serif;
+        font-size: 26px;
+        line-height: 1.35;
+        max-width: 28ch;
+        margin: 28px 0 0;
+        padding-left: 20px;
+        border-left: 3px solid var(--violet);
+      }
+
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+        margin-top: 36px;
+      }
+
+      .stat {
+        padding-top: 16px;
+        border-top: 1px solid var(--line);
+      }
+
+      .stat b {
+        display: block;
+        font-family: Fraunces, Georgia, serif;
+        font-size: 40px;
+        font-weight: 500;
+        line-height: 1;
+        margin-bottom: 8px;
+      }
+
+      .stat span {
+        color: var(--muted);
+        font-size: 15px;
+        line-height: 1.35;
+      }
+
+      .payoff {
+        margin-top: auto;
+        font-size: 22px;
+        font-weight: 600;
+        max-width: 32ch;
+      }
+
+      .steps {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+        margin-top: 28px;
+      }
+
+      .step {
+        background: var(--paper);
+        padding: 20px 18px 22px;
+        min-height: 210px;
+      }
+
+      .step em {
+        display: block;
+        font-style: normal;
+        font-size: 12px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--violet);
+        font-weight: 600;
+        margin-bottom: 12px;
+      }
+
+      .step strong {
+        display: block;
+        font-family: Fraunces, Georgia, serif;
+        font-size: 22px;
+        font-weight: 500;
+        margin-bottom: 10px;
+      }
+
+      .step p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 15px;
+        line-height: 1.4;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 24px;
+        font-size: 15px;
+      }
+
+      th,
+      td {
+        text-align: left;
+        vertical-align: top;
+        padding: 12px 14px 14px 0;
+        border-top: 1px solid var(--line);
+      }
+
+      th {
+        font-size: 13px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--violet);
+      }
+
+      td {
+        color: var(--muted);
+      }
+
+      ul {
+        margin: 8px 0 0;
+        padding-left: 18px;
+        font-size: 20px;
+        line-height: 1.5;
+      }
+
+      li + li {
+        margin-top: 6px;
+      }
+
+      .split {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 48px;
+        align-items: start;
+        margin-top: 8px;
+        flex: 1;
+      }
+
+      .price {
+        font-family: Fraunces, Georgia, serif;
+        font-size: 72px;
+        font-weight: 500;
+        line-height: 0.9;
+        margin: 8px 0 6px;
+      }
+
+      .price small {
+        font-size: 22px;
+        color: var(--muted);
+        font-family: "DM Sans", system-ui, sans-serif;
+        font-weight: 500;
+      }
+
+      .plus {
+        margin-top: 28px;
+        padding-top: 22px;
+        border-top: 1px solid var(--line);
+      }
+
+      .plus .price {
+        font-size: 48px;
+      }
+
+      .chrome {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 20px 12px;
+        color: #cfc8b6;
+        font-size: 12px;
+        letter-spacing: 0.04em;
+      }
+
+      .chrome button {
+        background: transparent;
+        border: 1px solid #5a564b;
+        color: #cfc8b6;
+        font: inherit;
+        padding: 4px 10px;
+        cursor: pointer;
+      }
+
+      .chrome button:hover {
+        border-color: #cfc8b6;
+        color: #fff;
+      }
+
+      .notes-panel {
+        display: none;
+        position: fixed;
+        left: 20px;
+        right: 20px;
+        bottom: 48px;
+        background: #11100d;
+        color: #ebe6d8;
+        padding: 16px 20px;
+        font-size: 14px;
+        line-height: 1.45;
+        max-height: 22vh;
+        overflow: auto;
+      }
+
+      .notes-panel.open {
+        display: block;
+      }
+
+      .notes-panel strong {
+        color: #c4b6ff;
+        display: block;
+        margin-bottom: 6px;
+        font-size: 11px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      @media print {
+        @page {
+          size: landscape;
+          margin: 0;
+        }
+
+        html,
+        body,
+        .stage {
+          height: auto;
+          background: white;
+          padding: 0;
+        }
+
+        .frame {
+          width: 100%;
+          aspect-ratio: auto;
+          height: auto;
+          overflow: visible;
+        }
+
+        .slide {
+          display: flex !important;
+          position: relative;
+          page-break-after: always;
+          height: 100vh;
+        }
+
+        .chrome,
+        .notes-panel {
+          display: none !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="stage">
+      <div class="frame" id="frame"></div>
+    </div>
+
+    <div class="notes-panel" id="notes">
+      <strong>Speaker notes</strong>
+      <div id="notes-body"></div>
+    </div>
+
+    <div class="chrome">
+      <span>Upline · Sales demo · August 2026</span>
+      <span>
+        <button type="button" id="prev">Prev</button>
+        <span id="count"></span>
+        <button type="button" id="next">Next</button>
+        <button type="button" id="notes-toggle">Notes (N)</button>
+      </span>
+    </div>
+
+    <script>
+      const slides = [
+        {
+          html: `
+            <kicker>Upline</kicker>
+            <h1>Shop every customer<br>on every renewal.</h1>
+            <p class="lede">August 2026</p>
+          `,
+          className: "center",
+          notes: "Pause. Let them sit with the line. This is the whole pitch.",
+        },
+        {
+          html: `
+            <kicker>The offer that retains</kicker>
+            <h1>“Let me go shop this for you.”</h1>
+            <p class="lede">The single most powerful thing an independent P&amp;C agent can say.</p>
+          `,
+          className: "center",
+          notes: "Every owner in the room already believes this. Do not explain it. Move to why they cannot say it enough.",
+        },
+        {
+          html: `
+            <kicker>Why silence costs more than the software</kicker>
+            <h2>If I save you one customer a month, this pays for itself.</h2>
+            <div class="stats">
+              <div class="stat"><b>12% / 23%</b><span>Homeowners premiums were up 12% in 2025. Auto was up 23% in 2024.</span></div>
+              <div class="stat"><b>15%</b><span>Average annual churn among agents we interviewed.</span></div>
+              <div class="stat"><b>$566</b><span>Commission rescued by keeping one customer from leaving this month.</span></div>
+            </div>
+          `,
+          notes: "Loss aversion, not upside. Do not walk the 5× ROI sheet. Do not lead with referrals. Book-value language waits for slide 13. $566 is the ~1,000-household case; at 1,500 it is higher.",
+        },
+        {
+          html: `
+            <kicker>How renewal works today</kicker>
+            <h2>Up to 2.5 hours to shop one client.</h2>
+            <table>
+              <thead>
+                <tr><th>Review the AMS</th><th>Call the client</th><th>Shop the portals</th><th>Recommend</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>10–20 min / day. Brian’s auto is up 17%. Home is up 24%.</td>
+                  <td>10–15 min — if they pick up. Hope you ask the right questions.</td>
+                  <td>1–2 hours. 80–130 data points per carrier, typed by hand.</td>
+                  <td>10–15 min to walk the options. Then you bind it yourself.</td>
+                </tr>
+              </tbody>
+            </table>
+          `,
+          notes: "The grind is the shopping. Everything else they already know how to do. You are buying back the 1–2 hours.",
+        },
+        {
+          html: `
+            <kicker>The service trap</kicker>
+            <h2>1,500 clients. 30 renew every week.</h2>
+            <p class="body">The phone is ringing. Service requests are coming in. Claims need attention. New business — usually a referral — needs a same-day response.</p>
+            <p class="payoff">This is not a motivation problem. It is a capacity problem.</p>
+          `,
+          notes: "Ask: how many of those 30 hear from you before the bill? Then: Upline is how those 30 get touched without adding headcount.",
+        },
+        {
+          html: `
+            <kicker>Meet Upline</kicker>
+            <h2>We handle the prep, outreach, shopping, and follow-through.</h2>
+            <p class="lede">You show up, build trust, and close. Not a CRM. A teammate that drives the work.</p>
+          `,
+          className: "center",
+          notes: "One sentence, then go product by product. Do not dump a feature list.",
+        },
+        {
+          html: `
+            <kicker>What you are buying</kicker>
+            <h2>Four things, in order.</h2>
+            <div class="steps">
+              <div class="step"><em>01</em><strong>Outreach</strong><p>Who needs you this week, drafted in your voice.</p></div>
+              <div class="step"><em>02</em><strong>Questionnaire</strong><p>Only the gaps — plus the next line of coverage.</p></div>
+              <div class="step"><em>03</em><strong>Shopping</strong><p>You do it, or we do it. 24 hours, or you do not pay.</p></div>
+              <div class="step"><em>04</em><strong>Recommendation</strong><p>The winner, the why, the email. You close.</p></div>
+            </div>
+          `,
+          notes: "Read them as products. Each of the next four slides has to stand alone. Outreach is still a win if nobody fills out the questionnaire.",
+        },
+        {
+          html: `
+            <kicker>01 · Prioritized outreach</kicker>
+            <h2>They hear from you before the bill arrives.</h2>
+            <p class="body muted">Upline pulls your book, ranks this week’s renewals by rate movement, and drafts the email in your voice. You review and send.</p>
+            <p class="quote">Your Progressive homeowners is up 12%. The state average is 19%. Still real money — want me to shop it?</p>
+          `,
+          notes: "First sale: even if they never fill anything out, they heard from their agent. Human in the loop is also the compliance story.",
+        },
+        {
+          html: `
+            <kicker>02 · Household questionnaire</kicker>
+            <h2>Only the questions we need to shop them right.</h2>
+            <p class="body">We look at everything you know, and everything you don’t. Then we ask for the gaps: drivers, vehicles, roof, dogs, contact info.</p>
+            <p class="body">And like any good salesperson, we ask for the next piece of coverage — home, umbrella, life — while they are already paying attention.</p>
+          `,
+          notes: "This is how you get from “I emailed them” to “I can actually shop them.” Cross-sell is not a separate campaign.",
+        },
+        {
+          html: `
+            <kicker>03 · Shopping</kicker>
+            <h2>$18. Three or four carriers. 24 hours, or you don’t pay.</h2>
+            <p class="body">You can shop it. Your VAs can shop it. Or we can.</p>
+            <p class="body muted">Most agencies spend about two hours in the portals. Fully loaded, that is closer to $32 a shop. We are about half that. Your panel. We pick the right markets for that household. You still bind.</p>
+          `,
+          notes: "Keep shopping as its own line item. If they flinch on $18, anchor first: CSR fully loaded × two hours. Do not talk ourselves down to $12 on the first ask. 24-hour language is untested — watch the face.",
+        },
+        {
+          html: `
+            <kicker>04 · Recommendation</kicker>
+            <h2>We bring you the winner. You close the rest.</h2>
+            <p class="body">Who came out ahead, what it costs, and why. A draft in your voice. A comparison page the client can actually read.</p>
+            <p class="body muted">You review. You send. You walk them through it. You rewrite and bind. The relationship stays yours. The grind does not.</p>
+          `,
+          notes: "Collaborator, not replacement. If they stay with the incumbent, that is still a win — they heard from you.",
+        },
+        {
+          html: `
+            <kicker>Optional · Life</kicker>
+            <h2>The offer to shop is a conversation starter.</h2>
+            <ul>
+              <li>“While we’re reviewing coverage, can I get you a quick quote on life?”</li>
+              <li>“You’re only carrying auto — want to look at bundling home?”</li>
+              <li>“Is there anyone in your circle who could use this kind of attention?”</li>
+            </ul>
+            <p class="body muted" style="margin-top:22px">If you want us to fulfill life, we handle the details. You stay the relationship. You are eligible for 60% of that commission. You do not have to. The software does not need life to pay for itself.</p>
+          `,
+          notes: "Optional. Do not discount the monthly to $499 in this version. If they already have a life plan, we just do not run the ask.",
+        },
+        {
+          html: `
+            <kicker>What it adds up to</kicker>
+            <h2>A book that sells at a higher multiple.</h2>
+            <div class="stats">
+              <div class="stat"><b>Retention</b><span>Clients do not drift when someone is watching out for them.</span></div>
+              <div class="stat"><b>Lines / household</b><span>Cross-sell happens at the right moment, not never.</span></div>
+              <div class="stat"><b>Referrals</b><span>Long-tenured clients actually get asked — and they respond.</span></div>
+            </div>
+          `,
+          notes: "Second beat, after “one customer pays for this.” Two points of retention compounds. Do not put a referral dollar figure on the slide. If they ask: one referred household over five years is on the order of $3,000 — and it is our least predictable number.",
+        },
+        {
+          html: `
+            <kicker>Case · Members 1st Insurance Services · Enola, PA</kicker>
+            <h2>One month. 42 households.</h2>
+            <div class="stats">
+              <div class="stat"><b>43%</b><span>asked to be shopped</span></div>
+              <div class="stat"><b>97%</b><span>retention among policyholders in the pilot</span></div>
+              <div class="stat"><b>$592</b><span>average amount saved per client</span></div>
+            </div>
+            <p class="body muted" style="margin-top:28px">36 hours of shopping time back. Four cross-sell quote requests. +3.1% premium value on the touched book.</p>
+          `,
+          notes: "Proof, then sit down. 43% is the shop-me rate in the model. Honest on method: AI + VAs in their portals, they reviewed every rec. They moved at ~95% accuracy and it was fine.",
+        },
+        {
+          html: `
+            <kicker>Pricing</kicker>
+            <div class="split">
+              <div>
+                <div class="price">$699 <small>/ month</small></div>
+                <ul>
+                  <li>Outreach to every renewal, in your voice</li>
+                  <li>A questionnaire for every household</li>
+                  <li>Cross-sell and referral asks, configured to you</li>
+                  <li>Comparison pages for every proposal</li>
+                  <li>White-glove onboarding · unlimited users</li>
+                </ul>
+              </div>
+              <div class="plus">
+                <div class="price">+$18 <small>/ shop</small></div>
+                <p class="body muted">When our team shops for you. Up to four carriers. Guaranteed 24-hour turnaround. Or bring your own VAs.</p>
+              </div>
+            </div>
+          `,
+          notes: "One price. Shopping is à la carte. First month of shopping can be free to taste it — still show the $18 sticker. Do not put the 25/50 bundle tiers back on.",
+        },
+        {
+          html: `
+            <kicker>The close</kicker>
+            <h2>You will not lose money trying this.</h2>
+            <p class="body">Save one customer a month. The subscription is covered.</p>
+            <p class="body">Shop with us only when you want to. $18 versus the ~$32 you are already spending.</p>
+            <p class="payoff">Life and referrals are upside. They are not required for the math to work.</p>
+          `,
+          notes: "Close here. “I would love to shop these people. I hate that I don’t. And I don’t think this loses me money.” Then stop talking.",
+        },
+        {
+          html: `
+            <kicker>Next</kicker>
+            <h1>Pick a producer.<br>Run it on their book.</h1>
+            <p class="lede">Real outreach to real clients. You review. We iterate.</p>
+          `,
+          className: "center",
+          notes: "Only if they are in a pilot conversation. Otherwise: when can we walk your book. Do not reopen AMS replacement. If they bring it up: later, once the data already lives in Upline.",
+        },
+      ];
+
+      const frame = document.getElementById("frame");
+      const notesEl = document.getElementById("notes");
+      const notesBody = document.getElementById("notes-body");
+      const countEl = document.getElementById("count");
+      let i = 0;
+
+      slides.forEach((slide, index) => {
+        const el = document.createElement("section");
+        el.className = "slide" + (slide.className ? " " + slide.className : "");
+        el.innerHTML = slide.html;
+        if (index === 0) el.classList.add("active");
+        frame.appendChild(el);
+      });
+
+      const nodes = frame.querySelectorAll(".slide");
+
+      function go(n) {
+        i = (n + slides.length) % slides.length;
+        nodes.forEach((node, idx) => node.classList.toggle("active", idx === i));
+        countEl.textContent = i + 1 + " / " + slides.length;
+        notesBody.textContent = slides[i].notes;
+      }
+
+      document.getElementById("prev").onclick = () => go(i - 1);
+      document.getElementById("next").onclick = () => go(i + 1);
+      document.getElementById("notes-toggle").onclick = () => notesEl.classList.toggle("open");
+
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "ArrowRight" || event.key === " " || event.key === "PageDown") {
+          event.preventDefault();
+          go(i + 1);
+        }
+        if (event.key === "ArrowLeft" || event.key === "PageUp") {
+          event.preventDefault();
+          go(i - 1);
+        }
+        if (event.key === "n" || event.key === "N") notesEl.classList.toggle("open");
+        if (event.key === "Home") go(0);
+        if (event.key === "End") go(slides.length - 1);
+      });
+
+      go(0);
+    </script>
+  </body>
+</html>

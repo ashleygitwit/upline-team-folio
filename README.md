@@ -1,6 +1,8 @@
 # Upline Venture — Team Folio
 
-The venture-wide planning hub: a live Gantt, LLM-friendly exports, and (later) a full venture home.
+The venture-wide planning hub: Through Line (internal comms), project planning, product strategy, and go-to-market.
+
+**New here?** Start with [`WELCOME.md`](WELCOME.md). In Cursor, say **Welcome me — I’m [your name].**
 
 **This repo is completely separate from [upline-poc](https://github.com/austinboardman/upline-poc).**
 Nothing here writes to or deploys to the POC.
@@ -12,7 +14,6 @@ Nothing here writes to or deploys to the POC.
 - **Hosting:** Vercel (Upline team)
 - **GitHub:** https://github.com/ashleygitwit/upline-team-folio
 - **Legacy URL:** `upline-team-folio.vercel.app` still resolves to the same project.
-- **Custom domain:** add in Vercel → Settings → Domains when ready (e.g. `plan.upline.com`)
 
 ## Try it locally
 
@@ -21,24 +22,37 @@ cd "/Users/ashleyroberts/Upline Venture - Team Folio"
 npm run dev
 ```
 
-Open **http://localhost:5299** — Team Folio uses its own port (5299), separate from other projects on 5173.
+Open **http://localhost:5299** — Through Line uses its own port (5299), separate from other projects on 5173.
 
 ## How to update the plan (Ashley)
 
 1. Edit `data/venture-plan.json` in Cursor (or ask the agent).
-2. Run `npm run generate-plan` to refresh `venture/planning/execution-plan.md`.
+2. Run `npm run generate-plan` to refresh `project-planning/execution-plan.md`.
 3. Commit and push to **this repo only**.
 4. Vercel redeploys automatically (~1 min).
 
-## Page layout
+## Four top-level folders
 
-1. Venture thesis
-2. Mantra
-3. Upcoming proof point
-4. Gantt (filters by status / workstream)
-5. Copy for your LLM (`execution-plan.md`)
+```
+Team Folio/
+├── internal-comms/               # Through Line — presentation / internal communication
+├── project-planning/             # Timeline, sprint week, execution plan
+├── product/                      # Product strategy and build
+├── go-to-market/                 # Sales + GTM
+│
+├── data/                         # venture-plan.json + learnings.json (site source of truth)
+├── scripts/                      # Generators (generate-plan, sync-data)
+└── assets/                       # Brand assets
+```
 
-Edit thesis, mantra, and proof point in `data/venture-plan.json` under the `venture` key.
+| Folder | What it is | What it is not |
+|---|---|---|
+| [`internal-comms/`](internal-comms/) | Through Line — the site the team reads | The Upline product |
+| [`project-planning/`](project-planning/) | When, in what order, which rooms | Product decisions |
+| [`product/`](product/) | Pricing, journey, VA/shopping, MVP line | Sales decks |
+| [`go-to-market/`](go-to-market/) | Demos, prospect notes, sales decks | Product strategy |
+
+`data/` and `scripts/` stay at the root so Through Line can keep reading one JSON plan. Edit those when the live site needs new numbers; put the *thinking* in the four folders above.
 
 ## POC isolation
 
@@ -52,27 +66,3 @@ Edit thesis, mantra, and proof point in `data/venture-plan.json` under the `vent
 
 - Logo: `assets/upline-logo.png`
 - Primary color: `#4338CA` (Upline indigo)
-
-## Structure
-
-Two primary **content** folders, plus a thin **deploy shell** at the root:
-
-```
-Team Folio/
-├── venture/                      # PRIMARY — venture / product strategy
-│   ├── README.md
-│   └── planning/execution-plan.md
-├── go-to-market/                 # PRIMARY — sales + GTM motions
-│   ├── agent-demo/               # Clickable Ultra Plan waitlist demo
-│   └── sales-demos/              # Prospect demo transcripts / notes
-│
-├── app/                          # Live site shell (React + Vite) — stays at root for Vercel
-├── data/                         # venture-plan.json + learnings.json (site source of truth)
-├── scripts/                      # Generators (generate-plan, sync-data)
-├── assets/                       # Brand assets
-└── .cursor/rules/                # Workspace guardrails
-```
-
-- **Venture strategy signal** → `venture/` and/or `data/`
-- **Sales / GTM signal** → `go-to-market/`
-

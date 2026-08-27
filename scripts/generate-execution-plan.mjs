@@ -6,8 +6,8 @@ import { buildExecutionPlanMarkdown } from './plan-markdown.mjs';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.join(__dirname, '..');
 const planPath = path.join(root, 'data', 'venture-plan.json');
-const outPath = path.join(root, 'venture', 'planning', 'execution-plan.md');
-const publicOutPath = path.join(root, 'app', 'public', 'venture', 'planning', 'execution-plan.md');
+const outPath = path.join(root, 'project-planning', 'execution-plan.md');
+const publicOutPath = path.join(root, 'internal-comms', 'public', 'project-planning', 'execution-plan.md');
 
 const plan = JSON.parse(fs.readFileSync(planPath, 'utf8'));
 const content = buildExecutionPlanMarkdown(plan);

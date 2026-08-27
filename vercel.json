@@ -1,6 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "installCommand": "npm install --prefix app --legacy-peer-deps",
+  "installCommand": "npm install --prefix internal-comms --legacy-peer-deps",
   "buildCommand": "npm run build",
-  "outputDirectory": "app/dist"
+  "outputDirectory": "internal-comms/dist"
 }
