@@ -73,64 +73,68 @@ export function HomePage({ plan }: HomePageProps) {
         </p>
       </section>
 
-      <section className="arc-section">
-        <h2>Venture Through Line</h2>
-        <p className="arc-intro">
-          From the insight that started it to what the pilot has taught us so far.
-        </p>
-        <div className="arc-grid">
-          {ARC.map((step, i) => (
-            <div key={step.beat} className="arc-cell">
-              <div className="arc-step">
-                <p className="arc-beat">{step.beat}</p>
-                <p className="arc-text">{step.text}</p>
-                {step.cta && step.href ? (
-                  <a
-                    className="arc-cta"
-                    href={step.href}
-                    {...(step.external ? { target: '_blank', rel: 'noreferrer' } : {})}
-                  >
-                    {step.cta} &rarr;
-                  </a>
-                ) : null}
-              </div>
-              {i % 2 === 0 ? (
-                <span className="arc-arrow" aria-hidden="true">
-                  &rarr;
-                </span>
-              ) : null}
+      <div className="feature-band">
+        <div className="feature-band-inner">
+          <section className="arc-section">
+            <h2>Venture Through Line</h2>
+            <p className="arc-intro">
+              From the insight that started it to what the pilot has taught us so far.
+            </p>
+            <div className="arc-grid">
+              {ARC.map((step, i) => (
+                <div key={step.beat} className="arc-cell">
+                  <div className="arc-step">
+                    <p className="arc-beat">{step.beat}</p>
+                    <p className="arc-text">{step.text}</p>
+                    {step.cta && step.href ? (
+                      <a
+                        className="arc-cta"
+                        href={step.href}
+                        {...(step.external ? { target: '_blank', rel: 'noreferrer' } : {})}
+                      >
+                        {step.cta} &rarr;
+                      </a>
+                    ) : null}
+                  </div>
+                  {i % 2 === 0 ? (
+                    <span className="arc-arrow" aria-hidden="true">
+                      &rarr;
+                    </span>
+                  ) : null}
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-      </section>
+          </section>
 
-      {plan ? (
-        <section className="bento-section">
-          <h2>The bet at a glance</h2>
-          <div className="card bet-card">
-            <div className="bet-grid">
-              <div className="bet-block bet-hypothesis">
-                <p className="tile-label">Venture hypothesis</p>
-                <p>{plan.venture.hypothesis}</p>
+          {plan ? (
+            <section className="bento-section">
+              <h2>The bet at a glance</h2>
+              <div className="card bet-card">
+                <div className="bet-grid">
+                  <div className="bet-block bet-hypothesis">
+                    <p className="tile-label">Venture hypothesis</p>
+                    <p>{plan.venture.hypothesis}</p>
+                  </div>
+                  <div className="bet-block bet-problem">
+                    <p className="tile-label">Problem</p>
+                    <p>{plan.venture.thesis.problem}</p>
+                  </div>
+                  <div className="bet-block bet-world">
+                    <p className="tile-label">World after</p>
+                    <p>{plan.venture.thesis.worldAfter}</p>
+                  </div>
+                  <div className="bet-block bet-approach">
+                    <p className="tile-label">Our approach</p>
+                    <p>{plan.venture.thesis.approach}</p>
+                  </div>
+                </div>
               </div>
-              <div className="bet-block bet-problem">
-                <p className="tile-label">Problem</p>
-                <p>{plan.venture.thesis.problem}</p>
-              </div>
-              <div className="bet-block bet-world">
-                <p className="tile-label">World after</p>
-                <p>{plan.venture.thesis.worldAfter}</p>
-              </div>
-              <div className="bet-block bet-approach">
-                <p className="tile-label">Our approach</p>
-                <p>{plan.venture.thesis.approach}</p>
-              </div>
-            </div>
-          </div>
-        </section>
-      ) : (
-        <p className="loading">Loading venture context…</p>
-      )}
+            </section>
+          ) : (
+            <p className="loading">Loading venture context…</p>
+          )}
+        </div>
+      </div>
 
       <section className="product-journey">
         <div className="journey-glance">

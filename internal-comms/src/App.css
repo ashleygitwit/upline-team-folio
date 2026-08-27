@@ -615,6 +615,49 @@ h2 {
   max-width: 60ch;
 }
 
+/* ---- Feature band ----
+   An indigo block that breaks out of the page shell to sit almost full-bleed,
+   while its content stays on the same 928px measure as the rest of the page. */
+.feature-band {
+  --band-inset: 1.5rem;
+  margin-left: calc(50% - 50vw + var(--band-inset));
+  margin-right: calc(50% - 50vw + var(--band-inset));
+  margin-bottom: var(--space-section);
+  /* The band already broke out by --band-inset, so it only needs the remainder
+     of the shell padding to keep its content on the same left edge as the
+     sections above and below it. */
+  padding: var(--space-section) max(0px, calc(var(--shell-pad) - var(--band-inset)));
+  border-radius: calc(var(--radius) * 1.5);
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+
+.feature-band-inner {
+  max-width: calc(var(--shell-max) - var(--shell-pad) * 2);
+  margin: 0 auto;
+}
+
+/* The band's own padding closes the block, so the last section drops its margin. */
+.feature-band > .feature-band-inner > :last-child {
+  margin-bottom: 0;
+}
+
+/* Section labels invert to the brand's lime; body copy to white. */
+.feature-band h2 {
+  color: var(--secondary);
+}
+
+/* Mixed against the band rather than transparent, so the value stays opaque
+   and measurable. */
+.feature-band .arc-intro,
+.feature-band .loading {
+  color: color-mix(in srgb, var(--primary-foreground) 78%, var(--primary));
+}
+
+.feature-band .arc-arrow {
+  color: var(--primary-foreground);
+}
+
 .arc-section {
   margin-bottom: var(--space-section);
 }
