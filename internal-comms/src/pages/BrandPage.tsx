@@ -120,7 +120,7 @@ function rgbToHex([r, g, b]: [number, number, number]): string {
   return '#' + [r, g, b].map((n) => n.toString(16).padStart(2, '0')).join('');
 }
 
-const SWATCH_INK = '#363533';
+const SWATCH_INK = '#282831';
 const SWATCH_PAPER = '#ffffff';
 
 function relLuminance([r, g, b]: [number, number, number]): number {
@@ -140,7 +140,7 @@ function contrast(a: [number, number, number], b: [number, number, number]): num
 // Pick whichever of ink/paper reads better on the swatch, rather than guessing
 // from a luminance threshold — saturated mid-tones fool a fixed cutoff.
 function isLight(rgb: [number, number, number]): boolean {
-  return contrast(rgb, [54, 53, 51]) >= contrast(rgb, [255, 255, 255]);
+  return contrast(rgb, [40, 40, 49]) >= contrast(rgb, [255, 255, 255]);
 }
 
 interface Swatch {
