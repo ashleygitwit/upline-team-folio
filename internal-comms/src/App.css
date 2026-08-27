@@ -32,11 +32,9 @@
 
 .card {
   background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: calc(var(--radius) + 4px);
+  border-radius: var(--radius);
   padding: 1.25rem 1.5rem;
   margin-bottom: var(--space-block);
-  box-shadow: var(--shadow-sm);
 }
 
 h2 {
@@ -548,7 +546,7 @@ h2 {
   padding: 0.4rem;
   background: var(--card);
   border: 1px solid var(--border);
-  border-radius: calc(var(--radius) + 2px);
+  border-radius: var(--radius);
   box-shadow: var(--shadow-md, 0 12px 28px rgb(0 0 0 / 0.12));
   opacity: 0;
   visibility: hidden;
@@ -647,6 +645,20 @@ h2 {
   color: var(--secondary);
 }
 
+/* ...but a white card inside the band is still a light surface, so anything
+   within one keeps its normal treatment. */
+.feature-band .card h2 {
+  color: var(--primary);
+}
+
+.feature-band .card .arc-intro {
+  color: var(--muted-foreground);
+}
+
+.feature-band .arc-link {
+  color: var(--secondary);
+}
+
 /* Mixed against the band rather than transparent, so the value stays opaque
    and measurable. */
 .feature-band .arc-intro,
@@ -693,11 +705,8 @@ h2 {
   flex-direction: column;
   align-items: flex-start;
   padding: 1.6rem 1.6rem 1.5rem;
-  border: 1px solid var(--border);
-  border-top: 3px solid var(--primary);
-  border-radius: calc(var(--radius) + 4px);
+  border-radius: var(--radius);
   background: var(--card);
-  box-shadow: var(--shadow-sm);
 }
 
 .arc-beat {
@@ -756,7 +765,6 @@ h2 {
 }
 
 .bet-card {
-  border-top: 3px solid var(--primary);
   padding: 1.75rem 1.85rem;
 }
 
@@ -831,7 +839,6 @@ h2 {
   width: 100%;
   aspect-ratio: 16 / 10;
   margin-bottom: 0.85rem;
-  border: 1px solid var(--border);
   border-radius: var(--radius);
   overflow: hidden;
   background: var(--muted);
@@ -1073,8 +1080,6 @@ h2 {
 }
 
 .repo-domain {
-  border: 1px solid var(--border);
-  border-top: 3px solid var(--primary);
   border-radius: var(--radius);
   background: var(--card);
   padding: 0.9rem 1rem;
@@ -1452,7 +1457,7 @@ h2 {
   align-items: center;
   justify-content: center;
   padding: 2.25rem 1.5rem;
-  border-radius: calc(var(--radius) + 2px);
+  border-radius: var(--radius);
 }
 
 .logo-well-bordered {
@@ -1649,11 +1654,9 @@ code {
 }
 
 .metric-card {
-  border: 1px solid var(--border);
   border-radius: var(--radius);
   background: var(--card);
   padding: 1.1rem 1.1rem 1.2rem;
-  border-top: 3px solid var(--primary);
 }
 
 .metric-head {
@@ -2090,7 +2093,7 @@ code {
 
 /* "At a glance" product journey block on the home page */
 .journey-glance {
-  margin-bottom: 2.75rem;
+  margin-bottom: var(--space-block);
 }
 
 .journey-glance h2 {
@@ -2214,7 +2217,7 @@ code {
   text-align: center;
   min-height: 220px;
   border: 2px dashed var(--border);
-  border-radius: calc(var(--radius) + 4px);
+  border-radius: var(--radius);
   background: color-mix(in oklch, var(--muted) 45%, var(--card));
   padding: 2rem 1.5rem;
 }
@@ -2469,7 +2472,7 @@ code {
   display: flex;
   flex-direction: column;
   border: 1px solid var(--border);
-  border-radius: calc(var(--radius) + 2px);
+  border-radius: var(--radius);
   overflow: hidden;
   background: var(--card);
 }
@@ -2524,7 +2527,7 @@ code {
   display: flex;
   gap: 1.15rem;
   border: 1px solid var(--border);
-  border-radius: calc(var(--radius) + 2px);
+  border-radius: var(--radius);
   background: var(--card);
   padding: 1.25rem 1.35rem;
 }
@@ -4081,7 +4084,7 @@ code {
 .ljm-detail {
   margin-top: 1.4rem;
   border: 1px solid var(--border);
-  border-radius: calc(var(--radius) + 4px);
+  border-radius: var(--radius);
   background: var(--card);
   padding: 1.15rem 1.25rem 1.35rem;
 }

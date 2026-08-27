@@ -29,7 +29,13 @@ const JOURNEY_STEPS: SwimStep[] = [
 const JOURNEY_PHASES: SwimPhase[] = [
   { start: 0, span: 2, label: 'Set up the data', bg: 'var(--primary)', fg: 'var(--primary-foreground)' },
   { start: 2, span: 3, label: 'Reach out & intake', bg: 'var(--chart-3)', fg: 'var(--foreground)' },
-  { start: 5, span: 2, label: 'Shop & recommend', bg: 'var(--chart-5)', fg: 'var(--primary-foreground)' },
+  {
+    start: 5,
+    span: 2,
+    label: 'Shop & recommend',
+    bg: 'var(--success-strong)',
+    fg: 'var(--primary-foreground)',
+  },
   { start: 7, span: 2, label: 'Review & close', bg: 'var(--info)', fg: 'var(--primary-foreground)' },
 ];
 
@@ -133,35 +139,40 @@ export function HomePage({ plan }: HomePageProps) {
           ) : (
             <p className="loading">Loading venture context…</p>
           )}
+
+          <section className="product-journey">
+            <div className="card journey-glance">
+              <h2>Upline Journey — at a glance</h2>
+              <p className="arc-intro">
+                The whole flow in one view — who does what, left to right. Want the detail? The full
+                version is right below.
+              </p>
+              <SwimlaneMap
+                lanes={JOURNEY_LANES}
+                steps={JOURNEY_STEPS}
+                phases={JOURNEY_PHASES}
+                ariaLabel="Upline product journey at a glance. Upline pulls the book and renewal numbers by RPA; a VA refreshes household data; Upline generates the outreach email; the agent sends it from their own name; the customer completes a tailored questionnaire; a VA shops across carriers; Upline drafts the recommendation and cross-sell; the agent reviews, adjusts, and sends; the customer schedules, meets, and decides."
+              />
+            </div>
+
+            <div className="embed-frame embed-frame-tall">
+              <iframe
+                title="Upline — the product journey"
+                src="/product-journey.html?v=4"
+                loading="lazy"
+              />
+            </div>
+            <a
+              className="arc-link"
+              href="/product-journey.html?v=4"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Open the product journey in a new tab &rarr;
+            </a>
+          </section>
         </div>
       </div>
-
-      <section className="product-journey">
-        <div className="journey-glance">
-          <h2>Upline Journey — at a glance</h2>
-          <p className="arc-intro">
-            The whole flow in one view — who does what, left to right. Want the detail? The full
-            version is right below.
-          </p>
-          <SwimlaneMap
-            lanes={JOURNEY_LANES}
-            steps={JOURNEY_STEPS}
-            phases={JOURNEY_PHASES}
-            ariaLabel="Upline product journey at a glance. Upline pulls the book and renewal numbers by RPA; a VA refreshes household data; Upline generates the outreach email; the agent sends it from their own name; the customer completes a tailored questionnaire; a VA shops across carriers; Upline drafts the recommendation and cross-sell; the agent reviews, adjusts, and sends; the customer schedules, meets, and decides."
-          />
-        </div>
-
-        <div className="embed-frame embed-frame-tall">
-          <iframe
-            title="Upline — the product journey"
-            src="/product-journey.html?v=4"
-            loading="lazy"
-          />
-        </div>
-        <a className="arc-link" href="/product-journey.html?v=4" target="_blank" rel="noreferrer">
-          Open the product journey in a new tab &rarr;
-        </a>
-      </section>
     </>
   );
 }

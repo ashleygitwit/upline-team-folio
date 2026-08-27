@@ -99,7 +99,13 @@ interface Phase {
 const PHASES: Phase[] = [
   { start: 0, span: 1, label: 'Prep · week before', bg: 'var(--primary)', fg: 'var(--primary-foreground)' },
   { start: 1, span: 3, label: 'Outreach & intake', bg: 'var(--chart-3)', fg: 'var(--foreground)' },
-  { start: 4, span: 3, label: 'Shop & propose', bg: 'var(--chart-5)', fg: 'var(--primary-foreground)' },
+  {
+    start: 4,
+    span: 3,
+    label: 'Shop & propose',
+    bg: 'var(--success-strong)',
+    fg: 'var(--primary-foreground)',
+  },
 ];
 
 function WeeklyLoopMap() {
