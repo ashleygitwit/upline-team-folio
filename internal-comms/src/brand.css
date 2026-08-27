@@ -76,6 +76,7 @@
      and 32px (the live site's gap-8) separates blocks inside one. */
   --shell-max: 1024px;
   --nav-h: 5rem; /* 80px — the live site's h-20 nav bar */
+  --hero-gap: 8rem; /* 128px — matches uplineinsurance.com hero pt-52 (208px) minus the nav */
   --shell-pad: 1.25rem;
   --space-section: 5rem; /* 80px — between major sections */
   --space-block: 2rem; /* 32px — between cards within a section */
