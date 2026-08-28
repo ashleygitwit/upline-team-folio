@@ -1452,12 +1452,12 @@ h2 {
   gap: 0.85rem;
 }
 
+/* Matches .card — no stroke; the white fill separates it from the page. */
 .milestone {
   display: grid;
   grid-template-columns: 84px 1fr;
   gap: 1rem;
-  padding: 1.5rem;
-  border: 1px solid var(--border);
+  padding: var(--card-pad);
   border-radius: var(--radius);
   background: var(--card);
 }
@@ -2586,13 +2586,13 @@ code {
   gap: var(--space-tight);
 }
 
+/* Matches .card — no stroke; the white fill separates it from the page. */
 .team-card {
   display: flex;
   gap: 1.15rem;
-  border: 1px solid var(--border);
   border-radius: var(--radius);
   background: var(--card);
-  padding: 1.5rem;
+  padding: var(--card-pad);
 }
 
 .team-photo {
