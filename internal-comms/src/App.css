@@ -316,8 +316,11 @@ h2 {
   letter-spacing: normal;
 }
 
+/* A caption for the block above it — needs a gap, or it butts against the card
+   or table it trails. Tight rather than a full block gap, since it belongs to
+   that block rather than standing on its own. */
 .edit-hint {
-  margin: 0 0 0.75rem;
+  margin: var(--space-tight) 0 0.75rem;
   font-size: 0.8rem;
   color: var(--muted-foreground);
 }
