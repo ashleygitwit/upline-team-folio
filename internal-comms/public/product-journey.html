@@ -4,34 +4,77 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Upline — The Product Journey</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  href="https://fonts.googleapis.com/css2?family=Radio+Canada:ital,wght@0,300..700;1,300..700&family=Radio+Canada+Big:ital,wght@0,400..700;1,400..700&family=Reddit+Mono:wght@300;400;500;600&display=swap"
+  rel="stylesheet"
+/>
 <style>
+  /* Upline brand tokens, mirrored from src/brand.css (the Brand tab). This page
+     is a standalone static file served from /public, so it can't import the
+     app's stylesheet — keep these in sync if the brand ramps change. Comments
+     name the ramp step each value comes from. */
   :root {
-    --bg: #ffffff;
-    --panel: #f7f7f8;
-    --elevated: #ffffff;
-    --border: #e4e4e7;
-    --border-soft: #eeeef1;
-    --text: #1a1a1e;
-    --muted: #6b6b73;
-    --faint: #9a9aa2;
-    --accent: #2f6fb0;
-    --upline: #1f8a65;
-    --va: #c08532;
-    --agent: #3685bf;
-    --customer: #8a8a8f;
-    --warn: #b5730a;
+    /* --- Surfaces & neutrals --- */
+    --bg: #ffffff;          /* card */
+    --panel: #f7f7f6;       /* Gray 50 — "light background". Every surface using
+                               this sits directly on white, so it takes the
+                               lightest neutral rather than muted (#f2f0ec). */
+    --elevated: #ffffff;    /* card */
+    --border: #dcdad8;      /* Gray 200 — border and input */
+    --border-soft: #ecebe9; /* Gray 100 */
+    --text: #282831;        /* Slate 700 — foreground */
+    --muted: #6d6c68;       /* Gray 700 — muted foreground */
+    --faint: #9a9894;       /* Gray 500 */
+
+    /* --- Brand --- */
+    --accent: #3721a6;      /* Indigo 600 — primary */
+
+    /* --- Actors — one ramp each. The 500 carries identity (bands, borders,
+       legend dots); the 700 is the same hue at small-text weight. --- */
+    --upline: #483ac7;      /* Indigo 500 */
+    --upline-700: #321e97;  /* Indigo 700 */
+    --va: #ff7f35;          /* Coral 500 */
+    --va-700: #b55a26;      /* Coral 700 */
+    --agent: #4db360;       /* Green 500 */
+    --agent-700: #377f44;   /* Green 700 */
+    --customer: #ad8bd5;    /* Lavender 500 */
+    --customer-700: #785d97;/* Lavender 700 */
+
+    --warn: #b55a26;        /* Coral 700 — text on light */
+    --warn-soft: #ffd7c0;   /* Coral 100 — fills */
+    --warn-line: #ffa978;   /* Coral 300 — borders on those fills */
+
+    --font-sans: 'Radio Canada', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+      'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    --font-display: 'Radio Canada Big', 'Radio Canada', ui-sans-serif, system-ui, -apple-system,
+      BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+
+    --gutter: 28px;
   }
   * { box-sizing: border-box; }
   body {
     margin: 0;
     background: var(--bg);
     color: var(--text);
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-family: var(--font-sans);
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
   }
-  .wrap { max-width: 1800px; margin: 0 auto; padding: 32px 28px 64px; }
+  .wrap { max-width: 1800px; margin: 0 auto; padding: 32px var(--gutter) 64px; }
+  h1, h2, h3, h4 { font-family: var(--font-display); }
   h1 { font-size: 26px; margin: 0 0 6px; }
+  .page-head {
+    display: flex; align-items: baseline; justify-content: space-between;
+    gap: 20px; flex-wrap: wrap;
+  }
+  .newtab {
+    font-size: 13px; font-weight: 600; white-space: nowrap;
+    color: var(--accent); text-decoration: none;
+  }
+  .newtab:hover { text-decoration: underline; }
+  .newtab:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
   h2 { font-size: 19px; margin: 0 0 4px; }
   h3 { font-size: 16px; margin: 0; }
   h4 { font-size: 13px; margin: 0 0 6px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
@@ -39,16 +82,6 @@
   .sub { color: var(--muted); font-size: 14px; }
   .small { font-size: 13px; }
   .muted { color: var(--muted); }
-
-  .thesis {
-    margin: 20px 0;
-    border: 1px solid var(--border);
-    border-left: 4px solid var(--accent);
-    background: var(--panel);
-    border-radius: 10px;
-    padding: 14px 16px;
-  }
-  .thesis .t { font-weight: 600; margin-bottom: 4px; }
 
   .legend { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 16px 0; }
   .tag {
@@ -59,14 +92,44 @@
   }
   .dot { width: 8px; height: 8px; border-radius: 2px; display: inline-block; }
 
+  /* ── "At a glance" swim-lane map ── */
+  .glance { margin: 18px 0 4px; }
+  .glance-map { margin: 0; max-width: 1100px; }
+  .glance-map svg { display: block; width: 100%; height: auto; }
+  .glance-map svg text { font-family: var(--font-display); }
+  .glance-node {
+    box-sizing: border-box; width: 100%; height: 100%;
+    display: flex; flex-direction: column; justify-content: center;
+    border: 1.5px solid; border-left-width: 4px;
+    background: var(--elevated);
+    padding: 6px 9px;
+    overflow: hidden;
+  }
+  .glance-node span {
+    font-size: 10.5px; line-height: 1.2; color: var(--text);
+    overflow-wrap: break-word; word-break: break-word; hyphens: auto;
+  }
+
   /* ── Swimlane grid: columns = steps, rows = lanes ── */
   .matrix {
     display: grid;
     gap: 14px;
     overflow-x: auto;
-    padding: 6px 2px 18px;
+    /* No horizontal padding: a sticky `left: 0` resolves against the content
+       box, so any inline padding leaves a strip at the scrollport edge that the
+       lane labels don't cover and scrolled cards show through. */
+    padding: 6px 0 18px;
     align-items: stretch;
+    /* Lets a collapsed lane bar size itself to the visible scrollport (100cqi)
+       rather than to the full scroll width. */
+    container-type: inline-size;
+    /* Bleed past the right gutter so cards run off the card edge — that's the
+       cue that there's more to scroll, since the scrollbar is hidden below. */
+    margin-right: calc(var(--gutter) * -1);
+    scrollbar-width: none;
+    -ms-overflow-style: none;
   }
+  .matrix::-webkit-scrollbar { display: none; }
   .lane-label {
     position: sticky; left: 0; z-index: 5;
     background: var(--bg);
@@ -75,8 +138,9 @@
     padding: 4px 16px 4px 0;
     display: flex; flex-direction: column; justify-content: flex-start;
   }
-  .lane-label .lt { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--text); }
+  .lane-label .lt { font-family: var(--font-display); font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--text); }
   .lane-label .ld { font-size: 12px; color: var(--faint); margin-top: 3px; }
+  .lane-label .ln { font-size: 11.5px; line-height: 1.45; color: var(--faint); margin-top: 12px; }
   .lane-label.toggle {
     cursor: pointer; user-select: none;
     background: var(--panel);
@@ -105,9 +169,17 @@
     border: 1px solid var(--accent); border-radius: 999px; padding: 2px 11px;
   }
   .lane-label.toggle:not(.collapsed)::after { content: "Hide"; }
-  /* Collapsed lanes render as clean full-width accordion header bars. */
+  /* Collapsed lanes render as clean accordion header bars. The bar keeps its
+     grid area spanning every column — that's the travel a sticky element needs
+     — but sizes itself to the visible scrollport and pins there, so it reads as
+     a stationary card with both rounded ends and side strokes on screen
+     instead of a strip sliding under the matrix. */
   .lane-label.toggle.collapsed {
     grid-column: 1 / -1 !important;
+    position: sticky;
+    left: 0;
+    /* Stationary card, so it keeps the right gutter the scrolling lanes bleed past. */
+    width: calc(100cqi - var(--gutter));
     flex-direction: row;
     align-items: center;
     padding: 11px 16px;
@@ -173,68 +245,28 @@
   .cell-review .ri.warn { color: var(--text); font-weight: 500; }
   .cell-review .ri.warn::before { content: "\26A0"; color: var(--warn); font-size: 11px; }
 
-  .stepcard.cut { border-color: #e8c893; }
+  .stepcard.cut { border-color: var(--warn-line); }
   .cut-badge {
     display: inline-flex; align-items: center; gap: 6px; align-self: flex-start;
     font-size: 11px; font-weight: 600; color: var(--warn);
-    background: #fff6ea; border: 1px solid #f0d9b5;
+    background: var(--warn-soft); border: 1px solid var(--warn-line);
     border-radius: 999px; padding: 2px 9px; margin-bottom: 10px;
   }
 
-  .review-banner {
-    margin: 18px 0; border: 1px solid var(--border); border-left: 4px solid var(--warn);
-    background: #fffaf2; border-radius: 10px; padding: 14px 16px;
-  }
-  .review-banner .t { font-weight: 600; margin-bottom: 6px; }
-  .review-banner ul { margin: 6px 0 0; padding-left: 18px; }
-  .review-banner li { font-size: 13px; color: var(--muted); margin-bottom: 4px; }
-
-  .block { border: 1px solid var(--border); border-radius: 12px; padding: 18px; margin-top: 24px; }
-  .block.repo-anchor { border-left: 4px solid var(--accent); background: var(--panel); border-radius: 0; }
-  .breadcrumb { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: 14px 0 12px; }
-  .chip { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--panel); font-size: 13px; }
-  .chip b { font-weight: 600; }
-  .chip .s { color: var(--faint); }
-  .domains { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .domain { border: 1px solid var(--border-soft); border-top: 3px solid var(--accent); border-radius: 10px; background: var(--elevated); padding: 14px; }
-  .domain h4 { color: var(--text); text-transform: none; letter-spacing: 0; font-size: 14px; font-weight: 600; margin-bottom: 8px; }
-  .domain ul { margin: 0; padding-left: 18px; }
-  .domain li { color: var(--muted); font-size: 13px; margin-bottom: 5px; }
-
-  .funnel-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
-  .funnel-label { width: 210px; flex-shrink: 0; }
-  .funnel-label .n { font-size: 13px; font-weight: 500; }
-  .funnel-label .note { font-size: 12px; color: var(--faint); }
-  .funnel-track { flex: 1; min-width: 0; }
-  .funnel-bar { height: 24px; border-radius: 4px; background: var(--accent); min-width: 28px; }
-  .funnel-count { width: 48px; text-align: right; font-weight: 600; flex-shrink: 0; }
-  .stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-top: 16px; }
-  .stat { border: 1px solid var(--border-soft); border-radius: 10px; padding: 14px; }
-  .stat .v { font-size: 24px; font-weight: 600; }
-  .stat .l { font-size: 12px; color: var(--muted); margin-top: 2px; }
-  .cost-assumptions { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 4px; }
-  .cost-assumptions .pill { border: 1px solid var(--border); background: var(--panel); border-radius: 8px; padding: 6px 10px; font-size: 12px; color: var(--muted); }
-  .cost-assumptions .pill b { color: var(--text); font-weight: 600; }
-  table.cost { width: 100%; border-collapse: collapse; margin-top: 14px; font-size: 13px; }
-  table.cost th, table.cost td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border-soft); }
-  table.cost th { font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); font-weight: 600; }
-  table.cost td.amt, table.cost th.amt { text-align: right; white-space: nowrap; }
-  table.cost tr.group td { font-weight: 600; background: var(--panel); color: var(--text); }
-  table.cost tr.total td { font-weight: 700; border-top: 2px solid var(--border); border-bottom: none; }
-  .cost-note { font-size: 12px; color: var(--faint); margin-top: 8px; }
-  .callout { margin-top: 14px; border: 1px solid var(--border); border-left: 4px solid var(--warn); background: var(--panel); border-radius: 8px; padding: 12px 14px; }
-  .callout .t { font-weight: 600; margin-bottom: 4px; }
   .footer { margin-top: 28px; color: var(--faint); font-size: 12px; }
-  @media (max-width: 720px) {
-    .domains, .stats { grid-template-columns: 1fr; }
-    .funnel-label { width: 150px; }
-  }
 </style>
 </head>
 <body>
 <div class="wrap">
-  <h1>Upline — the product journey</h1>
-  <p class="sub">How Upline works, left to right. The top lane is the journey; each column drops down into the data it writes to the repository, its operational logic, future ideas, and the open questions &amp; decisions from the Jul 15 team review (⚠ = open decision).</p>
+  <div class="page-head">
+    <h1>Upline — the product journey</h1>
+    <a class="newtab" id="newtab" target="_blank" rel="noreferrer" hidden>Open the product journey in a new tab →</a>
+  </div>
+
+  <section class="glance">
+    <h2>At a Glance</h2>
+    <figure class="glance-map" id="glance"></figure>
+  </section>
 
   <div class="legend" id="legend">
     <span class="small muted">Who runs each step:</span>
@@ -450,6 +482,91 @@ function bulletsHTML(bullets){
 document.getElementById("legend").insertAdjacentHTML("beforeend",
   Object.keys(ROLES).map(k => tag(k)).join(""));
 
+// At a Glance — the whole flow in one view (columns = steps, rows = actors).
+// Condensed companion to the full matrix below; same actors, no deep detail.
+const GLANCE_LANES = [
+  { label:"Upline",   color:"var(--upline)",   ink:"var(--upline-700)" },
+  { label:"VA",       color:"var(--va)",       ink:"var(--va-700)" },
+  { label:"Agent",    color:"var(--agent)",    ink:"var(--agent-700)" },
+  { label:"Customer", color:"var(--customer)", ink:"var(--customer-700)" },
+];
+
+const GLANCE_STEPS = [
+  { lane:0, text:"Pull the book + renewals (RPA)" },
+  { lane:1, text:"Refresh household data before outreach" },
+  { lane:0, text:"Generate the outreach email" },
+  { lane:2, text:"Send it — from the agent’s own name" },
+  { lane:3, text:"Complete the tailored questionnaire" },
+  { lane:1, text:"Shop across multiple carriers" },
+  { lane:0, text:"Draft the recommendation" },
+  { lane:2, text:"Review, adjust, and send" },
+  { lane:3, text:"Schedule, meet, and decide" },
+];
+
+// Phase bars carry white type, so they take the 700 of each ramp.
+const GLANCE_PHASES = [
+  { start:0, span:2, label:"Set up the data",    bg:"var(--upline-700)" },
+  { start:2, span:3, label:"Reach out & intake", bg:"var(--va-700)" },
+  { start:5, span:2, label:"Shop & recommend",   bg:"var(--agent-700)" },
+  { start:7, span:2, label:"Review & close",     bg:"var(--customer-700)" },
+];
+
+(function buildGlance(){
+  const host = document.getElementById("glance");
+  if (!host) return;
+
+  const W = 1000, gutter = 88, topPad = 6, headerH = 24, headerGap = 10;
+  const laneH = 94, laneGap = 10, nodeH = 74;
+  const n = GLANCE_STEPS.length;
+  const colW = (W - gutter) / n;
+  const nodeW = colW - 12;
+  const lanesTop = topPad + headerH + headerGap;
+  const laneTop = i => lanesTop + i * (laneH + laneGap);
+  const nodeX = c => gutter + c * colW + (colW - nodeW) / 2;
+  const nodeY = l => laneTop(l) + (laneH - nodeH) / 2;
+  const midY  = l => nodeY(l) + nodeH / 2;
+  const H = lanesTop + GLANCE_LANES.length * laneH + (GLANCE_LANES.length - 1) * laneGap + topPad;
+
+  let s = "";
+
+  // Lane bands + actor labels
+  GLANCE_LANES.forEach((ln, i) => {
+    s += `<rect x="0" y="${laneTop(i)}" width="${W}" height="${laneH}" rx="8" fill="${ln.color}" fill-opacity=".055"/>`
+       + `<rect x="0" y="${laneTop(i)}" width="4" height="${laneH}" fill="${ln.color}"/>`
+       + `<text x="13" y="${midY(i)}" dominant-baseline="middle" fill="${ln.ink}" font-size="12" font-weight="700">${esc(ln.label)}</text>`;
+  });
+
+  // Phase headers spanning their steps
+  GLANCE_PHASES.forEach(p => {
+    const x = gutter + p.start * colW + 3;
+    const w = p.span * colW - 6;
+    s += `<rect x="${x}" y="${topPad}" width="${w}" height="${headerH}" rx="6" fill="${p.bg}"/>`
+       + `<text x="${x + w / 2}" y="${topPad + headerH / 2 + 0.5}" text-anchor="middle" dominant-baseline="middle" fill="#fff" font-size="10" font-weight="700" letter-spacing=".6">${esc(p.label.toUpperCase())}</text>`;
+  });
+
+  // Step-to-step connectors
+  for (let i = 0; i < n - 1; i++){
+    const ax = nodeX(i) + nodeW, ay = midY(GLANCE_STEPS[i].lane);
+    const bx = nodeX(i + 1),     by = midY(GLANCE_STEPS[i + 1].lane);
+    const mx = (ax + bx) / 2;
+    s += `<polyline points="${ax},${ay} ${mx},${ay} ${mx},${by} ${bx},${by}" fill="none" stroke="var(--faint)" stroke-width="1.5" marker-end="url(#glanceArrow)"/>`;
+  }
+
+  // Step nodes
+  GLANCE_STEPS.forEach((st, i) => {
+    const color = GLANCE_LANES[st.lane].color;
+    s += `<foreignObject x="${nodeX(i)}" y="${nodeY(st.lane)}" width="${nodeW}" height="${nodeH}">`
+       + `<div xmlns="http://www.w3.org/1999/xhtml" class="glance-node" style="border-color:${color}">`
+       + `<span>${esc(st.text)}</span></div></foreignObject>`;
+  });
+
+  const aria = "Upline product journey at a glance. Upline pulls the book and renewal numbers by RPA; a VA refreshes household data; Upline generates the outreach email; the agent sends it from their own name; the customer completes a tailored questionnaire; a VA shops across carriers; Upline drafts the recommendation and cross-sell; the agent reviews, adjusts, and sends; the customer schedules, meets, and decides.";
+
+  host.innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${aria}">`
+    + `<defs><marker id="glanceArrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">`
+    + `<path d="M0,0 L6,3 L0,6 Z" fill="var(--faint)"/></marker></defs>${s}</svg>`;
+})();
+
 // Journey — swimlane grid (columns = steps, rows = lanes)
 const matrix = document.getElementById("journey");
 matrix.className = "matrix";
@@ -461,17 +578,18 @@ matrix.style.gridTemplateColumns = `190px repeat(${N}, 300px)`;
 const LANE_ROW = { journey: 1, data: 2, logic: 3, future: 4, review: 5 };
 function cellPos(key, i){ return `grid-column:${i + 2};grid-row:${LANE_ROW[key]}`; }
 
-function laneLabel(title, desc, key, collapsible){
+function laneLabel(title, desc, key, collapsible, note){
   const cls = "lane-label" + (collapsible ? " toggle" : "");
   const caret = collapsible ? `<span class="caret">\u25BE</span>` : "";
   const attrs = collapsible ? ` role="button" tabindex="0" aria-expanded="true" data-toggle="${key}"` : "";
-  return `<div class="${cls}" style="grid-column:1;grid-row:${LANE_ROW[key]}"${attrs}><div class="lt">${caret}${esc(title)}</div>${desc?`<div class="ld">${esc(desc)}</div>`:""}</div>`;
+  return `<div class="${cls}" style="grid-column:1;grid-row:${LANE_ROW[key]}"${attrs}><div class="lt">${caret}${esc(title)}</div>${desc?`<div class="ld">${esc(desc)}</div>`:""}${note?`<div class="ln">${esc(note)}</div>`:""}</div>`;
 }
 
 let html = "";
 
 // Row 1 — journey step cards (not collapsible)
-html += laneLabel("Journey", "left → right", "journey", false);
+html += laneLabel("Journey", "left → right", "journey", false,
+  "How Upline works, left to right. The top lane is the journey; each column drops down into the data it writes to the repository, its operational logic, future ideas, and the open questions & decisions from the Jul 15 team review (⚠ = open decision).");
 STEPS.forEach((step, i) => {
   const lane = ROLES[step.roles[0]].color;
   const isCut = CUT.includes(step.n);
@@ -537,6 +655,14 @@ matrix.querySelectorAll(".lane-label.toggle").forEach(label => {
   // Default: start collapsed so the journey reads cleanly; each lane expands on click.
   setCollapsed(true);
 });
+
+// "Open in a new tab" only earns its place inside the home-page embed —
+// standalone, this page is already the thing the link points at.
+if (window.self !== window.top){
+  const newtab = document.getElementById("newtab");
+  newtab.href = location.href;
+  newtab.hidden = false;
+}
 
 </script>
 </body>

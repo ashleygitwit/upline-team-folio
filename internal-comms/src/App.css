@@ -915,10 +915,18 @@ h2 {
   margin-top: var(--space-section);
 }
 
+/* The frame hugs its content instead of scrolling internally — the embedded
+   page is same-origin, so its height is measured and applied in JS. The fixed
+   height here is only the pre-measurement placeholder. */
 .embed-frame-tall {
   aspect-ratio: auto;
-  height: 82vh;
-  min-height: 620px;
+  height: auto;
+}
+
+.embed-frame-tall iframe {
+  position: static;
+  display: block;
+  height: 1280px;
 }
 
 /* ---- Funnel economics (Learnings) ---- */

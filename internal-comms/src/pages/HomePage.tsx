@@ -1,43 +1,63 @@
+import { useEffect, useRef } from 'react';
 import type { VenturePlan } from '../types';
-import { SwimlaneMap, type SwimLane, type SwimStep, type SwimPhase } from '../components/SwimlaneMap';
 
 interface HomePageProps {
   plan: VenturePlan | null;
 }
 
-// "At a glance" version of the full product journey — the actors and the
-// left-to-right flow, minus the deep detail in the embedded version below.
-const JOURNEY_LANES: SwimLane[] = [
-  { key: 'upline', label: 'Upline', color: 'var(--primary)' },
-  { key: 'va', label: 'VA', color: 'var(--chart-4)' },
-  { key: 'agent', label: 'Agent', color: 'var(--success-strong)' },
-  { key: 'customer', label: 'Customer', color: 'var(--info)' },
-];
+// The embedded journey page is same-origin, so we can size the frame to its
+// content and let the page scroll instead of the iframe. Its lanes expand and
+// collapse on click, so the height is kept in sync as the content reflows.
+function useContentHeight() {
+  const ref = useRef<HTMLIFrameElement>(null);
 
-const JOURNEY_STEPS: SwimStep[] = [
-  { lane: 0, text: 'Pull the book + renewals (RPA)' },
-  { lane: 1, text: 'Refresh household data before outreach' },
-  { lane: 0, text: 'Generate the outreach email' },
-  { lane: 2, text: 'Send it — from the agent\u2019s own name' },
-  { lane: 3, text: 'Complete the tailored questionnaire' },
-  { lane: 1, text: 'Shop across multiple carriers' },
-  { lane: 0, text: 'Draft the recommendation' },
-  { lane: 2, text: 'Review, adjust, and send' },
-  { lane: 3, text: 'Schedule, meet, and decide' },
-];
+  useEffect(() => {
+    const frame = ref.current;
+    if (!frame) return;
 
-const JOURNEY_PHASES: SwimPhase[] = [
-  { start: 0, span: 2, label: 'Set up the data', bg: 'var(--primary)', fg: 'var(--primary-foreground)' },
-  { start: 2, span: 3, label: 'Reach out & intake', bg: 'var(--chart-3)', fg: 'var(--foreground)' },
-  {
-    start: 5,
-    span: 2,
-    label: 'Shop & recommend',
-    bg: 'var(--success-strong)',
-    fg: 'var(--primary-foreground)',
-  },
-  { start: 7, span: 2, label: 'Review & close', bg: 'var(--info)', fg: 'var(--primary-foreground)' },
-];
+    let observer: ResizeObserver | undefined;
+
+    // Before the lazy load fires the frame holds about:blank; measuring that
+    // would collapse it to nothing and strand it below the viewport.
+    const loadedDoc = () => {
+      const doc = frame.contentDocument;
+      return doc && doc.location.href !== 'about:blank' ? doc : null;
+    };
+
+    const sync = () => {
+      const doc = loadedDoc();
+      if (!doc?.body) return;
+      // Measure the body, not documentElement: the latter is clamped to the
+      // iframe's own viewport, so the frame could only ever grow.
+      const height = Math.ceil(doc.body.getBoundingClientRect().height);
+      // Guard against a measure/apply feedback loop on sub-pixel differences.
+      if (height && Math.abs(frame.clientHeight - height) > 1) {
+        frame.style.height = `${height}px`;
+      }
+    };
+
+    const attach = () => {
+      const doc = loadedDoc();
+      if (!doc?.body) return;
+      sync();
+      observer?.disconnect();
+      observer = new ResizeObserver(sync);
+      observer.observe(doc.body);
+    };
+
+    frame.addEventListener('load', attach);
+    if (frame.contentDocument?.readyState === 'complete') attach();
+    window.addEventListener('resize', sync);
+
+    return () => {
+      frame.removeEventListener('load', attach);
+      window.removeEventListener('resize', sync);
+      observer?.disconnect();
+    };
+  }, []);
+
+  return ref;
+}
 
 interface ArcStep {
   beat: string;
@@ -69,6 +89,8 @@ const ARC: ArcStep[] = [
 ];
 
 export function HomePage({ plan }: HomePageProps) {
+  const journeyFrame = useContentHeight();
+
   return (
     <>
       <section className="hero">
@@ -147,35 +169,14 @@ export function HomePage({ plan }: HomePageProps) {
           )}
 
           <section className="product-journey">
-            <div className="card journey-glance">
-              <h2>Upline Journey — at a glance</h2>
-              <p className="arc-intro">
-                The whole flow in one view — who does what, left to right. Want the detail? The full
-                version is right below.
-              </p>
-              <SwimlaneMap
-                lanes={JOURNEY_LANES}
-                steps={JOURNEY_STEPS}
-                phases={JOURNEY_PHASES}
-                ariaLabel="Upline product journey at a glance. Upline pulls the book and renewal numbers by RPA; a VA refreshes household data; Upline generates the outreach email; the agent sends it from their own name; the customer completes a tailored questionnaire; a VA shops across carriers; Upline drafts the recommendation and cross-sell; the agent reviews, adjusts, and sends; the customer schedules, meets, and decides."
-              />
-            </div>
-
             <div className="embed-frame embed-frame-tall">
               <iframe
+                ref={journeyFrame}
                 title="Upline — the product journey"
-                src="/product-journey.html?v=6"
+                src="/product-journey.html?v=7"
                 loading="lazy"
               />
             </div>
-            <a
-              className="arc-link"
-              href="/product-journey.html?v=6"
-              target="_blank"
-              rel="noreferrer"
-            >
-              Open the product journey in a new tab &rarr;
-            </a>
           </section>
         </div>
       </div>
