@@ -136,10 +136,8 @@ export function MvpPage() {
       </section>
 
       {/* GOAL */}
-      <div className="phase-rule">
-        <span>Goal</span>
-      </div>
       <section className="card phase-card">
+        <h2>Goal</h2>
         <p className="proof-statement">
           Ship the first sellable front-end experience the agent actually touches — review and send
           — with some steps still manual (VAs shopping) behind the scenes at launch. The target is a
@@ -148,16 +146,14 @@ export function MvpPage() {
       </section>
 
       {/* SCOPE */}
-      <div className="phase-rule">
-        <span>Scope</span>
-      </div>
       <section className="card phase-card">
+        <h2>Scope</h2>
         <p className="export-hint" style={{ marginTop: 0 }}>
           Working strawman of the first sellable week lives on the{' '}
           <a href="#/mvp-journey">layered MVP journey map</a> — experience, UX, data, and
           features on the same grid. Feature cards below stay until that map is locked.
         </p>
-        <p className="sub-label">Feature backlog</p>
+        <h3 className="sub-label">Feature backlog</h3>
         <div className="kanban">
           {KANBAN_COLS.map((col) => (
             <div key={col.title} className="kanban-col">
@@ -303,10 +299,8 @@ export function MvpPage() {
       </section>
 
       {/* OUTCOME */}
-      <div className="phase-rule">
-        <span>Outcome</span>
-      </div>
       <section className="card phase-card">
+        <h2>Outcome</h2>
         <div className="empty-state is-tall">
           <p className="empty-state-t">Build hasn&rsquo;t started yet — outcome TBD</p>
           <p className="empty-state-b">

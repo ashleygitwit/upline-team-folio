@@ -161,6 +161,8 @@ function App() {
   }
 
   const isWide = route === 'mvp-journey';
+  // The brand gradient wash is the home page's alone; see .page.is-home in App.css.
+  const pageClass = `page${isWide ? ' is-wide' : ''}${route === 'home' ? ' is-home' : ''}`;
 
   return (
     <>
@@ -218,7 +220,7 @@ function App() {
         </div>
       </header>
 
-      <div className={isWide ? 'page is-wide' : 'page'}>
+      <div className={pageClass}>
         {error ? <p className="error">{error}</p> : null}
 
         {route === 'home' ? <HomePage plan={plan} /> : null}

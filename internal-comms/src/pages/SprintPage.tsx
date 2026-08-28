@@ -82,11 +82,9 @@ export function SprintPage() {
       </section>
 
       {/* GOAL */}
-      <div className="phase-rule">
-        <span>Goal</span>
-      </div>
       <section className="card phase-card">
-        <p className="sub-label">What we bring in</p>
+        <h2>Goal</h2>
+        <h3 className="sub-label">What we bring in</h3>
         <ul className="proving-list">
           {INPUTS.map((i) => (
             <li key={i}>{i}</li>
@@ -100,10 +98,8 @@ export function SprintPage() {
       </section>
 
       {/* PLAN */}
-      <div className="phase-rule">
-        <span>Plan</span>
-      </div>
       <section className="card phase-card">
+        <h2>Plan</h2>
         <p className="proof-statement" style={{ marginBottom: '1rem' }}>
           The strawman journey map is what we bring to the room.
         </p>
@@ -112,7 +108,7 @@ export function SprintPage() {
         </a>
 
         <hr className="soft-rule" />
-        <p className="sub-label">Week at a glance</p>
+        <h3 className="sub-label">Week at a glance</h3>
         <div className="sprint-days">
           {DAYS.map((d) => (
             <div key={d.when} className="sprint-day">
@@ -129,11 +125,9 @@ export function SprintPage() {
       </section>
 
       {/* OUTCOME */}
-      <div className="phase-rule">
-        <span>Outcome</span>
-      </div>
       <section className="card phase-card">
-        <p className="sub-label">By Wednesday night</p>
+        <h2>Outcome</h2>
+        <h3 className="sub-label">By Wednesday night</h3>
         <ul className="check-list">
           {LEAVE_WITH.map((i) => (
             <li key={i}>{i}</li>

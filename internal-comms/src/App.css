@@ -5,6 +5,38 @@
   color: var(--foreground);
 }
 
+/* Brand gradient wash — home page only.
+   Restores the background gradient from the brand system, in the guide's two
+   gradient roles: Light Blue from the top left, Lime from the right. That is
+   the same composition uplineinsurance.com uses, but built from two radial
+   stops rather than its pair of 760px blurred, animated blobs. A radial
+   gradient is diffuse on its own, so this needs no blur filter and no
+   keyframes, and leaves nothing running to composite.
+   The geometry deliberately does not copy the live site's. There the blobs sit
+   low enough to reach mid-page, which is safe because that hero is centred and
+   its copy sits in the clear middle. This hero is left-aligned, so the blue is
+   pulled up and out of frame to keep its falloff clear of the sub-copy below —
+   --muted-foreground has only about half a point of AA headroom to give away,
+   and this way it gives away none.
+   Fixed to the viewport so the wash reads as one field behind the whole page
+   and frames the indigo band down both gutters. */
+.page.is-home::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  /* Horizontal radii are clamped against the viewport the way the live site
+     sizes its blobs (min(760px, 85vw)). Left in rem alone, both ellipses are
+     wider than a phone, so they cover the full width and stack — and the two
+     brand hues sum to a muddy olive that puts --muted-foreground under 4.5:1
+     at 320px. Clamped, they stay side by side at every width. Above ~1190px
+     the rem values win and this has no effect. */
+  background:
+    radial-gradient(min(58rem, 78vw) 38rem at 6% -12%, var(--wash-a), transparent 72%),
+    radial-gradient(min(46rem, 70vw) 40rem at 102% 34%, var(--wash-b), transparent 70%);
+}
+
 .header {
   margin-bottom: 1.25rem;
 }
@@ -1944,33 +1976,11 @@ code {
 }
 
 /* ---- Shared phase layout (Goal / Plan|Scope / Outcome) ---- */
+/* Was 0 because the .phase-rule divider above the next card supplied the
+   separation. The heading now lives inside the card, so these space themselves
+   on the same card-to-card rhythm as the Learnings sections. */
 .phase-card {
-  margin-bottom: 0;
-}
-
-/* Labeled section header that sits ABOVE a phase card (so the card itself
-   isn't doubled up with an internal divider right at its top edge). */
-.phase-rule {
-  display: flex;
-  align-items: center;
-  gap: 0.85rem;
-  margin: 2.4rem 0 var(--card-label-gap);
-}
-
-.phase-rule > span {
-  flex-shrink: 0;
-  font-size: 0.72rem;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--foreground);
-}
-
-.phase-rule::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: var(--border);
+  margin-bottom: var(--space-block);
 }
 
 /* Soft in-card divider between sub-sections */
@@ -2527,14 +2537,6 @@ code {
 
 .accordion-body {
   padding: 0 1.1rem 1.1rem;
-}
-
-.accordion-body .phase-rule {
-  margin-top: 1.5rem;
-}
-
-.accordion-body .phase-rule:first-of-type {
-  margin-top: 0.85rem;
 }
 
 /* ---- MVP Scope: placeholder kanban board ---- */
