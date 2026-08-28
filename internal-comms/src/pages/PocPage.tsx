@@ -68,8 +68,8 @@ const PILOT_FACTS: [string, string][] = [
 ];
 const LANES: { key: string; label: string; color: string }[] = [
   { key: 'upline', label: 'Upline', color: 'var(--primary)' },
-  { key: 'agent', label: 'Agent', color: 'var(--chart-5)' },
-  { key: 'client', label: 'Client', color: 'oklch(0.55 0.12 262)' },
+  { key: 'agent', label: 'Agent', color: 'var(--success-strong)' },
+  { key: 'client', label: 'Client', color: 'var(--info)' },
 ];
 
 interface LoopStep {
@@ -97,9 +97,15 @@ interface Phase {
 }
 
 const PHASES: Phase[] = [
-  { start: 0, span: 1, label: 'Prep · week before', bg: 'var(--primary)', fg: '#fff' },
-  { start: 1, span: 3, label: 'Outreach & intake', bg: 'var(--chart-3)', fg: '#3a3320' },
-  { start: 4, span: 3, label: 'Shop & propose', bg: 'var(--chart-5)', fg: '#fff' },
+  { start: 0, span: 1, label: 'Prep · week before', bg: 'var(--primary)', fg: 'var(--primary-foreground)' },
+  { start: 1, span: 3, label: 'Outreach & intake', bg: 'var(--chart-3)', fg: 'var(--foreground)' },
+  {
+    start: 4,
+    span: 3,
+    label: 'Shop & propose',
+    bg: 'var(--success-strong)',
+    fg: 'var(--primary-foreground)',
+  },
 ];
 
 function WeeklyLoopMap() {
@@ -218,7 +224,7 @@ function WeeklyLoopMap() {
                   gap: '2px',
                   border: `1.5px solid ${color}`,
                   borderLeft: `4px solid ${color}`,
-                  borderRadius: '8px',
+                  borderRadius: '0',
                   background: 'var(--card)',
                   padding: '6px 8px',
                   overflow: 'hidden',
@@ -318,10 +324,8 @@ export function PocPage({ plan }: PocPageProps) {
       </section>
 
       {/* GOAL */}
-      <div className="phase-rule">
-        <span>Goal</span>
-      </div>
       <section className="card phase-card">
+        <h2>Goal</h2>
         <p className="proof-statement">
           {plan?.venture.upcomingProofPoint.description ??
             'For real renewals in this pilot, we need proof that we can repeatedly generate a proposal moment that agents trust enough to send and that customers respond to.'}
@@ -354,7 +358,7 @@ export function PocPage({ plan }: PocPageProps) {
         </div>
 
         <hr className="soft-rule" />
-        <p className="sub-label">The lens — our mantra</p>
+        <h3 className="sub-label">The lens — our mantra</h3>
         <blockquote className="goal-mantra">
           {plan?.venture.mantra ?? 'Make every renewal prove the agent is in my corner.'}
         </blockquote>
@@ -366,10 +370,8 @@ export function PocPage({ plan }: PocPageProps) {
       </section>
 
       {/* PLAN */}
-      <div className="phase-rule">
-        <span>Plan</span>
-      </div>
       <section className="card phase-card">
+        <h2>Plan</h2>
         <div className="plan-top">
           <div className="plan-col">
             <h3 className="plan-subhead" style={{ marginTop: 0 }}>
@@ -404,10 +406,8 @@ export function PocPage({ plan }: PocPageProps) {
       </section>
 
       {/* OUTCOME */}
-      <div className="phase-rule">
-        <span>Outcome</span>
-      </div>
       <section className="card phase-card">
+        <h2>Outcome</h2>
         <div className="outcome-verdict tone-win">
           <span className="outcome-verdict-kicker">How we read it</span>
           <p className="outcome-verdict-title">It tested well. Big victory — we move forward.</p>
@@ -434,7 +434,7 @@ export function PocPage({ plan }: PocPageProps) {
           switchers.
         </p>
 
-        <p className="sub-label">Against the three bars</p>
+        <h3 className="sub-label">Against the three bars</h3>
         <div className="metric-grid">
           {CLEARED.map((m, i) => (
             <div key={m.title} className="metric-card">
@@ -450,7 +450,7 @@ export function PocPage({ plan }: PocPageProps) {
           ))}
         </div>
 
-        <p className="sub-label">What we learned</p>
+        <h3 className="sub-label">What we learned</h3>
         <ul className="check-list">
           {FINDINGS.map((f) => (
             <li key={f}>{f}</li>
@@ -458,7 +458,7 @@ export function PocPage({ plan }: PocPageProps) {
         </ul>
 
         <hr className="soft-rule" />
-        <p className="sub-label">What&rsquo;s next</p>
+        <h3 className="sub-label">What&rsquo;s next</h3>
         <p className="proof-statement" style={{ marginTop: 0 }}>
           Stockton Hill kicks off the week of August 31. Same proposal moment, Version A outreach
           — we do not inherit the Members 1st v8 copy. That is the second proof, running in tandem
