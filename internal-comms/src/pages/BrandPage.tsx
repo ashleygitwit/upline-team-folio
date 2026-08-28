@@ -178,7 +178,7 @@ export function BrandPage() {
         </p>
       </section>
 
-      <section className="brand-section">
+      <section className="card">
         <h2>Logo</h2>
         <div className="logo-trio">
           {LOGO_CELLS.map((c) => (
@@ -195,7 +195,7 @@ export function BrandPage() {
         </div>
       </section>
 
-      <section className="brand-section">
+      <section className="card">
         <h2>Palette</h2>
         <p className="brand-subnote">
           The Upline brand colors and their scales — the tokens this whole system is built from. Hex
@@ -225,7 +225,7 @@ export function BrandPage() {
         </div>
       </section>
 
-      <section className="brand-section">
+      <section className="card">
         <h2>Typography</h2>
         <div className="type-specimen">
           <p className="type-display">Radio Canada Big — headers &amp; subheaders</p>
@@ -234,7 +234,7 @@ export function BrandPage() {
         </div>
       </section>
 
-      <section className="brand-section mantra-card">
+      <section className="card mantra-card">
         <h2>Voice — the mantra</h2>
         <blockquote>Make every renewal prove the agent is in my corner.</blockquote>
         <p className="export-hint">
