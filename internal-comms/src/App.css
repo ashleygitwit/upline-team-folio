@@ -167,7 +167,17 @@ h2 {
   font-size: 0.875rem;
   color: var(--muted-foreground);
   line-height: 1.4;
-  max-width: 48ch;
+  /* A readable measure, not a narrow column — 48ch here capped the line at
+     under half the card and read as a bug rather than a choice. */
+  max-width: 78ch;
+}
+
+/* Same rhythm as `* + .sub-label` below: an intro line that leads into content
+   needs a gap, but one that closes a card shouldn't pad out its bottom. The
+   card is block-level, so this collapses with a following top margin rather
+   than stacking on it. */
+.export-hint:not(:last-child) {
+  margin-bottom: var(--space-tight);
 }
 
 .copy-btn {
