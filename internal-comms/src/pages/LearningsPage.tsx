@@ -303,8 +303,10 @@ export function LearningsPage({ learnings }: LearningsPageProps) {
                 e.kind === 'milestone' ? (
                   <tr key={`${e.date}-${idx}`} className="timeline-milestone-row">
                     <td className="col-date">{formatDate(e.date)}</td>
-                    <td colSpan={2}>
+                    <td className="col-source">
                       <span className="milestone-flag">Milestone</span>
+                    </td>
+                    <td>
                       <span className="milestone-title">{e.title}</span>
                       <p className="milestone-desc">{e.learning}</p>
                     </td>

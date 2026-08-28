@@ -1461,6 +1461,8 @@ h2 {
   border-left: 3px solid var(--primary);
 }
 
+/* Sits alone in the Source column, where a normal row carries its .source-tag,
+   so it needs neither the gap to a following title nor inline alignment. */
 .milestone-flag {
   display: inline-block;
   font-size: 0.62rem;
@@ -1471,16 +1473,14 @@ h2 {
   background: var(--primary);
   border-radius: 999px;
   padding: 0.12rem 0.5rem;
-  margin-right: 0.55rem;
-  vertical-align: middle;
 }
 
 .milestone-title {
+  display: block;
   font-family: var(--font-display);
   font-weight: 500;
   font-size: 1rem;
   color: var(--foreground);
-  vertical-align: middle;
 }
 
 .milestone-desc {
