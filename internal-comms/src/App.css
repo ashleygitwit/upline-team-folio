@@ -298,7 +298,14 @@ h2 {
   color: var(--primary-foreground);
 }
 
-.secondary-btn {
+/* The arc CTAs join this rule rather than carrying their own fill: on the
+   indigo band their default indigo pill is Indigo 500 sitting on the glass
+   panel's Indigo 600, about 1.1:1, so the button read as a flat block of
+   colour. Scoped to .feature-band so the Sprint page's arc CTA, which sits on
+   a white card where the indigo pill is correct, keeps it. Both selectors here
+   outrank the .arc-cta appearance further down the file on specificity. */
+.secondary-btn,
+.feature-band .arc-cta {
   padding: 0.55rem 1rem;
   border: 1px solid var(--border);
   border-radius: var(--radius-pill);
@@ -310,7 +317,8 @@ h2 {
   cursor: pointer;
 }
 
-.secondary-btn:hover {
+.secondary-btn:hover,
+.feature-band .arc-cta:hover {
   background: var(--accent);
 }
 
