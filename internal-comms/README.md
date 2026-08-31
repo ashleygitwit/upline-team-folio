@@ -23,7 +23,7 @@ The site can *show* those things. The durable reference copy lives in the folder
 
 ## Pages (hash routes)
 
-`#/` What is Upline · `#/learnings` · `#/roadmap` · `#/poc` · `#/sprint` · `#/mvp` · `#/mvp-journey` · `#/scale` · `#/brand` · `#/team`
+`#/` What is Upline · `#/learnings` · `#/roadmap` · `#/poc` · `#/sprint` · `#/sprint/tuesday` (and wednesday / thursday / friday) · `#/mvp` · `#/mvp-journey` · `#/scale` · `#/brand` · `#/team`
 
 ## How the site gets its data
 

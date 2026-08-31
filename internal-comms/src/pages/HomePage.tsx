@@ -1,40 +1,67 @@
+import { useEffect, useRef } from 'react';
 import type { VenturePlan } from '../types';
-import { SwimlaneMap, type SwimLane, type SwimStep, type SwimPhase } from '../components/SwimlaneMap';
 
 interface HomePageProps {
   plan: VenturePlan | null;
 }
 
-// "At a glance" version of the full product journey — the actors and the
-// left-to-right flow, minus the deep detail in the embedded version below.
-const JOURNEY_LANES: SwimLane[] = [
-  { key: 'upline', label: 'Upline', color: 'var(--primary)' },
-  { key: 'va', label: 'VA', color: 'oklch(0.62 0.14 40)' },
-  { key: 'agent', label: 'Agent', color: 'var(--chart-5)' },
-  { key: 'customer', label: 'Customer', color: 'oklch(0.55 0.12 262)' },
-];
+// The embedded journey page is same-origin, so we can size the frame to its
+// content and let the page scroll instead of the iframe. Its lanes expand and
+// collapse on click, so the height is kept in sync as the content reflows.
+function useContentHeight() {
+  const ref = useRef<HTMLIFrameElement>(null);
 
-const JOURNEY_STEPS: SwimStep[] = [
-  { lane: 0, text: 'Pull the book + renewals (RPA)' },
-  { lane: 1, text: 'Refresh household data before outreach' },
-  { lane: 0, text: 'Generate the outreach email' },
-  { lane: 2, text: 'Send it — from the agent\u2019s own name' },
-  { lane: 3, text: 'Complete the tailored questionnaire' },
-  { lane: 1, text: 'Shop across multiple carriers' },
-  { lane: 0, text: 'Draft the recommendation' },
-  { lane: 2, text: 'Review, adjust, and send' },
-  { lane: 3, text: 'Schedule, meet, and decide' },
-];
+  useEffect(() => {
+    const frame = ref.current;
+    if (!frame) return;
 
-const JOURNEY_PHASES: SwimPhase[] = [
-  { start: 0, span: 2, label: 'Set up the data', bg: 'var(--primary)', fg: '#fff' },
-  { start: 2, span: 3, label: 'Reach out & intake', bg: 'var(--chart-3)', fg: '#3a3320' },
-  { start: 5, span: 2, label: 'Shop & recommend', bg: 'var(--chart-5)', fg: '#fff' },
-  { start: 7, span: 2, label: 'Review & close', bg: 'oklch(0.55 0.12 262)', fg: '#fff' },
-];
+    let observer: ResizeObserver | undefined;
+
+    // Before the lazy load fires the frame holds about:blank; measuring that
+    // would collapse it to nothing and strand it below the viewport.
+    const loadedDoc = () => {
+      const doc = frame.contentDocument;
+      return doc && doc.location.href !== 'about:blank' ? doc : null;
+    };
+
+    const sync = () => {
+      const doc = loadedDoc();
+      if (!doc?.body) return;
+      // Measure the body, not documentElement: the latter is clamped to the
+      // iframe's own viewport, so the frame could only ever grow.
+      const height = Math.ceil(doc.body.getBoundingClientRect().height);
+      // Guard against a measure/apply feedback loop on sub-pixel differences.
+      if (height && Math.abs(frame.clientHeight - height) > 1) {
+        frame.style.height = `${height}px`;
+      }
+    };
+
+    const attach = () => {
+      const doc = loadedDoc();
+      if (!doc?.body) return;
+      sync();
+      observer?.disconnect();
+      observer = new ResizeObserver(sync);
+      observer.observe(doc.body);
+    };
+
+    frame.addEventListener('load', attach);
+    if (frame.contentDocument?.readyState === 'complete') attach();
+    window.addEventListener('resize', sync);
+
+    return () => {
+      frame.removeEventListener('load', attach);
+      window.removeEventListener('resize', sync);
+      observer?.disconnect();
+    };
+  }, []);
+
+  return ref;
+}
 
 interface ArcStep {
   beat: string;
+  heading: string;
   text: string;
   href?: string;
   cta?: string;
@@ -44,20 +71,26 @@ interface ArcStep {
 const ARC: ArcStep[] = [
   {
     beat: 'The insight that started it all',
-    text: 'A renewal is an agent\u2019s best chance to reconnect with a client \u2014 to shop for a better rate, add coverage, and open cross-sell and up-sell conversations. But books are too big to reach everyone in time, so clients quietly churn (often 8\u20139%) when a renewal lands, especially with an increase. The unlock: catch every renewal, and be able to offer to shop every single one.',
+    heading:
+      'A renewal is an agent\u2019s best chance to reconnect with a client \u2014 to shop for a better rate, add coverage, and open cross-sell and up-sell conversations.',
+    text: 'But books are too big to reach everyone in time, so clients quietly churn (often 8\u20139%) when a renewal lands, especially with an increase. The unlock: catch every renewal, and be able to offer to shop every single one.',
     href: 'https://upline-members1st-investor-demo.netlify.app/',
     cta: 'The original concept demo',
     external: true,
   },
   {
     beat: 'What we\u2019ve learned',
-    text: 'Members 1st proved it: short outreach in the agency\u2019s voice, shop the big jumps first, keep the phone close in-house. 43% of emailed households completed a questionnaire; seven switched carriers. Without the product they go reactive again \u2014 so the win is making proactive renewal work actually feasible, not just desirable.',
+    heading:
+      'Members 1st proved it: short outreach in the agency\u2019s voice, shop the big jumps first, keep the phone close in-house.',
+    text: '43% of emailed households completed a questionnaire; seven switched carriers. Without the product they go reactive again \u2014 so the win is making proactive renewal work actually feasible, not just desirable.',
     href: '#/learnings',
     cta: 'Read the learnings',
   },
 ];
 
 export function HomePage({ plan }: HomePageProps) {
+  const journeyFrame = useContentHeight();
+
   return (
     <>
       <section className="hero">
@@ -73,91 +106,80 @@ export function HomePage({ plan }: HomePageProps) {
         </p>
       </section>
 
-      <section className="arc-section">
-        <h2>Venture Through Line</h2>
-        <p className="arc-intro">
-          From the insight that started it to what the pilot has taught us so far.
-        </p>
-        <div className="arc-grid">
-          {ARC.map((step, i) => (
-            <div key={step.beat} className="arc-cell">
-              <div className="arc-step">
-                <p className="arc-beat">{step.beat}</p>
-                <p className="arc-text">{step.text}</p>
-                {step.cta && step.href ? (
-                  <a
-                    className="arc-cta"
-                    href={step.href}
-                    {...(step.external ? { target: '_blank', rel: 'noreferrer' } : {})}
-                  >
-                    {step.cta} &rarr;
-                  </a>
-                ) : null}
-              </div>
-              {i % 2 === 0 ? (
-                <span className="arc-arrow" aria-hidden="true">
-                  &rarr;
-                </span>
-              ) : null}
+      <div className="feature-band">
+        <div className="feature-band-inner">
+          <section className="arc-section">
+            <h2>Venture Through Line</h2>
+            <p className="arc-intro">
+              From the insight that started it to what the pilot has taught us so far.
+            </p>
+            <div className="arc-grid">
+              {ARC.map((step, i) => (
+                <div key={step.beat} className="arc-cell">
+                  <div className="arc-step">
+                    <p className="arc-beat">{step.beat}</p>
+                    <h3 className="arc-heading">{step.heading}</h3>
+                    <p className="arc-text">{step.text}</p>
+                    {step.cta && step.href ? (
+                      <a
+                        className="arc-cta"
+                        href={step.href}
+                        {...(step.external ? { target: '_blank', rel: 'noreferrer' } : {})}
+                      >
+                        {step.cta} &rarr;
+                      </a>
+                    ) : null}
+                  </div>
+                  {i % 2 === 0 ? (
+                    <span className="arc-arrow" aria-hidden="true">
+                      &rarr;
+                    </span>
+                  ) : null}
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-      </section>
+          </section>
 
-      {plan ? (
-        <section className="bento-section">
-          <h2>The bet at a glance</h2>
-          <div className="card bet-card">
-            <div className="bet-grid">
-              <div className="bet-block bet-hypothesis">
-                <p className="tile-label">Venture hypothesis</p>
-                <p>{plan.venture.hypothesis}</p>
+          {plan ? (
+            <section className="bento-section">
+              <h2>The bet at a glance</h2>
+              <div className="card bet-card">
+                <div className="bet-grid">
+                  <div className="bet-block bet-hypothesis">
+                    <p className="tile-label">Venture hypothesis</p>
+                    <p>{plan.venture.hypothesis}</p>
+                  </div>
+                  <div className="bet-block bet-problem">
+                    <p className="tile-label">Problem</p>
+                    <p>{plan.venture.thesis.problem}</p>
+                  </div>
+                  <div className="bet-block bet-world">
+                    <p className="tile-label">World after</p>
+                    <p>{plan.venture.thesis.worldAfter}</p>
+                  </div>
+                  <div className="bet-block bet-approach">
+                    <p className="tile-label">Our approach</p>
+                    <p>{plan.venture.thesis.approach}</p>
+                  </div>
+                </div>
               </div>
-              <div className="bet-block bet-problem">
-                <p className="tile-label">Problem</p>
-                <p>{plan.venture.thesis.problem}</p>
-              </div>
-              <div className="bet-block bet-world">
-                <p className="tile-label">World after</p>
-                <p>{plan.venture.thesis.worldAfter}</p>
-              </div>
-              <div className="bet-block bet-approach">
-                <p className="tile-label">Our approach</p>
-                <p>{plan.venture.thesis.approach}</p>
-              </div>
+            </section>
+          ) : (
+            <p className="loading">Loading venture context…</p>
+          )}
+
+          <section className="product-journey">
+            <div className="embed-frame embed-frame-tall">
+              <iframe
+                ref={journeyFrame}
+                title="Upline — the product journey"
+                src="/product-journey.html?v=7"
+                loading="lazy"
+              />
             </div>
-          </div>
-        </section>
-      ) : (
-        <p className="loading">Loading venture context…</p>
-      )}
-
-      <section className="product-journey">
-        <div className="journey-glance">
-          <h2>Upline Journey — at a glance</h2>
-          <p className="arc-intro">
-            The whole flow in one view — who does what, left to right. Want the detail? The full
-            version is right below.
-          </p>
-          <SwimlaneMap
-            lanes={JOURNEY_LANES}
-            steps={JOURNEY_STEPS}
-            phases={JOURNEY_PHASES}
-            ariaLabel="Upline product journey at a glance. Upline pulls the book and renewal numbers by RPA; a VA refreshes household data; Upline generates the outreach email; the agent sends it from their own name; the customer completes a tailored questionnaire; a VA shops across carriers; Upline drafts the recommendation and cross-sell; the agent reviews, adjusts, and sends; the customer schedules, meets, and decides."
-          />
+          </section>
         </div>
-
-        <div className="embed-frame embed-frame-tall">
-          <iframe
-            title="Upline — the product journey"
-            src="/product-journey.html?v=4"
-            loading="lazy"
-          />
-        </div>
-        <a className="arc-link" href="/product-journey.html?v=4" target="_blank" rel="noreferrer">
-          Open the product journey in a new tab &rarr;
-        </a>
-      </section>
+      </div>
     </>
   );
 }

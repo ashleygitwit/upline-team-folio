@@ -709,10 +709,8 @@ export function PathToScalePage() {
       </section>
 
       {/* THE RAMP */}
-      <div className="phase-rule">
-        <span>The ramp</span>
-      </div>
       <section className="card phase-card">
+        <h2>The ramp</h2>
         <div className="ramp-view-toggle" role="group" aria-label="Chart view">
           <button
             type="button"
@@ -790,10 +788,8 @@ export function PathToScalePage() {
       </section>
 
       {/* THE STRATEGIC FORK */}
-      <div className="phase-rule">
-        <span>The decision</span>
-      </div>
       <section className="card phase-card">
+        <h2>The decision</h2>
         <p className="proof-statement">
           Above the ramps, one fork: how we treat shopping labor for the next 12–24 months. That
           choice sets the product roadmap, the fundraising story, and how much risk we put on a
@@ -863,10 +859,8 @@ export function PathToScalePage() {
       </section>
 
       {/* SIDE BY SIDE */}
-      <div className="phase-rule">
-        <span>Side by side</span>
-      </div>
       <section className="card phase-card">
+        <h2>Side by side</h2>
         <p className="export-hint">
           Three VA paces plus the automated-shopping-prioritized alternative. Selected column
           highlights with the toggle above.
@@ -917,10 +911,8 @@ export function PathToScalePage() {
       </section>
 
       {/* WHAT MUST BE TRUE */}
-      <div className="phase-rule">
-        <span>What must be true</span>
-      </div>
       <section className="card phase-card">
+        <h2>What must be true</h2>
         <p className="export-hint">Conditions for each path to hold — and what slips if they don’t.</p>
         <div className="wmt-table-wrap">
           <table className="wmt-table">
@@ -947,10 +939,8 @@ export function PathToScalePage() {
       </section>
 
       {/* HOW WE BUILD */}
-      <div className="phase-rule">
-        <span>How we build</span>
-      </div>
       <section className="card phase-card">
+        <h2>How we build</h2>
         <div className="rel-gate">
           <span className="rel-gate-badge">Gate</span>
           <div>
@@ -1036,10 +1026,8 @@ export function PathToScalePage() {
       </section>
 
       {/* PRICING STRATEGY */}
-      <div className="phase-rule">
-        <span>Pricing strategy</span>
-      </div>
       <section className="card phase-card">
+        <h2>Pricing strategy</h2>
         <p className="proof-statement">
           $699 a month. $18 when we shop. If we save you one customer a month, this pays for
           itself.

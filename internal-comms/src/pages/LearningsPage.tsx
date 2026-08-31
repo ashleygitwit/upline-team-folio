@@ -7,21 +7,21 @@ interface LearningsPageProps {
 const LENS_META: Record<QuestionLens, { label: string; color: string; bg: string; fg: string }> = {
   desirability: {
     label: 'User desirability',
-    color: 'oklch(0.3811 0.196 279.1717)',
-    bg: 'oklch(0.3811 0.196 279.1717 / 0.12)',
-    fg: 'oklch(0.3811 0.196 279.1717)',
+    color: 'var(--primary)',
+    bg: 'color-mix(in srgb, var(--primary) 12%, transparent)',
+    fg: 'var(--primary)',
   },
   viability: {
     label: 'Business viability',
-    color: 'oklch(0.6791 0.1292 149.9093)',
-    bg: 'oklch(0.6791 0.1292 149.9093 / 0.16)',
-    fg: 'oklch(0.42 0.12 149.9093)',
+    color: 'var(--chart-5)',
+    bg: 'color-mix(in srgb, var(--chart-5) 16%, transparent)',
+    fg: 'var(--success-strong)',
   },
   feasibility: {
     label: 'Technical feasibility',
-    color: 'oklch(0.8246 0.1351 89.6359)',
-    bg: 'oklch(0.8246 0.1351 89.6359 / 0.24)',
-    fg: 'oklch(0.42 0.09 79.4236)',
+    color: 'var(--chart-3)',
+    bg: 'color-mix(in srgb, var(--chart-3) 24%, transparent)',
+    fg: 'var(--amber-strong)',
   },
 };
 
@@ -30,9 +30,9 @@ function formatDate(iso: string): string {
   return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
-const FN_GREEN = 'oklch(0.6791 0.1292 149.9093)';
-const FN_PURPLE = 'oklch(0.3811 0.196 279.1717)';
-const FN_GRAY = 'oklch(0.5309 0.0063 95.1706)';
+const FN_GREEN = 'var(--chart-5)';
+const FN_PURPLE = 'var(--primary)';
+const FN_GRAY = 'var(--muted-foreground)';
 
 interface FunnelNode {
   x: number;
@@ -303,8 +303,10 @@ export function LearningsPage({ learnings }: LearningsPageProps) {
                 e.kind === 'milestone' ? (
                   <tr key={`${e.date}-${idx}`} className="timeline-milestone-row">
                     <td className="col-date">{formatDate(e.date)}</td>
-                    <td colSpan={2}>
+                    <td className="col-source">
                       <span className="milestone-flag">Milestone</span>
+                    </td>
+                    <td>
                       <span className="milestone-title">{e.title}</span>
                       <p className="milestone-desc">{e.learning}</p>
                     </td>

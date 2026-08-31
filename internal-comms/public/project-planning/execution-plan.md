@@ -151,11 +151,11 @@ Post-shop handoff locked short: steer (switch/stay + $) in paragraph one, premiu
 ### Product strategy sprint
 - **Workstream:** Product
 - **Dates:** 2026-09-08 → 2026-09-11
-- **Notes:** Sprint week of Sep 8. Runs in tandem with Stockton Hill, then goes straight into the MVP build.
+- **Notes:** Four days Tue–Fri (Sept 8–11). Journeys, how-might-we, keep-kill / roadmap, venture ops. Runs in tandem with Stockton Hill, then goes straight into the MVP build.
 ### MVP planning
 - **Workstream:** Product
 - **Dates:** 2026-09-10 → 2026-09-11
-- **Notes:** Closes sprint week and opens the build.
+- **Notes:** Thursday keep-kill / roadmap and Friday how-we-work close the sprint and open the build.
 ### MVP build
 - **Workstream:** Product
 - **Dates:** 2026-09-14 → 2026-11-06

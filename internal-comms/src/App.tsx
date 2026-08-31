@@ -5,6 +5,8 @@ import { LearningsPage } from './pages/LearningsPage';
 import { RoadmapPage } from './pages/RoadmapPage';
 import { PocPage } from './pages/PocPage';
 import { SprintPage } from './pages/SprintPage';
+import { SprintDayPage } from './pages/SprintDayPage';
+import { sprintDayById, type SprintDayId } from './data/sprintDays';
 import { MvpJourneyPage } from './pages/MvpJourneyPage';
 import { MvpPage } from './pages/MvpPage';
 import { PathToScalePage } from './pages/PathToScalePage';
@@ -24,6 +26,10 @@ type RouteKey =
   | 'roadmap'
   | 'poc'
   | 'sprint'
+  | 'sprint-tuesday'
+  | 'sprint-wednesday'
+  | 'sprint-thursday'
+  | 'sprint-friday'
   | 'mvp-journey'
   | 'mvp'
   | 'scale'
@@ -43,6 +49,10 @@ const ROADMAP_ROUTES: RouteKey[] = [
   'roadmap',
   'poc',
   'sprint',
+  'sprint-tuesday',
+  'sprint-wednesday',
+  'sprint-thursday',
+  'sprint-friday',
   'mvp-journey',
   'mvp',
   'scale',
@@ -56,10 +66,17 @@ const ROADMAP_MENU: { key: RouteKey; label: string; href: string }[] = [
   { key: 'mvp', label: 'MVP', href: '#/mvp' },
 ];
 
+const SPRINT_DAY_IDS: SprintDayId[] = ['tuesday', 'wednesday', 'thursday', 'friday'];
+
 function routeFromHash(): RouteKey {
-  const hash = window.location.hash.replace(/^#\/?/, '').split('/')[0];
+  const parts = window.location.hash.replace(/^#\/?/, '').split('/').filter(Boolean);
+  const hash = parts[0] ?? '';
+  const day = parts[1];
   // Legacy link support: old hashes resolve to the Roadmap page.
   if (hash === 'milestones' || hash === 'scenario-build-now') return 'roadmap';
+  if (hash === 'sprint' && day && SPRINT_DAY_IDS.includes(day as SprintDayId)) {
+    return `sprint-${day}` as RouteKey;
+  }
   if (
     hash === 'learnings' ||
     hash === 'roadmap' ||
@@ -99,7 +116,11 @@ function App() {
       window.scrollTo({ top: 0 });
     };
     window.addEventListener('hashchange', onHashChange);
-    return () => window.removeEventListener('hashchange', onHashChange);
+    window.addEventListener('popstate', onHashChange);
+    return () => {
+      window.removeEventListener('hashchange', onHashChange);
+      window.removeEventListener('popstate', onHashChange);
+    };
   }, []);
 
   useEffect(() => {
@@ -160,14 +181,22 @@ function App() {
     window.location.reload();
   }
 
+  const isWide = route === 'mvp-journey';
+  const sprintDay = route.startsWith('sprint-')
+    ? sprintDayById(route.replace('sprint-', ''))
+    : undefined;
+  // The brand gradient wash is the home page's alone; see .page.is-home in App.css.
+  const pageClass = `page${isWide ? ' is-wide' : ''}${route === 'home' ? ' is-home' : ''}`;
+
   return (
-    <div className={route === 'mvp-journey' ? 'page is-wide' : 'page'}>
-      <header className="site-header">
-        <a className="brand-lockup" href="#/" aria-label="The Upline Through Line — home">
-          <img src="/upline-logo.png" alt="Upline" className="logo" />
-          <span className="wordmark">The Through Line</span>
-        </a>
-        <nav className="site-nav" aria-label="Primary">
+    <>
+      <header className={isWide ? 'site-header is-wide' : 'site-header'}>
+        <div className="site-header-inner">
+          <a className="brand-lockup" href="#/" aria-label="The Upline Through Line — home">
+            <img src="/upline-u.svg" alt="Upline" className="logo" />
+            <span className="wordmark">The Through Line</span>
+          </a>
+          <nav className="site-nav" aria-label="Primary">
           {NAV.map((item) => {
             if (item.key === 'roadmap') {
               const isActive = ROADMAP_ROUTES.includes(route);
@@ -211,38 +240,42 @@ function App() {
               </a>
             );
           })}
-        </nav>
+          </nav>
+        </div>
       </header>
 
-      {error ? <p className="error">{error}</p> : null}
+      <div className={pageClass}>
+        {error ? <p className="error">{error}</p> : null}
 
-      {route === 'home' ? <HomePage plan={plan} /> : null}
-      {route === 'learnings' ? <LearningsPage learnings={learnings} /> : null}
-      {route === 'roadmap' ? (
-        <RoadmapPage
-          plan={plan}
-          exportMarkdown={exportMarkdown}
-          hasLocalEdits={hasLocalEdits}
-          onPlanChange={applyPlan}
-          onDownload={downloadPlanJson}
-          onReset={resetToServerPlan}
-        />
-      ) : null}
-      {route === 'poc' ? <PocPage plan={plan} /> : null}
-      {route === 'sprint' ? <SprintPage /> : null}
-      {route === 'mvp-journey' ? <MvpJourneyPage /> : null}
-      {route === 'mvp' ? <MvpPage /> : null}
-      {route === 'scale' ? <PathToScalePage /> : null}
-      {route === 'brand' ? <BrandPage /> : null}
-      {route === 'team' ? <TeamPage /> : null}
+        {route === 'home' ? <HomePage plan={plan} /> : null}
+        {route === 'learnings' ? <LearningsPage learnings={learnings} /> : null}
+        {route === 'roadmap' ? (
+          <RoadmapPage
+            plan={plan}
+            exportMarkdown={exportMarkdown}
+            hasLocalEdits={hasLocalEdits}
+            onPlanChange={applyPlan}
+            onDownload={downloadPlanJson}
+            onReset={resetToServerPlan}
+          />
+        ) : null}
+        {route === 'poc' ? <PocPage plan={plan} /> : null}
+        {route === 'sprint' ? <SprintPage /> : null}
+        {sprintDay ? <SprintDayPage day={sprintDay} /> : null}
+        {route === 'mvp-journey' ? <MvpJourneyPage /> : null}
+        {route === 'mvp' ? <MvpPage /> : null}
+        {route === 'scale' ? <PathToScalePage /> : null}
+        {route === 'brand' ? <BrandPage /> : null}
+        {route === 'team' ? <TeamPage /> : null}
 
-      <footer className="site-footer">
-        <p>
-          The Upline Through Line · Upline's home base. Present, learnings, and where we're headed —
-          one roof.
-        </p>
-      </footer>
-    </div>
+          <footer className="site-footer">
+            <p>
+              The Upline Through Line · Upline's home base. Present, learnings, and where we're
+              headed — one roof.
+            </p>
+          </footer>
+      </div>
+    </>
   );
 }
 

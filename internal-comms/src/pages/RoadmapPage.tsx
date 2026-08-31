@@ -37,7 +37,7 @@ const MILESTONES: Milestone[] = [
   {
     tag: 'Then',
     title: 'Product strategy sprint',
-    body: 'Week of Sep 8. Three room days, Monday through Wednesday. Thursday and Friday are company-wide. We go in with Members 1st complete and Stockton Hill underway, then write the short build spec the week after.',
+    body: 'Week of Sep 8. Four room days, Tuesday through Friday. Dual track with GTM. Thursday cuts features and stands up Linear. Friday morning is ops; Davey’s first experiment launches after lunch.',
     href: '#/sprint',
     cta: 'View strategy sprint details',
   },

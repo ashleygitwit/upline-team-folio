@@ -1,39 +1,84 @@
 import { useEffect, useRef, useState } from 'react';
 
-const TWEAKCN_URL = 'https://tweakcn.com/themes/cmpyemmwk000204jse9u28aie';
-
 interface Ramp {
   name: string;
   role: string;
   cssVar: string;
+  steps: string[];
 }
 
+// The Upline Brand Guide palette. Each ramp shows shades 100/300/500/700/900;
+// the role names match the semantic labels in the guide.
 const RAMPS: Ramp[] = [
-  { name: 'Indigo', role: 'Primary', cssVar: '--primary' },
-  { name: 'Lime', role: 'Secondary', cssVar: '--secondary' },
-  { name: 'Periwinkle', role: 'Accent', cssVar: '--chart-2' },
-  { name: 'Gold', role: 'Accent', cssVar: '--chart-3' },
-  { name: 'Sand', role: 'Accent', cssVar: '--chart-4' },
-  { name: 'Green', role: 'Accent', cssVar: '--chart-5' },
-  { name: 'Ink', role: 'Text', cssVar: '--foreground' },
+  {
+    name: 'Indigo',
+    role: 'Primary',
+    cssVar: '--primary',
+    steps: ['#c0c3f4', '#7879e5', '#483ac7', '#321e97', '#1e125b'],
+  },
+  {
+    name: 'Lime',
+    role: 'Secondary',
+    cssVar: '--secondary',
+    steps: ['#f8fbcb', '#f1f68e', '#eaf156', '#a6ab3d', '#626524'],
+  },
+  {
+    name: 'Light Blue',
+    role: 'Gradient',
+    cssVar: '--chart-2',
+    steps: ['#e2e7fe', '#c1ccfc', '#a2b3fb', '#737fb2', '#444b69'],
+  },
+  {
+    name: 'Yellow',
+    role: 'Accent',
+    cssVar: '--chart-3',
+    steps: ['#fff1c7', '#ffe186', '#ffd24a', '#b59535', '#6b581f'],
+  },
+  {
+    name: 'Coral',
+    role: 'Accent',
+    cssVar: '--chart-4',
+    steps: ['#ffd7c0', '#ffa978', '#ff7f35', '#b55a26', '#6b3516'],
+  },
+  {
+    name: 'Green',
+    role: 'Accent',
+    cssVar: '--chart-5',
+    steps: ['#c8e7ce', '#88cc94', '#4db360', '#377f44', '#204b28'],
+  },
+  {
+    name: 'Lavender',
+    role: 'Accent',
+    cssVar: '--chart-6',
+    steps: ['#efe4fc', '#cfb6ee', '#ad8bd5', '#785d97', '#49385b'],
+  },
+  {
+    name: 'Red',
+    role: 'Destructive',
+    cssVar: '--destructive',
+    steps: ['#fcc1c0', '#fa7877', '#f83634', '#b02625', '#681716'],
+  },
+  {
+    name: 'Gray',
+    role: 'Neutral',
+    cssVar: '--muted-foreground',
+    steps: ['#ecebe9', '#c7c5c2', '#9a9894', '#6d6c68', '#363533'],
+  },
+  {
+    name: 'Slate',
+    role: 'Dark',
+    cssVar: '--foreground',
+    steps: ['#ceced6', '#888893', '#4f4e5a', '#282831', '#0b0b0f'],
+  },
 ];
 
-// Light → dark ramp built from each base token, so every column reads as a scale.
-function rampSteps(cssVar: string): string[] {
-  const base = `var(${cssVar})`;
-  return [
-    `color-mix(in oklab, ${base} 16%, white)`,
-    `color-mix(in oklab, ${base} 40%, white)`,
-    `color-mix(in oklab, ${base} 66%, white)`,
-    base,
-    `color-mix(in oklab, ${base} 78%, black)`,
-  ];
-}
+const LOGO_LIGHT = '/upline-logo.svg';
+const LOGO_WHITE = '/upline-logo-white.svg';
 
-const LOGO_CELLS: { key: string; label: string; bg: string; invert: boolean; border: boolean }[] = [
-  { key: 'light', label: 'On white', bg: 'var(--card)', invert: false, border: true },
-  { key: 'primary', label: 'On indigo', bg: 'var(--primary)', invert: true, border: false },
-  { key: 'dark', label: 'On black', bg: 'var(--foreground)', invert: true, border: false },
+const LOGO_CELLS: { key: string; label: string; bg: string; src: string; border: boolean }[] = [
+  { key: 'light', label: 'On white', bg: 'var(--card)', src: LOGO_LIGHT, border: true },
+  { key: 'primary', label: 'On indigo', bg: 'var(--primary)', src: LOGO_WHITE, border: false },
+  { key: 'dark', label: 'On black', bg: 'var(--foreground)', src: LOGO_WHITE, border: false },
 ];
 
 // ---- Color math: resolve the computed swatch color (oklab/oklch/rgb) to a hex code ----
@@ -75,9 +120,27 @@ function rgbToHex([r, g, b]: [number, number, number]): string {
   return '#' + [r, g, b].map((n) => n.toString(16).padStart(2, '0')).join('');
 }
 
-function isLight([r, g, b]: [number, number, number]): boolean {
-  // Relative luminance — bright swatches get dark text, dark swatches get light text.
-  return (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255 > 0.6;
+const SWATCH_INK = '#282831';
+const SWATCH_PAPER = '#ffffff';
+
+function relLuminance([r, g, b]: [number, number, number]): number {
+  const ch = (c: number) => {
+    const v = c / 255;
+    return v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4;
+  };
+  return 0.2126 * ch(r) + 0.7152 * ch(g) + 0.0722 * ch(b);
+}
+
+function contrast(a: [number, number, number], b: [number, number, number]): number {
+  const l1 = relLuminance(a);
+  const l2 = relLuminance(b);
+  return (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05);
+}
+
+// Pick whichever of ink/paper reads better on the swatch, rather than guessing
+// from a luminance threshold — saturated mid-tones fool a fixed cutoff.
+function isLight(rgb: [number, number, number]): boolean {
+  return contrast(rgb, [40, 40, 49]) >= contrast(rgb, [255, 255, 255]);
 }
 
 interface Swatch {
@@ -110,11 +173,8 @@ export function BrandPage() {
         <p className="eyebrow">Brand</p>
         <h1 className="hero-title">How Upline looks, sounds, and feels.</h1>
         <p className="hero-sub">
-          The working brand system — logo, palette, type, and voice. The theme is defined in{' '}
-          <a href={TWEAKCN_URL} target="_blank" rel="noreferrer">
-            tweakcn
-          </a>
-          .
+          The working brand system — logo, palette, type, and voice. Colour and type follow the
+          Upline Brand Guide; components follow the Upline shadcncraft Base library.
         </p>
       </section>
 
@@ -127,11 +187,7 @@ export function BrandPage() {
                 className={c.border ? 'logo-well logo-well-bordered' : 'logo-well'}
                 style={{ background: c.bg }}
               >
-                <img
-                  src="/upline-logo.png"
-                  alt="Upline logo"
-                  className={c.invert ? 'logo-mark logo-mark-reversed' : 'logo-mark'}
-                />
+                <img src={c.src} alt="Upline logo" className="logo-mark" />
               </div>
               <p className="logo-cell-label">{c.label}</p>
             </div>
@@ -149,13 +205,13 @@ export function BrandPage() {
           {RAMPS.map((r) => (
             <div key={r.cssVar} className="ramp" data-var={r.cssVar}>
               <div className="ramp-bar">
-                {rampSteps(r.cssVar).map((bg, i) => {
+                {r.steps.map((bg, i) => {
                   const sw = swatches[r.cssVar]?.[i];
                   return (
                     <div
                       key={i}
                       className="ramp-step"
-                      style={{ background: bg, color: sw?.light ? '#1c1a17' : '#ffffff' }}
+                      style={{ background: bg, color: sw?.light ? SWATCH_INK : SWATCH_PAPER }}
                     >
                       {sw?.hex ?? ''}
                     </div>
@@ -172,9 +228,9 @@ export function BrandPage() {
       <section className="card">
         <h2>Typography</h2>
         <div className="type-specimen">
-          <p className="type-serif">Fraunces — display &amp; quotes</p>
-          <p className="type-sans">DM Sans — body &amp; UI</p>
-          <p className="type-mono">DM Mono — data &amp; code</p>
+          <p className="type-display">Radio Canada Big — headers &amp; subheaders</p>
+          <p className="type-sans">Radio Canada — long-form copy &amp; captions</p>
+          <p className="type-mono">Reddit Mono — data &amp; code</p>
         </div>
       </section>
 
