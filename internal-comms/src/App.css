@@ -1,8 +1,40 @@
 .page {
-  max-width: 1100px;
+  max-width: var(--shell-max);
   margin: 0 auto;
-  padding: 2rem 1.25rem 3rem;
+  padding: calc(var(--nav-h) + var(--hero-gap)) var(--shell-pad) var(--space-section);
   color: var(--foreground);
+}
+
+/* Brand gradient wash — home page only.
+   Restores the background gradient from the brand system, in the guide's two
+   gradient roles: Light Blue from the top left, Lime from the right. That is
+   the same composition uplineinsurance.com uses, but built from two radial
+   stops rather than its pair of 760px blurred, animated blobs. A radial
+   gradient is diffuse on its own, so this needs no blur filter and no
+   keyframes, and leaves nothing running to composite.
+   The geometry deliberately does not copy the live site's. There the blobs sit
+   low enough to reach mid-page, which is safe because that hero is centred and
+   its copy sits in the clear middle. This hero is left-aligned, so the blue is
+   pulled up and out of frame to keep its falloff clear of the sub-copy below —
+   --muted-foreground has only about half a point of AA headroom to give away,
+   and this way it gives away none.
+   Fixed to the viewport so the wash reads as one field behind the whole page
+   and frames the indigo band down both gutters. */
+.page.is-home::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  /* Horizontal radii are clamped against the viewport the way the live site
+     sizes its blobs (min(760px, 85vw)). Left in rem alone, both ellipses are
+     wider than a phone, so they cover the full width and stack — and the two
+     brand hues sum to a muddy olive that puts --muted-foreground under 4.5:1
+     at 320px. Clamped, they stay side by side at every width. Above ~1190px
+     the rem values win and this has no effect. */
+  background:
+    radial-gradient(min(58rem, 78vw) 38rem at 6% -12%, var(--wash-a), transparent 72%),
+    radial-gradient(min(46rem, 70vw) 40rem at 102% 34%, var(--wash-b), transparent 70%);
 }
 
 .header {
@@ -32,18 +64,16 @@
 
 .card {
   background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: calc(var(--radius) + 4px);
-  padding: 1.25rem 1.5rem;
-  margin-bottom: 1rem;
-  box-shadow: var(--shadow-sm);
+  border-radius: var(--radius);
+  padding: var(--card-pad);
+  margin-bottom: var(--space-block);
 }
 
 h2 {
   margin: 0 0 0.65rem;
   font-size: 0.8rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
+  font-weight: 600;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--primary);
 }
@@ -66,7 +96,7 @@ h2 {
 .thesis-grid dt {
   margin: 0 0 0.25rem;
   font-size: 0.7rem;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--muted-foreground);
@@ -86,9 +116,9 @@ h2 {
   margin: 0;
   padding: 0;
   border: none;
-  font-family: var(--font-serif);
+  font-family: var(--font-display);
   font-size: 1.25rem;
-  font-weight: 600;
+  font-weight: 500;
   line-height: 1.5;
   color: var(--foreground);
 }
@@ -163,15 +193,25 @@ h2 {
   font-size: 0.875rem;
   color: var(--muted-foreground);
   line-height: 1.4;
-  max-width: 48ch;
+  /* A readable measure, not a narrow column — 48ch here capped the line at
+     under half the card and read as a bug rather than a choice. */
+  max-width: 78ch;
+}
+
+/* Same rhythm as `* + .sub-label` below: an intro line that leads into content
+   needs a gap, but one that closes a card shouldn't pad out its bottom. The
+   card is block-level, so this collapses with a following top margin rather
+   than stacking on it. */
+.export-hint:not(:last-child) {
+  margin-bottom: var(--space-tight);
 }
 
 .copy-btn {
   flex-shrink: 0;
   padding: 0.55rem 1rem;
   border: none;
-  border-radius: var(--radius);
-  background: var(--primary);
+  border-radius: var(--radius-pill);
+  background: var(--button);
   color: var(--primary-foreground);
   font: inherit;
   font-size: 0.875rem;
@@ -180,7 +220,7 @@ h2 {
 }
 
 .copy-btn:hover {
-  filter: brightness(0.92);
+  background: var(--button-hover);
 }
 
 .export-box {
@@ -254,14 +294,21 @@ h2 {
 }
 
 .view-toggle button.active {
-  background: var(--primary);
+  background: var(--button);
   color: var(--primary-foreground);
 }
 
-.secondary-btn {
+/* The arc CTAs join this rule rather than carrying their own fill: on the
+   indigo band their default indigo pill is Indigo 500 sitting on the glass
+   panel's Indigo 600, about 1.1:1, so the button read as a flat block of
+   colour. Scoped to .feature-band so the Sprint page's arc CTA, which sits on
+   a white card where the indigo pill is correct, keeps it. Both selectors here
+   outrank the .arc-cta appearance further down the file on specificity. */
+.secondary-btn,
+.feature-band .arc-cta {
   padding: 0.55rem 1rem;
   border: 1px solid var(--border);
-  border-radius: var(--radius);
+  border-radius: var(--radius-pill);
   background: var(--card);
   color: var(--foreground);
   font: inherit;
@@ -270,7 +317,8 @@ h2 {
   cursor: pointer;
 }
 
-.secondary-btn:hover {
+.secondary-btn:hover,
+.feature-band .arc-cta:hover {
   background: var(--accent);
 }
 
@@ -312,8 +360,11 @@ h2 {
   letter-spacing: normal;
 }
 
+/* A caption for the block above it — needs a gap, or it butts against the card
+   or table it trails. Tight rather than a full block gap, since it belongs to
+   that block rather than standing on its own. */
 .edit-hint {
-  margin: 0 0 0.75rem;
+  margin: var(--space-tight) 0 0.75rem;
   font-size: 0.8rem;
   color: var(--muted-foreground);
 }
@@ -380,7 +431,7 @@ h2 {
 .list-view th {
   background: var(--muted);
   font-size: 0.7rem;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--muted-foreground);
@@ -408,7 +459,7 @@ h2 {
 .delete-btn {
   padding: 0.25rem 0.5rem;
   border: 1px solid color-mix(in oklch, var(--destructive) 35%, transparent);
-  border-radius: var(--radius);
+  border-radius: var(--radius-pill);
   background: var(--card);
   color: var(--destructive);
   font: inherit;
@@ -427,24 +478,40 @@ h2 {
 
 /* Unboxed roadmap section — the milestone cards carry the visual distinction. */
 .roadmap-section {
-  margin-bottom: 1rem;
+  margin-bottom: var(--space-section);
+}
+
+/* "The path" label sits above the milestone cards — match the label-to-card gap. */
+.roadmap-section > h2 {
+  margin-bottom: var(--card-label-gap);
 }
 
 /* ---- Site nav ---- */
+/* Fixed full-bleed bar with the content centred in the page shell — the
+   treatment on uplineinsurance.com. Opaque background, no backdrop blur. */
 .site-header {
-  position: sticky;
+  position: fixed;
   top: 0;
-  z-index: 20;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  background: var(--background);
+  border-bottom: 1px solid var(--border);
+}
+
+.site-header-inner {
+  max-width: var(--shell-max);
+  margin: 0 auto;
+  padding: 0 var(--shell-pad);
+  height: var(--nav-h);
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 0.75rem 1.5rem;
-  margin: -2rem -1.25rem 1.5rem;
-  padding: 0.85rem 1.25rem;
-  background: color-mix(in oklch, var(--background) 88%, transparent);
-  backdrop-filter: saturate(1.4) blur(8px);
-  border-bottom: 1px solid var(--border);
+  gap: 1.5rem;
+}
+
+.site-header.is-wide .site-header-inner {
+  max-width: none;
 }
 
 .brand-lockup {
@@ -462,34 +529,42 @@ h2 {
 }
 
 .wordmark {
-  font-family: var(--font-serif);
-  font-weight: 600;
-  font-size: 1.15rem;
+  font-family: var(--font-display);
+  font-weight: 500;
+  /* Cap height ~16.6px, matching the white U glyph inside the badge. */
+  font-size: 1.42rem;
+  line-height: 1;
   letter-spacing: -0.01em;
 }
 
 .site-nav {
   display: flex;
+  align-items: center;
   flex-wrap: wrap;
-  gap: 0.25rem;
+  gap: 1.5rem;
 }
 
 .nav-link {
-  padding: 0.4rem 0.75rem;
-  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  height: 2.25rem;
+  padding: 0;
   text-decoration: none;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--muted-foreground);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--foreground);
   white-space: nowrap;
 }
 
 .nav-link:hover {
-  background: var(--accent);
-  color: var(--foreground);
+  color: var(--primary);
 }
 
+/* The live site sets one nav item apart as a pill (its CTA); the same shape
+   marks the current page here, in the brand's secondary rather than indigo. */
 .nav-link.active {
+  padding: 0 1.25rem;
+  border-radius: var(--radius-pill);
   background: var(--secondary);
   color: var(--secondary-foreground);
 }
@@ -521,7 +596,9 @@ h2 {
   position: absolute;
   top: 100%;
   right: 0;
-  margin-top: 0.35rem;
+  /* Hang below the bar, not the nav item: the item is centred in the bar, so
+     clear the remaining half plus a small gap. */
+  margin-top: calc((var(--nav-h) - 2.25rem) / 2 + 0.5rem);
   min-width: 200px;
   display: flex;
   flex-direction: column;
@@ -529,7 +606,7 @@ h2 {
   padding: 0.4rem;
   background: var(--card);
   border: 1px solid var(--border);
-  border-radius: calc(var(--radius) + 2px);
+  border-radius: var(--radius);
   box-shadow: var(--shadow-md, 0 12px 28px rgb(0 0 0 / 0.12));
   opacity: 0;
   visibility: hidden;
@@ -567,16 +644,16 @@ h2 {
 
 /* ---- Hero ---- */
 .hero {
-  margin: 0.5rem 0 2.25rem;
+  margin: 0.5rem 0 var(--space-section);
 }
 
 .hero-title {
   margin: 0.5rem 0 0;
-  font-family: var(--font-serif);
-  font-size: clamp(1.75rem, 4vw, 2.75rem);
-  font-weight: 600;
-  line-height: 1.12;
-  letter-spacing: -0.015em;
+  font-family: var(--font-display);
+  font-size: clamp(1.9rem, 4.5vw, 3rem);
+  font-weight: 500;
+  line-height: 1.05;
+  letter-spacing: normal;
   color: var(--foreground);
 }
 
@@ -590,14 +667,99 @@ h2 {
 
 /* ---- The arc ---- */
 .arc-intro {
-  margin: 0 0 1rem;
+  margin: 0 0 var(--card-label-gap);
   font-size: 0.95rem;
   color: var(--muted-foreground);
   max-width: 60ch;
 }
 
+/* ---- Feature band ----
+   An indigo block that breaks out of the page shell to sit almost full-bleed,
+   while its content stays on the same 928px measure as the rest of the page. */
+.feature-band {
+  --band-inset: 1.5rem;
+  margin-left: calc(50% - 50vw + var(--band-inset));
+  margin-right: calc(50% - 50vw + var(--band-inset));
+  margin-bottom: var(--space-section);
+  /* The band already broke out by --band-inset, so it only needs the remainder
+     of the shell padding to keep its content on the same left edge as the
+     sections above and below it. */
+  padding: var(--space-section) max(0px, calc(var(--shell-pad) - var(--band-inset)));
+  border-radius: calc(var(--radius) * 1.5);
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+
+.feature-band-inner {
+  max-width: calc(var(--shell-max) - var(--shell-pad) * 2);
+  margin: 0 auto;
+}
+
+/* The band's own padding closes the block, so the last section drops its margin. */
+.feature-band > .feature-band-inner > :last-child {
+  margin-bottom: 0;
+}
+
+/* Section labels invert to the brand's lime; body copy to white. */
+.feature-band h2 {
+  color: var(--secondary);
+}
+
+/* ...but a white card inside the band is still a light surface, so anything
+   within one keeps its normal treatment. */
+.feature-band .card h2 {
+  color: var(--primary);
+}
+
+.feature-band .card .arc-intro {
+  color: var(--muted-foreground);
+}
+
+.feature-band .arc-link {
+  color: var(--secondary);
+}
+
+/* Mixed against the band rather than transparent, so the value stays opaque
+   and measurable. */
+.feature-band .arc-intro,
+.feature-band .loading {
+  color: color-mix(in srgb, var(--primary-foreground) 78%, var(--primary));
+}
+
+.feature-band .arc-arrow {
+  color: var(--primary-foreground);
+}
+
+/* Content cards on the indigo band use the translucent "glass" style from the
+   uplineinsurance.com About page: 5% white fill, 15% white hairline, white text.
+   The journey diagram and embed stay on white surfaces — their labels use brand
+   colors that would disappear on indigo. */
+.feature-band .arc-step,
+.feature-band .bet-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: var(--primary-foreground);
+}
+
+.feature-band .arc-beat,
+.feature-band .tile-label {
+  color: var(--secondary);
+}
+
+.feature-band .arc-text {
+  color: color-mix(in srgb, var(--primary-foreground) 70%, var(--primary));
+}
+
+.feature-band .bet-block > p:not(.tile-label) {
+  color: var(--primary-foreground);
+}
+
+.feature-band .bet-approach {
+  border-top-color: rgba(255, 255, 255, 0.15);
+}
+
 .arc-section {
-  margin-bottom: 3rem;
+  margin-bottom: var(--space-section);
 }
 
 .arc-section > h2 {
@@ -630,21 +792,33 @@ h2 {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding: 1.6rem 1.6rem 1.5rem;
-  border: 1px solid var(--border);
-  border-top: 3px solid var(--primary);
-  border-radius: calc(var(--radius) + 4px);
+  padding: var(--card-pad);
+  border-radius: var(--radius);
   background: var(--card);
-  box-shadow: var(--shadow-sm);
 }
 
 .arc-beat {
-  margin: 0 0 0.55rem;
+  margin: 0 0 0.75rem;
   font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.05em;
+  font-weight: 600;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--primary);
+}
+
+/* First line of each band card, promoted to the design's h3 style. Lives on the
+   glass card, so it reverses to white; dark elsewhere for safety. */
+.arc-heading {
+  margin: 0 0 0.85rem;
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 500;
+  line-height: 1.3;
+  color: var(--foreground);
+}
+
+.feature-band .arc-heading {
+  color: var(--primary-foreground);
 }
 
 .arc-text {
@@ -661,7 +835,7 @@ h2 {
   align-items: center;
   padding: 0.5rem 0.95rem;
   border-radius: 999px;
-  background: var(--primary);
+  background: var(--button);
   color: var(--primary-foreground);
   font-size: 0.82rem;
   font-weight: 600;
@@ -670,7 +844,7 @@ h2 {
 }
 
 .arc-cta:hover {
-  filter: brightness(1.08);
+  background: var(--button-hover);
 }
 
 .arc-link {
@@ -686,35 +860,37 @@ h2 {
 
 /* ---- Bento (the bet at a glance) ---- */
 .bento-section {
-  margin-bottom: 2.5rem;
+  margin-bottom: var(--space-section);
 }
 
 .bento-section > h2 {
-  margin-bottom: 0.75rem;
+  margin-bottom: var(--card-label-gap);
 }
 
 .bet-card {
-  border-top: 3px solid var(--primary);
-  padding: 1.75rem 1.85rem;
+  padding: var(--card-pad);
 }
 
 .bet-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   grid-auto-rows: minmax(0, auto);
-  gap: 1.85rem 2.5rem;
+  gap: var(--card-label-gap) 2.5rem;
 }
 
 .bet-block > p:not(.tile-label) {
   margin: 0;
-  line-height: 1.55;
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 500;
+  line-height: 1.3;
   color: var(--card-foreground);
 }
 
 .tile-label {
-  margin: 0 0 0.4rem;
+  margin: 0 0 0.65rem;
   font-size: 0.7rem;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--primary);
@@ -725,7 +901,7 @@ h2 {
 }
 
 .bet-hypothesis > p:not(.tile-label) {
-  font-size: 1.05rem;
+  font-size: 1.4rem;
 }
 
 .bet-problem {
@@ -769,7 +945,6 @@ h2 {
   width: 100%;
   aspect-ratio: 16 / 10;
   margin-bottom: 0.85rem;
-  border: 1px solid var(--border);
   border-radius: var(--radius);
   overflow: hidden;
   background: var(--muted);
@@ -784,13 +959,21 @@ h2 {
 }
 
 .product-journey {
-  margin-top: 1.5rem;
+  margin-top: var(--space-section);
 }
 
+/* The frame hugs its content instead of scrolling internally — the embedded
+   page is same-origin, so its height is measured and applied in JS. The fixed
+   height here is only the pre-measurement placeholder. */
 .embed-frame-tall {
   aspect-ratio: auto;
-  height: 82vh;
-  min-height: 620px;
+  height: auto;
+}
+
+.embed-frame-tall iframe {
+  position: static;
+  display: block;
+  height: 1280px;
 }
 
 /* ---- Funnel economics (Learnings) ---- */
@@ -858,8 +1041,8 @@ h2 {
 
 .funnel-stat-v {
   font-size: 1.5rem;
-  font-weight: 600;
-  font-family: var(--font-serif);
+  font-weight: 500;
+  font-family: var(--font-display);
 }
 
 .funnel-stat-l {
@@ -873,7 +1056,7 @@ h2 {
   border: 1px solid var(--border);
   border-left: 4px solid var(--primary);
   background: color-mix(in srgb, var(--primary) 6%, var(--card));
-  border-radius: var(--radius);
+  border-radius: 0;
   padding: 0.85rem 1rem;
 }
 
@@ -1011,11 +1194,9 @@ h2 {
 }
 
 .repo-domain {
-  border: 1px solid var(--border);
-  border-top: 3px solid var(--primary);
   border-radius: var(--radius);
   background: var(--card);
-  padding: 0.9rem 1rem;
+  padding: 1.25rem;
 }
 
 .repo-domain h3 {
@@ -1070,7 +1251,7 @@ h2 {
 .table-scroll th {
   background: var(--muted);
   font-size: 0.7rem;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--muted-foreground);
@@ -1179,9 +1360,9 @@ h2 {
 }
 
 .venn-center {
-  font-family: var(--font-serif);
+  font-family: var(--font-display);
   font-size: 15px;
-  font-weight: 600;
+  font-weight: 500;
   fill: var(--foreground);
 }
 
@@ -1280,26 +1461,26 @@ h2 {
   border-left: 3px solid var(--primary);
 }
 
+/* Sits alone in the Source column, where a normal row carries its .source-tag,
+   so it needs neither the gap to a following title nor inline alignment. */
 .milestone-flag {
   display: inline-block;
   font-size: 0.62rem;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--primary-foreground, #fff);
+  color: var(--primary-foreground);
   background: var(--primary);
   border-radius: 999px;
   padding: 0.12rem 0.5rem;
-  margin-right: 0.55rem;
-  vertical-align: middle;
 }
 
 .milestone-title {
-  font-family: var(--font-serif);
-  font-weight: 600;
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 500;
   font-size: 1rem;
   color: var(--foreground);
-  vertical-align: middle;
 }
 
 .milestone-desc {
@@ -1318,12 +1499,12 @@ h2 {
   gap: 0.85rem;
 }
 
+/* Matches .card — no stroke; the white fill separates it from the page. */
 .milestone {
   display: grid;
   grid-template-columns: 84px 1fr;
   gap: 1rem;
-  padding: 1rem;
-  border: 1px solid var(--border);
+  padding: var(--card-pad);
   border-radius: var(--radius);
   background: var(--card);
 }
@@ -1336,7 +1517,7 @@ h2 {
   background: var(--primary);
   color: var(--primary-foreground);
   font-size: 0.7rem;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   text-align: center;
@@ -1344,9 +1525,9 @@ h2 {
 
 .milestone-body h3 {
   margin: 0 0 0.35rem;
-  font-family: var(--font-serif);
+  font-family: var(--font-display);
   font-size: 1.2rem;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--foreground);
 }
 
@@ -1390,7 +1571,7 @@ h2 {
   align-items: center;
   justify-content: center;
   padding: 2.25rem 1.5rem;
-  border-radius: calc(var(--radius) + 2px);
+  border-radius: var(--radius);
 }
 
 .logo-well-bordered {
@@ -1402,10 +1583,6 @@ h2 {
   max-width: 78%;
   height: auto;
   max-height: 42px;
-}
-
-.logo-mark-reversed {
-  filter: brightness(0) invert(1);
 }
 
 .logo-cell-label {
@@ -1470,10 +1647,10 @@ h2 {
   line-height: 1.2;
 }
 
-.type-serif {
-  font-family: var(--font-serif);
+.type-display {
+  font-family: var(--font-display);
   font-size: 1.9rem;
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .type-sans {
@@ -1489,7 +1666,7 @@ h2 {
 
 /* ---- Footer ---- */
 .site-footer {
-  margin-top: 2.5rem;
+  margin-top: var(--space-section);
   padding-top: 1.25rem;
   border-top: 1px solid var(--border);
 }
@@ -1519,8 +1696,23 @@ code {
 }
 
 @media (max-width: 640px) {
+  /* Too narrow for a single row: let the bar flow with the page and wrap,
+     rather than overflowing a fixed 80px strip. */
   .site-header {
-    margin: -1.25rem -1rem 1.25rem;
+    position: static;
+  }
+
+  .site-header-inner {
+    height: auto;
+    min-height: var(--nav-h);
+    flex-wrap: wrap;
+    gap: 0.75rem 1.5rem;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+  }
+
+  .page {
+    padding-top: var(--space-block);
   }
 
   .milestone {
@@ -1572,11 +1764,9 @@ code {
 }
 
 .metric-card {
-  border: 1px solid var(--border);
   border-radius: var(--radius);
   background: var(--card);
-  padding: 1.1rem 1.1rem 1.2rem;
-  border-top: 3px solid var(--primary);
+  padding: 1.5rem;
 }
 
 .metric-head {
@@ -1601,9 +1791,9 @@ code {
 
 .metric-head h3 {
   margin: 0;
-  font-family: var(--font-serif);
+  font-family: var(--font-display);
   font-size: 1.05rem;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--foreground);
 }
 
@@ -1636,7 +1826,7 @@ code {
 .metric-guardrail-label {
   margin: 0 0 0.35rem;
   font-size: 0.68rem;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--muted-foreground);
@@ -1671,9 +1861,9 @@ code {
 
 .decision-block h3 {
   margin: 0 0 0.5rem;
-  font-family: var(--font-serif);
+  font-family: var(--font-display);
   font-size: 1.05rem;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--foreground);
 }
 
@@ -1691,7 +1881,7 @@ code {
 
 .sprint-days {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 0.85rem;
 }
 
@@ -1702,10 +1892,30 @@ code {
   padding: 1rem 1.05rem 1.1rem;
 }
 
+a.sprint-day-link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+a.sprint-day-link:hover {
+  border-color: var(--foreground);
+}
+
+.sprint-day-open {
+  margin: 0.65rem 0 0 !important;
+  font-size: 0.75rem !important;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--primary);
+}
+
 .sprint-day-when {
   margin: 0 0 0.25rem;
   font-size: 0.72rem;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--muted-foreground);
@@ -1713,9 +1923,9 @@ code {
 
 .sprint-day h3 {
   margin: 0 0 0.45rem;
-  font-family: var(--font-serif);
+  font-family: var(--font-display);
   font-size: 1.05rem;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--foreground);
 }
 
@@ -1761,7 +1971,7 @@ code {
 .sprint-fork {
   border: 1px solid var(--border);
   border-left: 3px solid var(--chart-5);
-  border-radius: var(--radius);
+  border-radius: 0;
   padding: 0.7rem 0.85rem;
   background: var(--card);
 }
@@ -1788,33 +1998,11 @@ code {
 }
 
 /* ---- Shared phase layout (Goal / Plan|Scope / Outcome) ---- */
+/* Was 0 because the .phase-rule divider above the next card supplied the
+   separation. The heading now lives inside the card, so these space themselves
+   on the same card-to-card rhythm as the Learnings sections. */
 .phase-card {
-  margin-bottom: 0;
-}
-
-/* Labeled section header that sits ABOVE a phase card (so the card itself
-   isn't doubled up with an internal divider right at its top edge). */
-.phase-rule {
-  display: flex;
-  align-items: center;
-  gap: 0.85rem;
-  margin: 2.4rem 0 0.85rem;
-}
-
-.phase-rule > span {
-  flex-shrink: 0;
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--foreground);
-}
-
-.phase-rule::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: var(--border);
+  margin-bottom: var(--space-block);
 }
 
 /* Soft in-card divider between sub-sections */
@@ -1825,17 +2013,23 @@ code {
 }
 
 .sub-label {
-  margin: 0 0 0.7rem;
+  margin: 0 0 0.85rem;
   font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
+  font-weight: 600;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--muted-foreground);
 }
 
+/* A sub-label that opens a block needs no lead-in; one that follows content
+   was butting straight into the paragraph above it. */
+* + .sub-label {
+  margin-top: var(--space-tight);
+}
+
 .proof-statement {
   margin: 0;
-  font-family: var(--font-serif);
+  font-family: var(--font-display);
   font-size: 1.25rem;
   font-weight: 500;
   line-height: 1.5;
@@ -1845,7 +2039,7 @@ code {
 .proof-lead-label {
   margin: 1.1rem 0 0;
   font-size: 0.72rem;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--muted-foreground);
@@ -1853,9 +2047,9 @@ code {
 
 .goal-mantra {
   margin: 0;
-  font-family: var(--font-serif);
+  font-family: var(--font-display);
   font-size: 1.2rem;
-  font-weight: 600;
+  font-weight: 500;
   line-height: 1.5;
   color: var(--foreground);
 }
@@ -1863,9 +2057,9 @@ code {
 /* ---- POC Plan: facelift ---- */
 .plan-subhead {
   margin: 1.5rem 0 0.7rem;
-  font-family: var(--font-serif);
+  font-family: var(--font-display);
   font-size: 1.05rem;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--foreground);
 }
 
@@ -1912,7 +2106,7 @@ code {
   padding: 0.16rem 0.55rem;
   border-radius: 999px;
   font-size: 0.66rem;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
@@ -1923,15 +2117,15 @@ code {
 }
 .jm-actor-agent {
   background: color-mix(in srgb, var(--chart-5) 22%, white);
-  color: oklch(0.42 0.12 149.9);
+  color: var(--success-strong);
 }
 .jm-actor-client {
   background: color-mix(in srgb, var(--chart-2) 55%, white);
-  color: oklch(0.45 0.11 260);
+  color: var(--info-strong);
 }
 .jm-actor-team {
   background: color-mix(in srgb, var(--chart-3) 40%, white);
-  color: oklch(0.45 0.09 85);
+  color: var(--amber-strong);
 }
 
 .jm-activity {
@@ -2000,14 +2194,14 @@ code {
   place-items: center;
   border-radius: 999px;
   background: var(--chart-5);
-  color: #fff;
+  color: var(--primary-foreground);
   font-size: 0.66rem;
   font-weight: 700;
 }
 
 /* "At a glance" product journey block on the home page */
 .journey-glance {
-  margin-bottom: 2.75rem;
+  margin-bottom: var(--space-block);
 }
 
 .journey-glance h2 {
@@ -2061,7 +2255,7 @@ code {
 
 .pilot-fact dt {
   font-size: 0.72rem;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--muted-foreground);
@@ -2085,7 +2279,7 @@ code {
   margin-top: 0.4rem;
   border: 1px solid var(--border);
   border-left: 4px solid var(--chart-5);
-  border-radius: var(--radius);
+  border-radius: 0;
   background: color-mix(in srgb, var(--chart-5) 7%, var(--card));
   padding: 0.9rem 1.1rem;
 }
@@ -2117,7 +2311,7 @@ code {
   place-items: center;
   border-radius: 999px;
   background: var(--chart-5);
-  color: #fff;
+  color: var(--primary-foreground);
   font-size: 0.68rem;
   font-weight: 700;
 }
@@ -2131,7 +2325,7 @@ code {
   text-align: center;
   min-height: 220px;
   border: 2px dashed var(--border);
-  border-radius: calc(var(--radius) + 4px);
+  border-radius: var(--radius);
   background: color-mix(in oklch, var(--muted) 45%, var(--card));
   padding: 2rem 1.5rem;
 }
@@ -2142,9 +2336,9 @@ code {
 
 .empty-state-t {
   margin: 1rem 0 0;
-  font-family: var(--font-serif);
+  font-family: var(--font-display);
   font-size: 1.2rem;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--foreground);
 }
 
@@ -2181,7 +2375,7 @@ code {
 .outcome-verdict {
   border: 1px solid var(--border);
   border-left: 4px solid var(--chart-5);
-  border-radius: var(--radius);
+  border-radius: 0;
   background: color-mix(in srgb, var(--chart-5) 7%, var(--card));
   padding: 1.1rem 1.2rem 1.15rem;
   margin-bottom: 1.25rem;
@@ -2190,7 +2384,7 @@ code {
 .outcome-verdict-kicker {
   display: block;
   font-size: 0.72rem;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--muted-foreground);
@@ -2199,9 +2393,9 @@ code {
 
 .outcome-verdict-title {
   margin: 0 0 0.45rem;
-  font-family: var(--font-serif);
+  font-family: var(--font-display);
   font-size: 1.25rem;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--foreground);
 }
 
@@ -2228,9 +2422,9 @@ code {
 
 .outcome-stat-value {
   margin: 0;
-  font-family: var(--font-serif);
+  font-family: var(--font-display);
   font-size: 1.55rem;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--foreground);
 }
 
@@ -2271,7 +2465,7 @@ code {
 .outcome-note {
   border: 1px solid var(--border);
   border-left: 3px solid var(--border);
-  border-radius: var(--radius);
+  border-radius: 0;
   background: var(--card);
   padding: 0.65rem 0.8rem;
 }
@@ -2307,10 +2501,10 @@ code {
 }
 
 .outcome-note.tone-learn {
-  border-left-color: oklch(0.6 0.09 240);
+  border-left-color: var(--info);
 }
 .outcome-note.tone-learn .outcome-note-dot {
-  background: oklch(0.6 0.09 240);
+  background: var(--info);
 }
 
 .outcome-note.tone-risk {
@@ -2342,9 +2536,9 @@ code {
   padding: 0.9rem 1.1rem;
   cursor: pointer;
   list-style: none;
-  font-family: var(--font-serif);
+  font-family: var(--font-display);
   font-size: 1.05rem;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--foreground);
 }
 
@@ -2367,14 +2561,6 @@ code {
   padding: 0 1.1rem 1.1rem;
 }
 
-.accordion-body .phase-rule {
-  margin-top: 1.5rem;
-}
-
-.accordion-body .phase-rule:first-of-type {
-  margin-top: 0.85rem;
-}
-
 /* ---- MVP Scope: placeholder kanban board ---- */
 .kanban {
   display: grid;
@@ -2386,7 +2572,7 @@ code {
   display: flex;
   flex-direction: column;
   border: 1px solid var(--border);
-  border-radius: calc(var(--radius) + 2px);
+  border-radius: var(--radius);
   overflow: hidden;
   background: var(--card);
 }
@@ -2394,7 +2580,7 @@ code {
 .kanban-col-head {
   padding: 0.65rem 0.9rem;
   font-size: 0.78rem;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
@@ -2434,16 +2620,16 @@ code {
 .team-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 1.25rem;
+  gap: var(--space-tight);
 }
 
+/* Matches .card — no stroke; the white fill separates it from the page. */
 .team-card {
   display: flex;
   gap: 1.15rem;
-  border: 1px solid var(--border);
-  border-radius: calc(var(--radius) + 2px);
+  border-radius: var(--radius);
   background: var(--card);
-  padding: 1.25rem 1.35rem;
+  padding: var(--card-pad);
 }
 
 .team-photo {
@@ -2462,16 +2648,16 @@ code {
 
 .team-name {
   margin: 0;
-  font-family: var(--font-serif);
+  font-family: var(--font-display);
   font-size: 1.1rem;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--foreground);
 }
 
 .team-role {
   margin: 0.1rem 0 0;
   font-size: 0.72rem;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--muted-foreground);
@@ -2493,7 +2679,7 @@ code {
 .team-focus-label {
   display: block;
   font-size: 0.66rem;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.07em;
   text-transform: uppercase;
   color: var(--primary);
@@ -2710,7 +2896,7 @@ code {
 
 .ramp-axis-title {
   font-size: 10px;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   fill: var(--muted-foreground);
@@ -2960,7 +3146,7 @@ code {
   display: inline-block;
   margin-left: 0.5rem;
   font-size: 0.7rem;
-  font-weight: 700;
+  font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   padding: 0.18rem 0.5rem;
@@ -3051,7 +3237,7 @@ code {
 .scale-cta-eyebrow {
   margin: 0 0 0.15rem;
   font-size: 0.72rem;
-  font-weight: 700;
+  font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: var(--primary);
@@ -3184,7 +3370,7 @@ code {
   vertical-align: bottom;
   padding: 0.55rem 0.75rem;
   font-size: 0.72rem;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--muted-foreground);
@@ -3245,7 +3431,7 @@ code {
 .wmt-pill.scope-B,
 .wmt-pill.scope-auto {
   background: color-mix(in srgb, var(--chart-5) 16%, var(--card));
-  color: var(--chart-5);
+  color: var(--success-strong);
 }
 
 .wmt-pill.scope-va {
@@ -3505,9 +3691,9 @@ code {
 
 .scenario-launch-value {
   margin: 0;
-  font-family: var(--font-serif);
+  font-family: var(--font-display);
   font-size: 1.35rem;
-  font-weight: 600;
+  font-weight: 500;
   letter-spacing: -0.02em;
   color: var(--foreground);
 }
@@ -3548,7 +3734,6 @@ code {
   max-width: none;
 }
 
-.page.is-wide .site-header,
 .page.is-wide .site-footer {
   max-width: none;
 }
@@ -3632,7 +3817,7 @@ code {
   padding: 0.28rem 0.5rem;
   border-radius: 6px;
   font-size: 0.66rem;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.07em;
   text-transform: uppercase;
   text-align: center;
@@ -3649,8 +3834,8 @@ code {
 }
 .ljm-phase.is-intake,
 .ljm-phase.is-close {
-  background: color-mix(in srgb, oklch(0.55 0.12 262) 16%, var(--muted));
-  color: oklch(0.42 0.1 262);
+  background: color-mix(in srgb, var(--info) 16%, var(--muted));
+  color: var(--info-strong);
 }
 .ljm-phase.is-shop {
   background: color-mix(in srgb, var(--chart-5) 18%, var(--muted));
@@ -3690,10 +3875,10 @@ code {
 
 .ljm-updated {
   font-size: 0.62rem;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: oklch(0.5 0.1 70);
+  color: var(--warn-strong);
 }
 
 .ljm-lane {
@@ -3711,7 +3896,7 @@ code {
 
 .ljm-lane span {
   font-size: 0.72rem;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.05em;
   text-transform: uppercase;
 }
@@ -3732,8 +3917,8 @@ code {
   color: color-mix(in srgb, var(--chart-5) 70%, black);
 }
 .ljm-lane.is-customer {
-  border-left-color: oklch(0.55 0.12 262);
-  color: oklch(0.42 0.1 262);
+  border-left-color: var(--info);
+  color: var(--info-strong);
 }
 
 .ljm-card,
@@ -3755,6 +3940,7 @@ code {
   font: inherit;
   cursor: pointer;
   border-top-width: 3px;
+  border-radius: 0;
 }
 
 .ljm-card.is-upline,
@@ -3765,7 +3951,7 @@ code {
   border-top-color: var(--chart-5);
 }
 .ljm-card.is-customer {
-  border-top-color: oklch(0.55 0.12 262);
+  border-top-color: var(--info);
 }
 
 .ljm-card.is-selected,
@@ -3789,7 +3975,7 @@ code {
 .ljm-how,
 .ljm-open {
   font-size: 0.6rem;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   padding: 0.08rem 0.35rem;
@@ -3806,8 +3992,8 @@ code {
 }
 
 .ljm-open {
-  color: oklch(0.48 0.11 70);
-  border-color: color-mix(in srgb, oklch(0.7 0.12 70) 50%, var(--border));
+  color: var(--warn-strong);
+  border-color: color-mix(in srgb, var(--warn) 50%, var(--border));
 }
 
 .ljm-card-title {
@@ -3862,7 +4048,7 @@ code {
 .ljm-layer-kicker {
   margin: 0 0 0.2rem;
   font-size: 0.6rem;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--muted-foreground);
@@ -3990,7 +4176,7 @@ code {
   padding: 0 0.4rem 0 0;
   background: var(--background);
   font-size: 0.6rem;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--muted-foreground);
@@ -3999,9 +4185,9 @@ code {
 .ljm-detail {
   margin-top: 1.4rem;
   border: 1px solid var(--border);
-  border-radius: calc(var(--radius) + 4px);
+  border-radius: var(--radius);
   background: var(--card);
-  padding: 1.15rem 1.25rem 1.35rem;
+  padding: 1.5rem;
 }
 
 .ljm-detail-head {
@@ -4014,7 +4200,7 @@ code {
 .ljm-detail-kicker {
   margin: 0 0 0.2rem;
   font-size: 0.7rem;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--muted-foreground);
@@ -4022,9 +4208,9 @@ code {
 
 .ljm-detail h3 {
   margin: 0;
-  font-family: var(--font-serif);
+  font-family: var(--font-display);
   font-size: 1.45rem;
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .ljm-close {
@@ -4040,8 +4226,8 @@ code {
 .ljm-change {
   margin: 0.7rem 0 0;
   padding: 0.55rem 0.7rem;
-  border-left: 3px solid oklch(0.7 0.12 70);
-  background: color-mix(in srgb, oklch(0.85 0.08 70) 35%, var(--muted));
+  border-left: 3px solid var(--warn);
+  background: color-mix(in srgb, var(--warn-soft) 35%, var(--muted));
   font-size: 0.82rem;
   line-height: 1.45;
 }
@@ -4064,13 +4250,13 @@ code {
   border-top-color: var(--chart-5);
 }
 .ljm-detail-col.is-customer {
-  border-top-color: oklch(0.55 0.12 262);
+  border-top-color: var(--info);
 }
 
 .ljm-detail-col h4 {
   margin: 0 0 0.35rem;
   font-size: 0.72rem;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
 }
@@ -4089,4 +4275,293 @@ code {
   margin-top: 1.15rem;
   padding-top: 0.85rem;
   border-top: 1px solid var(--border);
+}
+
+/* ---- Sprint day pages ---- */
+.sprint-half-label {
+  margin: var(--space-section) 0 var(--space-tight);
+}
+
+.sprint-slide-title {
+  margin: 0 0 0.75rem;
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 500;
+  line-height: 1.25;
+  color: var(--foreground);
+}
+
+.sprint-slide-list,
+.sprint-role-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sprint-slide-list li,
+.sprint-role-list li {
+  position: relative;
+  margin: 0;
+  padding: 0.45rem 0 0.45rem 1.1rem;
+  font-size: 1.02rem;
+  line-height: 1.45;
+  color: var(--card-foreground);
+  border-top: 1px solid var(--border);
+}
+
+.sprint-slide-list li:first-child,
+.sprint-role-list li:first-child {
+  border-top: none;
+  padding-top: 0;
+}
+
+.sprint-slide-list li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.9em;
+  width: 0.35rem;
+  height: 0.35rem;
+  border-radius: 50%;
+  background: var(--foreground);
+}
+
+.sprint-role-list li {
+  padding-left: 0;
+}
+
+.sprint-slide-cta {
+  display: inline-block;
+  margin-top: 0.85rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--primary);
+  text-decoration: none;
+}
+
+.sprint-slide-cta:hover {
+  text-decoration: underline;
+}
+
+.sprint-agenda {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+
+.sprint-agenda th,
+.sprint-agenda td {
+  text-align: left;
+  vertical-align: top;
+  padding: 0.45rem 0.65rem 0.45rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.sprint-agenda td:first-child {
+  white-space: nowrap;
+  font-weight: 600;
+  color: var(--foreground);
+  width: 7.5rem;
+}
+
+.sprint-day-nav {
+  display: flex;
+  justify-content: space-between;
+  margin-top: var(--space-section);
+}
+
+.sprint-day-nav a {
+  font-weight: 600;
+  color: var(--primary);
+  text-decoration: none;
+}
+
+.sprint-day-nav a:hover {
+  text-decoration: underline;
+}
+
+.sprint-lanes {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 1rem;
+  align-items: stretch;
+  margin-bottom: var(--space-block);
+}
+
+.sprint-lane-label {
+  margin: 0;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--primary);
+}
+
+.sprint-lanes > .sprint-slide {
+  height: 100%;
+  margin-bottom: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.sprint-lane-arrow {
+  justify-self: center;
+  align-self: center;
+  width: 2px;
+  height: 0.85rem;
+  background: var(--foreground);
+  position: relative;
+}
+
+.sprint-lane-arrow::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -1px;
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 7px solid var(--foreground);
+  transform: translateX(-50%);
+}
+
+.journey-snapshot {
+  display: block;
+  margin: 0 0 1.1rem;
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--muted);
+  text-decoration: none;
+  color: inherit;
+}
+
+.journey-snapshot:hover {
+  border-color: var(--foreground);
+}
+
+.journey-snapshot-flow {
+  display: flex;
+  align-items: stretch;
+}
+
+.journey-snapshot-stage {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+}
+
+.journey-snapshot-arrow {
+  flex: 0 0 auto;
+  width: 1.1rem;
+  height: 2px;
+  margin: 0 0.2rem;
+  background: var(--foreground);
+  position: relative;
+}
+
+.journey-snapshot-arrow::after {
+  content: '';
+  position: absolute;
+  right: -1px;
+  top: 50%;
+  width: 0;
+  height: 0;
+  border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent;
+  border-left: 6px solid var(--foreground);
+  transform: translateY(-50%);
+}
+
+.journey-snapshot-card {
+  flex: 1;
+  min-width: 0;
+  padding: 0.7rem 0.55rem 0.65rem;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.journey-snapshot-title {
+  margin: 0 0 0.55rem;
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 500;
+  line-height: 1.2;
+  text-align: center;
+  color: var(--foreground);
+}
+
+.journey-snapshot-boxes {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.2rem;
+}
+
+.journey-snapshot-box {
+  display: block;
+  width: 1.15rem;
+  height: 0.7rem;
+  border: 1.5px solid var(--border);
+  border-radius: 3px;
+  background: var(--muted);
+}
+
+.journey-snapshot-tick {
+  display: block;
+  width: 0.35rem;
+  height: 1px;
+  background: var(--muted-foreground);
+  opacity: 0.55;
+}
+
+.journey-snapshot-cta {
+  margin: 0.75rem 0 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--primary);
+}
+
+@media (max-width: 820px) {
+  .sprint-lanes {
+    grid-template-columns: 1fr;
+  }
+
+  .sprint-lane-label {
+    display: none;
+  }
+
+  .journey-snapshot-flow {
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .journey-snapshot-stage {
+    flex-direction: column;
+  }
+
+  .journey-snapshot-arrow {
+    width: 2px;
+    height: 0.7rem;
+    margin: 0.15rem 0;
+  }
+
+  .journey-snapshot-arrow::after {
+    right: auto;
+    left: 50%;
+    top: auto;
+    bottom: -1px;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 6px solid var(--foreground);
+    border-bottom: none;
+    transform: translateX(-50%);
+  }
 }

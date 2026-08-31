@@ -195,7 +195,7 @@
       "owner": "Ashley + Agent",
       "start": "2026-09-08",
       "end": "2026-09-11",
-      "notes": "Sprint week of Sep 8. Runs in tandem with Stockton Hill, then goes straight into the MVP build."
+      "notes": "Four days Tue–Fri (Sept 8–11). Journeys, how-might-we, keep-kill / roadmap, venture ops. Runs in tandem with Stockton Hill, then goes straight into the MVP build."
     },
     {
       "id": "prod-mvp-planning",
@@ -205,7 +205,7 @@
       "owner": "Ashley + Agent",
       "start": "2026-09-10",
       "end": "2026-09-11",
-      "notes": "Closes sprint week and opens the build."
+      "notes": "Thursday keep-kill / roadmap and Friday how-we-work close the sprint and open the build."
     },
     {
       "id": "prod-mvp-build",
