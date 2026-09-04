@@ -681,10 +681,7 @@ h2 {
   margin-left: calc(50% - 50vw + var(--band-inset));
   margin-right: calc(50% - 50vw + var(--band-inset));
   margin-bottom: var(--space-section);
-  /* The band already broke out by --band-inset, so it only needs the remainder
-     of the shell padding to keep its content on the same left edge as the
-     sections above and below it. */
-  padding: var(--space-section) max(0px, calc(var(--shell-pad) - var(--band-inset)));
+  padding: var(--space-section) max(var(--card-pad), var(--shell-pad));
   border-radius: calc(var(--radius) * 1.5);
   background: var(--primary);
   color: var(--primary-foreground);
@@ -700,9 +697,16 @@ h2 {
   margin-bottom: 0;
 }
 
-/* Section labels invert to the brand's lime; body copy to white. */
+/* Section labels invert to the brand's lime and stay sentence case — the
+   global h2 is an uppercase micro-label, which fights Amanda's type rules
+   on long-form band copy. */
 .feature-band h2 {
   color: var(--secondary);
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
 }
 
 /* ...but a white card inside the band is still a light surface, so anything
@@ -744,6 +748,8 @@ h2 {
 .feature-band .arc-beat,
 .feature-band .tile-label {
   color: var(--secondary);
+  text-transform: none;
+  letter-spacing: 0.02em;
 }
 
 .feature-band .arc-text {
@@ -752,10 +758,54 @@ h2 {
 
 .feature-band .bet-block > p:not(.tile-label) {
   color: var(--primary-foreground);
+  font-family: var(--font-sans);
+  font-size: 1.05rem;
+  font-weight: 400;
+  line-height: 1.6;
+}
+
+.feature-band .bet-hypothesis > p:not(.tile-label) {
+  font-family: var(--font-sans);
+  font-size: 1.05rem;
+  font-weight: 400;
+  line-height: 1.6;
 }
 
 .feature-band .bet-approach {
   border-top-color: rgba(255, 255, 255, 0.15);
+}
+
+.feature-band .band-kicker {
+  margin: 0 0 var(--space-tight);
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--secondary);
+}
+
+.feature-band .band-lead {
+  margin: 0 0 0.85rem;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: 1.4;
+  text-transform: none;
+  color: var(--primary-foreground);
+}
+
+.feature-band .band-copy {
+  margin: 0 0 1.1rem;
+  max-width: 62ch;
+  font-size: 0.95rem;
+  line-height: 1.65;
+  color: color-mix(in srgb, var(--primary-foreground) 78%, var(--primary));
+}
+
+.feature-band .band-bet {
+  margin-top: var(--space-section);
 }
 
 .arc-section {
@@ -962,9 +1012,18 @@ h2 {
   margin-top: var(--space-section);
 }
 
+/* Home now ends on the glance map — don't keep a full section gap under it. */
+.page.is-home {
+  padding-bottom: var(--space-block);
+}
+
+.page.is-home .site-footer {
+  margin-top: var(--space-block);
+}
+
 /* The frame hugs its content instead of scrolling internally — the embedded
    page is same-origin, so its height is measured and applied in JS. The fixed
-   height here is only the pre-measurement placeholder. */
+   height here is only the pre-measurement placeholder (glance-map sized). */
 .embed-frame-tall {
   aspect-ratio: auto;
   height: auto;
@@ -973,7 +1032,29 @@ h2 {
 .embed-frame-tall iframe {
   position: static;
   display: block;
-  height: 1280px;
+  height: 420px;
+}
+
+.private-journey-block {
+  margin: 0 0 var(--space-section);
+}
+
+.private-journey-block h2 {
+  margin: 0 0 0.35rem;
+}
+
+.private-journey-frame {
+  width: 100%;
+  margin-top: 1rem;
+  overflow: visible;
+}
+
+.private-journey-frame iframe {
+  display: block;
+  width: 100%;
+  min-height: 70vh;
+  border: 0;
+  background: var(--card);
 }
 
 /* ---- Funnel economics (Learnings) ---- */
@@ -2642,6 +2723,25 @@ a.sprint-day-link:hover {
   background: color-mix(in srgb, var(--muted) 40%, var(--card));
 }
 
+.team-photo-circle {
+  object-fit: contain;
+  object-position: center;
+  border-radius: 0;
+  background: transparent;
+}
+
+.team-photo-fallback {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--primary);
+  background: color-mix(in srgb, var(--primary) 12%, var(--card));
+}
+
 .team-body {
   min-width: 0;
 }
@@ -4278,6 +4378,17 @@ a.sprint-day-link:hover {
 }
 
 /* ---- Sprint day pages ---- */
+.sprint-day-objective {
+  margin: 0.85rem 0 0;
+  max-width: 62ch;
+  font-family: var(--font-display);
+  font-size: clamp(1.05rem, 2vw, 1.3rem);
+  font-weight: 500;
+  line-height: 1.45;
+  color: var(--foreground);
+  text-transform: none;
+}
+
 .sprint-half-label {
   margin: var(--space-section) 0 var(--space-tight);
 }
@@ -4330,6 +4441,13 @@ a.sprint-day-link:hover {
   padding-left: 0;
 }
 
+.sprint-slide-step {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
 .sprint-slide-cta {
   display: inline-block;
   margin-top: 0.85rem;
@@ -4339,6 +4457,20 @@ a.sprint-day-link:hover {
   text-transform: uppercase;
   color: var(--primary);
   text-decoration: none;
+}
+
+.sprint-slide-step-link {
+  margin-top: 0;
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+  .sprint-slide-step {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
 }
 
 .sprint-slide-cta:hover {
@@ -4351,6 +4483,10 @@ a.sprint-day-link:hover {
   font-size: 0.88rem;
 }
 
+.sprint-day-agenda {
+  margin-bottom: var(--space-section);
+}
+
 .sprint-agenda th,
 .sprint-agenda td {
   text-align: left;
@@ -4359,11 +4495,183 @@ a.sprint-day-link:hover {
   border-bottom: 1px solid var(--border);
 }
 
-.sprint-agenda td:first-child {
+.sprint-agenda th {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--primary);
+}
+
+.sprint-agenda td:first-child,
+.sprint-agenda th:first-child {
   white-space: nowrap;
   font-weight: 600;
   color: var(--foreground);
+  width: 8.5rem;
+}
+
+.sprint-day-agenda td:nth-child(2),
+.sprint-day-agenda th:nth-child(2) {
+  white-space: nowrap;
   width: 7.5rem;
+  color: var(--muted-foreground);
+}
+
+.sprint-exercise-thumb {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  gap: 0.85rem;
+  width: 100%;
+  max-width: 22rem;
+  margin-top: 1.1rem;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--card);
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.sprint-exercise-art {
+  display: block;
+  flex-shrink: 0;
+  object-fit: cover;
+}
+
+.sprint-exercise-art-thumb {
+  width: 7.5rem;
+  height: auto;
+}
+
+.sprint-exercise-art-slide {
+  width: min(14rem, 42vw);
+  height: auto;
+  margin-bottom: 1.25rem;
+  border-radius: var(--radius);
+}
+
+.sprint-exercise-thumb-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 0.85rem 0.85rem 0.85rem 0;
+}
+
+.sprint-exercise-thumb:hover,
+.sprint-exercise-thumb:focus-visible {
+  border-color: var(--primary);
+  outline: none;
+}
+
+.sprint-exercise-thumb-kicker {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--primary);
+}
+
+.sprint-exercise-thumb-title {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 500;
+  line-height: 1.25;
+  color: var(--foreground);
+}
+
+.sprint-exercise-thumb-hint {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+
+.sprint-exercise-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: flex;
+  flex-direction: column;
+  background: var(--background);
+  overflow: hidden;
+}
+
+.sprint-exercise-close {
+  position: absolute;
+  top: 1.25rem;
+  right: 1.5rem;
+  z-index: 1;
+  padding: 0.45rem 0.7rem;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--primary);
+  cursor: pointer;
+}
+
+.sprint-exercise-close:hover,
+.sprint-exercise-close:focus-visible {
+  text-decoration: underline;
+  outline: none;
+}
+
+.sprint-exercise-slide {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: min(44rem, calc(100% - 3rem));
+  margin: 0 auto;
+  padding: 2rem 0;
+}
+
+.sprint-exercise-slide h2 {
+  margin: 0 0 1.75rem;
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 5vw, 3.25rem);
+  font-weight: 500;
+  line-height: 1.1;
+  color: var(--foreground);
+}
+
+.sprint-exercise-steps {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sprint-exercise-steps li {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  margin: 0;
+  padding: 0.85rem 0;
+  border-top: 1px solid var(--border);
+  font-size: clamp(1.05rem, 2vw, 1.35rem);
+  line-height: 1.4;
+  color: var(--card-foreground);
+}
+
+.sprint-exercise-steps li:last-child {
+  border-bottom: 1px solid var(--border);
+}
+
+.sprint-exercise-num {
+  flex: 0 0 1.6rem;
+  font-family: var(--font-display);
+  font-weight: 500;
+  color: var(--primary);
 }
 
 .sprint-day-nav {
@@ -4404,28 +4712,6 @@ a.sprint-day-link:hover {
   margin-bottom: 0;
   display: flex;
   flex-direction: column;
-}
-
-.sprint-lane-arrow {
-  justify-self: center;
-  align-self: center;
-  width: 2px;
-  height: 0.85rem;
-  background: var(--foreground);
-  position: relative;
-}
-
-.sprint-lane-arrow::after {
-  content: '';
-  position: absolute;
-  left: 50%;
-  bottom: -1px;
-  width: 0;
-  height: 0;
-  border-left: 5px solid transparent;
-  border-right: 5px solid transparent;
-  border-top: 7px solid var(--foreground);
-  transform: translateX(-50%);
 }
 
 .journey-snapshot {
@@ -4480,14 +4766,17 @@ a.sprint-day-link:hover {
 .journey-snapshot-card {
   flex: 1;
   min-width: 0;
-  padding: 0.7rem 0.55rem 0.65rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.85rem 0.45rem;
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: var(--radius);
 }
 
 .journey-snapshot-title {
-  margin: 0 0 0.55rem;
+  margin: 0;
   font-family: var(--font-display);
   font-size: 0.95rem;
   font-weight: 500;
@@ -4564,4 +4853,62 @@ a.sprint-day-link:hover {
     border-bottom: none;
     transform: translateX(-50%);
   }
+}
+
+.private-gate {
+  margin-top: 1.4rem;
+  max-width: 22rem;
+}
+
+.private-gate label {
+  display: block;
+  margin-bottom: 0.45rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+
+.private-gate-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.private-gate input {
+  flex: 1;
+  min-width: 0;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--card);
+  color: var(--foreground);
+  font: inherit;
+}
+
+.private-gate button {
+  padding: 0.55rem 0.95rem;
+  border: 1px solid var(--primary);
+  border-radius: var(--radius);
+  background: var(--primary);
+  color: var(--primary-foreground, #fff);
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.private-gate-error {
+  margin: 0.55rem 0 0;
+  font-size: 0.85rem;
+  color: var(--destructive, #b42318);
+}
+
+.site-footer-private {
+  color: inherit;
+  text-decoration: none;
+}
+
+.site-footer-private:hover {
+  text-decoration: underline;
 }

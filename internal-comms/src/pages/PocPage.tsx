@@ -60,7 +60,7 @@ const SUCCESS_METRICS: SuccessMetric[] = [
 ];
 
 const PILOT_FACTS: [string, string][] = [
-  ['Design partners', 'Members 1st (done) + Stockton Hill (week of Aug 31)'],
+  ['Design partners', 'Members 1st (done) + Stockton Hill (three weeks, Sep 14–Oct 2)'],
   ['Members 1st', 'Jun 17 – Aug 3 · 10 sessions + retro · 42 emailed'],
   ['Session rhythm', 'Mon · Wed · Fri, ~30 min, on Zoom, recorded'],
   ['M1st outcomes', '18 QQ (43%) · 7 switched · 5 stayed · 6 pending'],
@@ -318,8 +318,10 @@ export function PocPage({ plan }: PocPageProps) {
         <p className="hero-sub">
           Our first live pilot with an independent agency is complete. Weekly Mon/Wed/Fri sessions,
           small-batch outreach paced to shopping capacity, and end-to-end runs from outreach &rarr;
-          questionnaire &rarr; shop &rarr; agent-reviewed recommendation. It tested well. Stockton
-          Hill is next.
+          questionnaire &rarr; shop &rarr; agent-reviewed recommendation. It tested well. We have
+          access to Stockton Hill; that pilot has not started. It runs three weeks after the Labor
+          Day product strategy sprint (Sep 8–11): September 14 through October 2, alongside the MVP
+          build.
         </p>
       </section>
 
@@ -460,9 +462,10 @@ export function PocPage({ plan }: PocPageProps) {
         <hr className="soft-rule" />
         <h3 className="sub-label">What&rsquo;s next</h3>
         <p className="proof-statement" style={{ marginTop: 0 }}>
-          Stockton Hill kicks off the week of August 31. Same proposal moment, Version A outreach
-          — we do not inherit the Members 1st v8 copy. That is the second proof, running in tandem
-          with strategy sprint week (week of Sep 8) and the start of the MVP build.
+          Stockton Hill is three weeks after the Labor Day sprint: September 14 through October 2.
+          We have access; we have not started the pilot. Same proposal moment, Version A outreach —
+          we do not inherit the Members 1st v8 copy. That is the second proof, running alongside
+          the start of the MVP build.
         </p>
       </section>
     </>

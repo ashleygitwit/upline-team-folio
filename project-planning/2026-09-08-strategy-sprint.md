@@ -16,13 +16,14 @@ Ashley facilitates **product**. Claire facilitates **GTM**. Same building.
 | Track | Facilitator | Who | Job of the week |
 | --- | --- | --- | --- |
 | Product | Ashley | Ashley, Amanda, Austin, engineer. JV and Davey for the Tuesday map and Thursday morning cut. | Lock the journey, sketch the key moments, cut scope, size it, stand up the build in Linear |
-| GTM | Claire | JV, Davey, Claire, Megan. Austin and Ashley for the shared blocks. Leander as pre-work. | ICP, sales journey (through onboard), systems, deck, site, Davey’s first motion launched Friday 1–3 |
+| GTM | Claire | JV, Davey, Claire, Megan. Austin and Ashley for the shared blocks. Leander as pre-work. | ICP, sales journey (through onboard), systems, deck, site, Davey’s first motion teed up Friday 1:30–3:00 |
 
 **How the rooms meet**
 
-- JV and Davey sit product **Tuesday 1:30–4:30** and **Thursday morning**.
+- JV and Davey sit product **Tuesday 1:00–4:30** and **Thursday morning**.
 - Wednesday 9–2 they are with Claire.
-- Friday 9–12 is the whole company on ops. Davey’s first experiment launches **after Friday lunch**.
+- Tuesday 11:30–12:00 is GitWit all-hands — Jacob introduces JV and Davey — then team lunch 12:00–1:00.
+- Friday 9–11 is working time. Venture Ops is **11:30–1:30** (lunch in that block). Davey’s first experiment is teed up **after Venture Ops**.
 
 ---
 
@@ -43,21 +44,26 @@ Product walks in with: findings, Through Line bet, the strawman journey ([`../pr
 
 Venture thesis and the big claim. Short orientation on work to date — not a recap of How meetings. **Catalog the biggest value-adds:** what we heard, what tested best. That list is what the afternoon journey has to deliver.
 
-### 9:30–12:30 · Together — GTM workshop (Claire leads)
+### 9:30–11:30 · Together — GTM workshop (Claire leads)
 
 **Who:** same room
 
 - Review and refine ICP
-- Sales journey Awareness → Contracting → Onboarding, with owners
-- Brainstorm awareness (outbound, paid, events) and what tests already taught
+- Review and critique the current sales pitch deck
+- Whiteboard the sales journey Awareness → Contracting → Onboarding
+- Brainstorm awareness (existing networks, outbound, events, paid)
 - Map content and systems onto that journey
-- Set OMTM for GTM and goals for Friday
+- Set OMTM for GTM and GTM goals for Friday
 
 Onboarding lives here, at sales fidelity.
 
-### 12:30–1:30 · Lunch
+### 11:30–12:00 · GitWit all-hands
 
-### 1:30–4:30 · Split
+Jacob introduces JV and Davey to the rest of GitWit.
+
+### 12:00–1:00 · Team lunch
+
+### 1:00–4:30 · Split
 
 **Product** — Ashley, Amanda, Austin, engineer, **JV, Davey**
 
@@ -73,7 +79,7 @@ Walk the **strawman** — not a blank wall. Printed at every seat. The 9:00 valu
 
 | Time | What we do |
 | --- | --- |
-| 1:30–1:45 | Open. How we walk. Roles: Amanda UX, Austin data, engineer feasibility notes, Ashley the 9:00 value, JV / Davey what sales can say. |
+| 1:00–1:15 | Open. How we walk. Roles: Amanda UX, Austin data, engineer feasibility notes, Ashley the 9:00 value, JV / Davey what sales can say. |
 | 1:45–2:05 | **Set up the data** (steps 1–2). Morning’s onboard assumptions sit here. |
 | 2:05–2:30 | **This week** (steps 3–8). |
 | 2:30–2:50 | **Intake** (steps 9–10). |
@@ -141,23 +147,27 @@ First sales motion, website, and pitch deck — against this morning’s above-t
 
 ## Friday — Company, then launch
 
-### 9:00–12:00 · Together — Venture ops
+### 9:00–11:00 · Split — Working time
 
-**Who:** Entire team. Mike and Patrick if they can sit the ops pile.
+**Product** — Ashley, Amanda, Austin, engineer. Keep stories, requirements, and Linear moving.
+
+**GTM** — Claire, JV, Davey. Keep the website, pitch deck, and first sales motion moving.
+
+### 11:30–1:30 · Together — Venture ops
+
+**Who:** Entire team. Lunch is in this block.
 
 Sticky-note exercise: everything it takes to run this business. Map it onto a wall — generally by quarter — now that we have an MVP launch date and GTM goals.
 
-Then roles. JV is standing CEO for a while. What that actually means. Capacity, decision rights, meetings.
+Then roles. Capacity, decision rights, meetings.
 
-### 12:00–1:00 · Lunch
+### 1:30–3:00 · GTM — Tee up Davey’s first experiment
 
-### 1:00–3:00 · GTM — Launch Davey’s first experiment
-
-Claire, Davey. Megan as needed. Hit go on the motion built Thursday.
+Claire, Davey. Megan as needed. Get the motion built Thursday ready to go.
 
 ### 3:00–5:00 · Podcast
 
-Jacob, JV, Davey. Not a product session. That is the week.
+Jacob, JV, Davey. That is the week.
 
 ---
 
@@ -166,15 +176,18 @@ Jacob, JV, Davey. Not a product session. That is the week.
 | Block | Product room | GTM room |
 | --- | --- | --- |
 | Tue 9:00–9:30 | Together — thesis + value-adds | Together |
-| Tue 9:30–12:30 | Together — GTM workshop | Together — Claire leads |
-| Tue 1:30–4:30 | Ashley, Amanda, Austin, engineer, JV, Davey | Claire synthesizes |
+| Tue 9:30–11:30 | Together — GTM workshop | Together — Claire leads |
+| Tue 11:30–12:00 | GitWit all-hands — Jacob introduces JV and Davey | Together |
+| Tue 12:00–1:00 | Team lunch | Together |
+| Tue 1:00–4:30 | Ashley, Amanda, Austin, engineer, JV, Davey | Claire synthesizes |
 | Wed 9:00–2:00 | Ashley, Amanda, Austin, engineer | Claire, JV, Davey, Megan |
 | Wed 2:00–3:00 | Together — sketch review | Together |
 | Wed 3:00–5:00 | Product revisions | Deck / site / systems as needed |
 | Thu morning | Together — features, keep-kill, size, roadmap | Together, then Claire / Megan can peel off |
 | Thu afternoon | Stories, requirements, Linear | Claire, Megan, Davey — motion, site, deck |
-| Fri 9:00–12:00 | Together — ops + roles | Together |
-| Fri 1:00–3:00 | — | Launch Davey’s experiment |
+| Fri 9:00–11:00 | Product working time | GTM working time |
+| Fri 11:30–1:30 | Together — Venture Ops. Lunch is in this block. | Together |
+| Fri 1:30–3:00 | — | Tee up Davey’s experiment |
 | Fri 3:00–5:00 | — | Jacob, JV, Davey podcast |
 
 ---

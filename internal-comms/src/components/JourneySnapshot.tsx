@@ -1,4 +1,4 @@
-const PHASES = ['Outreach prep', 'Intake', 'Shop', 'Recommend'] as const;
+const PHASES = ['Outreach', 'Prep', 'Intake', 'Shop', 'Recommend'] as const;
 
 export function JourneySnapshot() {
   return (
@@ -9,18 +9,11 @@ export function JourneySnapshot() {
             {i > 0 ? <span className="journey-snapshot-arrow" /> : null}
             <div className="journey-snapshot-card">
               <p className="journey-snapshot-title">{label}</p>
-              <div className="journey-snapshot-boxes">
-                <span className="journey-snapshot-box" />
-                <span className="journey-snapshot-tick" />
-                <span className="journey-snapshot-box" />
-                <span className="journey-snapshot-tick" />
-                <span className="journey-snapshot-box" />
-              </div>
             </div>
           </div>
         ))}
       </div>
-      <p className="journey-snapshot-cta">Open the strawman &rarr;</p>
+      <p className="journey-snapshot-cta">Open the preliminary product journey map &rarr;</p>
     </a>
   );
 }

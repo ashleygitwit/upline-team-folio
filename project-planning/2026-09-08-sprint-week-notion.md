@@ -1,22 +1,22 @@
-# Upline Sprint Week
+# Upline Venture Strategy Sprint Week
 
 Sept 8–11, 2026 · In person · Two rooms, one week
 
 Ashley runs **product**. Claire runs **GTM**. Labor Day is Monday the 7th, so we start Tuesday.
 
-| | |
-| --- | --- |
-| Product in the room | Ashley, Amanda, Austin, engineer |
-| GTM in the room | Claire, JV, Davey, Megan |
-| Shared / drop-in | Jacob, Dan (light). Mike + Patrick for Friday ops if they can. |
-| Slip risk | JV Pittsburgh 9/9–9/11. If that blocks, slide to the week of Sept 14. |
+Agenda of record matches the expectation-setting email sent Sept 3.
 
-**How the rooms meet**
+**Roles for the week**
 
-- JV and Davey sit product Tuesday 1:30–4:30 and Thursday morning
-- Wednesday 9–2 they are with Claire
-- Friday 9–12 is the whole company on ops
-- Davey’s first experiment launches Friday 1–3
+- **Justin — CEO.** Agent SME: how agents perceive value, what they’ll pay for, and how we sell this.
+- **Davie — Founding Head of Sales.** VA hiring and management; go-to-market and sales strategy with Justin.
+- **Claire — Brand and marketing.** Brand voice, marketing materials, and website.
+- **Jacob — Business strategy.** Venture setup, structure, and how we make this a viable business.
+- **Austin — Product strategist.** Technical feasibility, data, build approach, and product experience.
+- **Ashley — Venture lead / facilitator.** Primary facilitator for the week; proof-of-concept, timelines, and venture-wide context.
+- **Amanda — UX / UI.** Brand and user experience across the product.
+- **Douglas — Engineering.** What to build, how to build it, and what’s realistic in the time we have.
+- **Leander — GTM systems.** Current GTM initiatives and getting everyone set up with the accounts and tools we’ve been using.
 
 ---
 
@@ -24,10 +24,10 @@ Ashley runs **product**. Claire runs **GTM**. Labor Day is Monday the 7th, so we
 
 | Day | Theme | Together | Split |
 | --- | --- | --- | --- |
-| Tue 8 | Journeys | 9:00–12:30 thesis + GTM workshop | 1:30–4:30 product map / Claire synthesizes |
+| Tue 8 | Journeys | 9:00–11:30 thesis + GTM workshop · 11:30–1:00 Gitwit All-Hands (lunch included) | 1:00–4:30 product experience map |
 | Wed 9 | Sketch / setup | 2:00–3:00 sketch review | 9:00–2:00 and 3:00–5:00 |
-| Thu 10 | Plan, scope, and requirements | Morning: feature list, keep-kill, T-shirt, dated launch | Afternoon: stories + Linear vs sales motion / site / deck |
-| Fri 11 | Company, then launch | 9:00–12:00 ops + roles · 3:00–5:00 podcast | 1:00–3:00 Davey launches |
+| Thu 10 | Plan, Scope, and Requirements | Morning: features, keep-kill, effort, launch date | Afternoon: stories / ticketing vs sales motion / site / deck |
+| Fri 11 | Venture Ops | 11:30–1:30 ops + roles + week goals · 3:00–5:00 podcast | 9:00–11:30 heads-down · 1:30–3:00 Davie tees up |
 
 ---
 
@@ -35,55 +35,26 @@ Ashley runs **product**. Claire runs **GTM**. Labor Day is Monday the 7th, so we
 
 **Claire**
 
-- [ ] Polish the ICP
-- [ ] Map current GTM plays, systems, and accounts with Leander — pros / cons, what to recommend, what to hand off
+- [ ]  Polish the ICP
+- [ ]  Pricing
+- [ ]  Map current GTM plays, systems, and accounts with Leander — pros / cons, what to recommend, what to hand off
 
 **Product walks in with**
 
-- [ ] Through Line bet
-- [ ] One-pager of value-adds / what tested best
-- [ ] Strawman journey (print for every Tuesday 1:30 seat)
-- [ ] Pricing
-- [ ] Empty above / below the line wall for Thursday
-- [ ] Linear (or equivalent) ready to receive stories Thursday afternoon
+- [ ]  Venture Thesis
+- [ ]  One-pager of value-adds / what tested best
+- [ ]  Preliminary Product journey map (print for every Tuesday 1:00 seat)
 
 ---
 
-## Tuesday — Journeys
+## Tuesday — Journeys (GTM & Product Experience)
 
 | Time | Track | Who | What |
 | --- | --- | --- | --- |
-| 9:00–9:30 | Together | Ashley, Austin, JV, Davey, Jacob, Claire | Ground in the venture thesis and the big claim. Short orientation on work to date — not a recap of How meetings. Catalog the biggest value-adds: what we heard, what tested best. That list is what the afternoon journey has to deliver. |
-| 9:30–12:30 | Together · Claire leads | Same room | GTM workshop. Refine ICP. Sales journey Awareness → Contracting → Onboarding, with owners. Brainstorm awareness (outbound, paid, events) and what tests already taught. Map content and systems onto that journey. Set GTM OMTM and Friday goals. Onboarding lives here. |
-| 12:30–1:30 | Lunch | | |
-| 1:30–4:30 | Product | Ashley, Amanda, Austin, engineer, JV, Davey | Walk the strawman journey. Agenda below. |
-| 1:30–4:30 | GTM | Claire (solo) | Synthesize the morning workshop. Write next steps so Wednesday has a source. |
-
-#### Product · 1:30–4:30 — Walk the strawman
-
-**On the wall before we start:** the 20-step MVP strawman, printed at every seat. The 9:00 value-adds pinned above the map. We do not start from a blank.
-
-**How we walk each phase** (same method, five times)
-
-1. Ashley reads the strawman steps in this phase. No new map.
-2. *Does this still deliver the value we named at 9:00?* Hold, revise, drop, or add a step.
-3. On that stretch, mark three things — do not solve them:
-   - **Biggest risk** — if this goes wrong, the user or the week fails
-   - **Biggest unknown** — we cannot answer this in the room today
-   - **Flagship feature** — something here has to be true for the MVP to be the product
-4. JV / Davey, one question: *Would you sell this stretch as-is? What must you not promise?*
-5. Capture. Move on.
-
-| Time | What we do |
-| --- | --- |
-| 1:30–1:45 | Open. How we will walk. Roles: Amanda on UX, Austin on data, engineer on feasibility notes, Ashley on the 9:00 value, JV / Davey on what sales can say. Pin the value-adds. |
-| 1:45–2:05 | **Set up the data** — access, map the book (steps 1–2). Morning’s onboard assumptions sit here. |
-| 2:05–2:30 | **This week** — serve the 30, pull, prioritize, draft, agent review, send (steps 3–8). |
-| 2:30–2:50 | **Intake** — customer reads, questionnaire (steps 9–10). |
-| 2:50–3:20 | **Shop and recommend** — pick carriers through send the rec (steps 11–19). |
-| 3:20–3:40 | **Close** — step 20 is open on purpose. Hold, revise, or leave it open. Do not invent Calendly. |
-| 3:40–4:10 | Step back. Read the wall: which flagship features must Wednesday sketch? Which risk is the one we cannot ignore? Which unknowns go to Austin and the engineer tomorrow? |
-| 4:10–4:30 | Close. Photograph the map. One sentence for Wednesday: *these are the moments we breadboard at 9:00.* |
+| 9:00–9:30 | Together | Ashley, Austin, JV, Davie, Jacob, Claire, Douglas, Amanda | Hellos, overview of sprint week & outcomes. Review roles for the week. Ground us in the venture thesis. |
+| 9:30–11:30 | Together · Claire leads | Same room | **GTM workshop:** Review and refine ICP. Review and critique the current sales pitch deck. Whiteboard the sales journey Awareness → Contracting → Onboarding. Brainstorm awareness (existing networks, outbound, events, paid). Map content and systems to the sales journey. Set OMTM and GTM goals for Friday. |
+| 11:30–1:00 | Gitwit | Whole company | All-Hands. Jacob introduces Justin and Davie. Lunch included. |
+| 1:00–4:30 | Product | Ashley, Austin, Justin, Davie, Jacob, Douglas, Amanda | Walk the product experience map together, step by step, to catalog how Upline will work at MVP launch. Name the biggest risks, unknowns, and flagship features. |
 
 ---
 
@@ -91,52 +62,70 @@ Ashley runs **product**. Claire runs **GTM**. Labor Day is Monday the 7th, so we
 
 | Time | Track | Who | What |
 | --- | --- | --- | --- |
-| 9:00–2:00 | Product | Ashley, Amanda, Austin, engineer | No JV, no Davey. Breadboard, sketch, ideate, and wireframe the key moments. Austin + engineer in parallel: technical feasibility, biggest risks, open questions. |
-| 9:00–2:00 | GTM | Claire, JV, Davey, Megan | Onboard JV and Davey to systems: Gmail / Drive, Slack, Attio, Lemlist, ringless VM. Pitch deck critique and sitemap for v2 if time. Wrap before 2:00. |
-| 2:00–3:00 | Together | Everyone | Sketch review. Direction only — hold or revise. Not a new feature brainstorm. |
-| 3:00–5:00 | Product | Ashley, Amanda, Austin, engineer | Revise from the review. |
-| 3:00–5:00 | GTM | Claire, Megan, as needed | Keep going on systems / deck / site. |
-
----
-
-## Thursday — Plan, scope, and requirements
-
-This is the build day. Journey and sketches become a scoped MVP, a sized timeline, and stories the engineer can start from. Ashley facilitates the morning.
-
-| Time | Track | Who | What |
-| --- | --- | --- | --- |
-| Morning | Together | Ashley, Amanda, Austin, engineer, JV, Davey. Claire sits the cut, then can peel off. | Journey + sketches on the wall. Write the feature list that experience requires. Keep or kill each one — above the line is in the MVP, below is ice (including AMS replacement and “log in and you’re live”). T-shirt size what stays (S / M / L / XL). Sequence it. Leave with a dated build plan and a real launch date. |
-| Afternoon | Product | Ashley, Amanda, Austin, engineer | Turn the above-the-line list into epics, features, and user stories. Requirements and done-means on each story. Stand up Linear so the build has a home. |
-| Afternoon | GTM | Claire, Megan, Davey | First sales motion, website, and pitch deck — against this morning’s above-the-line list. |
-
----
-
-## Friday — Company, then launch
-
-| Time | Track | Who | What |
-| --- | --- | --- | --- |
-| 9:00–12:00 | Together | Entire team. Mike and Patrick if they can sit the ops pile. | Sticky-note exercise: everything it takes to run this business. Map it onto a wall — generally by quarter — now that we have an MVP launch date and GTM goals. Then roles. JV is standing CEO for a while. What that actually means. Capacity, decision rights, meetings. |
+| 9:00–2:00 | Product | Ashley, Amanda, Austin, Douglas | Breadboard, sketch, and wireframe the key moments. Austin + engineer in parallel: technical feasibility, biggest risks, open questions. |
+| 9:00–11:00 | GTM | Claire, JV, Davie, Leander | Onboard JV / Davie to ops and GTM accounts and systems: Gmail / Drive, Slack, Attio CRM?, Lemlist?, Ringless VM? |
+| 11:00–2:00 | GTM | Jacob, JV | Investor pitch deck working session |
+| 11:00–2:00 | GTM | Claire, Davie | Pitch deck working session — continue edits |
 | 12:00–1:00 | Lunch | | |
-| 1:00–3:00 | GTM | Claire, Davey. Megan as needed. | Launch Davey’s first sales experiment. Hit go on the motion built Thursday. |
-| 3:00–5:00 | Together | Jacob, JV, Davey | Podcast. Not a product session. That is the week. |
+| 2:00–3:00 | Together | Ashley, Austin, JV, Davie, Jacob, Claire, Douglas, Amanda | Sketch review. |
+| 3:00–5:00 | Product | Ashley, Amanda, Douglas | Revise from the review. |
+| 3:00–5:00 | GTM | Claire, JV, Davie, Austin | Website sitemapping session — in light of the sales journey, brainstorm v2 sitemap and highest-priority pages |
+
+---
+
+## Thursday — Plan, Scope and Requirements
+
+Ashley facilitates the morning.
+
+| Time | Track | Who | What |
+| --- | --- | --- | --- |
+| 9:00–12:00 | Together | Ashley, Austin, Justin, Davie, Jacob, Claire, Douglas, Amanda | Put Tuesday’s journey on the wall with Wednesday’s sketches beside it. (1) Name the features that have to exist. (2) Above the line / below the line on every one. (3) Estimate effort / complexity for what stays. (4) Sequence the work and set an MVP launch date. Everything under the line is ice — including AMS replacement and “log in and you’re live.” |
+| 12:00–1:00 | Lunch | | |
+| 1:00–5:00 | Product | Ashley, Amanda, Austin, Douglas | Draft user stories and requirements. Stand up in Linear, or whatever ticketing system we will use to manage the build. |
+| 1:00–5:00 | GTM | Claire, Davie, JV | Working time: Claire on website and pitch deck. JV / Davie on first sales motion. |
+
+---
+
+## Friday — Venture Ops
+
+| Time | Track | Who | What |
+| --- | --- | --- | --- |
+| 9:00–11:30 | Product | Ashley, Amanda, Austin, Douglas | Heads-down wrap-up from Thursday. |
+| 9:00–11:30 | GTM | Claire, Davie, Justin | Heads-down wrap-up from Thursday. |
+| 11:30–1:30 | Together | Ashley, Austin, Justin, Davie, Jacob, Claire, Douglas, Amanda | Venture Ops. Brainstorm what it takes to launch (support, onboarding, VAs, legal, billing, hiring). Map it on the roadmap with owners and timing. Name venture roles, recurring meetings, and milestones. Review Tuesday’s goals. |
+| 1:30–3:00 | GTM | Claire, Davie | Tee up Davie’s first sales experiment. |
+| 3:00 | | Ashley leaves for airport | |
+| 3:00–5:00 | Other | Jacob, Justin, Davie | Podcast: how they got to Upline, what excites them, and why they wanted to work with Gitwit. |
 
 ---
 
 ## Who is where
 
-| Block | Product room | GTM room |
+Product room = **The Curve**. GTM room = **The Cube**. If we are all together, we sit in The Curve and The Cube is empty.
+
+| Block | Product room (The Curve) | GTM room (The Cube) |
 | --- | --- | --- |
-| Tue 9:00–9:30 | Together — thesis + value-adds | Together |
-| Tue 9:30–12:30 | Together — GTM workshop | Together — Claire leads |
-| Tue 1:30–4:30 | Ashley, Amanda, Austin, engineer, JV, Davey | Claire synthesizes |
-| Wed 9:00–2:00 | Ashley, Amanda, Austin, engineer | Claire, JV, Davey, Megan |
-| Wed 2:00–3:00 | Together — sketch review | Together |
-| Wed 3:00–5:00 | Product revisions | Deck / site / systems as needed |
-| Thu morning | Together — features, keep-kill, size, roadmap | Together, then Claire / Megan can peel off |
-| Thu afternoon | Stories, requirements, Linear | Claire, Megan, Davey — motion, site, deck |
-| Fri 9:00–12:00 | Together — ops + roles | Together |
-| Fri 1:00–3:00 | — | Launch Davey’s experiment |
-| Fri 3:00–5:00 | — | Jacob, JV, Davey podcast |
+| **TUESDAY** |  |  |
+| Tue 9:00–9:30 | Ashley, Austin, JV, Davie, Jacob, Claire, Douglas, Amanda — hellos, week overview, roles, thesis | — |
+| Tue 9:30–11:30 | Same people — Claire leads GTM workshop + pitch deck | — |
+| Tue 11:30–1:00 | Gitwit All-Hands — Jacob introduces Justin and Davie. Lunch included. | — |
+| Tue 1:00–4:30 | Ashley, Austin, Justin, Davie, Jacob, Douglas, Amanda — product experience map | — |
+| **WEDNESDAY** |  |  |
+| Wed 9:00–11:00 | Ashley, Amanda, Austin, Douglas — breadboard / sketch | Claire, JV, Davie, Leander — systems onboard |
+| Wed 11:00–2:00 | Ashley, Amanda, Austin, Douglas — continue sketch | Jacob, JV — investor deck · Claire, Davie — sales deck |
+| Wed 12:00–1:00 | Lunch | — |
+| Wed 2:00–3:00 | Ashley, Austin, JV, Davie, Jacob, Claire, Douglas, Amanda — sketch review | — |
+| Wed 3:00–5:00 | Ashley, Amanda, Douglas — revise sketches | Claire, JV, Davie, Austin — website sitemap |
+| **THURSDAY** |  |  |
+| Thu 9:00–12:00 | Ashley, Austin, Justin, Davie, Jacob, Claire, Douglas, Amanda — features, keep/kill, effort, launch date | — |
+| Thu 12:00–1:00 | Lunch | — |
+| Thu 1:00–5:00 | Ashley, Amanda, Austin, Douglas — stories, requirements, ticketing | Claire, Davie, Justin — site / deck / first sales motion |
+| **FRIDAY** |  |  |
+| Fri 9:00–11:30 | Heads-down wrap-up | Heads-down wrap-up |
+| Fri 11:30–1:30 | Everyone — Venture Ops, roles, week goals | — |
+| Fri 1:30–3:00 | — | Claire, Davie — tee up Davie’s first experiment |
+| Fri 3:00 | Ashley leaves for the airport | — |
+| Fri 3:00–5:00 | — | Jacob, Justin, Davie — podcast |
 
 ---
 
@@ -144,25 +133,24 @@ This is the build day. Journey and sketches become a scoped MVP, a sized timelin
 
 **Product**
 
-- [ ] Shared journey from the strawman, with risks, unknowns, and flagship features named
-- [ ] Sketches of the key moments
-- [ ] Above-the-line cut, T-shirt sizes, a dated launch
-- [ ] Epics, stories, and requirements in Linear
+- [ ]  Shared product journey map, with risks, unknowns, and flagship features named
+- [ ]  Sketches of the key moments
+- [ ]  Above-the-line cut, effort estimates, an MVP launch date
+- [ ]  Epics, stories, and requirements in Linear (or whatever ticketing system we use)
 
 **GTM + company**
 
-- [ ] Refined ICP
-- [ ] Sales journey with owners
-- [ ] Systems on
-- [ ] Deck and site in motion
-- [ ] Quarterly ops map and roles
-- [ ] Davey’s first experiment launched
-- [ ] Podcast recorded
+- [ ]  Refined ICP
+- [ ]  Sales journey with owners
+- [ ]  Systems on
+- [ ]  Deck and site in motion
+- [ ]  Quarterly ops map and roles
+- [ ]  Davie’s first experiment set up
+- [ ]  Podcast recorded
 
 ---
 
 ## Print list
 
-- [ ] Tuesday 9:00 — Through Line bet + value-adds one-pager
-- [ ] Tuesday 1:30 — Strawman journey at every seat
-- [ ] Thursday morning — Tuesday’s map + Wednesday’s sketches + empty above / below the line
+- [ ]  Tuesday 9:00 — Through Line bet + value-adds one-pager
+- [ ]  Tuesday 1:00 — Preliminary Product Journey at every seat

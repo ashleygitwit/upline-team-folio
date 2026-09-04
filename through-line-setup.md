@@ -76,4 +76,4 @@ Later sessions: same branch. Pull latest `main` into `amanda/style-pass` before 
 
 ## Orientation only
 
-Through Line lives in `internal-comms/`. Shared styles are in `internal-comms/src/brand.css`, `internal-comms/src/index.css`, and `internal-comms/src/App.css`. Pages are hash routes (`#/`, `#/learnings`, `#/roadmap`, `#/poc`, `#/sprint`, `#/mvp`, `#/brand`, `#/team`, plus `#/mvp-journey` and `#/scale`).
+Through Line lives in `internal-comms/`. Shared styles are in `internal-comms/src/brand.css`, `internal-comms/src/index.css`, and `internal-comms/src/App.css`. Pages are hash routes (`#/`, `#/learnings`, `#/roadmap`, `#/poc`, `#/sprint`, `#/mvp`, `#/brand`, `#/team`, plus `#/mvp-journey` and `#/private`).

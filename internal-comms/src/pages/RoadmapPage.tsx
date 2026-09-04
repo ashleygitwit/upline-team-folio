@@ -29,29 +29,29 @@ const MILESTONES: Milestone[] = [
   },
   {
     tag: 'Now',
-    title: 'Stockton Hill pilot',
-    body: 'Kicks off the week of Aug 31 for three weeks (through Sep 18). Outreach resets to Version A so we can compare how copy and workflow evolve across two very different agencies. Runs in tandem with sprint week and the start of the MVP build.',
-    href: '#/poc',
-    cta: 'View POC details',
-  },
-  {
-    tag: 'Then',
     title: 'Product strategy sprint',
-    body: 'Week of Sep 8. Four room days, Tuesday through Friday. Dual track with GTM. Thursday cuts features and stands up Linear. Friday morning is ops; Davey’s first experiment launches after lunch.',
+    body: 'Labor Day week — Tuesday September 8 through Friday September 11. Dual track with GTM. Tuesday includes Gitwit All-Hands (11:30–1:00). Thursday cuts features and stands up the build. Friday morning is heads-down wrap-up; Venture Ops is 11:30–1:30; Davie’s first sales experiment is teed up after that.',
     href: '#/sprint',
     cta: 'View strategy sprint details',
   },
   {
     tag: 'Then',
+    title: 'Stockton Hill pilot',
+    body: 'Three weeks after the sprint: September 14 through October 2. Access is in hand; the pilot has not started. Same proposal moment, Version A outreach, so we can compare a second agency against the Members 1st run. Runs alongside the MVP build.',
+    href: '#/poc',
+    cta: 'View POC details',
+  },
+  {
+    tag: 'Then',
     title: 'MVP build',
-    body: 'The first sellable front-end experience, even if some steps stay manual (VAs shopping) at launch. Starts coming out of sprint week (Sep 14). Target launch Nov 6.',
+    body: 'The first sellable front-end experience, even if some steps stay manual (VAs shopping) at launch. Starts September 14 — the same week as Stockton Hill — and runs through November 6. The first three weeks overlap the Stockton pilot.',
     href: '#/mvp',
     cta: 'View MVP details',
   },
   {
     tag: 'Then',
     title: 'MVP launch',
-    body: 'November 6. Stockton Hill, the sprint, and the build run in tandem — we are not waiting for one to finish before the next starts.',
+    body: 'November 6. The Labor Day sprint (Sep 8–11) locks the plan; Stockton Hill and the MVP build start together the week of September 14.',
     href: '#/mvp',
     cta: 'View MVP details',
   },
@@ -110,19 +110,6 @@ export function RoadmapPage({
           shortlist RPA, and Zapier write-back — while Path 1 AMS partner talks continue in
           parallel.
         </p>
-
-        <a className="scale-cta" href="#/scale">
-          <div>
-            <p className="scale-cta-eyebrow">Looking past the MVP</p>
-            <p className="scale-cta-title">Path to Scale — Oct ’26 → Q2 ’27</p>
-            <p className="scale-cta-sub">
-              Customer + VA ramp, VA-led vs auto-shopping priority, and what has to be true.
-            </p>
-          </div>
-          <span className="scale-cta-arrow" aria-hidden="true">
-            &rarr;
-          </span>
-        </a>
       </section>
 
       {plan ? (

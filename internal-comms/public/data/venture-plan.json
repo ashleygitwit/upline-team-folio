@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-08-26",
+  "lastUpdated": "2026-09-04",
   "venture": {
     "hypothesis": "If we help independent P&C agencies turn renewal season into a repeatable, agent-approved outreach-and-recommendation workflow by triaging which accounts need action, doing the shopping legwork, and drafting a clear client recommendation, then agencies will retain more at-risk households and convert more renewals into cross-sell or up-sell conversations across their existing book of business, because today that work is too manual and time-consuming for most teams to run account-by-account at scale.",
     "thesis": {
@@ -9,7 +9,7 @@
     },
     "mantra": "Make every renewal prove the agent is in my corner.",
     "upcomingProofPoint": {
-      "description": "Members 1st proved agent trust and customer engagement on a real book. Next proof: the same proposal moment with Stockton Hill (Version A outreach), kicking off the week of Aug 31. Path 2 no-AMS ops are in place. Stockton Hill, strategy sprint week (Sep 8), and the MVP build run in tandem \u2014 launch Nov 6.",
+      "description": "Members 1st proved agent trust and customer engagement on a real book. Next proof: the same proposal moment with Stockton Hill (Version A outreach). Access is in hand; the pilot has not started. Product strategy sprint is Labor Day week, Tue Sep 8\u2013Fri Sep 11. Stockton Hill runs three weeks after that (Sep 14\u2013Oct 2), alongside the MVP build. Path 2 no-AMS ops are in place. MVP launch Nov 6.",
       "successCriteria": [
         "Agent Trust",
         "Customer Engagement",
@@ -25,12 +25,12 @@
   "pilotSummary": {
     "agency": "Members 1st Insurance",
     "kickoffDate": "2026-06-17",
-    "asOfDate": "2026-08-26",
+    "asOfDate": "2026-09-03",
     "pilotWeek": 6,
     "sessionRhythm": "Mon \u00b7 Wed \u00b7 Fri",
     "sessionsCompleted": 11,
     "sessionsPlanned": 11,
-    "scheduleNote": "Members 1st complete. 10 working sessions Jun 17 \u2013 Jul 27 + Final Retro Aug 3. Outreach catch-up Jul 20\u201324. Disposition sheet closed Aug 7: 48 households \u00b7 42 emailed \u00b7 18 QQ (43%) \u00b7 18 recs \u00b7 7 switched \u00b7 5 stayed \u00b7 6 pending. Stockton Hill setup / holding Aug 5\u201328. Pilot kicks off the week of Aug 31 for three weeks.",
+    "scheduleNote": "Members 1st complete. 10 working sessions Jun 17 \u2013 Jul 27 + Final Retro Aug 3. Outreach catch-up Jul 20\u201324. Disposition sheet closed Aug 7: 48 households \u00b7 42 emailed \u00b7 18 QQ (43%) \u00b7 18 recs \u00b7 7 switched \u00b7 5 stayed \u00b7 6 pending. Stockton Hill access is in hand; the pilot has not started. Strategy sprint is Labor Day week (Sep 8\u201311). Stockton Hill is three weeks after that (Sep 14\u2013Oct 2), running alongside the MVP build.",
     "clientNamingRule": "First name + last initial only (e.g. Daniel P). Never full last names in team-facing exports.",
     "funnel": {
       "outreachEmailsDrafted": 42,
@@ -161,11 +161,11 @@
       "id": "prod-stockton-holding",
       "title": "Stockton Hill setup / holding",
       "workstream": "Product",
-      "status": "In Flight",
+      "status": "Done",
       "owner": "Ashley + Agent",
       "start": "2026-08-05",
-      "end": "2026-08-28",
-      "notes": "Holding through this week. Pilot kicks off the week of Aug 31."
+      "end": "2026-09-03",
+      "notes": "Access received. Pilot does not start until Sep 14 \u2014 three weeks after Labor Day sprint week."
     },
     {
       "id": "prod-stockton-hill",
@@ -173,35 +173,35 @@
       "workstream": "Product",
       "status": "Next",
       "owner": "Ashley + Agent",
-      "start": "2026-08-31",
-      "end": "2026-09-18",
-      "notes": "Second design partner. Reset outreach to Version A (do not inherit M1 v8). Three weeks starting the week of Aug 31. Runs in tandem with sprint week and the start of the MVP build."
+      "start": "2026-09-14",
+      "end": "2026-10-02",
+      "notes": "Second design partner. Access is in hand; the pilot has not started. Reset outreach to Version A (do not inherit M1 v8). Three weeks after the strategy sprint (Sep 14\u2013Oct 2), running alongside the MVP build."
     },
     {
       "id": "prod-sprint-prep",
       "title": "Sprint prep",
       "workstream": "Product",
-      "status": "Future",
+      "status": "Next",
       "owner": "Ashley + Agent",
       "start": "2026-09-08",
       "end": "2026-09-08",
-      "notes": "Prep at the open of sprint week \u2014 not after Stockton wraps."
+      "notes": "Prep at the open of Labor Day sprint week (Sep 8\u201311). Stockton Hill is the three weeks after."
     },
     {
       "id": "prod-strategy-sprint",
       "title": "Product strategy sprint",
       "workstream": "Product",
-      "status": "Future",
+      "status": "In Flight",
       "owner": "Ashley + Agent",
       "start": "2026-09-08",
       "end": "2026-09-11",
-      "notes": "Four days Tue–Fri (Sept 8–11). Journeys, how-might-we, keep-kill / roadmap, venture ops. Runs in tandem with Stockton Hill, then goes straight into the MVP build."
+      "notes": "Labor Day week. Four days Tue\u2013Fri (Sep 8\u201311). Journeys, how-might-we, keep-kill / roadmap, venture ops. Then Stockton Hill for three weeks (Sep 14\u2013Oct 2) alongside the MVP build."
     },
     {
       "id": "prod-mvp-planning",
       "title": "MVP planning",
       "workstream": "Product",
-      "status": "Future",
+      "status": "Next",
       "owner": "Ashley + Agent",
       "start": "2026-09-10",
       "end": "2026-09-11",
@@ -211,11 +211,11 @@
       "id": "prod-mvp-build",
       "title": "MVP build",
       "workstream": "Product",
-      "status": "Future",
+      "status": "Next",
       "owner": "Ashley + Agent",
       "start": "2026-09-14",
       "end": "2026-11-06",
-      "notes": "Build starts coming out of sprint week. Runs in tandem with Stockton Hill. Launch Friday Nov 6."
+      "notes": "Starts the week after Labor Day sprint, Sep 14, and runs through Friday Nov 6. The first three weeks overlap Stockton Hill."
     },
     {
       "id": "prod-mvp-launch",
@@ -226,7 +226,7 @@
       "start": "2026-11-06",
       "end": "2026-11-06",
       "milestone": true,
-      "notes": "Ship date \u2014 Friday Nov 6. Stockton, the sprint, and the build run in tandem."
+      "notes": "Ship date \u2014 Friday Nov 6. Sprint week (Sep 8\u201311) locks the plan; Stockton Hill (three weeks, Sep 14\u2013Oct 2) and the MVP build start together the week of Sep 14."
     },
     {
       "id": "prod-oct-beta",
