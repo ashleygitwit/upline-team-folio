@@ -10,8 +10,7 @@ export function ExerciseIllustration({
     <img
       className={className}
       src="/exercise-illustration.png"
-      alt=""
-      aria-hidden="true"
+      alt={title}
       decoding="async"
       draggable={false}
     />
