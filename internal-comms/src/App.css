@@ -4597,14 +4597,15 @@ a.sprint-day-link:hover {
   position: fixed;
   inset: 0;
   z-index: 80;
-  display: flex;
-  flex-direction: column;
   background: var(--background);
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
 }
 
 .sprint-exercise-close {
-  position: absolute;
+  position: fixed;
   top: 1.25rem;
   right: 1.5rem;
   z-index: 1;
@@ -4627,13 +4628,14 @@ a.sprint-day-link:hover {
 }
 
 .sprint-exercise-slide {
-  flex: 1;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  box-sizing: border-box;
+  min-height: 100dvh;
   width: min(44rem, calc(100% - 3rem));
   margin: 0 auto;
-  padding: 2rem 0;
+  padding: 2rem 0 3rem;
 }
 
 .sprint-exercise-slide h2 {
