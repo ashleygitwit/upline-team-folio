@@ -1012,13 +1012,8 @@ h2 {
   margin-top: var(--space-section);
 }
 
-/* Home now ends on the glance map — don't keep a full section gap under it. */
-.page.is-home {
-  padding-bottom: var(--space-block);
-}
-
-.page.is-home .site-footer {
-  margin-top: var(--space-block);
+.home-pricing {
+  margin-top: var(--space-section);
 }
 
 /* The frame hugs its content instead of scrolling internally — the embedded

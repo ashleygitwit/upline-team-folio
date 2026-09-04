@@ -1,4 +1,5 @@
 import type { VenturePlan } from '../types';
+import { PricingStrategy } from '../components/PricingStrategy';
 import { ProductJourneyEmbed } from '../components/ProductJourneyEmbed';
 
 interface HomePageProps {
@@ -69,6 +70,8 @@ export function HomePage({ plan }: HomePageProps) {
         <h2>Upline product journey</h2>
         <ProductJourneyEmbed view="simple" />
       </section>
+
+      <PricingStrategy />
     </>
   );
 }
