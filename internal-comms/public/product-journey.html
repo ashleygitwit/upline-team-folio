@@ -253,6 +253,14 @@
   }
 
   .footer { margin-top: 28px; color: var(--faint); font-size: 12px; }
+
+  body.view-simple #journey,
+  body.view-simple #legend,
+  body.view-simple .footer { display: none !important; }
+  body.view-simple .wrap { padding: 8px 0 0; }
+  body.view-simple .glance { margin: 0; }
+  body.view-detail .glance,
+  body.view-detail .page-head { display: none; }
 </style>
 </head>
 <body>
@@ -276,6 +284,13 @@
 </div>
 
 <script>
+const VIEW = new URLSearchParams(location.search).get("view");
+if (VIEW === "simple" || VIEW === "detail") document.body.classList.add("view-" + VIEW);
+if (VIEW === "detail") {
+  document.querySelector(".glance")?.remove();
+  document.querySelector(".page-head")?.remove();
+}
+
 const ROLES = {
   upline:   { label: "Upline",   color: "var(--upline)" },
   va:       { label: "VA",       color: "var(--va)" },
@@ -565,6 +580,11 @@ const GLANCE_PHASES = [
     + `<path d="M0,0 L6,3 L0,6 Z" fill="var(--faint)"/></marker></defs>${s}</svg>`;
 })();
 
+if (VIEW === "simple") {
+  document.getElementById("journey")?.remove();
+  document.getElementById("legend")?.remove();
+} else {
+
 // Journey — swimlane grid (columns = steps, rows = lanes)
 const matrix = document.getElementById("journey");
 matrix.className = "matrix";
@@ -653,6 +673,8 @@ matrix.querySelectorAll(".lane-label.toggle").forEach(label => {
   // Default: start collapsed so the journey reads cleanly; each lane expands on click.
   setCollapsed(true);
 });
+
+}
 
 // "Open in a new tab" only earns its place inside the home-page embed —
 // standalone, this page is already the thing the link points at.

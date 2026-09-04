@@ -9,9 +9,9 @@ import { SprintDayPage } from './pages/SprintDayPage';
 import { sprintDayById, type SprintDayId } from './data/sprintDays';
 import { MvpJourneyPage } from './pages/MvpJourneyPage';
 import { MvpPage } from './pages/MvpPage';
-import { PathToScalePage } from './pages/PathToScalePage';
 import { BrandPage } from './pages/BrandPage';
 import { TeamPage } from './pages/TeamPage';
+import { PrivatePage } from './pages/PrivatePage';
 import {
   clearPlanStorage,
   generateExportMarkdown,
@@ -32,9 +32,9 @@ type RouteKey =
   | 'sprint-friday'
   | 'mvp-journey'
   | 'mvp'
-  | 'scale'
   | 'brand'
-  | 'team';
+  | 'team'
+  | 'private';
 
 const NAV: { key: RouteKey; label: string; href: string }[] = [
   { key: 'home', label: 'What is Upline', href: '#/' },
@@ -55,7 +55,6 @@ const ROADMAP_ROUTES: RouteKey[] = [
   'sprint-friday',
   'mvp-journey',
   'mvp',
-  'scale',
 ];
 
 // Sub-pages surfaced in the Roadmap nav dropdown.
@@ -74,6 +73,13 @@ function routeFromHash(): RouteKey {
   const day = parts[1];
   // Legacy link support: old hashes resolve to the Roadmap page.
   if (hash === 'milestones' || hash === 'scenario-build-now') return 'roadmap';
+  // Path to Scale moved onto the private page.
+  if (hash === 'scale') {
+    if (window.location.hash !== '#/private') {
+      window.location.replace(`${window.location.pathname}${window.location.search}#/private`);
+    }
+    return 'private';
+  }
   if (hash === 'sprint' && day && SPRINT_DAY_IDS.includes(day as SprintDayId)) {
     return `sprint-${day}` as RouteKey;
   }
@@ -84,9 +90,9 @@ function routeFromHash(): RouteKey {
     hash === 'sprint' ||
     hash === 'mvp-journey' ||
     hash === 'mvp' ||
-    hash === 'scale' ||
     hash === 'brand' ||
-    hash === 'team'
+    hash === 'team' ||
+    hash === 'private'
   ) {
     return hash;
   }
@@ -181,7 +187,7 @@ function App() {
     window.location.reload();
   }
 
-  const isWide = route === 'mvp-journey';
+  const isWide = route === 'mvp-journey' || route === 'private';
   const sprintDay = route.startsWith('sprint-')
     ? sprintDayById(route.replace('sprint-', ''))
     : undefined;
@@ -264,14 +270,17 @@ function App() {
         {sprintDay ? <SprintDayPage day={sprintDay} /> : null}
         {route === 'mvp-journey' ? <MvpJourneyPage /> : null}
         {route === 'mvp' ? <MvpPage /> : null}
-        {route === 'scale' ? <PathToScalePage /> : null}
         {route === 'brand' ? <BrandPage /> : null}
         {route === 'team' ? <TeamPage /> : null}
+        {route === 'private' ? <PrivatePage /> : null}
 
           <footer className="site-footer">
             <p>
               The Upline Through Line · Upline's home base. Present, learnings, and where we're
-              headed — one roof.
+              headed — one roof.{' '}
+              <a className="site-footer-private" href="#/private">
+                Private
+              </a>
             </p>
           </footer>
       </div>

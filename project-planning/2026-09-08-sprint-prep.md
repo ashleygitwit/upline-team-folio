@@ -53,7 +53,7 @@ Do not live-edit Folio in front of the room. Do not wait until Friday to organiz
 ### 1. People and rooms (today)
 
 - [ ] Confirm JV is **not** Pittsburgh 9/9–11. If he is, the week slides.
-- [ ] Confirm who is in the building: Amanda, engineer, Claire, Megan, JV, Davey, Austin, Jacob/Dan light, Mike + Patrick Friday 9–12.
+- [ ] Confirm who is in the building: Amanda, engineer, Claire, Megan, JV, Davey, Austin, Jacob/Dan light.
 - [ ] Two rooms booked Tue–Fri. Product wall space that can stay up overnight.
 - [ ] Calendar holds on everyone’s days. Block the hours on the agenda, not “the week of.”
 - [ ] Engineer: what they read before Tuesday, and that week one is this room, not shipping.
@@ -65,21 +65,22 @@ Send from you. Short. The week is already designed — you are not asking them t
 **Whole group** (Ashley, Austin, Claire, Amanda, Megan, JV, Davey, engineer, Jacob, Dan)
 
 - What this is: translation week, not discovery. Two rooms. Product + GTM.
-- Dates and the shape: Tue journeys · Wed sketch / systems · Thu plan, scope, requirements · Fri ops then launch then podcast.
+- Dates and the shape: Tue journeys (GitWit all-hands + team lunch 12–1) · Wed sketch / systems · Thu plan, scope, requirements · Fri working time, then Venture Ops 11:30–1:30, then launch, then podcast.
 - Pre-read attached (or Through Line links). Read once. We will not recap How meetings.
 - How we work in the room: drafts are proposals. Hold / revise / drop. We record. The wall is the work.
 - What we leave Friday with (the checklist on the agenda).
 
 **JV + Davey only**
 
-- You are in product Tue 1:30–4:30 and Thu morning. That is on purpose — you sell what we can deliver.
+- You are in product Tue 1:00–4:30 and Thu morning. That is on purpose — you sell what we can deliver.
 - Wed 9–2 you are with Claire (systems, deck, site).
-- Fri 9–12 ops with everyone. Your first experiment launches Fri 1–3. Podcast 3–5.
+- Tue 11:30–12:00 GitWit all-hands — Jacob introduces you — then team lunch 12–1.
+- Fri 9–11 working time. Venture Ops 11:30–1:30 (lunch in that block). First experiment teed up Fri 1:30–3. Podcast 3–5.
 
 **Claire**
 
 - Confirm her GTM pre-work (ICP, Leander systems map) lands before Tuesday.
-- Confirm she leads Tue 9:30–12:30 and has JV/Davey Wed 9–2.
+- Confirm she leads Tue 9:30–11:30 and has JV/Davey Wed 9–2.
 - You will send her the sellable-scope page Thursday after the cut.
 
 **Amanda**
@@ -98,7 +99,7 @@ Send from you. Short. The week is already designed — you are not asking them t
 
 **Mike + Patrick**
 
-- Friday 9–12 only. Sticky-note ops, then they leave with a pile (legal, insurance, setup).
+- Optional for Friday Venture Ops 11:30–1:30. Sticky-note ops, then they leave with a pile (legal, insurance, setup).
 
 **Stockton Hill** (separate, one email)
 

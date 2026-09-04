@@ -682,7 +682,7 @@ const SCOPE_LABEL: Record<WmtItem['scope'], string> = {
   auto: 'Auto-shopping',
 };
 
-export function PathToScalePage() {
+export function PathToScalePage({ embedded }: { embedded?: boolean } = {}) {
   const [scenario, setScenario] = useState<ScenarioKey>('baseline');
   const [showMoney, setShowMoney] = useState(false);
   const active = SCENARIOS[scenario];
@@ -693,12 +693,14 @@ export function PathToScalePage() {
 
   return (
     <>
-      <a className="page-back" href="#/mvp">
-        &larr; Back to MVP
-      </a>
+      {embedded ? null : (
+        <a className="page-back" href="#/private">
+          &larr; Back to private
+        </a>
+      )}
 
       <section className="hero">
-        <p className="eyebrow">Roadmap · The plan</p>
+        <p className="eyebrow">{embedded ? 'Private' : 'Roadmap · The plan'}</p>
         <h1 className="hero-title">Path to Scale — Oct ’26 → Q2 ’27.</h1>
         <p className="hero-sub">
           Two strategic bets, four paces. Three VA-led ramps (Conservative / Baseline / Aggressive)

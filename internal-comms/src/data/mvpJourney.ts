@@ -20,10 +20,8 @@ export interface LayerDef {
 
 export const LAYERS: LayerDef[] = [
   { key: 'experience', label: 'Experience', hint: 'What happens here' },
-  { key: 'ux', label: 'UX / wireframe', hint: 'What someone sees' },
   { key: 'data', label: 'Data written', hint: 'What this step writes to the repository' },
   { key: 'logic', label: 'Operational logic', hint: 'The rules behind this step' },
-  { key: 'sold', label: 'Agent value', hint: 'What the agent gets from this step' },
 ];
 
 export const ACTORS: { key: Actor; label: string; blurb: string }[] = [
