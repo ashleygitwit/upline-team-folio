@@ -6,7 +6,7 @@ Four maps, four jobs. Do not collapse them.
 |-----|-----|-------------------------|
 | [High-level / 4-beat](#high-level--4-beat) | How we talk about the product | Sales demo + Through Line home |
 | [POC / Members 1st](#poc--members-1st) | How the pilot actually ran | Through Line `#/poc` |
-| [MVP](#mvp--layered-strawman) | What we bring into sprint week | Through Line `#/mvp-journey` |
+| [MVP](#mvp--after-the-tuesday-walk) | After the Sept 8 product-room walk | Through Line `#/mvp-journey` |
 | [Ideal / end-state](#ideal--end-state) | North star if RPA and close are ours | `internal-comms/public/product-journey.html` |
 
 Through Line is the picture. This file is the words.
@@ -59,39 +59,42 @@ Proved: agent trust, questionnaire engagement, shopping saves the agent time. Di
 
 ---
 
-## MVP — layered strawman
+## MVP — after the Tuesday walk
 
-What we take into sprint week. 20 steps. Layers on the Through Line map: experience, UX, data written, operational logic, agent value, functionality.
+What the product room held and revised on Sept 8. 22 steps. Layers on the Through Line map: experience, data written, operational logic.
 
-**Actors:** Upline · VA · Agent · Customer  
-**Phases:** Set up the data · This week · Intake · Shop & recommend · Close
+**Actors:** Upline · VA · Agent · Insured  
+**Phases:** Set up the data · This week · Intake · Shop & recommend · Close  
+**Always-on (not steps):** business dashboard · client brief
 
 | # | Step | Lane | Essence |
 |---|------|------|---------|
-| 1 | Provide access | Agent | One sitting: EZLynx login, full renewal export, email CSV, ~7–30 carrier portal logins |
-| 2 | Map the book | Upline | Census. Date every household. Assign a week ≥ ~20 days before renewal. Not a Coverage Review file. |
-| 3 | Serve this week's 30 | Upline | ~30/week off the year map. Cap ~30. Overflow slides. |
-| 4 | Pull household data | VA | Deep-pull this week’s 30 in EZLynx (History, FPD, docs, notes) |
-| 5 | Prioritize the batch | Upline | Rank after the pull: increases first, then flat, then decrease |
-| 6 | Draft outreach | Upline | Frame by % change. Cross-sell every email. Gap-only QQ attached. |
-| 7 | Review the week | Agent | Ranked 30 + drafts. Edit or hold. Does not send yet. |
-| 8 | Send outreach | Agent | Send in Upline from the agent mailbox |
-| 9 | Read the email | Customer | Sees their agent only |
-| 10 | Questionnaire | Customer | Pre-filled gaps. Shop opt-in. |
-| 11 | Pick carriers | Upline | Always 3, from the appointed set |
-| 12 | Create shop ticket | Upline | Ticket on shop-yes + locked 3-carrier list |
-| 13 | Pull the ticket | VA | Claim. Lock the household. |
-| 14 | Shop | VA | Those 3 portals only. ~30–45 min. **A person at launch.** |
-| 15 | Attach quote PDFs | VA | PDFs on the ticket trigger the next step |
-| 16 | Read the quotes | Upline | Parse, compare, lock pick + rationale |
-| 17 | Generate recommendation | Upline | Agent readout + draft email |
-| 18 | Review recommendation | Agent | Can swap the pick or edit copy |
-| 19 | Send recommendation | Agent | From the agent mailbox, in Upline |
-| 20 | Close | Customer | **Open.** Members 1st asked for times; agent closed on the phone. Do not fake this on the map. |
+| 1 | Provide access | Agent | Individual Upline AMS login (one seat, not named upline) + carrier logins they want shopped. Access SLA. No full-book dump required. |
+| 2 | Date the book | Upline | Light placeholders only. Do not deep-pull the book at onboard. |
+| 3 | Name this week's 30 | Upline | Weekly pull, 30–45 day window. Ready Monday 8:00. |
+| 4 | Pull household data | VA | Deep-pull this week’s 30. This is when the real file is written. Person at launch. |
+| 5 | Rank the 30 | Upline | Simple table: date or %. Tag MVP clients. No algorithm. |
+| 6 | Draft outreach | Upline | Questionnaire to everyone. Frame by increase + complexion. Email only. |
+| 7 | Hold or it sends | Agent | Intervene or the week goes out. Never stacks to 90. |
+| 8 | Send outreach | Agent | Upline sends from the agent mailbox. Individual sends, not an Upline domain. |
+| 9 | Read the email | Insured | Sees their agent only |
+| 10 | Questionnaire | Insured | Filling it out is the trigger. No separate “yes, shop me.” |
+| 11 | Pick carriers | Upline | Always 3. Best carrier first. “We have access to your markets.” Do not say we shopped 30. |
+| 12 | Create shop ticket | Upline | Ticket from the completed questionnaire + locked 3 |
+| 13 | Pull the ticket | VA | Claim. Lock the household. Same kit every time. |
+| 14 | Shop | VA | Those 3 portals only. **A person at launch.** |
+| 15 | Attach quote PDFs | VA | PDFs trigger the rec — and QA |
+| 16 | Read the quotes | Upline | Parse, compare, lock pick + why we rolled others out |
+| 17 | Generate recommendation | Upline | Agent readout + draft email + **insured landing page** |
+| 18 | Review recommendation | Agent | Can swap the pick or edit copy. **Does not auto-send.** |
+| 19 | Send recommendation | Agent | From the agent mailbox, link to the landing page |
+| 20 | Insured responds | Insured | Reply to talk. Click-approve, if it exists, is pending — not bound. Calendly below the line. |
+| 21 | Needs binding | Agent | Stuck until the agent marks done. We do not bind. We do not write back to the AMS. |
+| 22 | Verify renewal | Upline | Pull the AMS. Approve ≠ retention. |
 
-Email framing locked in this draft: >10% → shop · <10% → discounts · flat/down → good news. Cross-sell: <65 life · ≥65 Medicare/Medicaid · missing home or auto → the missing line.
+Email framing: material increase → shop · small / good position → I probably would not shop · down → coverages / deductibles. Cross-sell still sits in every email.
 
-Open forks for the room: year-map “this week’s 30” vs a 60-day pull-and-rank; how close works.
+Still open: click-approve in MVP vs phone-only.
 
 ---
 
@@ -120,17 +123,17 @@ Steps 9–10 (Calendly + Upline-led close) are the first things to cut if the ro
 
 ## How they differ
 
-| | POC | MVP strawman | Ideal | 4-beat |
+| | POC | MVP (Tue Sept 8) | Ideal | 4-beat |
 |---|-----|--------------|-------|--------|
-| Steps | 7 | 20 | 10 | 4 |
-| Onboard | Manual EZLynx | CSV + report + portal logins | RPA bulk | “Pulls from AMS” |
+| Steps | 7 | 22 | 10 | 4 |
+| Onboard | Manual EZLynx | Access SLA + light date. No full-book dump. | RPA bulk | “Pulls from AMS” |
 | Shopping | Austin / Upline | VA, 3 carriers Upline picked | VA team | Optional $18 |
-| Send | Agent inbox | Agent **in Upline** | Upline on their behalf | Agent reviews / sends |
-| Close | Agent phone | TBD | Calendly + Upline meeting | Agent closes |
+| Send | Agent inbox | Upline from the agent mailbox unless they hold | Upline on their behalf | Agent reviews / sends |
+| Close | Agent phone | Reply to talk; needs-binding; verify in AMS | Calendly + Upline meeting | Agent closes |
 | VA visible? | Folded into Upline | Own lane | Own lane | “We can shop” |
 
 ---
 
 ## Sources
 
-Through Line journey pages and `mvpJourney.ts`. `product-journey.html`. Aug 24 sales demo. Journey-map working sessions (Jul–Aug 2026).
+Through Line journey pages and `mvpJourney.ts`. `product-journey.html`. Aug 24 sales demo. Journey-map working sessions (Jul–Aug 2026). Tuesday Sept 8 product-room walk — [`../project-planning/sprint-week/tue.md`](../project-planning/sprint-week/tue.md).

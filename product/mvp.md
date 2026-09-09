@@ -2,7 +2,7 @@
 
 **Goal:** Ship the first sellable front-end experience the agent actually touches — review and send — with some steps still manual (VAs shopping) behind the scenes. First paying customer around **Nov 6**.
 
-Build window on Through Line: **Sep 14 through Nov 6**, coming out of sprint week, in tandem with Stockton Hill. Feature cards on the site are still placeholders. The working strawman is the layered journey — [`journey-maps.md`](journey-maps.md).
+Build window on Through Line: **Sep 14 through Nov 6**, coming out of sprint week, in tandem with Stockton Hill. Feature cards on the site are still placeholders. The working journey is the layered map from the Tuesday walk — [`journey-maps.md`](journey-maps.md).
 
 POC `mvp-scope.md` is still an empty template. Use this file + the journey map until sprint week writes a real spec.
 
@@ -18,14 +18,13 @@ If the bet is wrong, sprint week changes the bet. If the experience does not ser
 
 ## Above the line (working)
 
-- Agency gives access in one sitting (AMS login, renewal export, contacts, carrier portals)
-- Book dated into weeks; ~30 households served each week
-- VA deep-pull on that week
-- Drafted outreach the agent reviews and sends **in Upline**
-- Questionnaire in; shop ticket out
+- Agency gives an individual Upline AMS login + the carrier portals they want shopped (access SLA)
+- Weekly ~30 from a 30–45 day pull; VA deep-pulls that week (not the whole book at onboard)
+- Outreach goes unless they hold it; Upline sends from the agent mailbox
+- Questionnaire in (that is the trigger); shop ticket out
 - VA shops the three carriers Upline picked
-- Recommendation the agent reviews and sends
-- Close: **undecided** — do not invent Calendly or an Upline-led meeting unless the room holds that
+- Recommendation the agent reviews and sends (never auto); insured landing page
+- Close: reply to talk; needs-binding until the agent marks done; verify renewal in the AMS. Calendly / bind / AMS write-back are below the line.
 
 ## On ice (unless sprint week pulls them forward)
 

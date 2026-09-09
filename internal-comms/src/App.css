@@ -3837,6 +3837,67 @@ a.sprint-day-link:hover {
   max-width: 46rem;
 }
 
+.journey-surfaces {
+  margin: 0 0 1.75rem;
+}
+
+.journey-surfaces-kicker {
+  margin: 0 0 0.35rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+
+.journey-surfaces-title {
+  margin: 0 0 0.85rem;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 500;
+}
+
+.journey-surfaces-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+  gap: 0.85rem;
+}
+
+.journey-surface {
+  padding: 0.9rem 1rem 1rem;
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--chart-5);
+  background: var(--card);
+}
+
+.journey-surface h3 {
+  margin: 0 0 0.2rem;
+  font-size: 1.02rem;
+}
+
+.journey-surface-who {
+  margin: 0 0 0.55rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--chart-5) 70%, black);
+}
+
+.journey-surface p {
+  margin: 0 0 0.65rem;
+  font-size: 0.88rem;
+  line-height: 1.45;
+  color: var(--muted-foreground);
+}
+
+.journey-surface ul {
+  margin: 0;
+  padding: 0 0 0 1.1rem;
+  font-size: 0.84rem;
+  line-height: 1.45;
+}
+
 .ljm {
   margin: 0.4rem 0 2rem;
 }
@@ -4011,7 +4072,8 @@ a.sprint-day-link:hover {
   border-left-color: var(--chart-5);
   color: color-mix(in srgb, var(--chart-5) 70%, black);
 }
-.ljm-lane.is-customer {
+.ljm-lane.is-customer,
+.ljm-lane.is-insured {
   border-left-color: var(--info);
   color: var(--info-strong);
 }
@@ -4045,7 +4107,8 @@ a.sprint-day-link:hover {
 .ljm-card.is-agent {
   border-top-color: var(--chart-5);
 }
-.ljm-card.is-customer {
+.ljm-card.is-customer,
+.ljm-card.is-insured {
   border-top-color: var(--info);
 }
 
@@ -4344,7 +4407,8 @@ a.sprint-day-link:hover {
 .ljm-detail-col.is-agent {
   border-top-color: var(--chart-5);
 }
-.ljm-detail-col.is-customer {
+.ljm-detail-col.is-customer,
+.ljm-detail-col.is-insured {
   border-top-color: var(--info);
 }
 

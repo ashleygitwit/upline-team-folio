@@ -13,6 +13,8 @@ This is **not** product strategy. If the question is "what do we believe / what 
 | [`2026-09-08-strategy-sprint.md`](2026-09-08-strategy-sprint.md) | Sprint week plan (Tue–Fri in the room) |
 | [`2026-09-08-sprint-week-notion.md`](2026-09-08-sprint-week-notion.md) | Same week, Notion-paste version |
 | [`2026-09-08-sprint-prep.md`](2026-09-08-sprint-prep.md) | This week’s prep: emails, print pack, how we present and capture |
+| [`strategy-sprint/`](strategy-sprint/) | Permanent home for sprint-week transcripts |
+| [`sprint-week/`](sprint-week/) | Nightly sprint capture. Tuesday: [`tue.md`](sprint-week/tue.md). Wednesday wall: [`wed-wall.md`](sprint-week/wed-wall.md). |
 | [`execution-plan.md`](execution-plan.md) | Generated living plan from `data/venture-plan.json` |
 
 New How Should We notes go here as `YYYY-MM-DD-how-should-we.md`.
