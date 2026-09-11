@@ -4973,3 +4973,1602 @@ a.sprint-day-link:hover {
 .site-footer-private:hover {
   text-decoration: underline;
 }
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.journey-surface-link {
+  display: inline-block;
+  margin-top: 0.75rem;
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: var(--primary);
+  text-decoration: none;
+}
+
+.journey-surface-link:hover {
+  text-decoration: underline;
+}
+
+/* ---- Business dashboard wireframe ---- */
+.page.is-product {
+  padding-top: calc(var(--nav-h) + 2.25rem);
+}
+
+.bd-intro {
+  max-width: 42rem;
+  margin-bottom: 1.35rem;
+}
+
+.bd-intro .hero-title {
+  margin-bottom: 0.4rem;
+}
+
+.bd-shell {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 22rem);
+  align-items: start;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 1.15rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.bd-main {
+  min-width: 0;
+  padding: 1.15rem 1.25rem 1.6rem;
+}
+
+.bd-chrome {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 0.85rem 1.25rem;
+  margin-bottom: 1.1rem;
+}
+
+.bd-agency {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+
+.bd-chrome-sub {
+  margin: 0.15rem 0 0;
+  font-size: 0.82rem;
+  color: var(--muted-foreground);
+}
+
+.bd-filters {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.bd-filters button {
+  appearance: none;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--foreground);
+  border-radius: var(--radius-pill);
+  padding: 0.38rem 0.8rem;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.bd-filters button.is-on {
+  border-color: var(--primary);
+  background: color-mix(in srgb, var(--info-soft) 55%, var(--card));
+  color: var(--primary);
+}
+
+/* Each layer answers a different question, so they get visible separation
+   rather than one undifferentiated wall of tiles. */
+.bd-layer {
+  padding-bottom: 1.5rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.bd-layer:last-child {
+  padding-bottom: 0;
+  margin-bottom: 0;
+  border-bottom: 0;
+}
+
+.bd-layer-head {
+  margin-bottom: 0.8rem;
+}
+
+.bd-layer-head h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--foreground);
+}
+
+.bd-kicker {
+  margin: 0 0 0.15rem;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+
+.bd-layer-note {
+  margin: 0.3rem 0 0;
+  max-width: 40rem;
+  font-size: 0.8rem;
+  line-height: 1.45;
+  color: var(--muted-foreground);
+}
+
+/* Metrics we model rather than measure carry this tag — the retention claim is
+   what we sell hardest, so a derived number next to it cannot look measured. */
+.bd-tag {
+  display: inline-block;
+  margin-left: 0.4rem;
+  padding: 0.08rem 0.4rem;
+  border-radius: var(--radius-pill);
+  background: var(--amber-soft);
+  color: var(--amber-strong);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  vertical-align: middle;
+}
+
+/* ---- Layer 1: retention, converted to money ---- */
+.bd-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 0.9rem;
+  overflow: hidden;
+}
+
+.bd-hero-main {
+  padding: 1.15rem 1.25rem 1.25rem;
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--info-soft) 40%, var(--card)),
+    var(--card) 62%
+  );
+}
+
+.bd-hero-label {
+  margin: 0;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.bd-hero-value {
+  margin: 0.1rem 0 0;
+  font-family: var(--font-display);
+  font-size: 4.25rem;
+  font-weight: 600;
+  letter-spacing: -0.045em;
+  line-height: 1;
+}
+
+.bd-hero-meta {
+  margin: 0.3rem 0 0;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  color: var(--muted-foreground);
+}
+
+.bd-gauge {
+  margin-top: 1rem;
+}
+
+.bd-gauge-track {
+  position: relative;
+  height: 0.6rem;
+  border-radius: var(--radius-pill);
+  background: var(--muted);
+  overflow: hidden;
+}
+
+.bd-gauge-fill {
+  height: 100%;
+  border-radius: var(--radius-pill);
+  background: linear-gradient(90deg, var(--chart-2), var(--primary));
+}
+
+/* The baseline marker is the whole point of the bar: the delta is the sale. */
+.bd-gauge-mark {
+  position: absolute;
+  top: -0.2rem;
+  bottom: -0.2rem;
+  width: 2px;
+  background: var(--foreground);
+}
+
+.bd-gauge-legend {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 0.35rem;
+  font-size: 0.72rem;
+  color: var(--muted-foreground);
+}
+
+.bd-hero-money {
+  padding: 1.15rem 1.25rem 1.25rem;
+  background: color-mix(in srgb, var(--success-soft) 32%, var(--card));
+}
+
+.bd-hero-money-label {
+  margin: 0;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--success-strong);
+}
+
+.bd-hero-money-value {
+  margin: 0.1rem 0 0;
+  font-family: var(--font-display);
+  font-size: 2.6rem;
+  font-weight: 600;
+  letter-spacing: -0.035em;
+  line-height: 1.05;
+}
+
+.bd-hero-money-sub {
+  margin: 0.35rem 0 0;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  color: var(--muted-foreground);
+}
+
+.bd-caption {
+  margin: 0.6rem 0 0;
+  font-size: 0.76rem;
+  line-height: 1.45;
+  color: var(--muted-foreground);
+}
+
+/* ---- Shared stat row ---- */
+/* Column flow so 3- and 4-stat rows both divide evenly without a per-row rule. */
+.bd-stats {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  margin-top: 1rem;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 0.9rem;
+  overflow: hidden;
+}
+
+.bd-stat {
+  position: relative;
+  padding: 0.9rem 1rem 1rem;
+}
+
+.bd-stat-rule {
+  position: absolute;
+  left: 0;
+  top: 1rem;
+  bottom: 1rem;
+  width: 1px;
+  background: var(--border);
+}
+
+.bd-stat-label {
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.bd-stat-value {
+  margin: 0.2rem 0 0;
+  font-family: var(--font-display);
+  font-size: 1.85rem;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+}
+
+.bd-stat-sub {
+  margin: 0.28rem 0 0;
+  font-size: 0.75rem;
+  line-height: 1.35;
+  color: var(--muted-foreground);
+}
+
+/* ---- Layer 4: exceptions only ---- */
+.bd-layer-actions .bd-layer-head h2 {
+  font-size: 1.05rem;
+}
+
+.bd-exceptions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: 0.7rem;
+}
+
+.bd-exception {
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.8rem 0.9rem 0.85rem;
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--warn);
+  border-radius: 0.7rem;
+  background: var(--card);
+}
+
+.bd-exception-count {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.7rem;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--warn-strong);
+}
+
+.bd-exception-label {
+  margin: 0;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.bd-exception-names {
+  margin: 0.2rem 0 0;
+  font-size: 0.78rem;
+  color: var(--primary);
+}
+
+.bd-exception-hint {
+  margin: 0.28rem 0 0;
+  font-size: 0.73rem;
+  line-height: 1.35;
+  color: var(--muted-foreground);
+}
+
+/* ---- Producer board page ---- */
+.bd-board-shell {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 20rem);
+  gap: 1rem;
+  align-items: start;
+}
+
+.bd-brief {
+  position: sticky;
+  top: calc(var(--nav-h) + 1rem);
+  padding: 1rem 1.1rem 1.2rem;
+  border: 1px solid var(--border);
+  border-radius: 0.9rem;
+  background: color-mix(in srgb, var(--info-soft) 18%, var(--card));
+}
+
+.bd-brief h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--foreground);
+}
+
+.bd-brief-meta {
+  margin: 0.2rem 0 0;
+  font-size: 0.78rem;
+  color: var(--primary);
+}
+
+.bd-brief-body {
+  margin: 0.6rem 0 0;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: var(--muted-foreground);
+}
+
+.bd-funnel {
+  margin: 0;
+  padding: 0.85rem 0.85rem 0.7rem;
+  border: 1px solid var(--border);
+  border-radius: 0.9rem;
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--warn-soft) 28%, var(--card)), var(--card) 46%);
+}
+
+.bd-funnel-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.bd-funnel-label {
+  fill: var(--foreground);
+  font-size: 13px;
+  font-weight: 600;
+  font-family: var(--font-sans);
+}
+
+.bd-funnel-count {
+  fill: #282831;
+  font-size: 13px;
+  font-weight: 700;
+  font-family: var(--font-sans);
+}
+
+.bd-funnel-hints {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.45rem;
+  margin: 0.15rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.bd-funnel-hints li {
+  padding-inline: 0.2rem;
+  font-size: 0.72rem;
+  line-height: 1.3;
+  text-align: center;
+  color: var(--muted-foreground);
+}
+
+.bd-kanban {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(11.5rem, 1fr));
+  gap: 0.7rem;
+  overflow-x: auto;
+}
+
+.bd-kanban-col {
+  min-width: 11.5rem;
+  border: 1px solid var(--border);
+  border-radius: 0.8rem;
+  background: color-mix(in srgb, var(--muted) 40%, var(--card));
+  padding: 0.65rem 0.6rem 0.7rem;
+}
+
+.bd-kanban-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.4rem;
+}
+
+.bd-kanban-head p {
+  margin: 0;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.bd-kanban-head span {
+  min-width: 1.25rem;
+  padding: 0.05rem 0.4rem;
+  border-radius: var(--radius-pill);
+  background: var(--card);
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.bd-kanban-hint {
+  margin: 0.2rem 0 0.55rem;
+  font-size: 0.68rem;
+  line-height: 1.3;
+  color: var(--muted-foreground);
+}
+
+.bd-kanban-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.bd-person {
+  appearance: none;
+  width: 100%;
+  text-align: left;
+  border: 1px solid transparent;
+  border-radius: 0.65rem;
+  background: var(--card);
+  padding: 0.55rem 0.6rem 0.6rem;
+  font: inherit;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+}
+
+.bd-person:hover,
+.bd-person.is-on {
+  border-color: var(--primary);
+}
+
+.bd-person strong {
+  display: block;
+  font-size: 0.84rem;
+}
+
+.bd-person-meta {
+  display: block;
+  margin-top: 0.12rem;
+  font-size: 0.7rem;
+  color: var(--primary);
+}
+
+.bd-person-note {
+  display: block;
+  margin-top: 0.28rem;
+  font-size: 0.72rem;
+  line-height: 1.35;
+  color: var(--muted-foreground);
+}
+
+/* Sticky and self-sized: the main column is far taller than the chat, and
+   stretching to match it stranded the input at the bottom of a dead void. */
+.bd-chat {
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: 0;
+  align-self: start;
+  max-height: 100vh;
+  border-left: 1px solid var(--border);
+  /* The shell cannot clip with overflow: hidden without killing the sticky
+     positioning above, so this rounds its own outer corners. */
+  border-radius: 0 1.15rem 1.15rem 0;
+  background: color-mix(in srgb, var(--info-soft) 18%, var(--card));
+}
+
+.bd-chat-head {
+  padding: 1.05rem 1rem 0.75rem;
+}
+
+.bd-chat-head h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--foreground);
+}
+
+.bd-chat-head p:last-child {
+  margin: 0.35rem 0 0;
+  font-size: 0.78rem;
+  line-height: 1.4;
+  color: var(--muted-foreground);
+}
+
+.bd-chat-thread {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  padding: 0 1rem 0.75rem;
+  overflow: auto;
+  min-height: 8rem;
+}
+
+.bd-bubble {
+  margin: 0;
+  max-width: 94%;
+  padding: 0.65rem 0.75rem;
+  border-radius: 0.85rem;
+  font-size: 0.8rem;
+  line-height: 1.45;
+}
+
+.bd-bubble.is-upline {
+  background: var(--card);
+  color: var(--foreground);
+  border-bottom-left-radius: 0.25rem;
+}
+
+.bd-bubble.is-agent {
+  align-self: flex-end;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  border-bottom-right-radius: 0.25rem;
+}
+
+.bd-starters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  padding: 0 1rem 0.7rem;
+}
+
+.bd-starters button,
+.bd-ask button {
+  appearance: none;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--foreground);
+  border-radius: var(--radius-pill);
+  padding: 0.32rem 0.65rem;
+  font: inherit;
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.bd-starters button:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.bd-ask {
+  display: flex;
+  gap: 0.4rem;
+  padding: 0 1rem 1rem;
+}
+
+.bd-ask input {
+  flex: 1;
+  min-width: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  background: var(--card);
+  padding: 0.5rem 0.8rem;
+  font: inherit;
+  font-size: 0.8rem;
+}
+
+.bd-ask button {
+  background: var(--button);
+  border-color: var(--button);
+  color: var(--primary-foreground);
+  padding-inline: 0.85rem;
+}
+
+.bd-ask button:hover {
+  background: var(--button-hover);
+}
+
+@media (max-width: 1080px) {
+  .bd-shell,
+  .bd-board-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .bd-chat {
+    border-left: 0;
+    border-top: 1px solid var(--border);
+  }
+
+  .bd-brief {
+    position: static;
+  }
+
+  .bd-hero {
+    grid-template-columns: 1fr;
+  }
+
+  .bd-stats {
+    grid-auto-flow: row;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .bd-stat:nth-child(-n + 2) .bd-stat-rule {
+    display: none;
+  }
+
+  .bd-funnel-hints {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .bd-stats {
+    grid-auto-flow: row;
+    grid-template-columns: 1fr;
+  }
+
+  .bd-stat-rule {
+    display: none;
+  }
+
+  .bd-hero-value {
+    font-size: 3.4rem;
+  }
+
+  .bd-kanban {
+    grid-template-columns: minmax(15rem, 1fr);
+  }
+}
+
+/* ---- Owner view — the weekly, peace-of-mind take ---- */
+.ov-intro {
+  max-width: 44rem;
+  margin-bottom: 1.35rem;
+}
+
+.ov-intro .hero-title {
+  margin-bottom: 0.4rem;
+}
+
+.ov-shell {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 1.15rem;
+  padding: 1.15rem 1.35rem 1.4rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.ov-chrome {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 0.6rem 1.25rem;
+  padding-bottom: 0.9rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.ov-agency {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+
+.ov-chrome-sub {
+  margin: 0.15rem 0 0;
+  font-size: 0.82rem;
+  color: var(--muted-foreground);
+}
+
+/* The organising axis is time since he last looked, not a range filter — a
+   weekly screen has to show news, and range toggles only show totals again. */
+.ov-lastlook {
+  margin: 0;
+  padding: 0.3rem 0.7rem;
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, var(--info-soft) 45%, var(--card));
+  color: var(--info-strong);
+  font-size: 0.76rem;
+  font-weight: 600;
+}
+
+/* ---- The verdict ---- */
+.ov-verdict {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 15rem;
+  gap: 1.5rem;
+  align-items: start;
+  padding: 1.4rem 0 1.6rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.ov-verdict-head {
+  margin: 0 0 0.7rem;
+  font-family: var(--font-display);
+  font-size: 3.2rem;
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  line-height: 1.02;
+}
+
+.ov-verdict-line {
+  margin: 0 0 0.3rem;
+  font-size: 1rem;
+  line-height: 1.45;
+}
+
+.ov-verdict-line strong {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.ov-verdict-delta {
+  margin: 0.8rem 0 0;
+  display: inline-block;
+  padding: 0.28rem 0.65rem;
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, var(--success-soft) 55%, var(--card));
+  color: var(--success-strong);
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+/* Reassurance alone makes the product invisible by renewal, so the accrued
+   value rides along as one quiet line and never more than that. */
+.ov-verdict-standing {
+  margin: 1rem 0 0;
+  padding-top: 0.8rem;
+  border-top: 1px dashed var(--border);
+  max-width: 34rem;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: var(--muted-foreground);
+}
+
+/* ---- The phone, same artifact at the zoom he actually reads it ---- */
+.ov-phone {
+  border: 8px solid #282831;
+  border-radius: 1.6rem;
+  background: #282831;
+  box-shadow: var(--shadow-sm);
+}
+
+.ov-phone-screen {
+  padding: 0.9rem 0.85rem 1rem;
+  border-radius: 1.05rem;
+  background: var(--background);
+}
+
+.ov-phone-kicker {
+  margin: 0 0 0.35rem;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--primary);
+}
+
+.ov-phone-head {
+  margin: 0 0 0.4rem;
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+
+.ov-phone-line {
+  margin: 0;
+  font-size: 0.72rem;
+  line-height: 1.4;
+  color: var(--muted-foreground);
+}
+
+.ov-phone-rule {
+  height: 1px;
+  margin: 0.7rem 0;
+  background: var(--border);
+}
+
+.ov-phone-sub {
+  margin: 0 0 0.35rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.ov-phone-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.ov-phone-list li {
+  font-size: 0.68rem;
+  line-height: 1.35;
+  color: var(--muted-foreground);
+}
+
+.ov-phone-list strong {
+  color: var(--foreground);
+}
+
+.ov-phone-foot {
+  margin: 0;
+  font-size: 0.68rem;
+  color: var(--muted-foreground);
+}
+
+/* ---- Blocks ---- */
+.ov-block {
+  padding: 1.5rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.ov-block-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 0.75rem 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.ov-block-head h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--foreground);
+}
+
+.ov-kicker {
+  margin: 0 0 0.15rem;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+
+.ov-block-note {
+  margin: 0.3rem 0 0;
+  max-width: 42rem;
+  font-size: 0.8rem;
+  line-height: 1.45;
+  color: var(--muted-foreground);
+}
+
+.ov-toggle,
+.ov-check-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.ov-toggle button,
+.ov-check-picker button,
+.ov-random {
+  appearance: none;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--foreground);
+  border-radius: var(--radius-pill);
+  padding: 0.38rem 0.8rem;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.ov-toggle button.is-on,
+.ov-check-picker button.is-on {
+  border-color: var(--primary);
+  background: color-mix(in srgb, var(--info-soft) 55%, var(--card));
+  color: var(--primary);
+}
+
+.ov-random {
+  border-style: dashed;
+  color: var(--primary);
+}
+
+/* ---- The field: his book, by contact freshness ---- */
+.ov-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1.4rem;
+  margin: 0 0 0.9rem;
+  padding: 0;
+  list-style: none;
+}
+
+.ov-legend li {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  font-size: 0.78rem;
+}
+
+.ov-legend-dot {
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+}
+
+.ov-legend-count {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.ov-legend-label {
+  color: var(--muted-foreground);
+}
+
+.ov-field-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.ov-caption {
+  margin: 0.9rem 0 0;
+  max-width: 46rem;
+  font-size: 0.8rem;
+  line-height: 1.55;
+  color: var(--muted-foreground);
+}
+
+/* ---- Spot-check ---- */
+.ov-check {
+  display: grid;
+  grid-template-columns: 11rem minmax(0, 1fr);
+  gap: 1.25rem;
+  align-items: start;
+}
+
+.ov-check .ov-check-picker {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.ov-check-picker button {
+  text-align: left;
+}
+
+.ov-trail {
+  border: 1px solid var(--border);
+  border-radius: 0.9rem;
+  overflow: hidden;
+}
+
+.ov-trail header {
+  padding: 0.8rem 1rem;
+  background: var(--muted);
+  border-bottom: 1px solid var(--border);
+}
+
+.ov-trail-name {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 500;
+}
+
+.ov-status {
+  padding: 0.1rem 0.45rem;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-body);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.ov-status.is-warm {
+  background: var(--info-soft);
+  color: var(--info-strong);
+}
+
+.ov-status.is-cold {
+  background: var(--warn-soft);
+  color: var(--warn-strong);
+}
+
+.ov-trail-meta {
+  margin: 0.2rem 0 0;
+  font-size: 0.78rem;
+  color: var(--muted-foreground);
+}
+
+.ov-trail-list {
+  margin: 0;
+  padding: 0.4rem 0;
+  list-style: none;
+}
+
+.ov-trail-list li {
+  display: grid;
+  grid-template-columns: 4rem 5.5rem minmax(0, 1fr);
+  gap: 0.75rem;
+  padding: 0.45rem 1rem;
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+.ov-trail-date {
+  color: var(--muted-foreground);
+  font-variant-numeric: tabular-nums;
+}
+
+.ov-trail-who {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding-top: 0.15rem;
+}
+
+.ov-trail-list li.is-upline .ov-trail-who {
+  color: var(--primary);
+}
+
+.ov-trail-list li.is-household .ov-trail-who {
+  color: var(--success-strong);
+}
+
+.ov-trail-list li.is-agency .ov-trail-who {
+  color: var(--warn-strong);
+}
+
+/* ---- Worth knowing ---- */
+.ov-wk {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+  gap: 0.75rem;
+}
+
+.ov-wk-card {
+  padding: 0.9rem 1rem 1rem;
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--border);
+  border-radius: 0.75rem;
+  background: var(--card);
+}
+
+.ov-wk-card.is-wants {
+  border-top-color: var(--success);
+}
+
+.ov-wk-card.is-changed {
+  border-top-color: var(--warn);
+}
+
+.ov-wk-card.is-told {
+  border-top-color: var(--chart-6);
+}
+
+.ov-wk-kind {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.4rem;
+  margin: 0 0 0.5rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.ov-wk-kind span {
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--muted-foreground);
+}
+
+.ov-wk-name {
+  margin: 0 0 0.35rem;
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.ov-wk-name span {
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+}
+
+.ov-wk-said {
+  margin: 0 0 0.4rem;
+  font-size: 0.86rem;
+  line-height: 1.45;
+}
+
+.ov-wk-why {
+  margin: 0 0 0.7rem;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  color: var(--muted-foreground);
+}
+
+/* Written for him. The ask has to be a phone call, not homework. */
+.ov-wk-opener {
+  margin: 0;
+  padding: 0.6rem 0.7rem;
+  border-radius: 0.5rem;
+  background: var(--muted);
+  font-size: 0.78rem;
+  line-height: 1.5;
+  font-style: italic;
+}
+
+.ov-wk-opener span {
+  display: block;
+  margin-bottom: 0.2rem;
+  font-style: normal;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+
+/* ---- Demoted funnel ---- */
+.ov-block-quiet {
+  border-bottom: 0;
+}
+
+.ov-funnel {
+  max-width: 46rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 0.9rem;
+  background: var(--muted);
+}
+
+.ov-block-quiet .ov-funnel .bd-funnel-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.ov-foot {
+  margin: 1.25rem 0 0;
+  padding: 0.8rem 0.95rem;
+  border-left: 3px solid var(--amber);
+  background: color-mix(in srgb, var(--amber-soft) 45%, var(--card));
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+
+@media (max-width: 1080px) {
+  .ov-verdict {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ov-phone {
+    max-width: 15rem;
+  }
+
+  .ov-check {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ov-check .ov-check-picker {
+    flex-direction: row;
+  }
+}
+
+@media (max-width: 640px) {
+  .ov-verdict-head {
+    font-size: 2.3rem;
+  }
+
+  .ov-trail-list li {
+    grid-template-columns: 3.5rem minmax(0, 1fr);
+  }
+
+  .ov-trail-who {
+    display: none;
+  }
+}
+
+/* ==========================================================================
+   Gantt — road to Nov 6 (SprintPage)
+   Each row is its own grid sharing one column template, so bars land on the
+   same week boundaries as the header without any row spanning.
+   Fills are brand ramp values; all text sits dark on light except --info,
+   which is dark enough to carry white.
+   ========================================================================== */
+
+.gantt-wrap {
+  margin-top: 0.5rem;
+}
+
+.gantt-scroll {
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+}
+
+.gantt {
+  min-width: 780px;
+}
+
+.gantt-row {
+  display: grid;
+  grid-template-columns: 7.75rem 1fr;
+  align-items: stretch;
+  gap: 0.5rem;
+}
+
+.gantt-track {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(var(--gantt-cols), 1fr);
+  align-items: center;
+  min-height: 2.35rem;
+}
+
+.gantt-gridline {
+  grid-row: 1;
+  height: 100%;
+  border-left: 1px solid var(--border);
+}
+
+.gantt-gridline:last-of-type {
+  border-right: 1px solid var(--border);
+}
+
+/* --- header --- */
+
+.gantt-row-head .gantt-track {
+  min-height: 0;
+  margin-bottom: 0.35rem;
+}
+
+.gantt-colhead {
+  grid-row: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 0.15rem 0.3rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.gantt-colhead-week {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--primary);
+}
+
+.gantt-colhead-dates {
+  font-size: 0.7rem;
+  color: var(--muted-foreground);
+}
+
+/* --- lanes and labels --- */
+
+.gantt-lane {
+  margin-top: 0.9rem;
+}
+
+.gantt-lane-title {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+  margin-bottom: 0.3rem;
+}
+
+.gantt-label {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-right: 0.35rem;
+}
+
+.gantt-label-main {
+  font-size: 0.82rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.gantt-label-sub {
+  font-size: 0.7rem;
+  color: var(--muted-foreground);
+  line-height: 1.2;
+}
+
+/* --- bars --- */
+
+.gantt-bar {
+  grid-row: 1;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  min-height: 1.8rem;
+  margin: 0.2rem 2px;
+  padding: 0 0.6rem;
+  border-radius: var(--radius-pill);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--foreground);
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.gantt-bar span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* One- and two-column bars are ~70–150px wide, which holds no useful label.
+   These carry theirs just past the bar instead of ellipsising it. */
+.gantt-bar[data-outside='true'] {
+  position: relative;
+  overflow: visible;
+}
+
+.gantt-bar[data-outside='true'] span {
+  position: absolute;
+  left: calc(100% + 0.45rem);
+  overflow: visible;
+  color: var(--foreground);
+  white-space: nowrap;
+}
+
+.gantt-bar[data-tone='design'] {
+  background: #ded2f0;
+}
+
+.gantt-bar[data-tone='dev'] {
+  background: var(--info);
+  color: var(--primary-foreground);
+}
+
+.gantt-bar[data-tone='qa'] {
+  background: var(--amber);
+}
+
+.gantt-bar[data-tone='pilot-a'] {
+  background: var(--chart-2);
+}
+
+.gantt-bar[data-tone='pilot-b'] {
+  background: #cdd7fd;
+}
+
+.gantt-bar[data-tone='launch'] {
+  background: var(--success);
+}
+
+.gantt-bar[data-tone='outbound'] {
+  background: var(--muted);
+  border: 1px solid var(--border);
+  color: var(--muted-foreground);
+}
+
+.gantt-bar[data-tone='paid-1'] {
+  background: var(--warn-soft);
+}
+
+.gantt-bar[data-tone='paid-2'] {
+  background: #ffb589;
+}
+
+.gantt-bar[data-tone='paid-3'] {
+  background: var(--warn);
+}
+
+.gantt-bar[data-tone='web'] {
+  background: var(--info-soft);
+}
+
+.gantt-bar[data-tone='event'] {
+  background: var(--amber-soft);
+}
+
+/* --- milestones --- */
+
+.gantt-row-milestones {
+  margin-top: 1rem;
+}
+
+.gantt-row-milestones .gantt-track {
+  min-height: 3.1rem;
+  align-items: start;
+}
+
+/* A milestone marks the Friday of its week, so it sits flush to the column's
+   right edge rather than its left. */
+.gantt-milestone {
+  grid-row: 1;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  text-align: right;
+  padding: 0.3rem 0.45rem 0 0;
+  border-right: 2px solid var(--primary);
+  margin-right: 2px;
+}
+
+.gantt-milestone-date {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.gantt-milestone-label {
+  font-size: 0.68rem;
+  line-height: 1.25;
+  color: var(--muted-foreground);
+}
+
+.gantt-milestone[data-emphasis='true'] {
+  border-right-color: var(--success-strong);
+}
+
+.gantt-milestone[data-emphasis='true'] .gantt-milestone-date {
+  color: var(--success-strong);
+}
+
+.gantt-milestone[data-emphasis='true'] .gantt-milestone-label {
+  color: var(--foreground);
+  font-weight: 600;
+}
+
+/* --- legend --- */
+
+.gantt-legend {
+  list-style: none;
+  margin: 1rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1rem;
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+}
+
+.gantt-legend li {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.gantt-swatch {
+  width: 0.85rem;
+  height: 0.85rem;
+  border-radius: 0.25rem;
+  flex: none;
+}
+
+.gantt-swatch[data-tone='design'] {
+  background: #ded2f0;
+}
+
+.gantt-swatch[data-tone='dev'] {
+  background: var(--info);
+}
+
+.gantt-swatch[data-tone='qa'] {
+  background: var(--amber);
+}
+
+.gantt-swatch[data-tone='pilot-a'] {
+  background: var(--chart-2);
+}
+
+.gantt-swatch[data-tone='launch'] {
+  background: var(--success);
+}
+
+.gantt-swatch[data-tone='paid-3'] {
+  background: var(--warn);
+}
+
+.gantt-hint {
+  margin: 0.5rem 0 0;
+  font-size: 0.72rem;
+  color: var(--muted-foreground);
+}
+
+@media (min-width: 900px) {
+  .gantt-hint {
+    display: none;
+  }
+}

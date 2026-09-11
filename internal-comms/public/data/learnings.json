@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-08-07",
+  "lastUpdated": "2026-09-09",
   "intro": "How our thinking has changed over time — the evolution from an initial concept toward what will become the MVP. The learning log below is added to constantly as each pilot teaches us more; the open questions up top are the ones we're still pressure-testing.",
   "questions": [
     {
@@ -211,6 +211,24 @@
       "kind": "learning",
       "source": "Internal team",
       "learning": "October ops architecture for Path 2 gets concrete: light CSV roster on onboard (no full-book RPA), weekly EZLynx renewal/retention report into an inbox, deep-pull RPA only on the shortlist, write-back via Zapier Create Note/Document when Sales Center is available (deposit pack fallback)."
+    },
+    {
+      "date": "2026-09-08",
+      "kind": "milestone",
+      "source": "Internal team",
+      "learning": "Product strategy sprint opened — four days, Tue Sep 8 through Fri Sep 11, to turn two pilots' worth of learning into a buildable MVP plan."
+    },
+    {
+      "date": "2026-09-08",
+      "kind": "learning",
+      "source": "Strategy sprint — journey walk",
+      "learning": "Walking the twenty-step map end to end held the spine: about thirty households a week, a VA pulls the file, the questionnaire is the trigger, three carriers get shopped on fit, and the agent sends the recommendation from their own mailbox. What the room revised was how the train moves — outreach goes unless the agency stops it, we do not deep-map the whole book at onboard, and we do not write structured data back into the AMS.",
+      "detail": [
+        "Renamed customer to insured / policyholder. The agency's customer is the consumer, and the language was getting confusing.",
+        "The insured gets a custom landing page for the proposal rather than a jargon PDF. The email is the invitation; the page is the brief.",
+        "Language discipline on shopping: we have access to the markets and we used judgment. We do not claim we shopped thirty carriers when we shopped three.",
+        "New top production risk named: false purchase. The insured clicks approve, the agent never binds, a claim happens, and Upline gets blamed. If approve exists it has to mean pending, never bound."
+      ]
     }
   ]
 }

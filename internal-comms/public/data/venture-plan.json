@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-09-04",
+  "lastUpdated": "2026-09-09",
   "venture": {
     "hypothesis": "If we help independent P&C agencies turn renewal season into a repeatable, agent-approved outreach-and-recommendation workflow by triaging which accounts need action, doing the shopping legwork, and drafting a clear client recommendation, then agencies will retain more at-risk households and convert more renewals into cross-sell or up-sell conversations across their existing book of business, because today that work is too manual and time-consuming for most teams to run account-by-account at scale.",
     "thesis": {
@@ -181,7 +181,7 @@
       "id": "prod-sprint-prep",
       "title": "Sprint prep",
       "workstream": "Product",
-      "status": "Next",
+      "status": "Done",
       "owner": "Ashley + Agent",
       "start": "2026-09-08",
       "end": "2026-09-08",

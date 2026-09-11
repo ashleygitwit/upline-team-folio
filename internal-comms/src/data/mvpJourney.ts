@@ -67,6 +67,8 @@ export const SURFACES: {
   who: string;
   experience: string;
   shows: string[];
+  href?: string;
+  hrefLabel?: string;
 }[] = [
   {
     id: 'dashboard',

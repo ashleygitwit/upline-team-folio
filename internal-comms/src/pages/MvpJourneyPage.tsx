@@ -32,6 +32,11 @@ export function MvpJourneyPage() {
                   <li key={item}>{item}</li>
                 ))}
               </ul>
+              {surface.href ? (
+                <a className="journey-surface-link" href={surface.href}>
+                  {surface.hrefLabel ?? 'Open'} &rarr;
+                </a>
+              ) : null}
             </article>
           ))}
         </div>

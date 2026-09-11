@@ -1,6 +1,6 @@
 # Upline Venture — Execution Plan
 
-*Last updated: 2026-09-04*
+*Last updated: 2026-09-09*
 
 Paste this into ChatGPT, Claude, or your preferred LLM to ask about timeline, priorities, pilot metrics, email copy, and what is in flight. Answers should synthesize at **team level** — see guidance below.
 
@@ -141,10 +141,6 @@ Post-shop handoff locked short: steer (switch/stay + $) in paragraph one, premiu
 - **Workstream:** Product
 - **Dates:** 2026-09-14 → 2026-10-02
 - **Notes:** Second design partner. Access is in hand; the pilot has not started. Reset outreach to Version A (do not inherit M1 v8). Three weeks after the strategy sprint (Sep 14–Oct 2), running alongside the MVP build.
-### Sprint prep
-- **Workstream:** Product
-- **Dates:** 2026-09-08 → 2026-09-08
-- **Notes:** Prep at the open of Labor Day sprint week (Sep 8–11). Stockton Hill is the three weeks after.
 ### MVP planning
 - **Workstream:** Product
 - **Dates:** 2026-09-10 → 2026-09-11
@@ -219,6 +215,10 @@ Post-shop handoff locked short: steer (switch/stay + $) in paragraph one, premiu
 - **Workstream:** Product
 - **Dates:** 2026-08-05 → 2026-09-03
 - **Notes:** Access received. Pilot does not start until Sep 14 — three weeks after Labor Day sprint week.
+### Sprint prep
+- **Workstream:** Product
+- **Dates:** 2026-09-08 → 2026-09-08
+- **Notes:** Prep at the open of Labor Day sprint week (Sep 8–11). Stockton Hill is the three weeks after.
 ### No-AMS launch feasibility (background)
 - **Workstream:** Product
 - **Dates:** 2026-07-13 → 2026-08-24
@@ -239,7 +239,7 @@ Post-shop handoff locked short: steer (switch/stay + $) in paragraph one, premiu
 | Members 1st final retro | Product | Done | 2026-08-03 | 2026-08-03 |
 | Stockton Hill setup / holding | Product | Done | 2026-08-05 | 2026-09-03 |
 | Stockton Hill pilot | Product | Next | 2026-09-14 | 2026-10-02 |
-| Sprint prep | Product | Next | 2026-09-08 | 2026-09-08 |
+| Sprint prep | Product | Done | 2026-09-08 | 2026-09-08 |
 | Product strategy sprint | Product | In Flight | 2026-09-08 | 2026-09-11 |
 | MVP planning | Product | Next | 2026-09-10 | 2026-09-11 |
 | MVP build | Product | Next | 2026-09-14 | 2026-11-06 |

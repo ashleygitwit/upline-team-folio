@@ -1,4 +1,5 @@
 import { SPRINT_DAYS } from '../data/sprintDays';
+import { GanttChart } from '../components/GanttChart';
 
 const INPUTS = [
   'Members 1st run end-to-end — our only live pilot so far',
@@ -151,6 +152,11 @@ export function SprintPage() {
             <li key={i}>{i}</li>
           ))}
         </ul>
+      </section>
+
+      <section className="card phase-card">
+        <h2>Road to November 6</h2>
+        <GanttChart />
       </section>
     </>
   );

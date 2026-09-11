@@ -1,0 +1,1057 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Upline MVP wireframe — this week's board</title>
+<!--
+  Standalone wireframe. Open this file directly in a browser — no server, no build.
+
+  The producer/CSR working screen, split out from the owner dashboard: "how is my
+  business doing" and "what do I do next" are different sessions, so they are
+  different surfaces.
+
+  Wednesday Sept 9 pass — flagship #2 (client brief) and flagship #5 (needs-binding):
+    · Client brief is now the one-pager the room described: type the name, get the
+      file + questionnaire + recommendation on one surface, with a chat sitting on
+      top of that file. Not 17 AMS screens.
+    · Needs binding shows aging and cannot clear itself. The agent has to check off
+      each human action before the card leaves the column.
+  Board columns and their hints are unchanged from the Tuesday walk.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Radio+Canada:wght@300..700&family=Radio+Canada+Big:wght@400..700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #f7f7f6; --fg: #282831; --card: #ffffff;
+    --primary: #3721a6; --muted: #f2f0ec; --muted-fg: #6d6c68;
+    --border: #dcdad8; --info-soft: #c0c3f4; --warn: #ff7f35;
+    --good: #2f7d55;
+    --sans: 'Radio Canada', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    --display: 'Radio Canada Big', 'Radio Canada', ui-sans-serif, system-ui, -apple-system, sans-serif;
+    --pill: 999px;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 1.5rem 1.5rem 3rem;
+    background: var(--bg); color: var(--fg);
+    font-family: var(--sans); font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wf-note {
+    max-width: 1600px; margin: 0 auto 1rem;
+    display: flex; flex-wrap: wrap; align-items: baseline;
+    justify-content: space-between; gap: 0.5rem 1.5rem;
+    padding-bottom: 0.7rem; border-bottom: 1px dashed var(--border);
+    font-size: 0.75rem; color: var(--muted-fg);
+  }
+  .wf-note strong { font-family: var(--display); font-size: 0.95rem; font-weight: 600; color: var(--fg); }
+  .wf-note a { color: var(--primary); font-weight: 600; }
+
+  .app {
+    max-width: 1600px; margin: 0 auto;
+    display: grid; grid-template-columns: minmax(0, 1fr) minmax(320px, 33rem);
+    gap: 1rem; align-items: start;
+  }
+
+  .topbar { margin-bottom: 0.85rem; }
+  .agency { margin: 0; font-family: var(--display); font-size: 1.3rem; font-weight: 600; }
+  .agency-sub { margin: 0.2rem 0 0; font-size: 0.82rem; color: var(--muted-fg); }
+
+  /* ---- the human-action strip: flagship #5, visible before you scroll ---- */
+  .human-strip {
+    display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.35rem 0.8rem;
+    margin-bottom: 0.85rem; padding: 0.55rem 0.75rem;
+    border: 1px solid color-mix(in srgb, var(--warn) 45%, var(--border));
+    border-left: 3px solid var(--warn);
+    border-radius: 0.6rem;
+    background: color-mix(in srgb, var(--warn) 8%, var(--card));
+    font-size: 0.78rem;
+  }
+  .human-strip strong { font-size: 0.83rem; }
+  .human-strip .sep { color: var(--border); }
+  .human-strip .quiet { color: var(--muted-fg); }
+  .human-strip .cleared { color: var(--good); font-weight: 600; }
+
+  .board { display: grid; grid-template-columns: repeat(4, minmax(11rem, 1fr)); gap: 0.7rem; }
+  .col {
+    border: 1px solid var(--border); border-radius: 0.8rem;
+    background: color-mix(in srgb, var(--muted) 45%, var(--card));
+    padding: 0.7rem 0.65rem 0.75rem;
+  }
+  .col.watch { border-color: color-mix(in srgb, var(--warn) 40%, var(--border)); }
+  .col-head { display: flex; align-items: center; justify-content: space-between; gap: 0.4rem; }
+  .col-head p { margin: 0; font-size: 0.8rem; font-weight: 600; }
+  .col-head span {
+    min-width: 1.3rem; padding: 0.05rem 0.42rem; border-radius: var(--pill);
+    background: var(--card); font-size: 0.71rem; font-weight: 700; text-align: center;
+  }
+  .col-hint { margin: 0.25rem 0 0.6rem; font-size: 0.69rem; line-height: 1.3; color: var(--muted-fg); }
+  .col-body { display: flex; flex-direction: column; gap: 0.45rem; }
+  .col-foot {
+    margin: 0.6rem 0 0; padding-top: 0.5rem;
+    border-top: 1px dashed var(--border);
+    font-size: 0.68rem; line-height: 1.4; color: var(--muted-fg);
+  }
+
+  .card {
+    width: 100%; text-align: left; cursor: pointer; font: inherit;
+    border: 1px solid transparent; border-radius: 0.65rem;
+    background: var(--card); padding: 0.6rem 0.65rem 0.65rem;
+    box-shadow: 0 1px 3px rgb(40 40 49 / 0.05);
+  }
+  .card:hover, .card[aria-current='true'] { border-color: var(--primary); }
+  .card strong { display: block; font-size: 0.85rem; }
+  .card .meta { display: block; margin-top: 0.14rem; font-size: 0.71rem; color: var(--primary); }
+  .card .note { display: block; margin-top: 0.3rem; font-size: 0.73rem; line-height: 1.35; color: var(--muted-fg); }
+
+  /* aging + stuck state on a card */
+  .card.stuck { border-left: 3px solid color-mix(in srgb, var(--warn) 55%, var(--border)); }
+  .card.stale { border-left-color: var(--warn); background: color-mix(in srgb, var(--warn) 6%, var(--card)); }
+  .card.done { border-left-color: var(--good); background: color-mix(in srgb, var(--good) 7%, var(--card)); }
+  .card .age {
+    display: inline-flex; align-items: center; gap: 0.3rem;
+    margin-top: 0.4rem; padding: 0.1rem 0.42rem;
+    border-radius: var(--pill); background: var(--muted);
+    font-size: 0.66rem; font-weight: 700; letter-spacing: 0.02em;
+    color: var(--muted-fg);
+  }
+  .card.stale .age { background: color-mix(in srgb, var(--warn) 22%, var(--card)); color: color-mix(in srgb, var(--warn) 65%, black); }
+  .card.done .age { background: color-mix(in srgb, var(--good) 16%, var(--card)); color: var(--good); }
+  .card .owes { display: block; margin-top: 0.32rem; font-size: 0.69rem; line-height: 1.35; color: color-mix(in srgb, var(--warn) 70%, black); }
+
+  /* ============================================================
+     CLIENT BRIEF — flagship #2
+     ============================================================ */
+  .brief {
+    position: sticky; top: 1rem;
+    max-height: calc(100vh - 2rem); overflow-y: auto;
+    padding: 1.05rem 1.15rem 1.25rem;
+    border: 1px solid var(--border); border-radius: 0.9rem;
+    background: color-mix(in srgb, var(--info-soft) 20%, var(--card));
+  }
+  .kicker {
+    margin: 0 0 0.15rem; font-size: 0.68rem; font-weight: 700;
+    letter-spacing: 0.07em; text-transform: uppercase; color: var(--muted-fg);
+  }
+  .brief h2 { margin: 0; font-family: var(--display); font-size: 1.15rem; font-weight: 600; }
+  .brief-meta { margin: 0.22rem 0 0; font-size: 0.79rem; color: var(--primary); }
+  .brief-body { margin: 0.7rem 0 0; font-size: 0.82rem; line-height: 1.55; color: var(--muted-fg); }
+
+  /* name search / typeahead */
+  .finder { position: relative; margin-bottom: 0.85rem; }
+  .finder-label { display: flex; align-items: baseline; justify-content: space-between; gap: 0.5rem; }
+  .finder-hint { font-size: 0.66rem; color: var(--muted-fg); }
+  .finder-input {
+    width: 100%; margin-top: 0.3rem; height: 2.4rem; padding: 0 0.7rem;
+    font: inherit; font-size: 0.85rem; color: var(--fg);
+    background: var(--card);
+    border: 1.5px solid var(--fg); border-radius: 0.5rem;
+  }
+  .finder-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 14%, transparent); }
+  .finder-results {
+    position: absolute; z-index: 5; left: 0; right: 0; top: calc(100% + 0.25rem);
+    margin: 0; padding: 0.25rem; list-style: none;
+    background: var(--card); border: 1px solid var(--border); border-radius: 0.55rem;
+    box-shadow: 0 12px 28px -14px rgb(40 40 49 / 0.35);
+  }
+  .finder-results[hidden] { display: none; }
+  .finder-results button {
+    display: block; width: 100%; text-align: left; font: inherit;
+    padding: 0.4rem 0.5rem; border: 0; border-radius: 0.4rem;
+    background: transparent; cursor: pointer; font-size: 0.8rem;
+  }
+  .finder-results button:hover, .finder-results button:focus { background: color-mix(in srgb, var(--info-soft) 40%, var(--card)); outline: none; }
+  .finder-results .rmeta { display: block; font-size: 0.68rem; color: var(--muted-fg); }
+  .finder-results .empty { padding: 0.45rem 0.5rem; font-size: 0.76rem; color: var(--muted-fg); }
+
+  /* brief head */
+  .brief-head { padding-bottom: 0.7rem; border-bottom: 1px solid var(--border); }
+  .brief-head .addr { margin: 0.3rem 0 0; font-size: 0.75rem; color: var(--muted-fg); }
+  .chips { display: flex; flex-wrap: wrap; gap: 0.3rem; margin-top: 0.5rem; }
+  .chip {
+    display: inline-block; padding: 0.12rem 0.5rem;
+    border-radius: var(--pill); border: 1px solid var(--border);
+    background: var(--card); font-size: 0.68rem; font-weight: 600;
+  }
+  .chip.stage { border-color: transparent; background: color-mix(in srgb, var(--primary) 12%, var(--card)); color: var(--primary); }
+  .chip.warn { border-color: transparent; background: color-mix(in srgb, var(--warn) 20%, var(--card)); color: color-mix(in srgb, var(--warn) 65%, black); }
+  .chip.good { border-color: transparent; background: color-mix(in srgb, var(--good) 15%, var(--card)); color: var(--good); }
+
+  /* brief sections */
+  .sec { padding-top: 0.85rem; margin-top: 0.85rem; border-top: 1px solid var(--border); }
+  .sec:first-of-type { border-top: 0; }
+  .sec-head { display: flex; align-items: baseline; justify-content: space-between; gap: 0.5rem; }
+  .sec-head h3 {
+    margin: 0; font-size: 0.7rem; font-weight: 700;
+    letter-spacing: 0.07em; text-transform: uppercase; color: var(--muted-fg);
+  }
+  .sec-head .src { font-size: 0.66rem; color: var(--muted-fg); }
+  .sec p { margin: 0.4rem 0 0; font-size: 0.79rem; line-height: 1.5; }
+  .sec p.quiet { color: var(--muted-fg); }
+
+  .pol {
+    display: grid; grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.1rem 0.6rem; align-items: baseline;
+    margin-top: 0.5rem; padding: 0.5rem 0.6rem;
+    border: 1px solid var(--border); border-radius: 0.5rem; background: var(--card);
+  }
+  .pol .line { font-size: 0.8rem; font-weight: 600; }
+  .pol .prem { font-size: 0.8rem; font-weight: 700; text-align: right; }
+  .pol .sub { grid-column: 1 / -1; font-size: 0.71rem; line-height: 1.4; color: var(--muted-fg); }
+  .pol .delta { font-size: 0.71rem; font-weight: 700; text-align: right; color: color-mix(in srgb, var(--warn) 70%, black); }
+  .pol .delta.down { color: var(--good); }
+
+  .qa { margin: 0.5rem 0 0; padding: 0; list-style: none; }
+  .qa li { padding: 0.4rem 0; border-top: 1px dashed var(--border); }
+  .qa li:first-child { border-top: 0; padding-top: 0.15rem; }
+  .qa .q { display: block; font-size: 0.73rem; color: var(--muted-fg); }
+  .qa .a { display: block; margin-top: 0.1rem; font-size: 0.8rem; font-weight: 600; }
+  .flag {
+    display: inline-block; margin-left: 0.35rem; padding: 0.02rem 0.4rem;
+    border-radius: var(--pill); font-size: 0.63rem; font-weight: 700;
+    letter-spacing: 0.03em; text-transform: uppercase;
+    background: color-mix(in srgb, var(--warn) 20%, var(--card));
+    color: color-mix(in srgb, var(--warn) 68%, black);
+    vertical-align: middle;
+  }
+
+  .rec {
+    margin-top: 0.5rem; padding: 0.6rem 0.7rem;
+    border: 1px solid color-mix(in srgb, var(--primary) 25%, var(--border));
+    border-radius: 0.55rem;
+    background: color-mix(in srgb, var(--primary) 5%, var(--card));
+  }
+  .rec .pick { margin: 0; font-size: 0.88rem; font-weight: 700; }
+  .rec .pick-sub { margin: 0.15rem 0 0; font-size: 0.75rem; color: var(--primary); }
+  .rec ul { margin: 0.45rem 0 0; padding-left: 1.05rem; font-size: 0.77rem; line-height: 1.5; }
+  .rec .out { margin: 0.55rem 0 0; padding: 0.45rem 0.55rem; border-radius: 0.45rem; background: var(--card); }
+  .rec .out p { margin: 0 0 0.2rem; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted-fg); }
+  .rec .out ul { margin: 0; padding-left: 1.05rem; font-size: 0.75rem; }
+  .rec .gate { margin: 0.55rem 0 0; font-size: 0.72rem; line-height: 1.45; color: var(--muted-fg); }
+  .rec .gate a { color: var(--primary); font-weight: 600; }
+
+  /* needs-binding block */
+  .bind {
+    margin-top: 0.5rem; padding: 0.65rem 0.7rem;
+    border: 1px solid color-mix(in srgb, var(--warn) 45%, var(--border));
+    border-left: 3px solid var(--warn);
+    border-radius: 0.55rem;
+    background: color-mix(in srgb, var(--warn) 7%, var(--card));
+  }
+  .bind.done { border-color: color-mix(in srgb, var(--good) 45%, var(--border)); border-left-color: var(--good); background: color-mix(in srgb, var(--good) 7%, var(--card)); }
+  .bind .since { margin: 0; font-size: 0.73rem; font-weight: 700; color: color-mix(in srgb, var(--warn) 70%, black); }
+  .bind.done .since { color: var(--good); }
+  .bind .risk { margin: 0.3rem 0 0; font-size: 0.72rem; line-height: 1.45; color: var(--muted-fg); }
+  .checklist { margin: 0.5rem 0 0; padding: 0; list-style: none; }
+  .checklist li { display: flex; align-items: flex-start; gap: 0.45rem; padding: 0.22rem 0; font-size: 0.78rem; }
+  .checklist input { margin: 0.2rem 0 0; accent-color: var(--primary); }
+  .bind .markdone {
+    width: 100%; margin-top: 0.55rem; height: 2.2rem;
+    font: inherit; font-size: 0.79rem; font-weight: 700;
+    border: 0; border-radius: 0.45rem;
+    background: var(--primary); color: #fff; cursor: pointer;
+  }
+  .bind .markdone[disabled] { background: var(--muted); color: var(--muted-fg); cursor: not-allowed; }
+  .bind .foot { margin: 0.45rem 0 0; font-size: 0.69rem; line-height: 1.4; color: var(--muted-fg); }
+
+  /* chat on top of the file */
+  .chat {
+    margin-top: 0.9rem; border: 1px solid var(--border);
+    border-radius: 0.6rem; background: var(--card); overflow: hidden;
+  }
+  .chat-toggle {
+    display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;
+    width: 100%; padding: 0.6rem 0.7rem;
+    font: inherit; font-size: 0.79rem; font-weight: 700; text-align: left;
+    border: 0; background: color-mix(in srgb, var(--primary) 7%, var(--card));
+    color: var(--primary); cursor: pointer;
+  }
+  .chat-toggle .caret { transition: transform 0.15s ease; }
+  .chat.open .chat-toggle .caret { transform: rotate(90deg); }
+  .chat-panel { display: none; padding: 0.6rem 0.7rem 0.7rem; }
+  .chat.open .chat-panel { display: block; }
+  .chat-scope { margin: 0 0 0.5rem; font-size: 0.7rem; line-height: 1.45; color: var(--muted-fg); }
+  .chat-thread { display: flex; flex-direction: column; gap: 0.4rem; }
+  .chat-thread:empty { display: none; }
+  .bub { max-width: 94%; padding: 0.5rem 0.6rem; border-radius: 0.5rem; font-size: 0.78rem; line-height: 1.5; }
+  .bub.me { align-self: flex-end; background: var(--primary); color: #fff; }
+  .bub.up { background: var(--muted); }
+  .chat-pills { display: flex; flex-wrap: wrap; gap: 0.3rem; margin-top: 0.55rem; }
+  .chat-pills button {
+    padding: 0.3rem 0.6rem; border-radius: var(--pill);
+    border: 1px solid color-mix(in srgb, var(--primary) 25%, var(--border));
+    background: var(--card); color: var(--primary);
+    font: inherit; font-size: 0.71rem; font-weight: 600; cursor: pointer;
+  }
+  .chat-pills button:hover { background: color-mix(in srgb, var(--primary) 8%, var(--card)); }
+  .chat-form { display: flex; gap: 0.35rem; margin-top: 0.55rem; }
+  .chat-form input {
+    flex: 1; min-width: 0; height: 2.15rem; padding: 0 0.6rem;
+    font: inherit; font-size: 0.79rem;
+    border: 1px solid var(--border); border-radius: 0.45rem; background: var(--card);
+  }
+  .chat-form input:focus { outline: none; border-color: var(--primary); }
+  .chat-form button {
+    height: 2.15rem; padding: 0 0.85rem; border: 0; border-radius: 0.45rem;
+    background: var(--fg); color: #fff; font: inherit; font-size: 0.78rem; font-weight: 600; cursor: pointer;
+  }
+
+  @media (max-width: 1180px) {
+    .app { grid-template-columns: 1fr; }
+    .brief { position: static; max-height: none; }
+    .board { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (max-width: 620px) { .board { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<div class="wf-note">
+  <span><strong>Upline MVP wireframe</strong> &nbsp;·&nbsp; This week&rsquo;s board &nbsp;·&nbsp; producer / CSR working screen &nbsp;·&nbsp; flagships 2 + 5</span>
+  <span>Sample data. <a href="./business-dashboard.html">&larr; Owner dashboard</a> &nbsp;·&nbsp; <a href="./insured-proposal.html">Insured proposal page &rarr;</a></span>
+</div>
+
+<div class="app">
+  <div>
+    <div class="topbar">
+      <p class="agency">This week&rsquo;s board</p>
+      <p class="agency-sub">
+        30 named Monday 8:00 &middot; nothing auto-sends &middot; needs-binding does not clear until the agent marks their part done
+      </p>
+    </div>
+
+    <div class="human-strip" id="humanStrip"></div>
+
+    <div class="board" id="board"></div>
+  </div>
+
+  <aside class="brief">
+    <p class="kicker">Client brief</p>
+
+    <div class="finder">
+      <div class="finder-label">
+        <label class="finder-hint" for="finder"><strong style="font-size:0.72rem;color:var(--fg)">Type a name.</strong> One surface &mdash; file, questionnaire, recommendation.</label>
+      </div>
+      <input class="finder-input" id="finder" type="text" autocomplete="off" role="combobox"
+             aria-expanded="false" aria-controls="finderResults"
+             placeholder="Priya, Millers, Sally, 418 Walnut&hellip;" />
+      <ul class="finder-results" id="finderResults" role="listbox" hidden></ul>
+    </div>
+
+    <div id="briefRoot">
+      <h2 id="briefName">Pick a household</h2>
+      <p class="brief-meta" id="briefMeta"></p>
+      <p class="brief-body" id="briefBody">
+        Type a name above or click a card. You get the one-pager for a call: the file from
+        this week&rsquo;s pull, their questionnaire answers, the recommendation, and what is
+        waiting on a human. Then ask it questions.
+      </p>
+    </div>
+  </aside>
+</div>
+
+<script>
+/* ============================================================
+   BOARD COLUMNS — unchanged from the Tuesday walk, plus a footer
+   on needs-binding so the "cannot disappear" rule is on screen.
+   ============================================================ */
+const COLS = [
+  { id: 'send', title: 'Emails to send', hint: 'Held — they stop the week' },
+  { id: 'questionnaire', title: 'Questionnaire in', hint: 'Opened or started. Not the trigger yet.' },
+  { id: 'proposal', title: 'Proposal ready', hint: 'Does not auto-send' },
+  { id: 'binding', title: 'Needs binding', hint: 'Stuck until they mark done', watch: true,
+    foot: 'Nothing here clears itself. Upline does not bind and does not write back to the AMS. A card leaves this column only when the agent checks off their part.' }
+];
+
+/* ============================================================
+   HOUSEHOLDS
+   Each record is the whole client brief: the file we pulled Monday,
+   the questionnaire, the recommendation, the human action, and the
+   chat that sits on top of all of it.
+   ============================================================ */
+const HOUSEHOLDS = [
+  {
+    id: 'priya', name: 'Priya Shah', lines: 'Auto + home', renewal: 'Oct 12', col: 'send',
+    note: '18% increase. You held the email to call first.',
+    addr: '1204 Ridgeway Dr · client since 2019',
+    chips: ['Travelers', '+18% at renewal', 'Email held by you'],
+    filePulled: 'AMS pull · Mon Sep 7, 8:02 AM',
+    policies: [
+      { line: 'Auto', carrier: 'Travelers', prem: '$1,880/yr', delta: '+16%', sub: '2 vehicles · 100/300/100 · $500 comp / $500 coll · renews Oct 12' },
+      { line: 'Home', carrier: 'Travelers', prem: '$2,140/yr', delta: '+21%', sub: '$540k dwelling · $2,500 deductible · roof 2011 · renews Oct 12' }
+    ],
+    fileNotes: 'No claims in five years. Last year&rsquo;s call note: she will shop if it jumps double digits. Paperless, pays annual.',
+    q: { status: 'Not sent yet', rows: [] },
+    qEmpty: 'Questionnaire has not gone out. You held the send so you could call first. The questionnaire is the trigger &mdash; no shop ticket exists until she submits it.',
+    rec: null,
+    recEmpty: 'No recommendation yet. Nothing is shopped before the questionnaire comes back.',
+    chat: [
+      { q: 'Why is she up 18%?', a: 'Both policies renewed with Travelers&rsquo; statewide increase, and the home reinspection moved her dwelling from $505k to $540k. Nothing changed on her end &mdash; no claims, no new drivers. That is the sentence to open the call with.' },
+      { q: 'What do I say on the call?', a: 'Lead with the number she is about to see and that you already looked at it. She told you last year she would shop at double digits, so you are keeping your word by calling. Ask her to fill out the questionnaire while you are on the phone &mdash; it is the trigger for us to shop.' },
+      { q: 'Anything in the file that could bite us?', a: 'Roof is 2011, so a couple of carriers will want an inspection or will cap the roof settlement at actual cash value. Worth setting the expectation before we shop rather than after.' }
+    ]
+  },
+  {
+    id: 'millers', name: 'The Millers', lines: 'Home', renewal: 'Oct 18', col: 'send',
+    note: 'Landmine in AMS notes. Do not send yet.',
+    addr: '77 Cobbler Ln · clients since 2008',
+    chips: ['Donegal', '+9% at renewal', 'Flagged — do not send'],
+    filePulled: 'AMS pull · Mon Sep 7, 8:02 AM',
+    policies: [
+      { line: 'Home', carrier: 'Donegal', prem: '$1,610/yr', delta: '+9%', sub: '$395k dwelling · $1,000 deductible · renews Oct 18' }
+    ],
+    fileNotes: 'AMS note flagged as a landmine: 2023 water claim was denied and there was a family dispute over the adjuster. Whoever calls should read that note first.',
+    q: { status: 'Held with the email', rows: [] },
+    qEmpty: 'Nothing has gone out. The draft sits in the send column and will not move until you release it.',
+    rec: null,
+    recEmpty: 'No shop ticket. Do not shop this household until someone has talked to them.',
+    chat: [
+      { q: 'What is the landmine?', a: 'A 2023 water-damage claim was denied and the file has three notes about the adjuster. They have not called the agency since. An automated renewal email is the wrong first contact here.' },
+      { q: 'Should this go out at all?', a: 'This is exactly the case for holding. The week moves unless someone stops it, and someone stopped it. If you want it to go, unflag it and it joins Tuesday&rsquo;s send window.' }
+    ]
+  },
+  {
+    id: 'luis', name: 'Luis Ortega', lines: 'Auto', renewal: 'Oct 9', col: 'questionnaire',
+    note: 'Opened yesterday. Not finished.',
+    addr: '2210 Fairbanks Ave · client since 2021',
+    chips: ['Erie', '+7% at renewal', 'Started the questionnaire'],
+    filePulled: 'AMS pull · Mon Sep 7, 8:02 AM',
+    policies: [
+      { line: 'Auto', carrier: 'Erie', prem: '$1,240/yr', delta: '+7%', sub: '1 vehicle · 250/500/100 · $1,000 comp / $500 coll · renews Oct 9' }
+    ],
+    fileNotes: 'Single driver, no claims. Small increase, so the email was framed as "I probably would not shop, happy to if you want."',
+    q: {
+      status: 'Started Sep 8 · 2 questions left',
+      rows: [
+        { q: 'Anyone new driving the car?', a: 'No' },
+        { q: 'Miles driven a year', a: 'About 6,000 — works from home now', flag: 'New to us' },
+        { q: 'Anything else on the property or household?', a: '— not answered' },
+        { q: 'Do you want us to shop this?', a: '— not answered' }
+      ]
+    },
+    rec: null,
+    recEmpty: 'No shop ticket until he submits. Two questions left.',
+    chat: [
+      { q: 'Is it worth nudging him?', a: 'Yes, and the 6,000 miles is the reason. Low mileage plus work-from-home is a discount at two of your carriers that his current rate does not reflect. That is a real reason to finish, not a reminder ping.' },
+      { q: 'Should we shop a 7% increase?', a: 'On its own, probably not &mdash; that is the "I would not shop this" framing the email used. The mileage change is the thing that makes it worth a look.' }
+    ]
+  },
+  {
+    id: 'helen', name: 'Helen Cho', lines: 'Auto + umbrella', renewal: 'Oct 21', col: 'questionnaire',
+    note: 'Started last night. Asked about umbrella.',
+    addr: '58 Larkspur Ct · client since 2016',
+    chips: ['Safeco', '+4% at renewal', 'Cross-sell signal'],
+    filePulled: 'AMS pull · Mon Sep 7, 8:02 AM',
+    policies: [
+      { line: 'Auto', carrier: 'Safeco', prem: '$2,060/yr', delta: '+4%', sub: '3 vehicles · 250/500/100 · renews Oct 21' },
+      { line: 'Umbrella', carrier: 'Safeco', prem: '$310/yr', delta: '—', sub: '$1M limit · renews Oct 21' }
+    ],
+    fileNotes: 'Small increase, so the shop-ask was soft. Home is with another agency &mdash; mono-line household.',
+    q: {
+      status: 'Started Sep 8, 9:40 PM',
+      rows: [
+        { q: 'Anyone new driving?', a: 'Yes — our son Ethan, 16, got his permit in August', flag: 'Not in your AMS' },
+        { q: 'Any changes to the vehicles?', a: 'No' },
+        { q: 'Anything you want to ask about?', a: 'Is $1M enough umbrella? We just paid off the house.', flag: 'Cross-sell' },
+        { q: 'Do you want us to shop this?', a: '— not answered' }
+      ]
+    },
+    rec: null,
+    recEmpty: 'Not shopped yet. The teen driver changes the whole quote, so nothing goes to a carrier until she finishes.',
+    chat: [
+      { q: 'What did the questionnaire surface?', a: 'A 16-year-old with a permit who is not in your AMS, and an umbrella question she raised herself. The teen driver will move her rate more than the 4% increase did.' },
+      { q: 'What is the umbrella answer?', a: 'She paid off the house, so her exposed net worth went up while her limit stayed at $1M. Going to $2M is usually another $90&ndash;$130 a year. She asked &mdash; you are answering, not selling.' },
+      { q: 'Which carriers survive a teen driver?', a: 'Of your panel, three will write it without a surcharge that eats the savings. Erie and Progressive are the two we would take first. Donegal we would leave alone with a permitted teen.' }
+    ]
+  },
+  {
+    id: 'patels', name: 'The Patels', lines: 'Auto + home', renewal: 'Oct 14', col: 'questionnaire',
+    note: 'Opened this morning. Not started.',
+    addr: '9 Hollybrook Rd · clients since 2022',
+    chips: ['Travelers', '+24% at renewal', 'Thin file'],
+    filePulled: 'AMS pull · Mon Sep 7, 8:02 AM',
+    policies: [
+      { line: 'Auto', carrier: 'Travelers', prem: '$2,410/yr', delta: '+24%', sub: '2 vehicles · limits not in the AMS record · renews Oct 14' },
+      { line: 'Home', carrier: 'Travelers', prem: '$1,975/yr', delta: '+22%', sub: '$460k dwelling · deductible not recorded · renews Oct 14' }
+    ],
+    fileNotes: 'Last year&rsquo;s file is thin &mdash; limits and deductibles were never entered. This is a net-new data household if they finish the questionnaire.',
+    q: { status: 'Opened Sep 9, 7:15 AM · not started', rows: [] },
+    qEmpty: 'Opened this morning, nothing answered yet. A 24% increase usually finishes the questionnaire on its own.',
+    rec: null,
+    recEmpty: 'Nothing shopped. We would not send a quote request with a file this thin anyway.',
+    chat: [
+      { q: 'What is missing from this file?', a: 'Auto limits, both deductibles, and roof year. The AMS has premium and renewal date and not much else. Everything else on this brief came out of the renewal declarations, not the AMS record.' },
+      { q: 'Do we shop a 24% jump?', a: 'Yes. That is over any threshold worth arguing about, and their email was framed as a shop-ask for exactly that reason.' }
+    ]
+  },
+  {
+    id: 'jordan', name: 'Jordan Hale', lines: 'Auto + home', renewal: 'Oct 8', col: 'proposal',
+    note: 'Rec drafted. Waiting on your review.',
+    addr: '31 Sycamore St · client since 2015',
+    chips: ['Donegal', '+18% at renewal', 'Rec drafted — not sent'],
+    filePulled: 'AMS pull · Mon Sep 7, 8:02 AM',
+    policies: [
+      { line: 'Auto', carrier: 'Donegal', prem: '$1,690/yr', delta: '+17%', sub: '2 vehicles · 100/300/100 · $500 comp / $500 coll · renews Oct 8' },
+      { line: 'Home', carrier: 'Donegal', prem: '$1,340/yr', delta: '+19%', sub: '$418k dwelling · $1,000 deductible · roof 2004 · renews Oct 8' }
+    ],
+    fileNotes: 'One hail claim, 2024, paid. German shepherd on the property (came off the questionnaire, not the AMS). Daughter Maddie turns 16 in February.',
+    q: {
+      status: 'Submitted Sep 5',
+      rows: [
+        { q: 'Anyone new driving?', a: 'Not yet — Maddie turns 16 in February', flag: 'Not in your AMS' },
+        { q: 'Any dogs on the property?', a: 'Yes — German shepherd, 4 years old', flag: 'Not in your AMS' },
+        { q: 'Roof or major repairs since last year?', a: 'No — roof is original, 2004' },
+        { q: 'Do you want us to shop this?', a: 'Yes — $300 more this year is a lot' }
+      ]
+    },
+    rec: {
+      status: 'Drafted Sep 8 · not sent',
+      pick: 'Progressive — auto + home',
+      pickSub: '$2,846/yr vs $3,030 today · saves $184 · limits matched or better',
+      why: [
+        'Only one of the three that took the German shepherd without an exclusion.',
+        'Writes a 2004 roof at replacement cost, not actual cash value.',
+        'Rated the 2024 hail claim as a weather loss, so it did not surcharge.',
+        'Adding Maddie in February is a rate change, not a re-underwrite.'
+      ],
+      out: [
+        'Erie — came back $61 cheaper and excluded dog bites entirely. Rolled out.',
+        'Nationwide — would only write the 2004 roof at actual cash value. Rolled out.',
+        'Donegal (current) — the increase is real and they would not re-rate it.'
+      ],
+      gate: 'Rec email is drafted in your voice and does not auto-send. Review it, then it goes from your mailbox with a link to his page.'
+    },
+    chat: [
+      { q: 'Why Progressive and not the cheaper one?', a: 'Erie was $61 cheaper and excluded dog bites. He has a four-year-old German shepherd, so that exclusion is the exact claim he is most likely to have. Cheapest and best are different answers here, and the draft says so plainly.' },
+      { q: 'What do I check before I send?', a: 'Two things. That the home limits on the Progressive quote match the $418k dwelling, and that the draft explains the roof-settlement difference in language he will follow. Everything else is boilerplate.' },
+      { q: 'What does he see when I send it?', a: 'An email from you, and a page built for his household &mdash; the pick, the reasoning, and who you rolled out. Not a PDF. It says clearly that approving starts the process and does not put coverage in place.' }
+    ],
+    proposalLink: true
+  },
+  {
+    id: 'ana', name: 'Ana Ruiz', lines: 'Home', renewal: 'Oct 11', col: 'proposal',
+    note: 'Stay recommendation. You have the why.',
+    addr: '640 Prescott Way · client since 2013',
+    chips: ['Erie', '+6% at renewal', 'Rec drafted — not sent'],
+    filePulled: 'AMS pull · Mon Sep 7, 8:02 AM',
+    policies: [
+      { line: 'Home', carrier: 'Erie', prem: '$1,455/yr', delta: '+6%', sub: '$372k dwelling · $1,000 deductible · roof 2019 · renews Oct 11' }
+    ],
+    fileNotes: 'No claims. Roof replaced 2019. She asked to be shopped after seeing a competitor mailer.',
+    q: {
+      status: 'Submitted Sep 6',
+      rows: [
+        { q: 'Any changes to the property?', a: 'No' },
+        { q: 'Anything else we should know?', a: 'A mailer quoted me $260 less — is that real?', flag: 'Why she asked' },
+        { q: 'Do you want us to shop this?', a: 'Yes' }
+      ]
+    },
+    rec: {
+      status: 'Drafted Sep 8 · not sent',
+      pick: 'Stay with Erie',
+      pickSub: 'Best outcome is no change. Two carriers shopped, neither beat her on equal coverage.',
+      why: [
+        'Her roof is 2019, which is why Erie is pricing her better than the market.',
+        'The mailer number was a $2,500 deductible against her $1,000. Same house, different deductible.',
+        'Moving her would restart her claims-free credit for two years.'
+      ],
+      out: [
+        'Travelers — cheaper only at a $2,500 deductible. Not the same policy.',
+        'Progressive — would not match the ordinance-and-law endorsement she already has.'
+      ],
+      gate: 'The valuable send this week. She asked a question and gets a real answer, whether or not anything changes.'
+    },
+    chat: [
+      { q: 'How do I answer the mailer?', a: 'Straight. The mailer is a $2,500 deductible and hers is $1,000, so it is a cheaper policy, not a better price. Say that and she stops shopping.' },
+      { q: 'Is a stay worth sending?', a: 'It is the send that buys the next five renewals. She hears from you either way, and the answer is documented in her file.' }
+    ]
+  },
+  {
+    id: 'sally', name: 'Sally Brennan', lines: 'Auto + home', renewal: 'Oct 6', col: 'binding',
+    note: 'Said yes on the phone yesterday.',
+    age: 1,
+    addr: '812 Harrow Bend · client since 2011',
+    chips: ['Moving to Progressive', 'Approved Sep 8', 'Not bound'],
+    filePulled: 'AMS pull · Mon Sep 7, 8:02 AM',
+    policies: [
+      { line: 'Auto (new)', carrier: 'Progressive', prem: '$2,290/yr', delta: '—', sub: 'Quoted and held · limits match current · effective Oct 6 if bound' },
+      { line: 'Home (new)', carrier: 'Progressive', prem: '$2,630/yr', delta: '—', sub: 'Quoted and held · $1,000 deductible · effective Oct 6 if bound' },
+      { line: 'Current (Travelers)', carrier: 'Travelers', prem: '$5,532/yr', delta: 'In force', sub: 'Still the policy that covers her today. Do not cancel until Progressive issues.' }
+    ],
+    fileNotes: 'Saves $612 across both lines. She approved on the phone Sep 8 and asked "so am I switched?" &mdash; the answer was not yet.',
+    q: {
+      status: 'Submitted Sep 2',
+      rows: [
+        { q: 'Anyone new driving?', a: 'No' },
+        { q: 'Any changes to the property?', a: 'New water heater, 2025' },
+        { q: 'Do you want us to shop this?', a: 'Yes — please' }
+      ]
+    },
+    rec: {
+      status: 'Sent Sep 7 · approved Sep 8',
+      pick: 'Progressive — auto + home',
+      pickSub: '$4,920/yr vs $5,532 today · saves $612 · same limits',
+      why: [
+        'Beat the current carrier on equal coverage, not on a bigger deductible.',
+        'Kept her claims-free credit through the move.'
+      ],
+      out: [
+        'Erie — declined the detached workshop.',
+        'Donegal — would not write the two lines together.'
+      ],
+      gate: 'She has approved. Upline is done drafting. Everything left is a human action.'
+    },
+    binding: {
+      since: 'Sitting in needs-binding since Sep 8',
+      risk: 'She said yes out loud on the phone. If nobody binds this and she has a claim, she will believe she was covered. Her Travelers policy is still the one in force until Progressive issues.',
+      owes: ['Application signed (DocuSign sent Sep 8, not returned)', 'Bank / payment method on file', 'Progressive issues the policy', 'Travelers cancellation dated after the new effective date']
+    },
+    chat: [
+      { q: 'What is actually left?', a: 'Four things, all human: her signature, payment, Progressive issuing, and the Travelers cancellation dated after Oct 6. Upline does not do any of them and cannot tell whether they happened.' },
+      { q: 'What does she think is true right now?', a: 'That she switched. She asked "so am I switched?" on the call and the honest answer was not yet. That gap is the risk on this card.' },
+      { q: 'Draft me a text to her.', a: '"Hi Sally &mdash; Ray here. Your Progressive paperwork is in your inbox from Friday. Once you sign it I can put it in force for Oct 6. You are still covered with Travelers until then." Short, and it does not imply she is switched.' }
+    ]
+  },
+  {
+    id: 'dan', name: 'Dan Fisher', lines: 'Auto', renewal: 'Oct 4', col: 'binding',
+    note: 'Approved on his page. Nobody has touched it since.',
+    age: 5,
+    addr: '418 Walnut St · client since 2017',
+    chips: ['Moving to Progressive', 'Approved Sep 4', 'Not bound · 5 days'],
+    filePulled: 'AMS pull · Mon Sep 7, 8:02 AM',
+    policies: [
+      { line: 'Auto (new)', carrier: 'Progressive', prem: '$1,506/yr', delta: '—', sub: 'Quoted and held · saves $184 · effective Oct 4 if bound' },
+      { line: 'Current (Erie)', carrier: 'Erie', prem: '$1,690/yr', delta: 'In force', sub: 'Still the policy covering him today.' }
+    ],
+    fileNotes: 'Questionnaire added a teen driver and a garage address that does not match the AMS. He clicked approve on his proposal page and has not heard from anyone since.',
+    q: {
+      status: 'Submitted Sep 1',
+      rows: [
+        { q: 'Anyone new driving?', a: 'Yes — my son, 17, licensed in July', flag: 'Not in your AMS' },
+        { q: 'Where is the car parked overnight?', a: '418 Walnut St', flag: 'AMS says 22 Grove' },
+        { q: 'Do you want us to shop this?', a: 'Yes' }
+      ]
+    },
+    rec: {
+      status: 'Sent Sep 3 · approved Sep 4',
+      pick: 'Progressive — auto',
+      pickSub: '$1,506/yr vs $1,690 today · saves $184 · teen driver included',
+      why: [
+        'Took the 17-year-old without the surcharge that erased the savings elsewhere.',
+        'Rated on the correct garaging address, which the old policy never had.'
+      ],
+      out: [
+        'Travelers — surcharged the teen driver by $340.',
+        'Erie (current) — would not re-rate mid-term.'
+      ],
+      gate: 'Approved on the page five days ago. This is the card the room was worried about.'
+    },
+    binding: {
+      since: 'Sitting in needs-binding since Sep 4 · 5 days · oldest on the board',
+      risk: 'This is the false-purchase case. He clicked approve on a page, saw "we will be in touch," and has heard nothing for five days. He may already believe his son is on the policy. He is not &mdash; the Erie policy is unchanged.',
+      owes: ['Call him back (nobody has, five days)', 'Correct the garaging address on the application', 'Application signed', 'Payment method on file', 'Progressive issues the policy']
+    },
+    chat: [
+      { q: 'Why has this sat five days?', a: 'It came in as an approval on the page rather than a phone call, so no person ever picked it up. That is exactly the hole this column exists to make visible.' },
+      { q: 'What is the exposure?', a: 'His son has been driving since July and is not on any policy we control. If there is a loss, the family will point at the approve button. Call first, paperwork second.' },
+      { q: 'What is the fastest path to closed?', a: 'One call today. Confirm the garaging address, resend the signature request while you are on the phone, and take payment. Then check off the four items on this card so it leaves the column.' }
+    ]
+  },
+  {
+    id: 'chris', name: 'Chris Nguyen', lines: 'Home + umbrella', renewal: 'Oct 7', col: 'binding',
+    note: 'Stay on home, new umbrella. Needs bank info.',
+    age: 3,
+    addr: '15 Beaumont Pl · client since 2014',
+    chips: ['Erie — staying', 'New umbrella', 'Not bound · 3 days'],
+    filePulled: 'AMS pull · Mon Sep 7, 8:02 AM',
+    policies: [
+      { line: 'Home', carrier: 'Erie', prem: '$1,720/yr', delta: '+5%', sub: 'Staying put · $455k dwelling · renews Oct 7' },
+      { line: 'Umbrella (new)', carrier: 'Erie', prem: '$380/yr', delta: '—', sub: '$1M limit · quoted and held · not in force' }
+    ],
+    fileNotes: 'The umbrella came off his own questionnaire answer, not from us pitching it. He replied "yes, let&rsquo;s do it" on Sep 6.',
+    q: {
+      status: 'Submitted Sep 4',
+      rows: [
+        { q: 'Any changes to the property?', a: 'Finished the basement' , flag: 'Not in your AMS' },
+        { q: 'Anything you want to ask about?', a: 'We coach youth soccer now — are we exposed?', flag: 'Cross-sell' },
+        { q: 'Do you want us to shop this?', a: 'Sure, but I like Erie' }
+      ]
+    },
+    rec: {
+      status: 'Sent Sep 5 · approved Sep 6',
+      pick: 'Stay with Erie, add a $1M umbrella',
+      pickSub: 'Home is already the best available. The umbrella answers the question he asked.',
+      why: [
+        'Coaching youth soccer is real personal-liability exposure his home limit does not cover.',
+        'Adding it to the existing Erie policy avoids a new-business underwriting cycle.'
+      ],
+      out: [
+        'Nothing rolled out on the home &mdash; Erie was already the best fit and the draft says so.'
+      ],
+      gate: 'A stay plus a cross-sell he asked for. Still needs a human to put the umbrella in force.'
+    },
+    binding: {
+      since: 'Sitting in needs-binding since Sep 6 · 3 days',
+      risk: 'He thinks the umbrella is done. It is quoted, not issued. If he has a liability loss at a soccer practice this weekend, there is no umbrella.',
+      owes: ['Signed umbrella application', 'Bank info for the $380', 'Erie endorses / issues the umbrella']
+    },
+    chat: [
+      { q: 'What is left on this one?', a: 'Signature, bank info, and Erie issuing the umbrella. The home needs nothing &mdash; he is staying.' },
+      { q: 'Did we sell him this?', a: 'No. He asked about his soccer-coaching exposure on the questionnaire and the recommendation answered it. Worth saying that way if it ever comes up.' }
+    ]
+  }
+];
+
+/* ============================================================
+   HELPERS
+   ============================================================ */
+function byId(id) { return HOUSEHOLDS.find(h => h.id === id); }
+function cardsIn(colId) {
+  return HOUSEHOLDS.filter(h => h.col === colId && !(colId === 'binding' && h.cleared));
+}
+
+/* ============================================================
+   BOARD
+   ============================================================ */
+const board = document.getElementById('board');
+
+function renderBoard() {
+  board.innerHTML = COLS.map(col => {
+    const cards = cardsIn(col.id);
+    const done = col.id === 'binding' ? HOUSEHOLDS.filter(h => h.col === 'binding' && h.cleared) : [];
+    const all = cards.concat(done);
+    return '<div class="col' + (col.watch ? ' watch' : '') + '">' +
+      '<div class="col-head"><p>' + col.title + '</p><span>' + cards.length + '</span></div>' +
+      '<p class="col-hint">' + col.hint + '</p>' +
+      '<div class="col-body">' + all.map(cardHtml).join('') + '</div>' +
+      (col.foot ? '<p class="col-foot">' + col.foot + '</p>' : '') +
+    '</div>';
+  }).join('');
+  if (selected) markSelected(selected);
+  renderStrip();
+}
+
+function cardHtml(h) {
+  const isBind = h.col === 'binding';
+  const stale = isBind && !h.cleared && h.age >= 3;
+  const cls = 'card' + (isBind ? ' stuck' : '') + (stale ? ' stale' : '') + (h.cleared ? ' done' : '');
+  let extra = '';
+  if (isBind && h.cleared) {
+    extra = '<span class="age">Cleared by you today</span>';
+  } else if (isBind) {
+    extra =
+      '<span class="owes">Owes: ' + h.binding.owes.length + ' human ' + (h.binding.owes.length === 1 ? 'step' : 'steps') + ' &mdash; not bound</span>' +
+      '<span class="age">' + h.age + (h.age === 1 ? ' day' : ' days') + ' waiting on you' + (stale ? ' · aging' : '') + '</span>';
+  }
+  return '<button class="' + cls + '" type="button" data-id="' + h.id + '">' +
+    '<strong>' + h.name + '</strong>' +
+    '<span class="meta">' + h.lines + ' · ' + h.renewal + '</span>' +
+    '<span class="note">' + h.note + '</span>' +
+    extra +
+  '</button>';
+}
+
+/* The strip above the board: flagship #5 in one line. */
+function renderStrip() {
+  const open = cardsIn('binding');
+  const cleared = HOUSEHOLDS.filter(h => h.col === 'binding' && h.cleared);
+  const oldest = open.reduce((m, h) => Math.max(m, h.age), 0);
+  const parts = [
+    '<strong>' + open.length + ' human ' + (open.length === 1 ? 'action' : 'actions') + ' outstanding</strong>'
+  ];
+  if (open.length) {
+    parts.push('<span class="sep">·</span>');
+    parts.push('<span>oldest ' + oldest + (oldest === 1 ? ' day' : ' days') + ' &mdash; ' +
+      open.slice().sort((a, b) => b.age - a.age)[0].name + '</span>');
+  }
+  parts.push('<span class="sep">·</span>');
+  parts.push('<span class="quiet">Nothing in needs-binding clears on its own. Upline does not bind.</span>');
+  if (cleared.length) {
+    parts.push('<span class="sep">·</span>');
+    parts.push('<span class="cleared">' + cleared.map(h => h.name).join(', ') + ' cleared today</span>');
+  }
+  document.getElementById('humanStrip').innerHTML = parts.join(' ');
+}
+
+function markSelected(id) {
+  document.querySelectorAll('.card').forEach(c =>
+    c.setAttribute('aria-current', String(c.dataset.id === id)));
+}
+
+board.addEventListener('click', e => {
+  const btn = e.target.closest('.card');
+  if (btn) select(btn.dataset.id);
+});
+
+/* ============================================================
+   CLIENT BRIEF — one surface: file, questionnaire, recommendation,
+   the human action, and a chat that sits on the same file.
+   ============================================================ */
+let selected = null;
+const briefRoot = document.getElementById('briefRoot');
+
+function select(id) {
+  selected = id;
+  markSelected(id);
+  renderBrief();
+}
+
+function chipHtml(h) {
+  const chips = (h.chips || []).map((c, i) => {
+    let cls = 'chip';
+    if (/not bound|do not send|held/i.test(c)) cls += ' warn';
+    else if (/staying|approved/i.test(c)) cls += ' good';
+    else if (i === 0) cls += ' stage';
+    return '<span class="' + cls + '">' + c + '</span>';
+  });
+  const col = COLS.find(c => c.id === h.col);
+  chips.unshift('<span class="chip stage">' + col.title + '</span>');
+  return '<div class="chips">' + chips.join('') + '</div>';
+}
+
+function policiesHtml(h) {
+  return h.policies.map(p =>
+    '<div class="pol">' +
+      '<span class="line">' + p.line + ' &middot; ' + p.carrier + '</span>' +
+      '<span class="prem">' + p.prem + '</span>' +
+      '<span class="sub">' + p.sub + '</span>' +
+      '<span class="delta' + (/^-|down/i.test(p.delta) ? ' down' : '') + '" style="grid-column:2">' + p.delta + '</span>' +
+    '</div>').join('');
+}
+
+function questionnaireHtml(h) {
+  if (!h.q.rows.length) {
+    return '<p class="quiet">' + h.qEmpty + '</p>';
+  }
+  return '<ul class="qa">' + h.q.rows.map(r =>
+    '<li><span class="q">' + r.q + '</span>' +
+      '<span class="a">' + r.a + (r.flag ? '<span class="flag">' + r.flag + '</span>' : '') + '</span></li>'
+  ).join('') + '</ul>';
+}
+
+function recHtml(h) {
+  if (!h.rec) return '<p class="quiet">' + h.recEmpty + '</p>';
+  const r = h.rec;
+  return '<div class="rec">' +
+    '<p class="pick">' + r.pick + '</p>' +
+    '<p class="pick-sub">' + r.pickSub + '</p>' +
+    '<ul>' + r.why.map(w => '<li>' + w + '</li>').join('') + '</ul>' +
+    '<div class="out"><p>Rolled out &mdash; and why</p><ul>' +
+      r.out.map(o => '<li>' + o + '</li>').join('') +
+    '</ul></div>' +
+    '<p class="gate">' + r.gate +
+      (h.proposalLink ? ' <a href="./insured-proposal.html">Preview what the insured sees &rarr;</a>' : '') +
+    '</p>' +
+  '</div>';
+}
+
+function bindHtml(h) {
+  if (!h.binding) return '';
+  if (h.cleared) {
+    return '<div class="sec"><div class="sec-head"><h3>Human action</h3><span class="src">Cleared</span></div>' +
+      '<div class="bind done">' +
+        '<p class="since">You marked your part done today. This card left needs-binding.</p>' +
+        '<p class="risk">Upline logged who cleared it and when. Retention still is not true until the policy shows up in the AMS &mdash; approve is not retained.</p>' +
+      '</div></div>';
+  }
+  const b = h.binding;
+  return '<div class="sec"><div class="sec-head"><h3>Human action &mdash; blocking</h3><span class="src">' + h.age + (h.age === 1 ? ' day' : ' days') + ' old</span></div>' +
+    '<div class="bind">' +
+      '<p class="since">' + b.since + '</p>' +
+      '<p class="risk">' + b.risk + '</p>' +
+      '<ul class="checklist">' + b.owes.map((o, i) =>
+        '<li><input type="checkbox" id="owe-' + h.id + '-' + i + '" data-owe="' + h.id + '" />' +
+        '<label for="owe-' + h.id + '-' + i + '">' + o + '</label></li>').join('') +
+      '</ul>' +
+      '<button class="markdone" type="button" id="markdone-' + h.id + '" data-done="' + h.id + '" disabled>' +
+        'Mark my part done &mdash; check all ' + b.owes.length + ' first' +
+      '</button>' +
+      '<p class="foot">This button is the only thing that moves the card. Upline cannot bind, cannot see a signature, and does not write back to the AMS.</p>' +
+    '</div></div>';
+}
+
+function chatHtml(h) {
+  return '<div class="chat" id="chat">' +
+    '<button class="chat-toggle" type="button" id="chatToggle" aria-expanded="false">' +
+      '<span>Ask about ' + h.name + '</span><span class="caret">&rsaquo;</span>' +
+    '</button>' +
+    '<div class="chat-panel">' +
+      '<p class="chat-scope">Sits on this household&rsquo;s file, questionnaire and shop history &mdash; not the whole book. Wireframe: the prompts below return written answers.</p>' +
+      '<div class="chat-thread" id="chatThread"></div>' +
+      '<div class="chat-pills" id="chatPills">' +
+        h.chat.map((c, i) => '<button type="button" data-chat="' + i + '">' + c.q + '</button>').join('') +
+      '</div>' +
+      '<form class="chat-form" id="chatForm">' +
+        '<input id="chatInput" autocomplete="off" placeholder="Ask anything about this household" aria-label="Ask about this household" />' +
+        '<button type="submit">Ask</button>' +
+      '</form>' +
+    '</div>' +
+  '</div>';
+}
+
+function renderBrief() {
+  const h = byId(selected);
+  if (!h) return;
+  briefRoot.innerHTML =
+    '<div class="brief-head">' +
+      '<h2>' + h.name + '</h2>' +
+      '<p class="brief-meta">' + h.lines + ' · renewal ' + h.renewal + '</p>' +
+      '<p class="addr">' + h.addr + '</p>' +
+      chipHtml(h) +
+    '</div>' +
+
+    '<div class="sec">' +
+      '<div class="sec-head"><h3>Household file</h3><span class="src">' + h.filePulled + '</span></div>' +
+      policiesHtml(h) +
+      '<p class="quiet">' + h.fileNotes + '</p>' +
+    '</div>' +
+
+    '<div class="sec">' +
+      '<div class="sec-head"><h3>Questionnaire</h3><span class="src">' + h.q.status + '</span></div>' +
+      questionnaireHtml(h) +
+    '</div>' +
+
+    '<div class="sec">' +
+      '<div class="sec-head"><h3>Recommendation</h3><span class="src">' + (h.rec ? h.rec.status : 'Not shopped') + '</span></div>' +
+      recHtml(h) +
+    '</div>' +
+
+    bindHtml(h) +
+    chatHtml(h);
+
+  wireBrief(h);
+}
+
+/* ---- brief interactions ---- */
+function wireBrief(h) {
+  // needs-binding checklist gates the button
+  const btn = document.getElementById('markdone-' + h.id);
+  if (btn) {
+    const boxes = Array.prototype.slice.call(
+      briefRoot.querySelectorAll('input[data-owe="' + h.id + '"]'));
+    const sync = () => {
+      const left = boxes.filter(b => !b.checked).length;
+      btn.disabled = left > 0;
+      btn.textContent = left > 0
+        ? 'Mark my part done — ' + left + ' still unchecked'
+        : 'Mark my part done — clears this card';
+    };
+    boxes.forEach(b => b.addEventListener('change', sync));
+    sync();
+    btn.addEventListener('click', () => {
+      h.cleared = true;
+      renderBoard();
+      renderBrief();
+    });
+  }
+
+  // chat on the file
+  const chat = document.getElementById('chat');
+  const toggle = document.getElementById('chatToggle');
+  const thread = document.getElementById('chatThread');
+  const pills = document.getElementById('chatPills');
+  const form = document.getElementById('chatForm');
+  if (!chat || !toggle || !thread || !pills || !form) return;
+
+  const openChat = () => {
+    chat.classList.add('open');
+    toggle.setAttribute('aria-expanded', 'true');
+  };
+  toggle.addEventListener('click', () => {
+    const open = chat.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', String(open));
+  });
+  function say(role, html) {
+    const b = document.createElement('div');
+    b.className = 'bub ' + role;
+    b.innerHTML = html;
+    thread.appendChild(b);
+    b.scrollIntoView({ block: 'nearest' });
+  }
+  pills.addEventListener('click', e => {
+    const b = e.target.closest('button');
+    if (!b) return;
+    openChat();
+    const item = h.chat[Number(b.dataset.chat)];
+    say('me', item.q);
+    say('up', item.a);
+  });
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    const input = document.getElementById('chatInput');
+    const q = input.value.trim();
+    if (!q) return;
+    input.value = '';
+    say('me', q.replace(/[<>&]/g, ''));
+    const hit = h.chat.find(c => {
+      const words = c.q.toLowerCase().replace(/[^a-z ]/g, '').split(' ').filter(w => w.length > 4);
+      return words.some(w => q.toLowerCase().includes(w));
+    });
+    say('up', hit ? hit.a :
+      'In product this answers off ' + h.name + '&rsquo;s file, questionnaire and shop history &mdash; and says so when the file does not contain the answer. For the sketch, try one of the prompts above.');
+  });
+}
+
+/* ============================================================
+   NAME SEARCH — "type the name, get the one-pager"
+   ============================================================ */
+const finder = document.getElementById('finder');
+const results = document.getElementById('finderResults');
+
+function searchIndex(h) {
+  return (h.name + ' ' + h.lines + ' ' + h.addr + ' ' + (h.chips || []).join(' ')).toLowerCase();
+}
+
+function showResults(list) {
+  if (!list.length) {
+    results.innerHTML = '<li class="empty">No household by that name in this week&rsquo;s 30. In product this searches the whole book.</li>';
+  } else {
+    results.innerHTML = list.map(h =>
+      '<li role="option"><button type="button" data-pick="' + h.id + '">' + h.name +
+        '<span class="rmeta">' + h.lines + ' · renewal ' + h.renewal + ' · ' +
+        COLS.find(c => c.id === h.col).title.toLowerCase() + '</span></button></li>').join('');
+  }
+  results.hidden = false;
+  finder.setAttribute('aria-expanded', 'true');
+}
+function hideResults() {
+  results.hidden = true;
+  finder.setAttribute('aria-expanded', 'false');
+}
+
+finder.addEventListener('input', () => {
+  const q = finder.value.trim().toLowerCase();
+  if (!q) { hideResults(); return; }
+  showResults(HOUSEHOLDS.filter(h => searchIndex(h).includes(q)).slice(0, 6));
+});
+finder.addEventListener('focus', () => { if (finder.value.trim()) finder.dispatchEvent(new Event('input')); });
+finder.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { hideResults(); return; }
+  if (e.key !== 'Enter') return;
+  e.preventDefault();
+  const first = results.querySelector('button[data-pick]');
+  if (first) first.click();
+});
+results.addEventListener('click', e => {
+  const b = e.target.closest('button[data-pick]');
+  if (!b) return;
+  const h = byId(b.dataset.pick);
+  finder.value = h.name;
+  hideResults();
+  select(h.id);
+});
+document.addEventListener('click', e => {
+  if (!e.target.closest('.finder')) hideResults();
+});
+
+/* ============================================================
+   BOOT — open on the card the room argues about
+   ============================================================ */
+renderBoard();
+select('jordan');
+</script>
+</body>
+</html>

@@ -1,0 +1,1345 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Upline — Business Intelligence</title>
+<!--
+  Upline — Business Intelligence (owner dashboard)
+  Wireframe handoff. One self-contained file: no server, no build, no assets.
+  Double-click to open in any browser, or drop it into your editor and edit
+  directly. All markup, styles, data and behaviour are in this file.
+
+  Where things live:
+    STYLE   brand tokens at the top (:root), then chrome, sections, funnel,
+            activity rows, and the Ask Upline drawer, in that order.
+    SCRIPT  BOOK / BIZ_VALUE / BIZ_GROWTH / RETENTION / FEED hold every number
+            on the page. ANSWERS + BRIEF hold the Ask Upline content.
+            drawFunnel() and drawRetention() build the two SVG charts.
+
+  Tokens, type (DM Sans / Fraunces / DM Mono) and the indigo topbar are lifted
+  from the Upline Coverage Review demo so the two screens match.
+
+  Interactions worth clicking:
+    · "Showing" filter on the funnel — week / month / year / custom
+    · "Ask Upline anything" — opens a drawer on a morning brief, and the pills
+      return built responses with bars and stat cells
+    · Recent activity — search and date range; rows will open the household's
+      customer profile, which is not designed yet
+
+  All data is invented. Fonts load from Google Fonts on first open.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&display=swap" rel="stylesheet" />
+<style>
+  /* ============================================================
+     Brand tokens — same set the Coverage Review demo uses
+     ============================================================ */
+  :root {
+    --background: oklch(0.9759 0.0013 106.4236);
+    --foreground: oklch(0.3293 0.0037 84.5776);
+    --card: oklch(1 0 0);
+    --primary: oklch(0.3811 0.196 279.1717);
+    --primary-foreground: oklch(0.9759 0.0013 106.4236);
+    --secondary: oklch(0.9757 0.0921 114.5593);
+    --muted: oklch(0.9556 0.0057 84.5665);
+    --muted-foreground: oklch(0.5309 0.0063 95.1706);
+    --destructive: oklch(0.5305 0.1766 33.8349);
+    --border: oklch(0.8894 0.0035 67.7786);
+
+    --periwinkle: oklch(0.8249 0.061 260.0792);
+    --gold: oklch(0.8246 0.1351 89.6359);
+    --green: oklch(0.6791 0.1292 149.9093);
+
+    --primary-soft: color-mix(in oklab, var(--primary) 9%, white);
+    --primary-line: color-mix(in oklab, var(--primary) 22%, white);
+    --primary-mid: color-mix(in oklab, var(--primary) 55%, white);
+    /* funnel ribbon: deep indigo into violet, both dark enough for white numerals */
+    --band-1: var(--primary);
+    --band-2: oklch(0.5600 0.1950 300);
+    --band-switched: oklch(0.6300 0.1550 302);
+    --green-soft: color-mix(in oklab, var(--green) 16%, white);
+    --gold-soft: color-mix(in oklab, var(--gold) 26%, white);
+
+    --font-sans: "DM Sans", ui-sans-serif, system-ui, -apple-system, sans-serif;
+    --font-serif: "Fraunces", Georgia, Cambria, "Times New Roman", serif;
+    --font-mono: "DM Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+    --radius: 0.75rem;
+    --shadow-sm: 0 1px 2px hsl(40 6% 20% / 0.06);
+    --shadow-lg: 0 24px 60px -20px hsl(279 45% 20% / 0.28);
+  }
+
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    margin: 0;
+    font-family: var(--font-sans);
+    font-size: 16px;
+    color: var(--foreground);
+    background: var(--background);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  h1, h2, h3 { margin: 0; font-weight: 600; }
+  p { margin: 0; }
+  button { font-family: inherit; cursor: pointer; }
+  .muted { color: var(--muted-foreground); }
+
+  /* ============================================================
+     Product chrome — universal header + nav
+     ============================================================ */
+  .cockpit-topbar {
+    position: sticky; top: 0; z-index: 20;
+    display: flex; align-items: center; gap: 16px;
+    padding: 12px 28px;
+    background: var(--primary);
+    color: var(--primary-foreground);
+  }
+  .cockpit-logo { height: 22px; filter: brightness(0) invert(1); }
+  .cockpit-topbar .divider {
+    width: 1px; height: 22px;
+    background: color-mix(in oklab, white 30%, transparent);
+  }
+  .topnav { display: flex; align-items: center; gap: 4px; }
+  .topnav a {
+    padding: 6px 12px; border-radius: 999px;
+    font-size: 13.5px; font-weight: 600; letter-spacing: 0.01em;
+    color: color-mix(in oklab, white 82%, transparent);
+    text-decoration: none;
+  }
+  .topnav a:hover { background: color-mix(in oklab, white 12%, transparent); color: #fff; }
+  .topnav a.on { background: color-mix(in oklab, white 18%, transparent); color: #fff; }
+  .cockpit-crumb { font-size: 13px; letter-spacing: 0.02em; opacity: 0.85; }
+  .cockpit-user {
+    margin-left: auto;
+    display: flex; align-items: center; gap: 10px;
+    font-size: 13px;
+  }
+  .cockpit-avatar {
+    width: 30px; height: 30px; border-radius: 50%;
+    background: var(--secondary); color: var(--primary);
+    display: grid; place-items: center; font-weight: 700; font-size: 12px;
+  }
+  .cockpit-body { max-width: 1280px; margin: 0 auto; padding: 26px 32px 64px; }
+
+  .pagehead {
+    display: flex; flex-wrap: wrap; align-items: center;
+    justify-content: space-between; gap: 14px 28px;
+    margin-bottom: 20px;
+  }
+  .page-title {
+    font-family: var(--font-serif);
+    font-size: 27px; letter-spacing: -0.01em; line-height: 1.15;
+  }
+  .page-sub { margin-top: 6px; font-size: 15px; color: var(--muted-foreground); }
+
+  /* The one way in to Ask Upline — a primary action, not a hidden tab */
+  .ask-cta {
+    display: inline-flex; align-items: center; gap: 9px; flex: none;
+    height: 46px; padding: 0 22px;
+    border: none; border-radius: 999px;
+    background: var(--primary); color: var(--primary-foreground);
+    font-size: 15px; font-weight: 600;
+    box-shadow: var(--shadow-sm);
+    transition: background 0.15s ease, transform 0.05s ease;
+  }
+  .ask-cta:hover { background: color-mix(in oklab, var(--primary) 88%, black); }
+  .ask-cta:active { transform: translateY(1px); }
+  .ask-cta .spark { color: var(--secondary); }
+
+  /* ============================================================
+     Sections
+     ============================================================ */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px 24px 24px;
+    margin-bottom: 16px;
+  }
+  .section-head {
+    display: flex; flex-wrap: wrap; align-items: flex-start;
+    justify-content: space-between; gap: 12px 24px;
+    margin-bottom: 18px;
+  }
+  .section-head > div:first-child { flex: 1 1 22rem; min-width: 0; }
+  .section-head h2 {
+    font-family: var(--font-serif);
+    font-size: 22px; letter-spacing: -0.01em; line-height: 1.2;
+  }
+  .section-sub {
+    margin-top: 7px; max-width: 62ch;
+    font-size: 13.5px; line-height: 1.5; color: var(--muted-foreground);
+  }
+
+  /* filters (demo toolbar language) */
+  .filter { display: flex; align-items: center; gap: 8px; flex: none; }
+  .filter-label { font-size: 12.5px; font-weight: 700; }
+  .select-wrap { position: relative; display: inline-flex; align-items: center; }
+  .select-wrap select {
+    appearance: none; -webkit-appearance: none;
+    height: 38px; min-width: 158px;
+    padding: 0 34px 0 12px;
+    font: inherit; font-size: 14px; font-weight: 500; color: var(--foreground);
+    background: var(--card);
+    border: 1.5px solid var(--foreground); border-radius: 8px;
+    cursor: pointer;
+  }
+  .select-wrap select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-soft); }
+  .select-caret { position: absolute; right: 12px; pointer-events: none; }
+  .customrange { display: none; align-items: center; gap: 6px; }
+  .customrange.on { display: flex; }
+  .customrange input {
+    height: 38px; padding: 0 10px;
+    font: inherit; font-size: 13px;
+    background: var(--card);
+    border: 1.5px solid var(--foreground); border-radius: 8px;
+  }
+  .showing-static {
+    display: flex; align-items: center; gap: 8px;
+    height: 38px; padding: 0 14px;
+    background: var(--muted); border-radius: 999px;
+    font-size: 13px; white-space: nowrap;
+  }
+  .showing-static .lbl { font-weight: 700; }
+  .showing-static .val { font-family: var(--font-mono); font-size: 12.5px; }
+
+  /* ============================================================
+     Funnel
+     ============================================================ */
+  .funnel-wrap {
+    padding: 8px 8px 4px;
+    border: 1px solid var(--border); border-radius: var(--radius);
+    background: linear-gradient(180deg, var(--primary-soft), var(--card) 60%);
+  }
+  .funnel-wrap svg { display: block; width: 100%; height: auto; }
+  .legend {
+    display: flex; flex-wrap: wrap; gap: 6px 20px;
+    margin: 4px 8px 8px;
+    font-size: 12.5px; color: var(--muted-foreground);
+  }
+  .legend span { display: inline-flex; align-items: center; gap: 7px; }
+  .swatch { width: 11px; height: 11px; border-radius: 3px; display: inline-block; }
+  .line-key { width: 22px; height: 0; border-top-width: 2px; border-top-style: solid; display: inline-block; }
+
+  /* ============================================================
+     Stat boxes
+     ============================================================ */
+  .stat-grid { display: grid; gap: 12px; margin-top: 18px; }
+  .g4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .g3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .g2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  @media (max-width: 1040px) { .g4 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 860px) { .g4, .g3, .g2 { grid-template-columns: 1fr; } }
+
+  .box {
+    padding: 15px 17px 17px;
+    border: 1px solid var(--border); border-radius: var(--radius);
+    background: var(--card);
+  }
+  .box-value {
+    font-family: var(--font-mono); font-weight: 500;
+    font-size: 30px; letter-spacing: -0.02em; line-height: 1.05;
+  }
+  .box-label {
+    margin-top: 7px;
+    font-size: 13.5px; font-weight: 700; line-height: 1.35;
+    color: var(--primary);
+  }
+  .box-sub { margin-top: 5px; font-size: 12.5px; line-height: 1.45; color: var(--muted-foreground); }
+  .box.hero { background: linear-gradient(180deg, var(--primary-soft), var(--card)); border-color: var(--primary-line); }
+  .box.hero .box-value { font-size: 40px; }
+  .box.hero .box-label { font-size: 15px; }
+  .tag {
+    display: inline-block; margin-left: 6px; padding: 2px 7px;
+    border-radius: 999px; background: var(--gold-soft);
+    color: color-mix(in oklab, var(--gold) 55%, black);
+    font-size: 9.5px; font-weight: 700; letter-spacing: 0.05em;
+    text-transform: uppercase; vertical-align: middle;
+  }
+
+  /* ============================================================
+     Retention chart
+     ============================================================ */
+  .chart-wrap {
+    padding: 14px 16px 8px;
+    border: 1px solid var(--border); border-radius: var(--radius); background: var(--card);
+  }
+  .chart-wrap svg { display: block; width: 100%; height: auto; }
+
+  /* ============================================================
+     Activity — inbox style rows
+     ============================================================ */
+  .act-toolbar {
+    display: flex; flex-wrap: wrap; align-items: flex-end; gap: 12px;
+    padding-bottom: 14px; border-bottom: 1px solid var(--border);
+  }
+  .toolbar-field { display: flex; flex-direction: column; gap: 6px; flex: none; }
+  .toolbar-field.search-field { flex: 1; min-width: 180px; max-width: 340px; }
+  .toolbar-field.customrange { display: none; }
+  .toolbar-field.customrange.on { display: flex; flex-direction: row; align-items: center; }
+  .act-search {
+    display: flex; align-items: center; gap: 8px;
+    width: 100%; height: 38px; padding: 0 12px;
+    background: var(--card); color: var(--muted-foreground);
+    border: 1.5px solid var(--foreground); border-radius: 8px;
+  }
+  .act-search input {
+    flex: 1; min-width: 0; border: none; outline: none; background: transparent;
+    font: inherit; font-size: 14px; color: var(--foreground);
+  }
+  .act-count { margin-left: auto; padding-bottom: 10px; font-size: 12.5px; color: var(--muted-foreground); }
+
+  .feed { display: flex; flex-direction: column; margin: 0 -8px; }
+  .act-row {
+    display: grid;
+    grid-template-columns: 148px minmax(0, 1fr) 84px 20px;
+    align-items: center; gap: 16px 18px;
+    padding: 14px 8px;
+    border: 0;
+    border-bottom: 1px solid var(--border);
+    border-left: 3px solid transparent;
+    text-align: left; width: 100%;
+    background: transparent; color: inherit;
+    font: inherit;
+    transition: background 0.12s ease;
+  }
+  .act-row:hover { background: var(--primary-soft); }
+  .act-row.needs {
+    border-left-color: var(--gold);
+    background: color-mix(in oklab, var(--gold-soft) 42%, white);
+  }
+  .act-row.needs:hover { background: color-mix(in oklab, var(--gold-soft) 70%, white); }
+  .badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 3px 9px; border-radius: 999px;
+    border: 1px solid var(--border); background: var(--muted);
+    font-size: 11.5px; font-weight: 600; white-space: nowrap;
+  }
+  .badge.alert {
+    border-color: transparent; background: var(--gold-soft);
+    color: color-mix(in oklab, var(--gold) 55%, black);
+  }
+  .badge.green { border-color: transparent; background: var(--green-soft); color: color-mix(in oklab, var(--green) 60%, black); }
+  .badge.indigo { border-color: transparent; background: var(--primary-soft); color: var(--primary); }
+  .act-what { font-size: 15px; line-height: 1.35; }
+  .act-what strong { font-weight: 700; }
+  .act-detail { display: block; margin-top: 3px; font-size: 12.5px; line-height: 1.45; color: var(--muted-foreground); }
+  .act-date { font-family: var(--font-mono); font-size: 12.5px; color: var(--muted-foreground); white-space: nowrap; }
+  .act-chevron { color: var(--muted-foreground); display: grid; place-items: center; }
+  .act-empty { padding: 28px 8px; font-size: 14px; color: var(--muted-foreground); }
+  @media (max-width: 760px) {
+    .act-row { grid-template-columns: 1fr auto; gap: 6px 12px; }
+    .act-row .act-chevron { display: none; }
+  }
+
+  /* ============================================================
+     Ask Upline drawer
+     ============================================================ */
+  .drawer-scrim {
+    position: fixed; inset: 0; z-index: 35;
+    background: hsl(40 6% 10% / 0.28);
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.22s ease;
+  }
+  .drawer-scrim.on { opacity: 1; pointer-events: auto; }
+  .drawer {
+    position: fixed; top: 0; right: 0; bottom: 0;
+    width: min(560px, 100%); z-index: 40;
+    display: flex; flex-direction: column;
+    background: var(--background);
+    border-left: 1px solid var(--border);
+    box-shadow: var(--shadow-lg);
+    transform: translateX(100%);
+    transition: transform 0.22s ease;
+  }
+  .drawer.open { transform: translateX(0); }
+  .drawer-head { padding: 22px 22px 14px; }
+  .drawer-eyebrow {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--primary);
+  }
+  .drawer-head h2 { margin-top: 6px; font-family: var(--font-serif); font-size: 21px; letter-spacing: -0.01em; }
+  .drawer-head p { margin-top: 8px; font-size: 13.5px; line-height: 1.5; color: var(--muted-foreground); }
+  .drawer-close {
+    position: absolute; top: 12px; right: 12px;
+    border: 0; background: transparent; color: var(--muted-foreground);
+    font-size: 22px; line-height: 1; padding: 2px 6px;
+  }
+  .thread { flex: 1; display: flex; flex-direction: column; gap: 10px; padding: 0 22px 12px; overflow-y: auto; }
+  .bubble { max-width: 96%; padding: 14px 16px; border-radius: var(--radius); font-size: 13.5px; line-height: 1.55; }
+  .bubble.upline { background: var(--card); border: 1px solid var(--border); border-bottom-left-radius: 4px; }
+  .bubble.agent { align-self: flex-end; max-width: 82%; background: var(--primary); color: #fff; border-bottom-right-radius: 4px; }
+  .starters {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    padding: 12px 22px; border-top: 1px solid var(--border);
+    background: color-mix(in oklab, var(--muted) 55%, white);
+  }
+  .starters button {
+    padding: 7px 13px; border-radius: 999px;
+    border: 1px solid var(--primary-line); background: var(--card); color: var(--primary);
+    font-size: 12.5px; font-weight: 600;
+  }
+  .starters button:hover { background: var(--primary-soft); }
+  .starters button.back { border-color: var(--border); color: var(--muted-foreground); }
+
+  /* ---- generative answer blocks inside the thread ---- */
+  .hello { font-family: var(--font-serif); font-size: 19px; font-weight: 600; letter-spacing: -0.01em; }
+  .lede { margin-top: 8px; font-size: 14.5px; font-weight: 600; line-height: 1.4; }
+  .bubble h4 {
+    margin: 16px 0 0; font-size: 11px; font-weight: 700;
+    letter-spacing: 0.09em; text-transform: uppercase; color: var(--muted-foreground);
+  }
+  .bubble h4:first-child { margin-top: 0; }
+  .bubble p + p { margin-top: 6px; }
+  .bubble h4 + p { margin-top: 5px; }
+
+  .signal {
+    display: flex; gap: 11px; padding: 11px 0;
+    border-top: 1px solid var(--border);
+  }
+  .signal:first-of-type { border-top: none; }
+  .signal-mark {
+    flex: none; width: 26px; height: 26px; border-radius: 50%;
+    display: grid; place-items: center; font-size: 13px; font-weight: 700;
+  }
+  .signal-mark.up { background: var(--green-soft); color: color-mix(in oklab, var(--green) 62%, black); }
+  .signal-mark.watch { background: var(--gold-soft); color: color-mix(in oklab, var(--gold) 55%, black); }
+  .signal-mark.spark { background: var(--primary-soft); color: var(--primary); }
+  .signal-title { display: block; font-size: 13.5px; font-weight: 700; }
+  .signal-note { display: block; margin-top: 2px; font-size: 12.5px; line-height: 1.45; color: var(--muted-foreground); }
+
+  .viz { display: flex; flex-direction: column; gap: 10px; margin-top: 12px; }
+  .bar-head {
+    display: flex; align-items: baseline; justify-content: space-between; gap: 12px;
+    font-size: 12.5px;
+  }
+  .bar-head .k { font-weight: 600; }
+  .bar-head .v { font-family: var(--font-mono); font-size: 12.5px; color: var(--muted-foreground); }
+  .bar-track { margin-top: 4px; height: 9px; border-radius: 999px; background: var(--muted); overflow: hidden; }
+  .bar-fill { display: block; height: 100%; border-radius: 999px; background: var(--primary); }
+
+  .finding {
+    margin-top: 14px; padding: 12px 14px;
+    border: 1px solid var(--primary-line); border-radius: 10px;
+    background: var(--primary-soft);
+    font-size: 13px; line-height: 1.5;
+  }
+  .finding .lbl {
+    display: block; margin-bottom: 4px;
+    font-size: 10.5px; font-weight: 700; letter-spacing: 0.09em;
+    text-transform: uppercase; color: var(--primary);
+  }
+  .numbers { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 12px; }
+  .num-cell { padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px; }
+  .num-cell .v { font-family: var(--font-mono); font-size: 19px; font-weight: 500; }
+  .num-cell .k { margin-top: 3px; font-size: 11.5px; line-height: 1.35; color: var(--muted-foreground); }
+  .ask { display: flex; gap: 8px; padding: 0 22px 22px; }
+  .ask input {
+    flex: 1; min-width: 0; height: 40px; padding: 0 14px;
+    font: inherit; font-size: 14px;
+    background: var(--card);
+    border: 1px solid var(--border); border-radius: 10px;
+  }
+  .ask input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-soft); }
+  .ask button {
+    height: 40px; padding: 0 18px; border: none; border-radius: 10px;
+    background: var(--primary); color: #fff; font-size: 14px; font-weight: 600;
+  }
+</style>
+</head>
+<body>
+
+<header class="cockpit-topbar">
+  <img class="cockpit-logo" src="data:image/png;base64,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" alt="Upline" />
+  <span class="divider"></span>
+  <span class="cockpit-crumb">Seabrook Insurance</span>
+  <span class="divider"></span>
+  <nav class="topnav">
+    <a href="#" class="on">Business Intelligence</a>
+    <a href="#">Renewal Pipeline</a>
+    <a href="#">Insured Proposal</a>
+  </nav>
+  <div class="cockpit-user">
+    <span>Ray Seabrook</span>
+    <span class="cockpit-avatar">RS</span>
+  </div>
+</header>
+
+<main class="cockpit-body">
+  <div class="pagehead">
+    <div>
+      <h1 class="page-title">Business Intelligence</h1>
+      <p class="page-sub">Good morning, Ray. Dive into renewals across your existing book of business.</p>
+    </div>
+    <button class="ask-cta" id="askCta" aria-expanded="false" aria-controls="drawer">
+      <svg class="spark" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l1.9 5.6L19.5 9.5 13.9 11.4 12 17l-1.9-5.6L4.5 9.5l5.6-1.9L12 2z" /><path d="M18.5 14.5l.85 2.5 2.5.85-2.5.85-.85 2.5-.85-2.5-2.5-.85 2.5-.85.85-2.5z" /></svg>
+      Ask Upline anything
+    </button>
+  </div>
+
+  <!-- ============ RETENTION FUNNEL ============ -->
+  <section class="card">
+    <div class="section-head">
+      <div>
+        <h2>Retention funnel across your book of business</h2>
+        <p class="section-sub">Every renewal we reached and what came of it. Percentages are of outreach sent.</p>
+      </div>
+      <div class="filter">
+        <span class="filter-label" id="bookRangeLabel">Showing</span>
+        <span class="select-wrap">
+          <select id="bookRange" aria-labelledby="bookRangeLabel">
+            <option value="week">This week</option>
+            <option value="month" selected>This month</option>
+            <option value="year">This year</option>
+            <option value="custom">Custom date&hellip;</option>
+          </select>
+          <svg class="select-caret" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6" /></svg>
+        </span>
+        <span class="customrange" id="customRange">
+          <input type="date" id="dateFrom" value="2026-08-01" aria-label="From" />
+          <input type="date" id="dateTo" value="2026-09-09" aria-label="To" />
+        </span>
+      </div>
+    </div>
+
+    <div class="funnel-wrap">
+      <svg id="funnelSvg" viewBox="0 0 1320 400" role="img" aria-labelledby="funnelTitle">
+        <title id="funnelTitle">Outreach funnel, ending in stayed versus switched</title>
+        <defs>
+          <linearGradient id="trunkFill" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" style="stop-color:var(--band-1)" />
+            <stop offset="100%" style="stop-color:var(--band-2)" />
+          </linearGradient>
+        </defs>
+        <g id="funnelG"></g>
+      </svg>
+      <div class="legend">
+        <span><i class="swatch" style="background:linear-gradient(90deg,var(--band-1),var(--band-2))"></i> Reached &rarr; recommended</span>
+        <span><i class="swatch" style="background:var(--green)"></i> Stayed with their carrier</span>
+        <span><i class="swatch" style="background:var(--band-switched)"></i> Switched carriers</span>
+        <span><i class="swatch" style="background:var(--border)"></i> Still deciding</span>
+      </div>
+    </div>
+
+    <div class="stat-grid g4" id="bookBoxes"></div>
+  </section>
+
+  <!-- ============ RETENTION ============ -->
+  <section class="card">
+    <div class="section-head">
+      <div>
+        <h2>Retention across your book of business</h2>
+        <p class="section-sub">Last year is the baseline. The most recent weeks lag until policies actually bind.</p>
+      </div>
+      <div class="showing-static">
+        <span class="lbl">Showing</span>
+        <span class="val">January 1, 2026 &ndash; Today</span>
+      </div>
+    </div>
+
+    <div class="chart-wrap">
+      <svg id="retentionSvg" viewBox="0 0 1200 340" role="img" aria-labelledby="retTitle">
+        <title id="retTitle">Retention this year against last year's baseline</title>
+        <g id="retentionG"></g>
+      </svg>
+      <div class="legend">
+        <span><i class="line-key" style="border-top-color:var(--primary)"></i> Retention this year</span>
+        <span><i class="line-key" style="border-top-color:var(--muted-foreground);border-top-style:dotted"></i> Last year (baseline)</span>
+        <span><i class="line-key" style="border-top-color:var(--primary);border-top-style:dashed"></i> Lagging &mdash; not final until policies bind</span>
+      </div>
+    </div>
+
+    <div class="stat-grid g2" id="bizValueBoxes"></div>
+    <div class="stat-grid g3" id="bizGrowthBoxes"></div>
+  </section>
+
+  <!-- ============ RECENT ACTIVITY ============ -->
+  <section class="card">
+    <div class="section-head">
+      <div>
+        <h2>Recent activity</h2>
+        <p class="section-sub">
+          Coverage that moved, life events, real premium jumps, and anything waiting on you.
+          A renewal that went through unchanged is not here.
+        </p>
+      </div>
+    </div>
+
+    <div class="act-toolbar">
+      <div class="toolbar-field search-field">
+        <label class="filter-label" for="actSearch">Search activity</label>
+        <span class="act-search">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7" /><path d="M20 20l-3.5-3.5" /></svg>
+          <input id="actSearch" placeholder="Name, carrier, or what happened" autocomplete="off" />
+        </span>
+      </div>
+      <div class="toolbar-field">
+        <label class="filter-label" for="actRange">Date range</label>
+        <span class="select-wrap">
+          <select id="actRange">
+            <option value="7">Last 7 days</option>
+            <option value="30" selected>Last 30 days</option>
+            <option value="90">Last 90 days</option>
+            <option value="ytd">This year</option>
+            <option value="custom">Custom date&hellip;</option>
+          </select>
+          <svg class="select-caret" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6" /></svg>
+        </span>
+      </div>
+      <div class="toolbar-field customrange" id="actCustom">
+        <input type="date" id="actFrom" value="2026-08-01" aria-label="Activity from" />
+        <input type="date" id="actTo" value="2026-09-09" aria-label="Activity to" />
+      </div>
+      <p class="act-count" id="actCount"></p>
+    </div>
+
+    <div class="feed" id="feed"></div>
+  </section>
+</main>
+
+<div class="drawer-scrim" id="drawerScrim"></div>
+
+<aside class="drawer" id="drawer" aria-hidden="true">
+  <button class="drawer-close" id="drawerClose" aria-label="Close Ask Upline">&times;</button>
+  <div class="drawer-head">
+    <p class="drawer-eyebrow">Ask Upline</p>
+    <h2>Wednesday, September 9</h2>
+    <p>Your brief is below. Pull on any thread — this sits on your data, not 17 AMS screens.</p>
+  </div>
+  <div class="thread" id="thread" role="log"></div>
+  <div class="starters" id="starters"></div>
+  <form class="ask" id="askForm">
+    <input id="askInput" placeholder="Ask about retention, a carrier, or a household" autocomplete="off" aria-label="Ask about the agency" />
+    <button type="submit">Ask</button>
+  </form>
+</aside>
+
+<script>
+/* ============================================================
+   DATA
+   ============================================================ */
+
+/* Funnel: five trunk stages, then a fork into stayed / switched.
+   Percentages are always of stage 0 (outreach sent). */
+const BOOK = {
+  week: {
+    label: 'this week',
+    funnel: [
+      { label: ['Outreach', 'emails sent'], n: 30 },
+      { label: ['Emails', 'opened'], n: 22 },
+      { label: ['Questionnaires', 'completed'], n: 13 },
+      { label: ['Customers', 'shopped'], n: 11 },
+      { label: ['Recommendations', 'sent'], n: 10 }
+    ],
+    stayed: 4, switched: 4,
+    boxes: [
+      { value: '33', label: 'Quotes generated across carriers', sub: '11 households · 80–130 data points pulled per quote' },
+      { value: '6', label: 'Carriers on your panel we shopped', sub: 'Out of the 14 you are appointed with' },
+      { value: '22 hrs', label: 'Time saved shopping', sub: '11 shops × ~2 hrs in the portals', tag: 'Modeled' },
+      { value: '$538', label: 'Average savings per switched customer', sub: 'Where we moved them to a better carrier' }
+    ]
+  },
+  month: {
+    label: 'this month',
+    funnel: [
+      { label: ['Outreach', 'emails sent'], n: 120 },
+      { label: ['Emails', 'opened'], n: 98 },
+      { label: ['Questionnaires', 'completed'], n: 52 },
+      { label: ['Customers', 'shopped'], n: 48 },
+      { label: ['Recommendations', 'sent'], n: 44 }
+    ],
+    stayed: 16, switched: 18,
+    boxes: [
+      { value: '144', label: 'Quotes generated across carriers', sub: '48 households · 80–130 data points pulled per quote' },
+      { value: '9', label: 'Carriers on your panel we shopped', sub: 'Out of the 14 you are appointed with' },
+      { value: '96 hrs', label: 'Time saved shopping', sub: '48 shops × ~2 hrs in the portals', tag: 'Modeled' },
+      { value: '$592', label: 'Average savings per switched customer', sub: 'Where we moved them to a better carrier' }
+    ]
+  },
+  year: {
+    label: 'this year',
+    funnel: [
+      { label: ['Outreach', 'emails sent'], n: 410 },
+      { label: ['Emails', 'opened'], n: 331 },
+      { label: ['Questionnaires', 'completed'], n: 176 },
+      { label: ['Customers', 'shopped'], n: 162 },
+      { label: ['Recommendations', 'sent'], n: 149 }
+    ],
+    stayed: 56, switched: 62,
+    boxes: [
+      { value: '486', label: 'Quotes generated across carriers', sub: '162 households · 80–130 data points pulled per quote' },
+      { value: '12', label: 'Carriers on your panel we shopped', sub: 'Out of the 14 you are appointed with' },
+      { value: '324 hrs', label: 'Time saved shopping', sub: '162 shops × ~2 hrs in the portals', tag: 'Modeled' },
+      { value: '$574', label: 'Average savings per switched customer', sub: 'Where we moved them to a better carrier' }
+    ]
+  }
+};
+/* Custom range reuses the month shape — a real build would query the dates. */
+BOOK.custom = Object.assign({}, BOOK.month, { label: 'the selected range' });
+
+const BIZ_VALUE = [
+  { value: '$592', label: 'Average saved per client we moved', sub: 'Across every household we placed with a better carrier this year', hero: true },
+  { value: '+3.1%', label: 'Premium on the book we touched', sub: 'Retention held while rates rose, so your revenue base grew', hero: true }
+];
+
+const BIZ_GROWTH = [
+  { value: '14', label: 'Policyholders asked to be quoted for home, umbrella, or life', sub: 'They raised it on the questionnaire, while they were already paying attention' },
+  { value: '5', label: 'New policies written off those signals', sub: 'Adding $4,180 in annual premium to the book' },
+  { value: '6', label: 'Referrals provided by policyholders already in your book', sub: 'Named on a renewal touch · no outreach from your team yet' }
+];
+
+/* Retention, monthly. Upline started in March. Aug–Sep still lagging. */
+const RETENTION = {
+  months: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+  lastYear: [86, 85, 86, 84, 85, 86, 85, 84, 85, 86, 85, 85],
+  thisYear: [86, 86, 88, 90, 91, 93, 94, 95, 96, null, null, null],
+  laggingFrom: 7,   // index where the line goes dashed
+  todayIndex: 8     // Sep
+};
+
+/* Activity. `needs` items are waiting on the owner and carry a descriptive tag. */
+const TODAY = '2026-09-09';
+const FEED = [
+  { iso: '2026-09-09', kind: 'Ready to bind', needs: true, who: 'Sally Brennan',
+    what: 'is waiting on you to bind auto and home',
+    detail: 'Moving to Progressive · she approved the recommendation Sep 8' },
+  { iso: '2026-09-09', kind: 'Signature required', needs: true, who: 'Chris Nguyen',
+    what: 'approved a new umbrella policy',
+    detail: 'Home stays with Erie · umbrella came off the questionnaire' },
+  { iso: '2026-09-08', kind: 'Switched', who: 'Dan Fisher', what: 'switched carriers',
+    detail: 'Erie → Progressive · saving $184 on auto' },
+  { iso: '2026-09-06', kind: 'Life event', who: 'Priya Shah', what: 'bought a second home',
+    detail: 'Told us on the questionnaire · not in your AMS · uninsured as of Sep 6' },
+  { iso: '2026-09-06', kind: 'Household change', who: 'Helen Cho', what: 'added a teen driver',
+    detail: 'Also a garage address that does not match your AMS' },
+  { iso: '2026-09-05', kind: 'New policy', who: 'Marcus Webb', what: 'added life insurance',
+    detail: '$250k term · he asked about it himself after we shopped his auto' },
+  { iso: '2026-09-04', kind: 'Premium jump', who: 'The Patels', what: 'came in 24% higher and asked to be shopped',
+    detail: 'Auto and home with Travelers · shopping now' },
+  { iso: '2026-09-03', kind: 'Stayed', who: 'Ana Ruiz', what: 'stayed after we shopped three carriers',
+    detail: 'Her carrier was already the best price · she heard from you either way' },
+  { iso: '2026-09-02', kind: 'Referral', who: 'Tom Alvarez', what: 'referred his brother',
+    detail: 'Came up on the renewal touch · no contact yet' },
+  { iso: '2026-08-28', kind: 'Household change', who: 'Rosa Delgado', what: 'replaced a vehicle with a Tesla Model Y',
+    detail: 'New garaging address · rate impact flagged before renewal' },
+  { iso: '2026-08-26', kind: 'Premium jump', who: 'The Okonkwos', what: 'renewed 31% higher and asked to be shopped',
+    detail: 'Auto and home with Donegal · four carriers out now' },
+  { iso: '2026-08-21', kind: 'Life event', who: 'Grace Liu', what: 'added a newborn to the household',
+    detail: 'Life insurance conversation flagged for you' },
+  { iso: '2026-08-19', kind: 'Switched', who: 'Ben Rooney', what: 'switched carriers',
+    detail: 'Travelers → Erie · saving $242 across auto and home' },
+  { iso: '2026-08-14', kind: 'New policy', who: 'Dev Patel', what: 'added an umbrella policy',
+    detail: '$1M limit · came off the coverage gap we surfaced' }
+];
+
+/* ============================================================
+   ASK UPLINE CONTENT
+
+   The drawer opens on a brief, not a blank box. Every pill returns a
+   built response — bars, signal rows, number cells — rather than a
+   paragraph, and hands back follow-up pills. Retention is going UP;
+   the interesting question is what is driving it.
+   ============================================================ */
+
+function bars(rows) {
+  const max = Math.max.apply(null, rows.map(r => r.pct));
+  return '<div class="viz">' + rows.map((r, i) => {
+    const opacity = (1 - i * 0.16).toFixed(2);
+    return '<div>' +
+      '<div class="bar-head"><span class="k">' + esc(r.label) + '</span><span class="v">' + esc(r.value) + '</span></div>' +
+      '<div class="bar-track"><span class="bar-fill" style="width:' + (r.pct / max * 100).toFixed(1) + '%;opacity:' + opacity + '"></span></div>' +
+    '</div>';
+  }).join('') + '</div>';
+}
+function finding(text) {
+  return '<div class="finding"><span class="lbl">What that means</span>' + text + '</div>';
+}
+function signal(mark, kind, title, note) {
+  return '<div class="signal"><span class="signal-mark ' + kind + '">' + mark + '</span>' +
+    '<span><span class="signal-title">' + title + '</span><span class="signal-note">' + note + '</span></span></div>';
+}
+function numbers(cells) {
+  return '<div class="numbers">' + cells.map(c =>
+    '<div class="num-cell"><p class="v">' + esc(c.v) + '</p><p class="k">' + esc(c.k) + '</p></div>').join('') + '</div>';
+}
+
+const BRIEF =
+  '<p class="hello">Good morning, Ray.</p>' +
+  '<p class="lede">Your book is healthier than it was last month, and healthier than it has been all year.</p>' +
+  '<p style="margin-top:8px">Retention is at 96%, up 1.2 points since you last looked and 11 points above where you finished last year. It is holding because renewals are getting reached before the invoice lands, not because you are discounting.</p>' +
+  '<h4>Two things I would pay attention to</h4>' +
+  signal('!', 'watch', 'Two households are waiting on you',
+    'Sally Brennan needs auto and home bound with Progressive. Chris Nguyen needs a signature on his umbrella. $5,300 in premium sitting still.') +
+  signal('↑', 'watch', 'Donegal renewals are landing 19% higher than last year',
+    'Third straight week. The Okonkwos already asked to be shopped and two more are due in October.') +
+  '<h4>Biggest opportunity</h4>' +
+  '<p>23 households carry home with you and auto somewhere else. On this month&rsquo;s quoting, bundling would beat their current auto for most of them &mdash; roughly $58K in annual premium you are not writing.</p>';
+
+const ANSWERS = {
+  overview: {
+    q: 'Give me a five-minute overview',
+    html:
+      '<p class="lede">Five minutes, in the order I would run it.</p>' +
+      '<h4>1 · Where the book stands</h4>' +
+      '<p>96% retention against an 85% baseline. Premium on the households we touched is up 3.1%, because you kept people while rates rose. August and September are still provisional until those policies post.</p>' +
+      numbers([
+        { v: '96%', k: 'Retention, AMS-verified' },
+        { v: '+11', k: 'Points over last year' },
+        { v: '+3.1%', k: 'Premium on touched book' }
+      ]) +
+      '<h4>2 · What we did this month</h4>' +
+      '<p>120 outreach emails in your voice, 98 opened, 52 questionnaires completed, 48 households shopped. That was 144 quotes across 9 carriers, and about 96 hours nobody on your team spent in a portal.</p>' +
+      '<h4>3 · What it produced</h4>' +
+      '<p>16 stayed with their carrier because it was genuinely the best price, 18 moved and saved an average of $592, 10 are still deciding. On top of that: 5 new policies worth $4,180 and 6 referrals.</p>' +
+      '<h4>4 · What needs a decision from you</h4>' +
+      '<p>Sally Brennan and Chris Nguyen, both today. Nothing else is blocked on you.</p>' +
+      '<h4>5 · What I would watch</h4>' +
+      '<p>Donegal. Their renewals are running 19% over last year and you have 11 more households with them before December.</p>' +
+      finding('The number to repeat in a partner meeting is 96% against 85%. Everything else on this screen is the explanation for it.'),
+    next: ['data', 'needs', 'donegal']
+  },
+
+  data: {
+    q: 'Tell me what the data is saying',
+    html:
+      '<p class="lede">Retention is up 11 points. Here is what is actually carrying it.</p>' +
+      bars([
+        { label: 'Reached before the renewal invoice landed', value: '46%', pct: 46 },
+        { label: 'Re-placed with a better carrier', value: '27%', pct: 27 },
+        { label: 'Increase explained rather than absorbed', value: '15%', pct: 15 },
+        { label: 'Coverage deepened at renewal', value: '12%', pct: 12 }
+      ]) +
+      finding('Households we reached before their renewal invoice arrived retained at <strong>97%</strong>. The ones we never reached retained at <strong>84%</strong> &mdash; essentially last year\'s number. The timing of the contact is doing more work than the savings are.') +
+      '<p style="margin-top:12px">Which is good news and a warning at once: the lift is repeatable, but only for households that actually get reached.</p>',
+    next: ['unreached', 'carriers', 'compare']
+  },
+
+  unreached: {
+    q: 'Who did we miss?',
+    html:
+      '<p class="lede">30 households came due this month without a real touch.</p>' +
+      bars([
+        { label: 'Never opened the outreach email', value: '22 households', pct: 22 },
+        { label: 'Opened, never finished the questionnaire', value: '8 households', pct: 8 }
+      ]) +
+      '<p style="margin-top:12px">They retained at 84%, so roughly 5 of them left over something you could have answered. Their combined premium was $41,200.</p>' +
+      finding('The 22 who never opened are the cheapest lift on this page. A second send at a different time of day recovered 31% of non-openers in July.'),
+    next: ['data', 'needs', 'opportunity']
+  },
+
+  carriers: {
+    q: 'Which carriers drove the switches?',
+    html:
+      '<p class="lede">18 households moved this month. Where they went:</p>' +
+      bars([
+        { label: 'Progressive', value: '7 · avg $640 saved', pct: 7 },
+        { label: 'Travelers', value: '5 · avg $588 saved', pct: 5 },
+        { label: 'Erie', value: '3 · avg $512 saved', pct: 3 },
+        { label: 'Nationwide', value: '2 · avg $470 saved', pct: 2 },
+        { label: 'Safeco', value: '1 · $610 saved', pct: 1 }
+      ]) +
+      finding('Every one of those 18 stayed with <em>you</em>. In a year without shopping, most of that group is the churn line.'),
+    next: ['donegal', 'data', 'overview']
+  },
+
+  donegal: {
+    q: 'What is happening with Donegal?',
+    html:
+      '<p class="lede">Donegal is your rate-pressure carrier this quarter.</p>' +
+      bars([
+        { label: 'Donegal renewal increase, avg', value: '+19%', pct: 19 },
+        { label: 'Your book-wide average increase', value: '+8%', pct: 8 },
+        { label: 'Last year, Donegal', value: '+6%', pct: 6 }
+      ]) +
+      '<p style="margin-top:12px">You have 11 more Donegal households renewing before December, carrying $96K in premium.</p>' +
+      finding('This is not a churn problem yet, because we are catching them. Of the 6 Donegal renewals we shopped, 5 stayed with you on a different carrier and 1 stayed put. Left alone, that group is where retention usually breaks.'),
+    next: ['carriers', 'needs', 'overview']
+  },
+
+  needs: {
+    q: 'Who needs me today?',
+    html:
+      '<p class="lede">Two, and they are both quick.</p>' +
+      signal('1', 'watch', 'Sally Brennan &mdash; ready to bind',
+        'Auto and home moving to Progressive. She approved it Sep 8. $4,920 in premium, saving her $612.') +
+      signal('2', 'watch', 'Chris Nguyen &mdash; signature required',
+        'New umbrella, $380. Home stays with Erie. He raised the umbrella himself on the questionnaire.') +
+      '<p style="margin-top:12px">Everything else in the queue is moving on its own or waiting on the client.</p>',
+    next: ['opportunity', 'overview', 'data']
+  },
+
+  opportunity: {
+    q: 'Where is my biggest opportunity?',
+    html:
+      '<p class="lede">Mono-line households you already own.</p>' +
+      bars([
+        { label: 'Home with you, auto elsewhere', value: '23 · ~$58K premium', pct: 58 },
+        { label: 'Auto with you, no umbrella, $500K+ assets', value: '17 · ~$9K premium', pct: 9 },
+        { label: 'Asked about life on the questionnaire', value: '6 · not yet quoted', pct: 6 }
+      ]) +
+      finding('These are people who already trust you and already told us something. 14 of them raised the coverage themselves this month &mdash; we have not had to sell anything, only follow up.'),
+    next: ['needs', 'overview', 'compare']
+  },
+
+  compare: {
+    q: 'How does this compare to last year?',
+    html:
+      '<p class="lede">Same book, different outcome.</p>' +
+      signal('↑', 'up', 'Retention: 85% &rarr; 96%',
+        'Eleven points. On a $4.2M book that is roughly $462K of premium that would have walked.') +
+      signal('↑', 'up', 'Households contacted before renewal: 18% &rarr; 91%',
+        'This is the change that produced the one above it.') +
+      signal('↑', 'up', 'Households shopped: 34 &rarr; 162 year to date',
+        'Without adding a person to your team.') +
+      signal('✦', 'spark', 'New policies off renewal conversations: 4 &rarr; 19',
+        'Cross-sell used to happen when someone called in. Now it happens on the questionnaire.'),
+    next: ['overview', 'data', 'opportunity']
+  }
+};
+
+const DEFAULT_PILLS = ['overview', 'data', 'needs', 'opportunity'];
+
+/* ============================================================
+   HELPERS
+   ============================================================ */
+const NS = 'http://www.w3.org/2000/svg';
+function el(name, attrs, text) {
+  const n = document.createElementNS(NS, name);
+  for (const k in attrs) n.setAttribute(k, attrs[k]);
+  if (text != null) n.textContent = text;
+  return n;
+}
+function pct(n, base) { return Math.round((n / base) * 100) + '%'; }
+function esc(s) { return String(s).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c])); }
+
+/* ============================================================
+   FUNNEL — a continuous ribbon that eases between stage columns,
+   percentage set inside the band, count and step drop underneath.
+   ============================================================ */
+const F = {
+  W: 1320, H: 400,
+  headTop: 22, labelY: 54, plotTop: 78, plotBot: 338,
+  trunkRight: 950, forkFlat: 1130, forkEnd: 1170, labelX: 1188,
+  cols: 5, plateau: 66, maxHalf: 74
+};
+F.midY = (F.plotTop + F.plotBot) / 2;
+F.colW = F.trunkRight / F.cols;
+F.centers = Array.from({ length: F.cols }, (_, i) => F.colW * (i + 0.5));
+
+const STAGE_ICONS = [
+  ['M3 7.5l9 5.5 9-5.5', 'M3 6h18v12H3z'],
+  ['M2 12s3.6-6 10-6 10 6 10 6-3.6 6-10 6-10-6-10-6z', 'M12 9.5a2.5 2.5 0 100 5 2.5 2.5 0 000-5z'],
+  ['M9 4h6v3H9z', 'M8.5 5.5H6.5a1 1 0 00-1 1v13a1 1 0 001 1h11a1 1 0 001-1v-13a1 1 0 00-1-1h-2', 'M9 14.5l2 2 4-4'],
+  ['M11 4.5a6.5 6.5 0 100 13 6.5 6.5 0 000-13z', 'M19.5 19.5L16 16'],
+  ['M21 3L10.5 13.5', 'M21 3l-6.5 18-4-8.5L2 8.5 21 3z']
+];
+const OUTCOME_ICON = ['M5 21V4', 'M5 5h12l-2.4 4L17 13H5'];
+
+function iconAt(cx, cy, paths, colour) {
+  const g = el('g', {
+    transform: 'translate(' + (cx - 13) + ',' + (cy - 13) + ') scale(' + (26 / 24) + ')',
+    fill: 'none', stroke: colour, 'stroke-width': '1.7',
+    'stroke-linecap': 'round', 'stroke-linejoin': 'round'
+  });
+  paths.forEach(d => g.appendChild(el('path', { d: d })));
+  return g;
+}
+
+/* Ribbon across the trunk: flat through each column, eased between them. */
+function trunkPath(halves, scale) {
+  const { centers, plateau, midY, trunkRight } = F;
+  const h = halves.map(v => v * scale);
+  const seg = centers.map((cx, i) => ({
+    l: i === 0 ? 0 : cx - plateau,
+    r: i === centers.length - 1 ? trunkRight : cx + plateau,
+    h: h[i]
+  }));
+  const edge = sign => {
+    let d = '';
+    seg.forEach((s, i) => {
+      const y = midY + sign * s.h;
+      if (i === 0) d += 'M' + s.l + ' ' + y.toFixed(1);
+      else {
+        const p = seg[i - 1], mid = ((p.r + s.l) / 2).toFixed(1);
+        d += 'C' + mid + ' ' + (midY + sign * p.h).toFixed(1) + ',' + mid + ' ' + y.toFixed(1) + ',' + s.l.toFixed(1) + ' ' + y.toFixed(1);
+      }
+      d += 'L' + s.r.toFixed(1) + ' ' + y.toFixed(1);
+    });
+    return d;
+  };
+  // top edge left to right, then bottom edge right to left
+  const bottom = seg.slice().reverse().map((s, i, arr) => {
+    const y = midY + s.h;
+    if (i === 0) return 'L' + s.r.toFixed(1) + ' ' + y.toFixed(1) + 'L' + s.l.toFixed(1) + ' ' + y.toFixed(1);
+    const p = arr[i - 1], mid = ((s.r + p.l) / 2).toFixed(1);
+    return 'C' + mid + ' ' + (midY + p.h).toFixed(1) + ',' + mid + ' ' + y.toFixed(1) + ',' + s.r.toFixed(1) + ' ' + y.toFixed(1) +
+      'L' + s.l.toFixed(1) + ' ' + y.toFixed(1);
+  }).join('');
+  return edge(-1) + bottom + 'Z';
+}
+
+/* One branch of the fork: eases from a slice of the trunk edge to its own band. */
+function branchPath(y0Top, y0Bot, cy, half) {
+  const { trunkRight, forkFlat, forkEnd } = F;
+  const mid = ((trunkRight + forkFlat) / 2).toFixed(1);
+  const t = (cy - half).toFixed(1), b = (cy + half).toFixed(1);
+  return 'M' + trunkRight + ' ' + y0Top.toFixed(1) +
+    'C' + mid + ' ' + y0Top.toFixed(1) + ',' + mid + ' ' + t + ',' + forkFlat + ' ' + t +
+    'L' + forkEnd + ' ' + t + 'L' + forkEnd + ' ' + b + 'L' + forkFlat + ' ' + b +
+    'C' + mid + ' ' + b + ',' + mid + ' ' + y0Bot.toFixed(1) + ',' + trunkRight + ' ' + y0Bot.toFixed(1) + 'Z';
+}
+
+function drawFunnel(view) {
+  const g = document.getElementById('funnelG');
+  g.textContent = '';
+
+  const stages = view.funnel;
+  const base = stages[0].n;
+  const { midY, maxHalf, centers, plotTop, plotBot, H, trunkRight, labelX } = F;
+  const halves = stages.map(s => Math.max(8, maxHalf * (s.n / base)));
+
+  // column rules, full height like the reference
+  const rules = centers.map((_, i) => F.colW * i).slice(1).concat([trunkRight]);
+  rules.forEach(x => g.appendChild(el('line', {
+    x1: x, x2: x, y1: 8, y2: H - 6, stroke: 'var(--border)', 'stroke-width': '1'
+  })));
+
+  // soft outer bands, the layered look
+  g.appendChild(el('path', { d: trunkPath(halves, 1.62), fill: 'var(--primary)', opacity: '0.06' }));
+  g.appendChild(el('path', { d: trunkPath(halves, 1.28), fill: 'var(--primary)', opacity: '0.10' }));
+  g.appendChild(el('path', { d: trunkPath(halves, 1), fill: 'url(#trunkFill)' }));
+
+  // fork — the trunk's right edge divided in proportion to outcome
+  const lastHalf = halves[halves.length - 1];
+  const recs = stages[stages.length - 1].n;
+  const pending = Math.max(recs - view.stayed - view.switched, 0);
+  const edgeTop = midY - lastHalf, edgeH = lastHalf * 2;
+  const sliceStay = edgeH * (view.stayed / recs);
+  const slicePend = edgeH * (pending / recs);
+
+  const branches = [
+    { n: view.stayed, cy: 110, fill: 'var(--green)', name: 'Stayed', tone: 'color-mix(in oklab, var(--green) 62%, black)',
+      y0: edgeTop, y1: edgeTop + sliceStay },
+    { n: pending, cy: midY, fill: 'var(--muted-foreground)', name: null, tone: 'var(--muted-foreground)',
+      y0: edgeTop + sliceStay, y1: edgeTop + sliceStay + slicePend },
+    { n: view.switched, cy: 306, fill: 'var(--band-switched)', name: 'Switched', tone: 'var(--primary)',
+      y0: edgeTop + sliceStay + slicePend, y1: edgeTop + edgeH }
+  ];
+
+  branches.forEach(b => {
+    if (!b.n) return;
+    const half = Math.max(5, maxHalf * (b.n / base));
+    const solid = b.name ? '1' : '0.4';
+    g.appendChild(el('path', { d: branchPath(b.y0, b.y1, b.cy, half * 1.9), fill: b.fill, opacity: '0.13' }));
+    g.appendChild(el('path', { d: branchPath(b.y0, b.y1, b.cy, half), fill: b.fill, opacity: solid }));
+
+    if (b.name) {
+      g.appendChild(el('text', { x: labelX, y: b.cy - 10, 'letter-spacing': '0.07em', style: 'fill:var(--muted-foreground);font:700 14px var(--font-sans)' }, b.name.toUpperCase()));
+      g.appendChild(el('text', { x: labelX, y: b.cy + 19, style: 'fill:' + b.tone + ';font:500 27px var(--font-mono)' }, b.n));
+      g.appendChild(el('text', { x: labelX + String(b.n).length * 18 + 12, y: b.cy + 19, style: 'fill:var(--muted-foreground);font:600 16px var(--font-sans)' }, pct(b.n, base)));
+    } else {
+      g.appendChild(el('text', { x: labelX, y: b.cy + 6, style: 'fill:var(--muted-foreground);font:600 15px var(--font-sans)' }, b.n + ' still deciding'));
+    }
+  });
+
+  // stage columns: icon, label, percentage inside the band, count and drop below
+  stages.forEach((s, i) => {
+    const x = centers[i];
+    g.appendChild(iconAt(x, F.headTop + 6, STAGE_ICONS[i], 'var(--primary)'));
+
+    const label = el('text', {
+      x: x, y: F.labelY, 'text-anchor': 'middle', 'letter-spacing': '0.08em',
+      style: 'fill:var(--muted-foreground);font:700 14px var(--font-sans)'
+    });
+    label.appendChild(el('tspan', { x: x, dy: '0' }, s.label[0].toUpperCase()));
+    label.appendChild(el('tspan', { x: x, dy: '17' }, s.label[1].toUpperCase()));
+    g.appendChild(label);
+
+    g.appendChild(el('text', {
+      x: x, y: midY, 'text-anchor': 'middle', 'dominant-baseline': 'central',
+      style: 'fill:#fff;font:600 34px var(--font-sans)', 'letter-spacing': '-0.015em'
+    }, pct(s.n, base)));
+
+    g.appendChild(el('text', {
+      x: x, y: H - 30, 'text-anchor': 'middle',
+      style: 'fill:var(--foreground);font:500 25px var(--font-mono)'
+    }, s.n.toLocaleString()));
+
+    if (i > 0) {
+      const drop = Math.round((s.n / stages[i - 1].n - 1) * 100);
+      g.appendChild(el('text', {
+        x: x, y: H - 8, 'text-anchor': 'middle',
+        style: 'fill:color-mix(in oklab, var(--destructive) 82%, white);font:700 15px var(--font-mono)'
+      }, drop + '%'));
+    }
+  });
+
+  // outcome column header
+  const ocx = (trunkRight + F.W) / 2;
+  g.appendChild(iconAt(ocx, F.headTop + 6, OUTCOME_ICON, 'var(--primary)'));
+  g.appendChild(el('text', {
+    x: ocx, y: F.labelY, 'text-anchor': 'middle', 'letter-spacing': '0.08em',
+    style: 'fill:var(--muted-foreground);font:700 14px var(--font-sans)'
+  }, 'OUTCOME'));
+}
+
+/* ============================================================
+   RETENTION CHART
+   ============================================================ */
+function drawRetention() {
+  const g = document.getElementById('retentionG');
+  g.textContent = '';
+
+  const W = 1200, H = 340;
+  const left = 62, right = 34, topPad = 24, botPad = 52;
+  const plotW = W - left - right, plotH = H - topPad - botPad;
+  const yMin = 80, yMax = 100;
+  const months = RETENTION.months;
+  const xAt = i => left + (i * plotW) / (months.length - 1);
+  const yAt = v => topPad + plotH - ((v - yMin) / (yMax - yMin)) * plotH;
+
+  for (let v = yMin; v <= yMax; v += 5) {
+    g.appendChild(el('line', { x1: left, x2: W - right, y1: yAt(v), y2: yAt(v), stroke: 'var(--border)', 'stroke-width': '1' }));
+    g.appendChild(el('text', { x: left - 12, y: yAt(v) + 4, 'text-anchor': 'end', style: 'fill:var(--muted-foreground);font:500 12px var(--font-mono)' }, v + '%'));
+  }
+  months.forEach((m, i) => {
+    g.appendChild(el('text', { x: xAt(i), y: H - 28, 'text-anchor': 'middle', style: 'fill:var(--muted-foreground);font:600 12px var(--font-sans)' }, m));
+  });
+
+  // lagging band
+  const lagX = xAt(RETENTION.laggingFrom);
+  g.appendChild(el('rect', {
+    x: lagX, y: topPad, width: xAt(RETENTION.todayIndex) - lagX, height: plotH,
+    fill: 'var(--muted)', opacity: '0.95'
+  }));
+
+  // last year — gray dotted baseline
+  g.appendChild(el('polyline', {
+    points: RETENTION.lastYear.map((v, i) => xAt(i) + ',' + yAt(v)).join(' '),
+    fill: 'none', stroke: 'var(--muted-foreground)', 'stroke-width': '2',
+    'stroke-dasharray': '2 5', 'stroke-linecap': 'round'
+  }));
+
+  // this year — solid to the lagging point, dashed through it
+  const pts = RETENTION.thisYear.map((v, i) => v == null ? null : [xAt(i), yAt(v)]).filter(Boolean);
+  const solid = pts.slice(0, RETENTION.laggingFrom + 1);
+  const lagging = pts.slice(RETENTION.laggingFrom);
+  g.appendChild(el('polyline', {
+    points: solid.map(p => p[0] + ',' + p[1]).join(' '),
+    fill: 'none', stroke: 'var(--primary)', 'stroke-width': '3', 'stroke-linecap': 'round', 'stroke-linejoin': 'round'
+  }));
+  g.appendChild(el('polyline', {
+    points: lagging.map(p => p[0] + ',' + p[1]).join(' '),
+    fill: 'none', stroke: 'var(--primary)', 'stroke-width': '3',
+    'stroke-dasharray': '7 6', 'stroke-linecap': 'round'
+  }));
+  pts.forEach((p, i) => {
+    g.appendChild(el('circle', { cx: p[0], cy: p[1], r: '4.5', fill: '#fff', stroke: 'var(--primary)', 'stroke-width': '2.5' }));
+    if (i === pts.length - 1) {
+      g.appendChild(el('text', {
+        x: p[0] - 14, y: p[1] - 20, 'text-anchor': 'end',
+        style: 'fill:var(--primary);font:500 38px var(--font-mono)'
+      }, RETENTION.thisYear[i] + '%'));
+    }
+  });
+
+  // today marker
+  const tx = xAt(RETENTION.todayIndex);
+  g.appendChild(el('line', { x1: tx, x2: tx, y1: topPad - 6, y2: topPad + plotH, stroke: 'var(--foreground)', 'stroke-width': '1.5' }));
+  g.appendChild(el('text', { x: tx + 7, y: topPad + 8, style: 'fill:var(--foreground);font:700 11px var(--font-sans)' }, 'TODAY'));
+
+  g.appendChild(el('text', {
+    x: xAt(1) + 6, y: yAt(RETENTION.lastYear[1]) + 20,
+    style: 'fill:var(--muted-foreground);font:600 12px var(--font-sans)'
+  }, 'Last year averaged 85%'));
+}
+
+/* ============================================================
+   STAT BOXES
+   ============================================================ */
+function boxHtml(b) {
+  return '<div class="box' + (b.hero ? ' hero' : '') + '">' +
+    '<p class="box-value">' + esc(b.value) + '</p>' +
+    '<p class="box-label">' + esc(b.label) + (b.tag ? '<span class="tag">' + esc(b.tag) + '</span>' : '') + '</p>' +
+    '<p class="box-sub">' + esc(b.sub) + '</p></div>';
+}
+
+function renderBook(key) {
+  const view = BOOK[key];
+  drawFunnel(view);
+  document.getElementById('bookBoxes').innerHTML = view.boxes.map(boxHtml).join('');
+  document.getElementById('customRange').classList.toggle('on', key === 'custom');
+}
+
+document.getElementById('bizValueBoxes').innerHTML = BIZ_VALUE.map(boxHtml).join('');
+document.getElementById('bizGrowthBoxes').innerHTML = BIZ_GROWTH.map(boxHtml).join('');
+
+document.getElementById('bookRange').addEventListener('change', e => renderBook(e.target.value));
+['dateFrom', 'dateTo'].forEach(id =>
+  document.getElementById(id).addEventListener('change', () => renderBook('custom')));
+
+renderBook('month');
+drawRetention();
+
+/* ============================================================
+   ACTIVITY — search + date range, no clearing. The list is the record.
+   ============================================================ */
+const MONTHS_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function dayNumber(iso) {
+  const [y, m, d] = iso.split('-').map(Number);
+  return Date.UTC(y, m - 1, d) / 86400000;
+}
+function dateLabel(iso) {
+  const diff = dayNumber(TODAY) - dayNumber(iso);
+  if (diff === 0) return 'Today';
+  if (diff === 1) return 'Yesterday';
+  const [, m, d] = iso.split('-').map(Number);
+  return MONTHS_SHORT[m - 1] + ' ' + d;
+}
+function badgeClass(f) {
+  if (f.needs) return 'badge alert';
+  if (f.kind === 'Switched' || f.kind === 'New policy') return 'badge green';
+  if (f.kind === 'Referral') return 'badge indigo';
+  return 'badge';
+}
+
+function visibleFeed() {
+  const q = document.getElementById('actSearch').value.trim().toLowerCase();
+  const range = document.getElementById('actRange').value;
+  const today = dayNumber(TODAY);
+
+  let from = -Infinity, to = Infinity;
+  if (range === 'ytd') from = dayNumber('2026-01-01');
+  else if (range === 'custom') {
+    from = dayNumber(document.getElementById('actFrom').value || '2026-01-01');
+    to = dayNumber(document.getElementById('actTo').value || TODAY);
+  } else from = today - Number(range);
+
+  return FEED.filter(f => {
+    const d = dayNumber(f.iso);
+    if (d < from || d > to) return false;
+    if (!q) return true;
+    return (f.who + ' ' + f.what + ' ' + f.detail + ' ' + f.kind).toLowerCase().includes(q);
+  });
+}
+
+function renderFeed() {
+  const rows = visibleFeed();
+  const needs = rows.filter(f => f.needs).length;
+  document.getElementById('actCount').textContent =
+    rows.length + (rows.length === 1 ? ' event' : ' events') +
+    (needs ? ' · ' + needs + ' waiting on you' : '');
+  document.getElementById('actCustom').classList.toggle('on',
+    document.getElementById('actRange').value === 'custom');
+
+  // Each row will open that household's customer profile. Not built yet.
+  document.getElementById('feed').innerHTML = rows.length === 0
+    ? '<p class="act-empty">Nothing matches that search in this date range.</p>'
+    : rows.map(f =>
+        '<button type="button" class="act-row' + (f.needs ? ' needs' : '') + '">' +
+          '<span><span class="' + badgeClass(f) + '">' + esc(f.kind) + '</span></span>' +
+          '<span class="act-what"><strong>' + esc(f.who) + '</strong> ' + esc(f.what) +
+            '<span class="act-detail">' + esc(f.detail) + '</span></span>' +
+          '<span class="act-date">' + dateLabel(f.iso) + '</span>' +
+          '<span class="act-chevron"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6" /></svg></span>' +
+        '</button>').join('');
+}
+
+document.getElementById('actSearch').addEventListener('input', renderFeed);
+document.getElementById('actRange').addEventListener('change', renderFeed);
+['actFrom', 'actTo'].forEach(id => document.getElementById(id).addEventListener('change', renderFeed));
+renderFeed();
+
+/* ============================================================
+   ASK UPLINE DRAWER
+   ============================================================ */
+const drawer = document.getElementById('drawer');
+const scrim = document.getElementById('drawerScrim');
+const askCta = document.getElementById('askCta');
+function setDrawer(open) {
+  drawer.classList.toggle('open', open);
+  drawer.setAttribute('aria-hidden', String(!open));
+  scrim.classList.toggle('on', open);
+  askCta.setAttribute('aria-expanded', String(open));
+  if (open) document.getElementById('askInput').focus();
+}
+askCta.addEventListener('click', () => setDrawer(true));
+scrim.addEventListener('click', () => setDrawer(false));
+document.getElementById('drawerClose').addEventListener('click', () => setDrawer(false));
+document.addEventListener('keydown', e => { if (e.key === 'Escape') setDrawer(false); });
+
+const thread = document.getElementById('thread');
+const pills = document.getElementById('starters');
+
+function bubble(role, html) {
+  const node = document.createElement('div');
+  node.className = 'bubble ' + role;
+  node.innerHTML = html;
+  thread.appendChild(node);
+  // Long answers should start at the top, not scrolled past.
+  thread.scrollTop = node.offsetTop - thread.offsetTop - 8;
+  return node;
+}
+function setPills(ids, withBack) {
+  pills.innerHTML =
+    ids.map(id => '<button type="button" data-id="' + id + '">' + esc(ANSWERS[id].q) + '</button>').join('') +
+    (withBack ? '<button type="button" class="back" data-id="__brief">Back to my brief</button>' : '');
+}
+function answer(id) {
+  if (id === '__brief') {
+    bubble('upline', BRIEF);
+    setPills(DEFAULT_PILLS, false);
+    return;
+  }
+  const a = ANSWERS[id];
+  bubble('agent', esc(a.q));
+  bubble('upline', a.html);
+  setPills(a.next, true);
+}
+
+/* The drawer opens on the brief. */
+bubble('upline', BRIEF);
+setPills(DEFAULT_PILLS, false);
+
+pills.addEventListener('click', e => {
+  const btn = e.target.closest('button');
+  if (btn) answer(btn.dataset.id);
+});
+
+document.getElementById('askForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const input = document.getElementById('askInput');
+  const q = input.value.trim();
+  if (!q) return;
+  input.value = '';
+  bubble('agent', esc(q));
+
+  const l = q.toLowerCase();
+  const id =
+    /donegal|rate increase|carrier.*(rais|up)|pressure/.test(l) ? 'donegal' :
+    /miss|unreach|did not|didn.t (open|reach)|no touch|non.?open/.test(l) ? 'unreached' :
+    /which carrier|switch|moved to|where did they go/.test(l) ? 'carriers' :
+    /last year|compare|baseline|year over year/.test(l) ? 'compare' :
+    /opportunit|cross|bundle|mono|upsell|grow/.test(l) ? 'opportunity' :
+    /need|bind|today|sign|waiting|action/.test(l) ? 'needs' :
+    /overview|summar|five|brief me|board|meeting/.test(l) ? 'overview' :
+    /retention|retain|churn|data|why|driv/.test(l) ? 'data' :
+    null;
+
+  if (id) {
+    bubble('upline', ANSWERS[id].html);
+    setPills(ANSWERS[id].next, true);
+  } else {
+    bubble('upline',
+      '<p>In product this reads the household files, the weekly pull, and the AMS verify, and builds the answer around whatever you asked. Try one of these, or name a household.</p>');
+    setPills(DEFAULT_PILLS, true);
+  }
+});
+
+setDrawer(false);
+</script>
+</body>
+</html>

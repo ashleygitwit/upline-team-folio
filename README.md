@@ -4,6 +4,10 @@ The venture-wide planning hub: Through Line (internal comms), project planning, 
 
 **New here?** Start with [`WELCOME.md`](WELCOME.md). In Cursor, say **Welcome me — I’m [your name].**
 
+**Working the plan?** [`action-tracker.md`](action-tracker.md) is the master list — every open item
+across product, business, and go-to-market, with owner, due date, and next step. Sits at the root
+because it spans all four folders.
+
 **This repo is completely separate from [upline-poc](https://github.com/austinboardman/upline-poc).**
 Nothing here writes to or deploys to the POC.
 
