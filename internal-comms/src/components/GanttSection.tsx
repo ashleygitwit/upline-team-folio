@@ -1,16 +1,21 @@
 import { useMemo, useState } from 'react';
 import type { Initiative, InitiativeStatus, VenturePlan } from '../types';
-import { STATUS_COLORS, STATUS_TEXT_COLORS, touchPlan } from '../utils/ganttTasks';
+import {
+  ownerIncludesPerson,
+  STATUS_COLORS,
+  touchPlan,
+  uniquePeople,
+} from '../utils/ganttTasks';
 import { newInitiativeId } from '../utils/planStorage';
 import { CustomGantt, type TimelineZoom } from './CustomGantt';
 
 const STATUSES: InitiativeStatus[] = ['In Flight', 'Next', 'Future', 'Done'];
-
-type GanttView = 'timeline' | 'list';
+const ZOOMS: TimelineZoom[] = ['Day', 'Week', 'Month', 'Quarter'];
 
 interface GanttSectionProps {
   plan: VenturePlan;
   onPlanChange: (plan: VenturePlan) => void;
+  layout?: 'embed' | 'full';
 }
 
 const emptyForm = {
@@ -23,13 +28,14 @@ const emptyForm = {
   notes: '',
 };
 
-export function GanttSection({ plan, onPlanChange }: GanttSectionProps) {
-  const [view, setView] = useState<GanttView>('timeline');
+export function GanttSection({ plan, onPlanChange, layout = 'embed' }: GanttSectionProps) {
   const [viewMode, setViewMode] = useState<TimelineZoom>('Week');
   const [statusFilter, setStatusFilter] = useState<InitiativeStatus | 'All'>('All');
   const [workstreamFilter, setWorkstreamFilter] = useState<string>('All');
+  const [personFilter, setPersonFilter] = useState<string>('Everyone');
   const [showAddForm, setShowAddForm] = useState(false);
   const [form, setForm] = useState(emptyForm);
+  const [todayTick, setTodayTick] = useState(0);
 
   const workstreams = useMemo(() => {
     const fromInitiatives = [...new Set(plan.initiatives.map((i) => i.workstream))];
@@ -40,18 +46,27 @@ export function GanttSection({ plan, onPlanChange }: GanttSectionProps) {
     ];
   }, [plan.initiatives, plan.workstreams]);
 
+  const people = useMemo(() => uniquePeople(plan.initiatives), [plan.initiatives]);
+
   const ganttWorkstreamOrder = workstreamFilter === 'All' ? (plan.workstreams ?? []) : [];
 
-  const filteredInitiatives = useMemo(
-    () =>
-      plan.initiatives.filter((initiative) => {
-        const statusMatch = statusFilter === 'All' || initiative.status === statusFilter;
-        const workstreamMatch =
-          workstreamFilter === 'All' || initiative.workstream === workstreamFilter;
-        return statusMatch && workstreamMatch;
-      }),
-    [plan.initiatives, statusFilter, workstreamFilter],
-  );
+  const filteredInitiatives = useMemo(() => {
+    const matches = (initiative: Initiative) => {
+      const statusMatch = statusFilter === 'All' || initiative.status === statusFilter;
+      const workstreamMatch =
+        workstreamFilter === 'All' || initiative.workstream === workstreamFilter;
+      const personMatch =
+        personFilter === 'Everyone' || ownerIncludesPerson(initiative.owner, personFilter);
+      return statusMatch && workstreamMatch && personMatch;
+    };
+    const keep = new Set<string>();
+    for (const initiative of plan.initiatives) {
+      if (!matches(initiative)) continue;
+      keep.add(initiative.id);
+      if (initiative.parentId) keep.add(initiative.parentId);
+    }
+    return plan.initiatives.filter((initiative) => keep.has(initiative.id));
+  }, [plan.initiatives, statusFilter, workstreamFilter, personFilter]);
 
   function updateInitiatives(next: Initiative[]) {
     onPlanChange(touchPlan({ ...plan, initiatives: next }));
@@ -63,11 +78,6 @@ export function GanttSection({ plan, onPlanChange }: GanttSectionProps) {
         initiative.id === id ? { ...initiative, start, end } : initiative,
       ),
     );
-  }
-
-  function handleDelete(id: string, title: string) {
-    if (!window.confirm(`Delete "${title}"?`)) return;
-    updateInitiatives(plan.initiatives.filter((i) => i.id !== id));
   }
 
   function handleAddInitiative(e: React.FormEvent) {
@@ -91,30 +101,10 @@ export function GanttSection({ plan, onPlanChange }: GanttSectionProps) {
   }
 
   return (
-    <section className="card gantt-card">
-      <div className="section-head">
-        <h2>Current Plan</h2>
+    <section className={layout === 'full' ? 'card gantt-card is-full' : 'card gantt-card'}>
+      <div className="section-head gantt-toolbar-head">
+        {layout === 'embed' ? <h2>Current Plan</h2> : <h2 className="gantt-toolbar-title">Gantt</h2>}
         <div className="toolbar">
-          <div className="view-toggle" role="tablist" aria-label="Plan view">
-            <button
-              type="button"
-              role="tab"
-              aria-selected={view === 'timeline'}
-              className={view === 'timeline' ? 'active' : ''}
-              onClick={() => setView('timeline')}
-            >
-              Gantt chart
-            </button>
-            <button
-              type="button"
-              role="tab"
-              aria-selected={view === 'list'}
-              className={view === 'list' ? 'active' : ''}
-              onClick={() => setView('list')}
-            >
-              Table
-            </button>
-          </div>
           <button type="button" className="secondary-btn" onClick={() => setShowAddForm((v) => !v)}>
             {showAddForm ? 'Cancel' : '+ Add initiative'}
           </button>
@@ -139,7 +129,7 @@ export function GanttSection({ plan, onPlanChange }: GanttSectionProps) {
               list="workstream-options"
               value={form.workstream}
               onChange={(e) => setForm({ ...form, workstream: e.target.value })}
-              placeholder="e.g. GTM, POC / Pilot"
+              placeholder="e.g. GTM, Product"
             />
             <datalist id="workstream-options">
               {workstreams.map((ws) => (
@@ -197,17 +187,31 @@ export function GanttSection({ plan, onPlanChange }: GanttSectionProps) {
         </form>
       ) : null}
 
-      <div className="filters-row">
+      <div className="gantt-controls">
+        <div className="view-toggle zoom-toggle" role="radiogroup" aria-label="Timeline zoom">
+          {ZOOMS.map((zoom) => (
+            <button
+              key={zoom}
+              type="button"
+              role="radio"
+              aria-checked={viewMode === zoom}
+              className={viewMode === zoom ? 'active' : ''}
+              onClick={() => setViewMode(zoom)}
+            >
+              {zoom}
+            </button>
+          ))}
+        </div>
+        <button type="button" className="secondary-btn" onClick={() => setTodayTick((n) => n + 1)}>
+          Today
+        </button>
         <label>
-          Status
-          <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value as InitiativeStatus | 'All')}
-          >
-            <option value="All">All</option>
-            {STATUSES.map((status) => (
-              <option key={status} value={status}>
-                {status}
+          Person
+          <select value={personFilter} onChange={(e) => setPersonFilter(e.target.value)}>
+            <option value="Everyone">Everyone</option>
+            {people.map((person) => (
+              <option key={person} value={person}>
+                {person}
               </option>
             ))}
           </select>
@@ -223,19 +227,20 @@ export function GanttSection({ plan, onPlanChange }: GanttSectionProps) {
             ))}
           </select>
         </label>
-        {view === 'timeline' ? (
-          <label>
-            Zoom
-            <select
-              value={viewMode}
-              onChange={(e) => setViewMode(e.target.value as TimelineZoom)}
-            >
-              <option value="Day">Day</option>
-              <option value="Week">Week</option>
-              <option value="Month">Month</option>
-            </select>
-          </label>
-        ) : null}
+        <label>
+          Status
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value as InitiativeStatus | 'All')}
+          >
+            <option value="All">All</option>
+            {STATUSES.map((status) => (
+              <option key={status} value={status}>
+                {status}
+              </option>
+            ))}
+          </select>
+        </label>
       </div>
 
       <div className="legend">
@@ -245,75 +250,31 @@ export function GanttSection({ plan, onPlanChange }: GanttSectionProps) {
             {status}
           </span>
         ))}
+        <span className="legend-item">
+          <span className="swatch swatch-diamond" />
+          Milestone
+        </span>
       </div>
 
-      <p className="edit-hint">
-        Drag bars in Gantt chart view to reschedule. Use Table view to review details or delete items.
-        Edits save in this browser — download plan JSON below to commit to the repo.
-      </p>
-
-      {view === 'timeline' ? (
-        <CustomGantt
-          initiatives={filteredInitiatives}
-          workstreamOrder={ganttWorkstreamOrder}
-          viewMode={viewMode}
-          onDateChange={handleDateChange}
-        />
+      {layout === 'embed' ? (
+        <p className="edit-hint">
+          Drag bars to reschedule. Edits save in this browser — download plan JSON below to commit
+          to the repo.
+        </p>
       ) : (
-        <div className="list-view">
-          {filteredInitiatives.length === 0 ? (
-            <p className="empty">No initiatives match these filters.</p>
-          ) : (
-            <table>
-              <thead>
-                <tr>
-                  <th>Initiative</th>
-                  <th>Workstream</th>
-                  <th>Status</th>
-                  <th>Owner</th>
-                  <th>Start</th>
-                  <th>End</th>
-                  <th />
-                </tr>
-              </thead>
-              <tbody>
-                {filteredInitiatives.map((initiative) => (
-                  <tr key={initiative.id}>
-                    <td>
-                      <strong>{initiative.title}</strong>
-                      {initiative.notes ? <p className="row-notes">{initiative.notes}</p> : null}
-                    </td>
-                    <td>{initiative.workstream}</td>
-                    <td>
-                      <span
-                        className="status-pill"
-                        style={{
-                          backgroundColor: STATUS_COLORS[initiative.status],
-                          color: STATUS_TEXT_COLORS[initiative.status],
-                        }}
-                      >
-                        {initiative.status}
-                      </span>
-                    </td>
-                    <td>{initiative.owner}</td>
-                    <td>{initiative.start}</td>
-                    <td>{initiative.end}</td>
-                    <td>
-                      <button
-                        type="button"
-                        className="delete-btn"
-                        onClick={() => handleDelete(initiative.id, initiative.title)}
-                      >
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
-        </div>
+        <p className="edit-hint">
+          Drag bars to reschedule. Filter by person or workstream. Edits save in this browser.
+        </p>
       )}
+
+      <CustomGantt
+        initiatives={filteredInitiatives}
+        workstreamOrder={ganttWorkstreamOrder}
+        viewMode={viewMode}
+        onDateChange={handleDateChange}
+        fill={layout === 'full'}
+        scrollToToday={todayTick}
+      />
     </section>
   );
 }

@@ -10,6 +10,8 @@ export interface Initiative {
   end: string;
   notes?: string;
   milestone?: boolean;
+  /** When set, this row nests under that parent and shows in the accordion. */
+  parentId?: string;
 }
 
 export interface VentureThesis {

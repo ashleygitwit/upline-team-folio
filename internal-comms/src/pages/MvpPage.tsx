@@ -47,30 +47,92 @@ interface KanbanCol {
   title: string;
   color: string;
   text: string;
-  placeholder?: boolean;
+  items: string[];
 }
 
 const KANBAN_COLS: KanbanCol[] = [
-  { title: 'Feature backlog', color: 'var(--primary)', text: 'var(--primary-foreground)', placeholder: true },
-  { title: 'MVP scope', color: 'var(--success-strong)', text: 'var(--primary-foreground)' },
-  { title: 'Future features', color: 'var(--chart-3)', text: 'var(--foreground)' },
+  {
+    title: 'Above the line — Nov 6',
+    color: 'var(--success-strong)',
+    text: 'var(--primary-foreground)',
+    items: [
+      'Renewal queue',
+      'Outreach review and send',
+      'Household questionnaire',
+      'VA shopping of three carriers',
+      'Shop results for the agent',
+      'The proposal the policyholder sees',
+      'Needs-binding state that cannot silently disappear',
+    ],
+  },
+  {
+    title: 'Cut — first thing back after',
+    color: 'var(--chart-3)',
+    text: 'var(--foreground)',
+    items: [
+      'BI dashboard as a screen (stats ship as an email)',
+      'Native mobile app',
+      'Ask Upline anything chat',
+      'SMS and omnichannel — email only',
+      'Auto-shop, binding and payment inside Upline',
+      'Writing structured data back into the AMS',
+    ],
+  },
 ];
 
 export function MvpPage() {
   return (
     <>
-      <a className="page-back" href="#/roadmap">
-        &larr; Back to roadmap
-      </a>
-
       <section className="hero">
-        <p className="eyebrow">Roadmap · Then</p>
-        <h1 className="hero-title">MVP build.</h1>
+        <p className="eyebrow">Progress</p>
+        <h1 className="hero-title">MVP definition.</h1>
         <p className="hero-sub">
-          The first sellable front-end experience (Sep 14 through Nov 6), even if some steps stay
-          manual — VAs shopping — at launch. Starts the week after the Labor Day sprint (Sep
-          8–11). The first three weeks overlap the Stockton Hill pilot.
+          Dev started September 14. Six build weeks, then two QA weeks, ship Friday November 6.
+          Feature freeze October 23 — no new surfaces after that, bugs only. Some steps stay
+          manual at launch (VAs shopping). The first three weeks overlap Stockton Hill so they
+          can react to wireframes while design is still cheap to change.
         </p>
+      </section>
+
+      <section className="card phase-card">
+        <h2>Launch date</h2>
+        <p className="proof-statement">Friday November 6.</p>
+        <ul className="strat-list">
+          <li>
+            <strong>Design done Friday Oct 2</strong> — Stockton Hill has been reacting to
+            wireframes while change is still cheap.
+          </li>
+          <li>
+            <strong>Feature freeze Friday Oct 23</strong> — no new surfaces after that, bugs only.
+            Exit test: 30 real households, timed.
+          </li>
+          <li>
+            <strong>Ship Friday Nov 6</strong> — one paying agency running a real renewal week on
+            the seven surfaces above the line.
+          </li>
+        </ul>
+      </section>
+
+      <section className="card phase-card">
+        <h2>Weekly meetings</h2>
+        <p className="export-hint" style={{ marginTop: 0 }}>
+          Monday How Should We is retired. This team runs the weekly from here.
+        </p>
+        <ul className="strat-list">
+          <li>
+            <strong>Company weekly — Tuesday.</strong> First one is Thursday Sep 17, to tear up
+            the OKR draft. After that it is the Tuesday all-hands; product and go-to-market can
+            split into their own tracks from there.
+          </li>
+          <li>
+            <strong>Product stand-ups — Tuesday and Thursday mornings.</strong> Monday and
+            Wednesday stay the meeting-heavy days. Linear carries the ticket detail.
+          </li>
+          <li>
+            <strong>Monthly report-out</strong> uses the OKR format. That is the board cadence,
+            not a second set of goals.
+          </li>
+        </ul>
       </section>
 
       {/* GOAL */}
@@ -87,11 +149,11 @@ export function MvpPage() {
       <section className="card phase-card">
         <h2>Scope</h2>
         <p className="export-hint" style={{ marginTop: 0 }}>
-          Working preliminary product journey map of the first sellable week lives on the{' '}
-          <a href="#/mvp-journey">layered MVP journey map</a> — experience, data, and
-          features on the same grid. Feature cards below stay until that map is locked.
+          Thursday keep-kill set the line. Working product journey of the first sellable week lives
+          on the <a href="#/mvp-journey">layered MVP journey map</a> — experience, data, and
+          features on the same grid.
         </p>
-        <h3 className="sub-label">Feature backlog</h3>
+        <h3 className="sub-label">The November 6 cut</h3>
         <div className="kanban">
           {KANBAN_COLS.map((col) => (
             <div key={col.title} className="kanban-col">
@@ -102,13 +164,11 @@ export function MvpPage() {
                 className="kanban-col-body"
                 style={{ background: `color-mix(in srgb, ${col.color} 6%, var(--card))` }}
               >
-                {col.placeholder ? (
-                  <div className="kanban-card-ph">
-                    Feature placeholder — features will be listed here.
-                  </div>
-                ) : (
-                  <span className="kanban-empty">Empty for now</span>
-                )}
+                <ul className="kanban-list">
+                  {col.items.map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
               </div>
             </div>
           ))}
@@ -162,11 +222,11 @@ export function MvpPage() {
       <section className="card phase-card">
         <h2>Outcome</h2>
         <div className="empty-state is-tall">
-          <p className="empty-state-t">Build hasn&rsquo;t started yet — outcome TBD</p>
+          <p className="empty-state-t">Build is in flight — outcome still TBD</p>
           <p className="empty-state-b">
-            The MVP build starts Sep 14, the week after Labor Day sprint, alongside Stockton Hill.
-            The outcome we&rsquo;re after:
-            a first commercial customer live on the product around Nov 6.
+            Dev started Sep 14. The outcome we&rsquo;re after: a first paying customer live on
+            the product Friday November 6, running their real renewal week on the seven surfaces
+            above the line.
           </p>
         </div>
       </section>

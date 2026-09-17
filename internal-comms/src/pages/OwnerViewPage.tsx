@@ -78,13 +78,12 @@ export function OwnerViewPage() {
       </a>
 
       <section className="ov-intro">
-        <p className="eyebrow">Wireframe · agency owner, weekly</p>
+        <p className="eyebrow">Progress · weekly owner view</p>
         <h1 className="hero-title">Nothing has gone quiet.</h1>
         <p className="hero-sub">
-          The owner delegated retention outreach and could never verify it happened. So this screen
-          is not a report on our metrics &mdash; it is his book, and proof that nothing in it came
-          due untouched. Retention and money are the standing headline; coverage is what changes
-          each week. The metrics dashboard is the other take on this.
+          Thursday we cut the business intelligence dashboard as a screen — stats ship as an email
+          at launch. This page is the weekly owner view we are still designing toward: not a
+          report on our metrics, but his book, and proof that nothing in it came due untouched.
         </p>
       </section>
 

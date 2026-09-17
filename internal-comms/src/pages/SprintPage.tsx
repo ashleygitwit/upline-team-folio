@@ -1,162 +1,117 @@
-import { SPRINT_DAYS } from '../data/sprintDays';
-import { GanttChart } from '../components/GanttChart';
+const GOAL =
+  'We wanted to align on what we’re building, when and how, what we’re selling, how we’ll sell it, and the milestones to keep everyone moving in the same direction.';
 
-const INPUTS = [
-  'Members 1st run end-to-end — our only live pilot so far',
-  'A drafted MVP experience and an early pricing approach treated as a constraint',
-  'Real funnel and engagement data: response rates, opt-ins, and what actually drove a shop',
-  'A clear read on which work is VA-assisted vs. automatable, and the cost to run it',
+const DECIDED = [
+  {
+    title: 'What Upline is',
+    body: 'The servicing half of the agency, not a tool. Let the human be human; let the AI be the concierge. We never come out as an AMS, and we never position as “Upline Recommends.”',
+  },
+  {
+    title: 'Pricing',
+    body: 'The flat SaaS fee is dead. We price as a percentage of personal-lines premium, 24-month agreement, unlimited seats, shopping all-in or all-out. The percentage itself is still open.',
+  },
+  {
+    title: 'November 6 line',
+    body: 'Seven surfaces above the line: renewal queue, outreach review and send, questionnaire, VA shopping of three carriers, shop results, the insured proposal, and a needs-binding state that cannot silently disappear. The BI dashboard was cut — stats ship as an email.',
+  },
+  {
+    title: 'Go-to-market',
+    body: 'One metric that matters: 120 demos booked by end of November. Paid top-of-funnel video is the swing play. Austin spends more time on GTM than product.',
+  },
 ];
 
-const ROLES = [
-  { who: 'Justin — CEO', ask: 'Agent SME: how agents perceive value, what they’ll pay for, and how we sell this.' },
-  { who: 'Davie — Founding Head of Sales', ask: 'VA hiring and management; go-to-market and sales strategy with Justin.' },
-  { who: 'Claire — Brand and marketing', ask: 'Brand voice, marketing materials, and website.' },
-  { who: 'Jacob — Business strategy', ask: 'Venture setup, structure, and how we make this a viable business.' },
-  { who: 'Austin — Product strategist', ask: 'Technical feasibility, data, build approach, and product experience.' },
-  { who: 'Ashley — Venture lead / facilitator', ask: 'Primary facilitator for the week; proof-of-concept, timelines, and venture-wide context.' },
-  { who: 'Amanda — UX / UI', ask: 'Brand and user experience across the product.' },
-  { who: 'Douglas — Engineering', ask: 'What to build, how to build it, and what’s realistic in the time we have.' },
-  { who: 'Leander — GTM systems', ask: 'Current GTM initiatives and getting everyone set up with the accounts and tools we’ve been using.' },
+const TAKEAWAYS = [
+  {
+    title: 'The $699 pitch died in the room',
+    body: 'SaaS pricing made us sound like the thing we said we were not. Percentage of personal-lines premium, a 24-month partnership, and an uplift guarantee instead of a 90-day out. That was the week’s biggest pivot.',
+  },
+  {
+    title: 'The dashboard did not survive keep-or-kill',
+    body: 'Tuesday voted it a flagship. Thursday cut it. The owner still gets the numbers — as a month-in-review email — so November 6 can ship seven surfaces instead of a reporting product.',
+  },
+  {
+    title: 'We are not a tool, and we are not an AMS',
+    body: 'The working analogy is COO: don’t worry about it, we’ve got this. Coming out as a system of record puts us in a feature-parity trap. The agent’s name stays on the recommendation.',
+  },
+  {
+    title: 'GTM is a volume problem, not a deck problem',
+    body: '120 demos booked by November 30 is the number. Paid video is the swing play, outbound stays, and Austin’s time shifts toward go-to-market rather than pulling Doug off the build.',
+  },
 ];
 
-const LEAVE_WITH = [
-  'Aligned on what we’re building, when, and how',
-  'What we’re selling, how we’ll sell it, and milestones across the venture',
-  'A shared preliminary product journey map, with risks, unknowns, and flagship features named',
-  'Sketches of the key moments',
-  'An above-the-line cut, effort estimates, and an MVP launch date',
-  'Epics, stories, and requirements in Linear — or whatever ticketing system we use',
-  'A refined ICP and a sales journey with owners',
-  'A quarterly ops map and roles',
-  'Davie’s first sales experiment teed up, and a podcast recorded',
-];
-
-const WHO_WHERE: { time: string; curve: string; cube: string }[] = [
-  { time: 'Tue 9:00–10:00', curve: 'Everyone — ground the thesis', cube: '—' },
-  { time: 'Tue 10:00–11:30', curve: 'Everyone — GTM workshop', cube: '—' },
-  { time: 'Tue 11:30–1:00', curve: 'Gitwit All-Hands — Jacob introduces Justin and Davie. Lunch included.', cube: '—' },
-  { time: 'Tue 1:00–3:30', curve: 'Product — walk the product experience map', cube: '—' },
-  { time: 'Tue 3:30–4:30', curve: 'Product — what we sketch tomorrow', cube: '—' },
-  { time: 'Wed 9:00–2:00', curve: 'Product — breadboard and sketch', cube: 'Go-to-market — systems and decks' },
-  { time: 'Wed 2:00–3:00', curve: 'Everyone — review product design sketches', cube: '—' },
-  { time: 'Wed 3:00–5:00', curve: 'Product — revise', cube: 'Go-to-market — v2 sitemap' },
-  { time: 'Thu 9:00–12:00', curve: 'Everyone — features, keep or kill, effort, launch date', cube: '—' },
-  { time: 'Thu 1:00–5:00', curve: 'Product — stories and ticketing', cube: 'Go-to-market — site, deck, first motion' },
-  { time: 'Fri 9:00–11:30', curve: 'Heads-down wrap-up (product work)', cube: 'Heads-down wrap-up (go-to-market)' },
-  { time: 'Fri 11:30–1:30', curve: 'Everyone — Venture Ops, roles, week goals', cube: '—' },
-  { time: 'Fri 1:30–3:00', curve: '—', cube: 'Go-to-market — tee up Davie’s first sales experiment' },
-  { time: 'Fri 3:00–5:00', curve: '—', cube: 'Podcast — Justin and Davie with Jacob' },
+const DAYS = [
+  {
+    when: 'Tuesday',
+    date: 'September 8',
+    theme: 'Sales and product journeys',
+    body: 'We mapped the sales journey from awareness through onboarding, then walked the product experience map together and named the flagship moments to sketch the next day.',
+  },
+  {
+    when: 'Wednesday',
+    date: 'September 9',
+    theme: 'Sketch the product and set up go-to-market efforts',
+    body: 'Product sketched the flagship moments. Go-to-market got onto the systems, started the decks, and mapped the v2 site. The afternoon review is where the dashboard started to come apart.',
+  },
+  {
+    when: 'Thursday',
+    date: 'September 10',
+    theme: 'Keep or kill, and set the launch date',
+    body: 'We drew the MVP line — seven surfaces above it, the BI dashboard cut to an email — and set November 6. The pricing conversation killed the $699 SaaS fee in favor of a percentage of personal-lines premium.',
+  },
+  {
+    when: 'Friday',
+    date: 'September 11',
+    theme: 'Venture operations',
+    body: 'We named roles through year-end, set the Tuesday company weekly, teed up Davie’s first sales experiment, and recorded the podcast with Justin and Davie.',
+  },
 ];
 
 export function SprintPage() {
   return (
     <>
-      <a className="page-back" href="#/roadmap">
-        &larr; Back to roadmap
-      </a>
-
       <section className="hero">
-        <p className="eyebrow">Roadmap · Now</p>
+        <p className="eyebrow">Progress</p>
         <h1 className="hero-title">Product strategy sprint.</h1>
-        <p className="hero-sub">
-          Labor Day week — Tuesday September 8 through Friday September 11. After that, Stockton
-          Hill runs three weeks (Sep 14–Oct 2) while we start the MVP build.
-        </p>
+        <p className="hero-sub">{GOAL}</p>
       </section>
 
       <section className="card phase-card">
-        <h2>What we bring into the sprint</h2>
-        <ul className="proving-list">
-          {INPUTS.map((i) => (
-            <li key={i}>{i}</li>
+        <h2>What we decided</h2>
+        <div className="metric-grid">
+          {DECIDED.map((item) => (
+            <div key={item.title} className="metric-card">
+              <h3>{item.title}</h3>
+              <p>{item.body}</p>
+            </div>
           ))}
-        </ul>
-        <h3 className="sub-label">Goal of the sprint</h3>
-        <p className="proof-statement">
-          Lock product strategy for the MVP so we can build, and so sales knows what we can sell. By
-          Friday we leave aligned on what we’re building, when, and how — what we’re selling, how
-          we’ll sell it, and the milestones that keep everyone moving in the same direction.
-        </p>
+        </div>
       </section>
 
       <section className="card phase-card">
-        <h2>Plan</h2>
-        <h3 className="sub-label">Week at a glance</h3>
+        <h2>Biggest takeaways from the week</h2>
+        <div className="metric-grid">
+          {TAKEAWAYS.map((item) => (
+            <div key={item.title} className="metric-card">
+              <h3>{item.title}</h3>
+              <p>{item.body}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="card phase-card">
+        <h2>What we accomplished</h2>
         <div className="sprint-days">
-          {SPRINT_DAYS.map((d) => (
-            <a
-              key={d.id}
-              className="sprint-day sprint-day-link"
-              href={d.href}
-              onClick={(e) => {
-                e.preventDefault();
-                window.location.hash = d.href.replace(/^#/, '');
-              }}
-            >
+          {DAYS.map((d) => (
+            <div key={d.when} className="sprint-day">
               <p className="sprint-day-when">
                 {d.when} · {d.date}
               </p>
               <h3>{d.theme}</h3>
-              {d.glanceBeats.map((b) => (
-                <p key={b.label}>
-                  <b>{b.label}.</b> {b.text}
-                </p>
-              ))}
-              <p className="sprint-day-open">Open {d.when} &rarr;</p>
-            </a>
+              <p>{d.body}</p>
+            </div>
           ))}
         </div>
-
-        <hr className="soft-rule" />
-        <h3 className="sub-label">Roles for the week</h3>
-        <ul className="proving-list">
-          {ROLES.map((r) => (
-            <li key={r.who}>
-              <b>{r.who}.</b> {r.ask}
-            </li>
-          ))}
-        </ul>
-
-        <hr className="soft-rule" />
-        <h3 className="sub-label">Who is where</h3>
-        <p className="proof-statement" style={{ marginBottom: '1rem' }}>
-          Two rooms. The Curve is product. The Cube is go-to-market. If we are all together, we sit
-          in The Curve.
-        </p>
-        <table className="sprint-agenda">
-          <thead>
-            <tr>
-              <th>Block</th>
-              <th>The Curve</th>
-              <th>The Cube</th>
-            </tr>
-          </thead>
-          <tbody>
-            {WHO_WHERE.map((row) => (
-              <tr key={row.time}>
-                <td>{row.time}</td>
-                <td>{row.curve}</td>
-                <td>{row.cube}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </section>
-
-      <section className="card phase-card">
-        <h2>Outcome</h2>
-        <h3 className="sub-label">By Friday night</h3>
-        <ul className="check-list">
-          {LEAVE_WITH.map((i) => (
-            <li key={i}>{i}</li>
-          ))}
-        </ul>
-      </section>
-
-      <section className="card phase-card">
-        <h2>Road to November 6</h2>
-        <GanttChart />
       </section>
     </>
   );

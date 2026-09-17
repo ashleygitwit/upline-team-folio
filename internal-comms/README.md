@@ -2,7 +2,7 @@
 
 This folder is **The Through Line**, Upline's internal presentation and communication layer.
 
-It is **not** the Upline product. The product lives in [upline-poc](https://github.com/austinboardman/upline-poc). This site is how the team sees thesis, learnings, roadmap, sprint week, the journey map, brand, and team.
+It is **not** the Upline product. The product lives in [upline-poc](https://github.com/austinboardman/upline-poc). This site is how the team sees thesis, learnings, roadmap, the Gantt, sprint week, the journey map, brand, and team.
 
 **Live:** https://upline-throughline.vercel.app  
 **Local:** http://localhost:5299 (from the repo root: `npm run dev`)
@@ -23,7 +23,9 @@ The site can *show* those things. The durable reference copy lives in the folder
 
 ## Pages (hash routes)
 
-`#/` What is Upline · `#/learnings` · `#/roadmap` · `#/poc` · `#/sprint` · `#/sprint/tuesday` (and wednesday / thursday / friday) · `#/mvp` · `#/mvp-journey` · `#/brand` · `#/team` · `#/private` (password; includes the detailed journey and Path to Scale)
+Left rail is **Context** (overview, pricing strategy, learnings, POC results, brand, team) and **Progress** (Gantt, strategy sprint, MVP definition, OKRs, GTM approach).
+
+`#/` Overview · `#/pricing` · `#/learnings` · `#/poc` · `#/brand` · `#/team` · `#/gantt` · `#/sprint` · `#/mvp` · `#/mvp-journey` · `#/okrs` · `#/gtm` · `#/private` (password; includes the detailed journey and Path to Scale)
 
 ## How the site gets its data
 

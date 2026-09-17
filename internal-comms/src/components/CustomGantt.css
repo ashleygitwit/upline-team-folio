@@ -3,16 +3,16 @@
   border-radius: var(--radius);
   background: var(--card);
   overflow: hidden;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .custom-gantt-scroll {
   overflow: auto;
   max-height: 520px;
+  max-width: 100%;
+  min-width: 0;
   overscroll-behavior: contain;
-}
-
-.custom-gantt-grid {
-  min-width: 100%;
 }
 
 .cg-row {
@@ -28,13 +28,113 @@
   border-bottom: 1px solid var(--border);
 }
 
+.custom-gantt.is-fill {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+  width: 100%;
+}
+
+.custom-gantt.is-fill .custom-gantt-scroll {
+  flex: 1;
+  max-height: none;
+  min-height: 0;
+  min-width: 0;
+}
+
+.custom-gantt-grid {
+  position: relative;
+  min-width: 100%;
+}
+
+.cg-today-line {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  margin-left: -1px;
+  background: var(--warn);
+  z-index: 5;
+  pointer-events: none;
+}
+
 .cg-label-col {
-  flex: 0 0 220px;
+  flex: 0 0 300px;
+  width: 300px;
   border-right: 1px solid var(--border);
   background: var(--card);
   position: sticky;
   left: 0;
   z-index: 2;
+}
+
+.cg-header .cg-label-col {
+  z-index: 4;
+}
+
+.cg-label-head {
+  padding: 8px 12px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+
+.cg-task-meta {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.2rem;
+  min-width: 0;
+  padding: 0.4rem 0.75rem;
+}
+
+.cg-task-name {
+  font-size: 0.8rem;
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--foreground);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cg-task-tags {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.cg-ws-tag {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+
+.cg-person {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.45rem;
+  height: 1.45rem;
+  padding: 0 0.28rem;
+  border-radius: 999px;
+  background: var(--muted);
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--foreground);
+}
+
+.cg-day-letters span.is-today {
+  color: var(--warn-strong);
+  font-weight: 700;
 }
 
 .cg-timeline {

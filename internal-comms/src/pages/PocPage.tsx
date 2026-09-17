@@ -1,3 +1,5 @@
+import { useState } from 'react';
+import { PilotFunnel } from '../components/PilotFunnel';
 import type { VenturePlan } from '../types';
 
 interface PocPageProps {
@@ -60,7 +62,7 @@ const SUCCESS_METRICS: SuccessMetric[] = [
 ];
 
 const PILOT_FACTS: [string, string][] = [
-  ['Design partners', 'Members 1st (done) + Stockton Hill (three weeks, Sep 14–Oct 2)'],
+  ['Design partners', 'Members 1st (done) + Stockton Hill (kickoff Fri Sep 18, through Oct 9)'],
   ['Members 1st', 'Jun 17 – Aug 3 · 10 sessions + retro · 42 emailed'],
   ['Session rhythm', 'Mon · Wed · Fri, ~30 min, on Zoom, recorded'],
   ['M1st outcomes', '18 QQ (43%) · 7 switched · 5 stayed · 6 pending'],
@@ -305,23 +307,22 @@ const OUTCOME_STATS: { value: string; label: string }[] = [
   { value: '~$474', label: 'Avg savings found when shopped' },
 ];
 
+type OutcomeTab = 'members' | 'stockton';
+
 export function PocPage({ plan }: PocPageProps) {
+  const [outcomeTab, setOutcomeTab] = useState<OutcomeTab>('members');
+
   return (
     <>
-      <a className="page-back" href="#/roadmap">
-        &larr; Back to roadmap
-      </a>
-
       <section className="hero">
-        <p className="eyebrow">Roadmap · Proof</p>
-        <h1 className="hero-title">Proof of concept — the Members 1st pilot.</h1>
+        <p className="eyebrow">Context</p>
+        <h1 className="hero-title">Proof of concept findings.</h1>
         <p className="hero-sub">
           Our first live pilot with an independent agency is complete. Weekly Mon/Wed/Fri sessions,
           small-batch outreach paced to shopping capacity, and end-to-end runs from outreach &rarr;
-          questionnaire &rarr; shop &rarr; agent-reviewed recommendation. It tested well. We have
-          access to Stockton Hill; that pilot has not started. It runs three weeks after the Labor
-          Day product strategy sprint (Sep 8–11): September 14 through October 2, alongside the MVP
-          build.
+          questionnaire &rarr; shop &rarr; agent-reviewed recommendation. It tested well. Stockton
+          Hill is the second proof — in flight now, completing mid-October, running alongside the
+          MVP build.
         </p>
       </section>
 
@@ -410,63 +411,100 @@ export function PocPage({ plan }: PocPageProps) {
       {/* OUTCOME */}
       <section className="card phase-card">
         <h2>Outcome</h2>
-        <div className="outcome-verdict tone-win">
-          <span className="outcome-verdict-kicker">How we read it</span>
-          <p className="outcome-verdict-title">It tested well. Big victory — we move forward.</p>
-          <p className="outcome-verdict-body">
-            Members 1st proved the proposal moment on a real book. Agents trusted the rec enough to
-            send it. Customers answered. Seven households switched. The agency wants this as the
-            day-to-day once it is built — and was clear that without the product, they go reactive
-            again.
-          </p>
+        <div className="view-toggle outcome-tabs" role="tablist" aria-label="Pilot findings">
+          <button
+            type="button"
+            role="tab"
+            id="tab-members"
+            aria-selected={outcomeTab === 'members'}
+            aria-controls="panel-members"
+            className={outcomeTab === 'members' ? 'active' : ''}
+            onClick={() => setOutcomeTab('members')}
+          >
+            Members 1st
+          </button>
+          <button
+            type="button"
+            role="tab"
+            id="tab-stockton"
+            aria-selected={outcomeTab === 'stockton'}
+            aria-controls="panel-stockton"
+            className={outcomeTab === 'stockton' ? 'active' : ''}
+            onClick={() => setOutcomeTab('stockton')}
+          >
+            Stockton Hill
+          </button>
         </div>
 
-        <div className="outcome-stats">
-          {OUTCOME_STATS.map((s) => (
-            <div key={s.label} className="outcome-stat">
-              <p className="outcome-stat-value">{s.value}</p>
-              <p className="outcome-stat-label">{s.label}</p>
+        {outcomeTab === 'members' ? (
+          <div id="panel-members" role="tabpanel" aria-labelledby="tab-members">
+            <div className="outcome-verdict tone-win">
+              <span className="outcome-verdict-kicker">How we read it</span>
+              <p className="outcome-verdict-title">It tested well. Big victory — we move forward.</p>
+              <p className="outcome-verdict-body">
+                Members 1st proved the proposal moment on a real book. Agents trusted the rec enough
+                to send it. Customers answered. Seven households switched. The agency wants this as
+                the day-to-day once it is built — and was clear that without the product, they go
+                reactive again.
+              </p>
             </div>
-          ))}
-        </div>
-        <p className="export-hint">
-          Disposition sheet closed Aug 7: 48 households on the roster &rarr; 42 emailed &rarr; 18
-          questionnaires (43%) &rarr; 18 recommendations &rarr; 7 switched &middot; 5 stayed &middot;
-          6 pending. Average savings found among shopped households ~$474/yr; ~$665/yr among known
-          switchers.
-        </p>
 
-        <h3 className="sub-label">Against the three bars</h3>
-        <div className="metric-grid">
-          {CLEARED.map((m, i) => (
-            <div key={m.title} className="metric-card">
-              <div className="metric-head">
-                <span className="metric-n">{i + 1}</span>
-                <div>
-                  <h3>{m.title}</h3>
-                  <span className="metric-frame">{m.frame}</span>
+            <div className="outcome-stats">
+              {OUTCOME_STATS.map((s) => (
+                <div key={s.label} className="outcome-stat">
+                  <p className="outcome-stat-value">{s.value}</p>
+                  <p className="outcome-stat-label">{s.label}</p>
                 </div>
-              </div>
-              <p className="metric-q">{m.result}</p>
+              ))}
             </div>
-          ))}
-        </div>
+            <p className="export-hint">
+              Disposition sheet closed Aug 7: 48 households on the roster &rarr; 42 emailed &rarr; 18
+              questionnaires (43%) &rarr; 18 recommendations &rarr; 7 switched &middot; 5 stayed
+              &middot; 6 pending. Average savings found among shopped households ~$474/yr; ~$665/yr
+              among known switchers.
+            </p>
 
-        <h3 className="sub-label">What we learned</h3>
-        <ul className="check-list">
-          {FINDINGS.map((f) => (
-            <li key={f}>{f}</li>
-          ))}
-        </ul>
+            <h3 className="sub-label">Pilot customer funnel — end of Members 1st</h3>
+            <p className="export-hint">
+              Closed snapshot of the Members 1st pilot: 48 households on the disposition sheet,
+              traced from outreach through questionnaire, recommendation, and close-out.
+            </p>
+            <PilotFunnel />
 
-        <hr className="soft-rule" />
-        <h3 className="sub-label">What&rsquo;s next</h3>
-        <p className="proof-statement" style={{ marginTop: 0 }}>
-          Stockton Hill is three weeks after the Labor Day sprint: September 14 through October 2.
-          We have access; we have not started the pilot. Same proposal moment, Version A outreach —
-          we do not inherit the Members 1st v8 copy. That is the second proof, running alongside
-          the start of the MVP build.
-        </p>
+            <h3 className="sub-label">Against the three bars</h3>
+            <div className="metric-grid">
+              {CLEARED.map((m, i) => (
+                <div key={m.title} className="metric-card">
+                  <div className="metric-head">
+                    <span className="metric-n">{i + 1}</span>
+                    <div>
+                      <h3>{m.title}</h3>
+                      <span className="metric-frame">{m.frame}</span>
+                    </div>
+                  </div>
+                  <p className="metric-q">{m.result}</p>
+                </div>
+              ))}
+            </div>
+
+            <h3 className="sub-label">What we learned</h3>
+            <ul className="check-list">
+              {FINDINGS.map((f) => (
+                <li key={f}>{f}</li>
+              ))}
+            </ul>
+          </div>
+        ) : (
+          <div id="panel-stockton" role="tabpanel" aria-labelledby="tab-stockton">
+            <div className="outcome-verdict tone-pending">
+              <span className="outcome-verdict-kicker">In flight</span>
+              <p className="outcome-verdict-title">Stockton Hill is currently in the pilot.</p>
+              <p className="outcome-verdict-body">
+                The pilot is happening now and will be completed mid-October.
+              </p>
+            </div>
+          </div>
+        )}
       </section>
     </>
   );

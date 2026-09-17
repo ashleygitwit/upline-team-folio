@@ -1,5 +1,4 @@
 import type { VenturePlan } from '../types';
-import { PricingStrategy } from '../components/PricingStrategy';
 import { ProductJourneyEmbed } from '../components/ProductJourneyEmbed';
 
 interface HomePageProps {
@@ -19,7 +18,7 @@ export function HomePage({ plan }: HomePageProps) {
   return (
     <>
       <section className="hero">
-        <p className="eyebrow">What is Upline</p>
+        <p className="eyebrow">Context</p>
         <h1 className="hero-title">
           Upline turns every insurance renewal into a moment that proves the agent is in the
           customer&rsquo;s corner.
@@ -70,8 +69,6 @@ export function HomePage({ plan }: HomePageProps) {
         <h2>Upline product journey</h2>
         <ProductJourneyEmbed view="simple" />
       </section>
-
-      <PricingStrategy />
     </>
   );
 }

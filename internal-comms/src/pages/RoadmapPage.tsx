@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import type { VenturePlan } from '../types';
-import { GanttSection } from '../components/GanttSection';
 
 interface RoadmapPageProps {
   plan: VenturePlan | null;
@@ -28,30 +27,30 @@ const MILESTONES: Milestone[] = [
     cta: 'Read the learnings',
   },
   {
-    tag: 'Now',
+    tag: 'Done',
     title: 'Product strategy sprint',
-    body: 'Labor Day week — Tuesday September 8 through Friday September 11. Dual track with GTM. Tuesday includes Gitwit All-Hands (11:30–1:00). Thursday cuts features and stands up the build. Friday morning is heads-down wrap-up; Venture Ops is 11:30–1:30; Davie’s first sales experiment is teed up after that.',
+    body: 'Labor Day week — Tuesday September 8 through Friday September 11. Pricing moved to a percentage of personal-lines premium. Seven surfaces sit above the line for November 6. The business intelligence dashboard was cut to an email.',
     href: '#/sprint',
-    cta: 'View strategy sprint details',
+    cta: 'What we decided',
   },
   {
-    tag: 'Then',
+    tag: 'Now',
     title: 'Stockton Hill pilot',
-    body: 'Three weeks after the sprint: September 14 through October 2. Access is in hand; the pilot has not started. Same proposal moment, Version A outreach, so we can compare a second agency against the Members 1st run. Runs alongside the MVP build.',
+    body: 'Kickoff Friday September 18, three weeks to October 9. Format is Review Fridays — one shopped household at a time, individual sessions rather than a group. Version A outreach, so we can compare a second agency against Members 1st. Runs alongside the MVP build.',
     href: '#/poc',
     cta: 'View POC details',
   },
   {
-    tag: 'Then',
+    tag: 'Now',
     title: 'MVP build',
-    body: 'The first sellable front-end experience, even if some steps stay manual (VAs shopping) at launch. Starts September 14 — the same week as Stockton Hill — and runs through November 6. The first three weeks overlap the Stockton pilot.',
+    body: 'Dev started September 14 — six weeks of build, then two weeks of QA. Feature freeze Friday October 23. The first three weeks overlap Stockton Hill so they can react to wireframes while design is still cheap to change.',
     href: '#/mvp',
     cta: 'View MVP details',
   },
   {
     tag: 'Then',
     title: 'MVP launch',
-    body: 'November 6. The Labor Day sprint (Sep 8–11) locks the plan; Stockton Hill and the MVP build start together the week of September 14.',
+    body: 'November 6. One paying agency live, running their real renewal week on the software. A named design partner follows Stockton Hill in October and doubles as the QA population.',
     href: '#/mvp',
     cta: 'View MVP details',
   },
@@ -61,7 +60,6 @@ export function RoadmapPage({
   plan,
   exportMarkdown,
   hasLocalEdits,
-  onPlanChange,
   onDownload,
   onReset,
 }: RoadmapPageProps) {
@@ -82,8 +80,8 @@ export function RoadmapPage({
         <p className="eyebrow">Roadmap</p>
         <h1 className="hero-title">Where we are, and where we&rsquo;re headed.</h1>
         <p className="hero-sub">
-          The path from today&rsquo;s pilot to a first MVP — what each milestone is and what we aim
-          to learn. The interactive timeline underneath is the live plan.
+          The path from today&rsquo;s pilot to a first paying customer on November 6 — what each
+          milestone is and what we aim to learn. The live Gantt is its own page.
         </p>
       </section>
 
@@ -121,7 +119,20 @@ export function RoadmapPage({
             </p>
           ) : null}
 
-          <GanttSection plan={plan} onPlanChange={onPlanChange} />
+          <section className="card phase-card gantt-teaser">
+            <div className="section-head">
+              <div>
+                <h2>Current plan</h2>
+                <p className="export-hint">
+                  Day, week, month, quarter, and year. Filter by person or workstream. Full screen
+                  on its own page.
+                </p>
+              </div>
+              <a className="copy-btn" href="#/gantt">
+                Open Gantt chart →
+              </a>
+            </div>
+          </section>
 
           {SHOW_LLM_EXPORT ? (
           <section className="card export-card">
