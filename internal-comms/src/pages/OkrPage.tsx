@@ -47,7 +47,7 @@ const LANES = [
     id: 'customers',
     n: '3',
     title: 'Customers',
-    objective: 'Build a book of the right agencies, live on the product.',
+    objective: 'Get 30 of the right agencies contracted, with at least 3 live on the product.',
     results: [
       {
         id: '3.1',
