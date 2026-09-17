@@ -25,7 +25,7 @@ The site can *show* those things. The durable reference copy lives in the folder
 
 Left rail is **Context** (overview, pricing strategy, learnings, POC results, brand, team) and **Progress** (Gantt, strategy sprint, MVP definition, OKRs, GTM approach).
 
-`#/` Overview · `#/pricing` · `#/learnings` · `#/poc` · `#/brand` · `#/team` · `#/gantt` · `#/sprint` · `#/mvp` · `#/mvp-journey` · `#/okrs` · `#/gtm` · `#/private` (password; includes the detailed journey and Path to Scale)
+`#/` Overview · `#/pricing` · `#/learnings` · `#/poc` · `#/brand` · `#/team` · `#/gantt` · `#/sprint` · `#/breadboard` · `#/mvp` · `#/mvp-journey` · `#/okrs` · `#/gtm` · `#/private` (password; includes the detailed journey and Path to Scale)
 
 ## How the site gets its data
 

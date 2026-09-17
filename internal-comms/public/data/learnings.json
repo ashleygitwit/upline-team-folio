@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-09-09",
+  "lastUpdated": "2026-09-11",
   "intro": "How our thinking has changed over time — the evolution from an initial concept toward what will become the MVP. The learning log below is added to constantly as each pilot teaches us more; the open questions up top are the ones we're still pressure-testing.",
   "questions": [
     {
@@ -21,7 +21,7 @@
       "question": "Is automated shopping the wedge?",
       "status": "Answered",
       "lens": "viability",
-      "note": "No. Shopping is a ~$6 task; retention and cross-sell are the ~$800 tasks — and only they serve the mantra. Lead with those; let VAs shop for now. Aug 3 retro reinforced: quote prep + short rec saves time; the phone close stays in-house (~30 min/policy when the client answers)."
+      "note": "No. Shopping is a ~$6 task; retention and cross-sell are the ~$800 tasks — and only they serve the mantra. Lead with those; let VAs shop for now. Sept 10 sharpened it further: because we now earn on their premium, we are not doing pure apples-to-apples parity shopping. Three options, one parity and one upsell. Shopping is a cost we pass through, not a profit centre — which is exactly why the pricing model rewards us for automating it."
     },
     {
       "id": "scalability",
@@ -35,14 +35,14 @@
       "question": "How do we price when agencies control the copy and the cohort?",
       "status": "Open",
       "lens": "viability",
-      "note": "Both outcome-only and book-based pricing have failure modes. Pricing must assume agencies won't use the product exactly as we recommend. M1 value frame that landed: time savings + retention (~30 min/policy when client answers) — no price discussed on-record yet."
+      "note": "The model is answered; the number is not. Sept 10 killed the flat SaaS fee and moved us to a percentage of personal-lines premium — a tier without hard edges, and a pitch of pure alignment: if you shop your book and lose revenue, we lose money. 24-month agreement, unlimited seats, shopping all-in or all-out, and an uplift guarantee in place of a 90-day out. Still open: the actual percentage (0.5% probably does not cover shopping; likely 0.6–0.7%), which is gated on a fully loaded VA cost model."
     },
     {
       "id": "no-ams",
       "question": "Can we operate without ongoing AMS integration?",
       "status": "Emerging",
       "lens": "feasibility",
-      "note": "Launch plan is Path 2 (bypass): light CSV onboard + weekly renewal report into an inbox + shortlist RPA — not a full-book AMS API. Path 1 partner talks (EZLynx → HawkSoft) run in parallel. Aug 3 retro made EZLynx write-back a must-have for day-to-day use (Zapier note/doc or deposit pack)."
+      "note": "Now a strategy rather than a launch workaround. Sept 8–10 decided we do not integrate with the AMS at all, and do not write structured data back into it — no integration conversation, no 'you're replacing EZLynx' on day one, and no API anyone can switch off. We take our own AMS login and one seat, and access is the SLA: roughly two weeks to complete it, after which billing starts. Two systems is the point; ours has to be the one they gravitate to."
     }
   ],
   "entries": [
@@ -228,6 +228,55 @@
         "The insured gets a custom landing page for the proposal rather than a jargon PDF. The email is the invitation; the page is the brief.",
         "Language discipline on shopping: we have access to the markets and we used judgment. We do not claim we shopped thirty carriers when we shopped three.",
         "New top production risk named: false purchase. The insured clicks approve, the agent never binds, a claim happens, and Upline gets blamed. If approve exists it has to mean pending, never bound."
+      ]
+    },
+    {
+      "date": "2026-09-09",
+      "kind": "learning",
+      "source": "Strategy sprint — dashboard reframe",
+      "learning": "The owner dashboard is not a report of our funnel, it is the message that we have been protecting their book. A descending funnel reads as 'only 16 renewed' when the true story is 116 of 120 renewed and most never needed the middle steps, so the funnel actively misleads. The screen was restructured into two halves: above the line is what we need you to do, below the line is what we have been doing.",
+      "detail": [
+        "Retention is the anchor — rolling twelve months, with direction. Everything else is leading.",
+        "Explicitly not wanted: how many people switched carriers. 'No, I care if they stay.'",
+        "Low touchpoint coverage is a feature, not an embarrassment — it tells the owner whose contact details are missing.",
+        "It is their victory, not ours. The screen should make the owner look good."
+      ]
+    },
+    {
+      "date": "2026-09-10",
+      "kind": "milestone",
+      "title": "Pricing model replaced — percentage of premium",
+      "learning": "The flat SaaS fee we had been pitching is dead. We price as a percentage of personal-lines premium instead, because a percentage is a tier without hard edges and because it aligns us with the outcome we are selling: if we shop your book and you lose revenue, we lose money. It also resolves a messaging contradiction — we were telling people we are not another SaaS tool and then handing them SaaS pricing.",
+      "detail": [
+        "Personal lines only; commercial is excluded from the basis.",
+        "24-month agreement, no implementation fee, billing starts at the end of month one.",
+        "An uplift guarantee replaces the 90-day out — we guarantee we raise their retention rate.",
+        "Unlimited seats priced at the agency level; charging per seat would kill adoption among the people who feed the system its data.",
+        "Regulatory constraint: the fee cannot be tied to a specific policy, cannot sit on a commission account, and the word 'commission' cannot appear in the documents."
+      ]
+    },
+    {
+      "date": "2026-09-10",
+      "kind": "learning",
+      "source": "Strategy sprint — keep / kill",
+      "learning": "Seven surfaces went above the line for Nov 6 and everything else went under it. The business intelligence dashboard was cut despite carrying a magic-moment star — the stats ship as an email at launch and the screen is first thing back afterwards. The instruction was that paring down should hurt: 'if it doesn't hurt, you're not going far enough.'",
+      "detail": [
+        "Above the line: renewal queue, outreach review and send, questionnaire, VA shopping of three carriers, shop results, the insured proposal page, and a needs-binding state that cannot silently disappear.",
+        "The product runs on a weekly clock: renewals 30–45 days out, ~30 households, drafts ready Monday 8am, a 48-hour veto window, outreach sends Tuesday 9am.",
+        "Outreach sends automatically unless the agent intervenes; the recommendation never does. AI does not advise the insured.",
+        "A release valve list was pre-agreed in order, so week six is a choice rather than an argument."
+      ]
+    },
+    {
+      "date": "2026-09-11",
+      "kind": "milestone",
+      "title": "Strategy sprint closed — four lanes and a backwards plan",
+      "learning": "The week ended with a plan working back from Nov 6: six dev weeks with three design weeks overlapping the front, two QA weeks, Stockton Hill through September and a design partner through October who doubles as the QA population. Work is organised into four lanes — people, capital, customers, product — and the synthesis of the week is a set of 90-day OKRs rather than a summary document.",
+      "detail": [
+        "Monday How Should We is retired. One weekly for the whole team, then product and go-to-market split into their own cadences.",
+        "The VA hire is a senior manager in the country where we intend to build the team, treated as a core team member. Davie owns the relationship; Austin consults on tooling and protocol.",
+        "Investor pack, SPV framing and a data room are due before Sept 27; commitments targeted by Oct 15.",
+        "Two things nobody owns yet: onboarding when contracts close in December, and cover for paid social while Austin is at SIA."
       ]
     }
   ]

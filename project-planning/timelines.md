@@ -29,10 +29,13 @@ dev starting now, two weeks QA before launch) is tighter on dev and more discipl
 DESIGN ████████████████████
 DEV    ████████████████████████████████████████
 QA                                        ██████████████
-PILOT  ███ Stockton Hill ███  ████ Design partner ████████ │ Customer 1 →
+PILOT   ███ Stockton Hill ████  ███ Design partner ███████ │ Customer 1 →
                                                            ▲
                                                       Nov 6 LAUNCH
 ```
+
+**W1–W4 at day resolution**, with who is holding what on which day, is in
+[`product-next-four-weeks.md`](product-next-four-weeks.md). That is the version to send the wider team.
 
 - **Design:** W1–W3, done Fri Oct 2
 - **Dev:** W1–W6, feature freeze Fri Oct 23
@@ -48,10 +51,10 @@ runway design needs.
 
 | Week | Design | Dev | Pilot | Gate |
 |---|---|---|---|---|
-| **W1** Sep 14–18 | Shop results, insured page (Ashley) · queue, Outreach Review (Amanda) | Accounts, auth, multi-tenancy · **start the OAuth spike** | **Stockton Hill wk 1** | Fri: all 10 blocking decisions answered, Linear stood up |
-| **W2** Sep 21–25 | Iterate on Stockton Hill reactions | Credential vault · AMS renewal pull | Stockton Hill wk 2 | |
-| **W3** Sep 28–Oct 2 | Questionnaire polish, stats email | Renewal queue on real data | Stockton Hill wk 3 · **name the design partner** | **Fri Oct 2: design done.** Exit test — Stockton Hill's next 30 visible in the queue |
-| **W4** Oct 5–9 | Support only | Outreach Review · send from agent mailbox · scheduled auto-send | **Design partner starts** | Fri: a real email leaves a real mailbox and returns a completed questionnaire |
+| **W1** Sep 14–18 | Shop results, insured page (Ashley) · queue, Outreach Review (Amanda) | Accounts, auth, multi-tenancy · **start the OAuth spike** | Setup Tue–Wed · **Stockton Hill kickoff Fri 18** | Fri: all 10 blocking decisions answered, Linear stood up |
+| **W2** Sep 21–25 | Iterate on Stockton Hill reactions | Credential vault · AMS renewal pull | Stockton Hill review 1 (Fri 25) | |
+| **W3** Sep 28–Oct 2 | Questionnaire polish, stats email | Renewal queue on real data | Stockton Hill review 2 (Fri 2) · **name the design partner** | **Fri Oct 2: design done.** Exit test — Stockton Hill's next 30 visible in the queue |
+| **W4** Oct 5–9 | Support only | Outreach Review · send from agent mailbox · scheduled auto-send | **Stockton Hill closes Fri 9** · design partner starts | Fri: a real email leaves a real mailbox and returns a completed questionnaire |
 | **W5** Oct 12–16 | Support only | PDF parse and diff · shop results · talking points | Design partner wk 2 | Fri: one household goes questionnaire → shop → proposal |
 | **W6** Oct 19–23 | Support only | Proposal editor · insured page · Kanban and needs-binding | Design partner wk 3 | **Fri Oct 23: FEATURE FREEZE** |
 | **W7** Oct 26–30 | Bug fixes only | **QA wk 1** — full dry run, 30 real households, timed | Design partner wk 4 · **doubles as QA users** | Fri: two consecutive 24-hour shops delivered |
@@ -59,14 +62,20 @@ runway design needs.
 
 ## Why the pilots line up the way they do
 
-Stockton Hill runs W1–W3, which is exactly the design window. That is the point — they are reacting
-to wireframes and to their own real households while design is still cheap to change. Review Fridays,
-one shopped household at a time, individual sessions rather than a group.
+Stockton Hill kicks off **Friday Sept 18** and runs four Fridays to **Oct 9** — the kickoff plus three
+reviews. That covers the design window, which is the point: they are reacting to wireframes and to
+their own real households while design is still cheap to change. Review Fridays, one shopped household
+at a time, individual sessions rather than a group.
 
 The design partner starts W4, the week dev begins shipping user-facing surfaces, and runs straight
 through to launch. **They become the QA population for W7 and W8** — real users on real software
 during the two QA weeks, which is far better than testing against ourselves. Then they hand off and
 the first paying customer onboards Nov 6.
+
+**One consequence of the Friday kickoff:** Stockton Hill's last session and the design partner's first
+week both land in W4, which is also the riskiest dev week. Ashley flagged in the Sept 10 session that
+she may slide the design partner later so their three weeks dovetail into launch instead. That is an
+open call, and W4 is the reason to make it deliberately rather than by drift.
 
 ## What the freeze means
 

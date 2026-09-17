@@ -10,6 +10,7 @@ import { MvpPage } from './pages/MvpPage';
 import { OkrPage } from './pages/OkrPage';
 import { GtmPage } from './pages/GtmPage';
 import { PricingPage } from './pages/PricingPage';
+import { BreadboardPage } from './pages/BreadboardPage';
 import { BrandPage } from './pages/BrandPage';
 import { TeamPage } from './pages/TeamPage';
 import { PrivatePage } from './pages/PrivatePage';
@@ -31,6 +32,7 @@ type RouteKey =
   | 'okrs'
   | 'gtm'
   | 'pricing'
+  | 'breadboard'
   | 'brand'
   | 'team'
   | 'private';
@@ -67,6 +69,7 @@ const NAV_SECTIONS: {
 
 function navKeyForRoute(route: RouteKey): RouteKey {
   if (route === 'mvp-journey') return 'mvp';
+  if (route === 'breadboard') return 'sprint';
   return route;
 }
 
@@ -112,6 +115,7 @@ function routeFromHash(): RouteKey {
     hash === 'okrs' ||
     hash === 'gtm' ||
     hash === 'pricing' ||
+    hash === 'breadboard' ||
     hash === 'brand' ||
     hash === 'team' ||
     hash === 'private'
@@ -290,6 +294,7 @@ function App() {
           ) : null}
           {route === 'poc' ? <PocPage plan={plan} /> : null}
           {route === 'sprint' ? <SprintPage /> : null}
+          {route === 'breadboard' ? <BreadboardPage /> : null}
           {route === 'mvp-journey' ? <MvpJourneyPage /> : null}
           {route === 'mvp' ? <MvpPage /> : null}
           {route === 'okrs' ? <OkrPage /> : null}

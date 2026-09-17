@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-09-09",
+  "lastUpdated": "2026-09-17",
   "venture": {
     "hypothesis": "If we help independent P&C agencies turn renewal season into a repeatable, agent-approved outreach-and-recommendation workflow by triaging which accounts need action, doing the shopping legwork, and drafting a clear client recommendation, then agencies will retain more at-risk households and convert more renewals into cross-sell or up-sell conversations across their existing book of business, because today that work is too manual and time-consuming for most teams to run account-by-account at scale.",
     "thesis": {
@@ -9,7 +9,7 @@
     },
     "mantra": "Make every renewal prove the agent is in my corner.",
     "upcomingProofPoint": {
-      "description": "Members 1st proved agent trust and customer engagement on a real book. Next proof: the same proposal moment with Stockton Hill (Version A outreach). Access is in hand; the pilot has not started. Product strategy sprint is Labor Day week, Tue Sep 8\u2013Fri Sep 11. Stockton Hill runs three weeks after that (Sep 14\u2013Oct 2), alongside the MVP build. Path 2 no-AMS ops are in place. MVP launch Nov 6.",
+      "description": "Members 1st proved agent trust and customer engagement on a real book. Next proof: the same proposal moment with Stockton Hill (Version A outreach). Access is in hand; setup runs Sep 15–16 and the pilot kicks off Friday Sep 18, running three weeks to Oct 9 alongside the MVP build. The strategy sprint (Sep 8–11) closed the plan: percentage-of-premium pricing replaced the flat SaaS fee, seven surfaces sit above the line, and the business intelligence dashboard was cut to an email. A named design partner follows Stockton Hill in October and doubles as the QA population. Path 2 no-AMS ops are in place. MVP launch Nov 6.",
       "successCriteria": [
         "Agent Trust",
         "Customer Engagement",
@@ -20,17 +20,18 @@
   "workstreams": [
     "Ops",
     "Product",
-    "Go-to-market"
+    "Go-to-market",
+    "Capital"
   ],
   "pilotSummary": {
     "agency": "Members 1st Insurance",
     "kickoffDate": "2026-06-17",
     "asOfDate": "2026-09-03",
     "pilotWeek": 6,
-    "sessionRhythm": "Mon \u00b7 Wed \u00b7 Fri",
+    "sessionRhythm": "Mon · Wed · Fri",
     "sessionsCompleted": 11,
     "sessionsPlanned": 11,
-    "scheduleNote": "Members 1st complete. 10 working sessions Jun 17 \u2013 Jul 27 + Final Retro Aug 3. Outreach catch-up Jul 20\u201324. Disposition sheet closed Aug 7: 48 households \u00b7 42 emailed \u00b7 18 QQ (43%) \u00b7 18 recs \u00b7 7 switched \u00b7 5 stayed \u00b7 6 pending. Stockton Hill access is in hand; the pilot has not started. Strategy sprint is Labor Day week (Sep 8\u201311). Stockton Hill is three weeks after that (Sep 14\u2013Oct 2), running alongside the MVP build.",
+    "scheduleNote": "Members 1st complete. 10 working sessions Jun 17 – Jul 27 + Final Retro Aug 3. Outreach catch-up Jul 20–24. Disposition sheet closed Aug 7: 48 households · 42 emailed · 18 QQ (43%) · 18 recs · 7 switched · 5 stayed · 6 pending. Strategy sprint held Sep 8–11. Stockton Hill access is in hand; account setup Sep 15–16, kickoff Friday Sep 18, three weeks to Oct 9, running alongside the MVP build. Format is Review Fridays — one shopped household walked through together, individual sessions rather than a group.",
     "clientNamingRule": "First name + last initial only (e.g. Daniel P). Never full last names in team-facing exports.",
     "funnel": {
       "outreachEmailsDrafted": 42,
@@ -43,26 +44,26 @@
     },
     "outreachEmail": {
       "version": "v8 / vFINAL (held through Aug 3 retro)",
-      "summary": "One boilerplate for every renewal. Only variables: first name, renewal date, new premium (dollars only \u2014 no %, no old price, no increase language), and questionnaire link. Premium is never in the first sentence. ~85% rewrite from v1; zero further copy changes after Session 4.",
+      "summary": "One boilerplate for every renewal. Only variables: first name, renewal date, new premium (dollars only — no %, no old price, no increase language), and questionnaire link. Premium is never in the first sentence. ~85% rewrite from v1; zero further copy changes after Session 4.",
       "subject": "A quick review of your upcoming renewal",
-      "body": "Hi [First Name],\n\nAt Members 1st Insurance, we value you as a member, not just a policyholder. As your renewal on [renewal date] approaches, we'd like to take a few minutes to review your coverage and make sure everything still fits your needs. Sometimes we find our members are missing out on discounts, because over time the information we have no longer reflects your current situation. Your renewal premium for this term is $[new premium].\n\nOne of the advantages of working with Members 1st Insurance is that we partner with seven different insurance companies. That means we're able to compare options across multiple carriers to help ensure you're receiving competitive rates and the coverage that's right for you. There's no need to shop your insurance with other carriers when we can do that for you right here. We work on behalf of our members to find the best rates \u2014 let us take the guesswork and the multiple phone calls off your plate.\n\nTo make sure you're not missing any available discounts or carrying coverage that may no longer match your situation, I've put together a brief questionnaire. Your responses will help us identify potential savings opportunities, verify your current information, and make sure you're properly protected.\n\n[Complete the questionnaire here \u2192]([QUESTIONNAIRE_LINK])\n\nThank you for being a valued member of Members 1st Insurance. We're committed to helping you protect what matters most while making sure your insurance continues to work for you.\n\n[agent]"
+      "body": "Hi [First Name],\n\nAt Members 1st Insurance, we value you as a member, not just a policyholder. As your renewal on [renewal date] approaches, we'd like to take a few minutes to review your coverage and make sure everything still fits your needs. Sometimes we find our members are missing out on discounts, because over time the information we have no longer reflects your current situation. Your renewal premium for this term is $[new premium].\n\nOne of the advantages of working with Members 1st Insurance is that we partner with seven different insurance companies. That means we're able to compare options across multiple carriers to help ensure you're receiving competitive rates and the coverage that's right for you. There's no need to shop your insurance with other carriers when we can do that for you right here. We work on behalf of our members to find the best rates — let us take the guesswork and the multiple phone calls off your plate.\n\nTo make sure you're not missing any available discounts or carrying coverage that may no longer match your situation, I've put together a brief questionnaire. Your responses will help us identify potential savings opportunities, verify your current information, and make sure you're properly protected.\n\n[Complete the questionnaire here →]([QUESTIONNAIRE_LINK])\n\nThank you for being a valued member of Members 1st Insurance. We're committed to helping you protect what matters most while making sure your insurance continues to work for you.\n\n[agent]"
     },
     "recommendationEmail": {
       "version": "v8 / vFINAL + output contract",
       "summary": "Post-shop handoff locked short: steer (switch/stay + $) in paragraph one, premium-only recommended-vs-current table at most, coverage reassurance, soft CTA to a call. No jargon, no multi-carrier coverage tables. Agent reviews every quote before client contact. ~60% rewrite from v1.",
-      "status": "Locked at Aug 3 retro \u2014 no further template changes. Gerardo S is the canonical short switch example; next design partner resets to Version A.",
+      "status": "Locked at Aug 3 retro — no further template changes. Gerardo S is the canonical short switch example; next design partner resets to Version A.",
       "goldStandardClient": "Gerardo S"
     },
     "keyFindings": [
-      "End-of-pilot funnel (disposition sheet Aug 7): 48 on sheet \u2192 42 emailed \u2192 18 QQ (43%) \u2192 18 recs sent \u2192 7 switched \u00b7 5 stayed \u00b7 6 pending. Avg savings found ~$474/yr among shopped; ~$665/yr among known switchers.",
-      "Outreach collapsed to a single boilerplate (v8, ~85% from v1) \u2014 one email for everyone. Held with zero further copy changes through the Aug 3 retro.",
+      "End-of-pilot funnel (disposition sheet Aug 7): 48 on sheet → 42 emailed → 18 QQ (43%) → 18 recs sent → 7 switched · 5 stayed · 6 pending. Avg savings found ~$474/yr among shopped; ~$665/yr among known switchers.",
+      "Outreach collapsed to a single boilerplate (v8, ~85% from v1) — one email for everyone. Held with zero further copy changes through the Aug 3 retro.",
       "Recommendation email locked short (~60% from v1): steer + dollars; depth on the phone. OUTPUT CONTRACT caps length; flag higher deductible; match pay cadence.",
-      "Shop threshold held: prioritize \u226515% increases, ranked biggest-first. Preferred product cadence: weekly batch (Mon send / Tue QQ prompts / Fri check), not daily drips.",
-      "Upline drafts; agency closes \u2014 ~30 min/policy when the client answers (mostly phone). 90\u201395% quote accuracy with a human double-check is enough; preliminary \u2260 bind-ready.",
-      "Without the product, proactive disappears \u2014 M1 will go reactive during the build pause. Strong intent to adopt day-to-day once built.",
+      "Shop threshold held: prioritize ≥15% increases, ranked biggest-first. Preferred product cadence: weekly batch (Mon send / Tue QQ prompts / Fri check), not daily drips.",
+      "Upline drafts; agency closes — ~30 min/policy when the client answers (mostly phone). 90–95% quote accuracy with a human double-check is enough; preliminary ≠ bind-ready.",
+      "Without the product, proactive disappears — M1 will go reactive during the build pause. Strong intent to adopt day-to-day once built.",
       "Must-haves for day-to-day: EZLynx write-back, weekly batch + QQ notifications, 15%+ priority, short client surfaces, manual mid-term add.",
-      "Cross-sell/upsell: 35 households touched; 0 bound by end of pilot \u2014 interest surfaces easily; closing is a different motion.",
-      "Next design customer resets outreach to Version A \u2014 do not inherit Members 1st v8 wording."
+      "Cross-sell/upsell: 35 households touched; 0 bound by end of pilot — interest surfaces easily; closing is a different motion.",
+      "Next design customer resets outreach to Version A — do not inherit Members 1st v8 wording."
     ],
     "notableProgress": [
       {
@@ -71,7 +72,7 @@
       },
       {
         "client": "Donald K",
-        "note": "Travelers looked ~$665 under until a forgiven at-fault accident hit the report \u2014 stayed Donegal. Preliminary \u2260 bind-ready."
+        "note": "Travelers looked ~$665 under until a forgiven at-fault accident hit the report — stayed Donegal. Preliminary ≠ bind-ready."
       },
       {
         "client": "Kimberly S",
@@ -89,224 +90,525 @@
   "initiatives": [
     {
       "id": "ops-ceo-hiring",
-      "title": "CEO hiring",
+      "title": "Hire the CEO",
       "workstream": "Ops",
-      "status": "In Flight",
+      "status": "Done",
       "owner": "Ashley + Austin",
       "start": "2026-07-13",
-      "end": "2026-11-20",
-      "notes": "Executive search and hiring process."
+      "end": "2026-09-08",
+      "notes": "Justin onboarded Tuesday Sep 8 during sprint week."
     },
     {
       "id": "prod-m1st-week1",
-      "title": "Members 1st pilot \u2014 Week 1",
+      "title": "Conduct Members 1st pilot — Week 1",
       "workstream": "Product",
       "status": "Done",
-      "owner": "Ashley + Agent",
+      "owner": "Ashley",
       "start": "2026-06-17",
       "end": "2026-06-24",
-      "notes": "Sessions Jun 17 (Wed), 22, 24."
+      "notes": "Sessions Jun 17 (Wed), 22, 24.",
+      "parentId": "prod-m1st"
     },
     {
       "id": "prod-m1st-week2",
-      "title": "Members 1st pilot \u2014 Week 2",
+      "title": "Conduct Members 1st pilot — Week 2",
       "workstream": "Product",
       "status": "Done",
-      "owner": "Ashley + Agent",
+      "owner": "Ashley",
       "start": "2026-07-06",
       "end": "2026-07-10",
-      "notes": "Sessions Jul 6, 8, 10."
+      "notes": "Sessions Jul 6, 8, 10.",
+      "parentId": "prod-m1st"
     },
     {
       "id": "prod-m1st-week3",
-      "title": "Members 1st pilot \u2014 Week 3",
+      "title": "Conduct Members 1st pilot — Week 3",
       "workstream": "Product",
       "status": "Done",
-      "owner": "Ashley + Agent",
+      "owner": "Ashley",
       "start": "2026-07-13",
       "end": "2026-07-17",
-      "notes": "Sessions Jul 13, 15, 17 \u2014 complete."
+      "notes": "Sessions Jul 13, 15, 17 — complete.",
+      "parentId": "prod-m1st"
     },
     {
       "id": "prod-m1st-week4-sends",
-      "title": "Members 1st \u2014 outreach catch-up (Week 4)",
+      "title": "Send Members 1st outreach catch-up",
       "workstream": "Product",
       "status": "Done",
-      "owner": "Ashley + Agent",
+      "owner": "Ashley",
       "start": "2026-07-20",
       "end": "2026-07-24",
-      "notes": "Send batch Jul 20, 22, 24 \u2014 complete. Outreach queue cleared."
+      "notes": "Send batch Jul 20, 22, 24 — complete. Outreach queue cleared.",
+      "parentId": "prod-m1st"
     },
     {
       "id": "prod-pilot-break",
-      "title": "Pilot break \u2014 iterate & Stockton prep",
+      "title": "Iterate after Members 1st and prep Stockton Hill",
       "workstream": "Product",
       "status": "Done",
-      "owner": "Ashley + Agent",
+      "owner": "Ashley",
       "start": "2026-07-27",
       "end": "2026-08-02",
-      "notes": "Complete. M1st learnings synthesized; disposition sheet closed Aug 7; Aug 3 final retro held."
+      "notes": "Complete. M1st learnings synthesized; disposition sheet closed Aug 7; Aug 3 final retro held.",
+      "parentId": "prod-m1st"
     },
     {
       "id": "prod-m1st-retro",
-      "title": "Members 1st final retro",
+      "title": "Run the Members 1st final retro",
       "workstream": "Product",
       "status": "Done",
-      "owner": "Ashley + Agent",
+      "owner": "Ashley",
       "start": "2026-08-03",
       "end": "2026-08-03",
-      "notes": "Final session / retro Aug 3. Locked v8 emails, weekly cadence, EZLynx write-back + mid-term add as must-haves."
+      "notes": "Final session / retro Aug 3. Locked v8 emails, weekly cadence, EZLynx write-back + mid-term add as must-haves.",
+      "parentId": "prod-m1st"
     },
     {
       "id": "prod-stockton-holding",
-      "title": "Stockton Hill setup / holding",
+      "title": "Set up the Stockton Hill account",
       "workstream": "Product",
       "status": "Done",
-      "owner": "Ashley + Agent",
-      "start": "2026-08-05",
-      "end": "2026-09-03",
-      "notes": "Access received. Pilot does not start until Sep 14 \u2014 three weeks after Labor Day sprint week."
+      "owner": "Ashley",
+      "start": "2026-09-14",
+      "end": "2026-09-16",
+      "notes": "Access received. Account setup runs Sep 15–16; the pilot kicks off Friday Sep 18.",
+      "parentId": "prod-stockton-hill"
     },
     {
       "id": "prod-stockton-hill",
-      "title": "Stockton Hill pilot",
+      "title": "Conduct the Stockton Hill pilot",
       "workstream": "Product",
-      "status": "Next",
-      "owner": "Ashley + Agent",
+      "status": "In Flight",
+      "owner": "Ashley",
       "start": "2026-09-14",
-      "end": "2026-10-02",
-      "notes": "Second design partner. Access is in hand; the pilot has not started. Reset outreach to Version A (do not inherit M1 v8). Three weeks after the strategy sprint (Sep 14\u2013Oct 2), running alongside the MVP build."
+      "end": "2026-10-09",
+      "notes": "Second design partner. Kickoff Friday Sep 18, three weeks to Oct 9. Format is Review Fridays — one shopped household per session, individual rather than a group. Reset outreach to Version A (do not inherit M1 v8). Runs alongside the MVP build so they react to wireframes while design is still cheap to change. Validate the owner view with Brandon and the CSR view with Stacey."
     },
     {
       "id": "prod-sprint-prep",
-      "title": "Sprint prep",
+      "title": "Prep the strategy sprint",
       "workstream": "Product",
       "status": "Done",
-      "owner": "Ashley + Agent",
+      "owner": "Ashley",
       "start": "2026-09-08",
       "end": "2026-09-08",
-      "notes": "Prep at the open of Labor Day sprint week (Sep 8\u201311). Stockton Hill is the three weeks after."
+      "notes": "Prep at the open of Labor Day sprint week (Sep 8–11). Stockton Hill is the three weeks after."
     },
     {
       "id": "prod-strategy-sprint",
-      "title": "Product strategy sprint",
+      "title": "Run the product strategy sprint",
       "workstream": "Product",
-      "status": "In Flight",
-      "owner": "Ashley + Agent",
+      "status": "Done",
+      "owner": "Ashley",
       "start": "2026-09-08",
       "end": "2026-09-11",
-      "notes": "Labor Day week. Four days Tue\u2013Fri (Sep 8\u201311). Journeys, how-might-we, keep-kill / roadmap, venture ops. Then Stockton Hill for three weeks (Sep 14\u2013Oct 2) alongside the MVP build."
+      "notes": "Complete. Seven sessions Tue–Thu: journeys, magical moments, MVP sketch review, pricing, product breadboard, and the Thursday afternoon close on timeline, lanes and cadence. Outputs are decisions.md, timelines.md and the action tracker. Biggest change of the week was pricing — flat SaaS fee replaced by a percentage of personal-lines premium."
     },
     {
       "id": "prod-mvp-planning",
-      "title": "MVP planning",
+      "title": "Plan the MVP",
       "workstream": "Product",
-      "status": "Next",
-      "owner": "Ashley + Agent",
+      "status": "Done",
+      "owner": "Ashley",
       "start": "2026-09-10",
       "end": "2026-09-11",
-      "notes": "Thursday keep-kill / roadmap and Friday how-we-work close the sprint and open the build."
+      "notes": "Thursday keep-kill set the above/below line and confirmed Nov 6. Friday's session was folded into Thursday afternoon, which set the backwards plan, the four lanes and the meeting cadence."
     },
     {
       "id": "prod-mvp-build",
-      "title": "MVP build",
+      "title": "Build the customer-facing MVP",
       "workstream": "Product",
-      "status": "Next",
-      "owner": "Ashley + Agent",
+      "status": "In Flight",
+      "owner": "Ashley",
       "start": "2026-09-14",
       "end": "2026-11-06",
-      "notes": "Starts the week after Labor Day sprint, Sep 14, and runs through Friday Nov 6. The first three weeks overlap Stockton Hill."
+      "notes": "Six dev weeks from Sep 14 with three weeks of design overlapping the front, then two QA weeks. Feature freeze Friday Oct 23 — no new surfaces after that, bugs only. Above the line: renewal queue, outreach review and send, questionnaire, VA shopping of three carriers, shop results, the insured proposal page, and a needs-binding state that cannot silently disappear."
     },
     {
       "id": "prod-mvp-launch",
-      "title": "MVP launch",
+      "title": "Launch the MVP",
       "workstream": "Product",
       "status": "Future",
-      "owner": "Ashley + Agent",
+      "owner": "Ashley",
       "start": "2026-11-06",
       "end": "2026-11-06",
       "milestone": true,
-      "notes": "Ship date \u2014 Friday Nov 6. Sprint week (Sep 8\u201311) locks the plan; Stockton Hill (three weeks, Sep 14\u2013Oct 2) and the MVP build start together the week of Sep 14."
+      "notes": "Ship date — Friday Nov 6. One paying agency live, running their real renewal week on the software. Confirmed at the Sep 10 keep-kill. Definition of done is the seven above-the-line surfaces plus emails leaving the agent's own mailbox on the Tuesday 9:00 schedule, a VA kit that makes the 24-hour promise true, and an onboarding runbook someone outside the room can follow."
     },
     {
       "id": "prod-oct-beta",
-      "title": "Optional Oct beta \u2014 design partners (Aggressive path)",
+      "title": "Run the October design partner",
       "workstream": "Product",
-      "status": "Future",
-      "owner": "Ashley + Agent",
-      "start": "2026-10-12",
+      "status": "Next",
+      "owner": "Davie + Ashley",
+      "start": "2026-10-05",
       "end": "2026-11-06",
-      "notes": "Only if engineer gate clears. Simple MVP slice with Members 1st + Stockton for VA reps before paying logos. Ends at the Nov 6 launch."
+      "notes": "Candidate identified in the Sep 10 session and being approached. Free shopping and VA practice — a second agency's reality before we charge anyone. Starts the week dev begins shipping user-facing surfaces and runs to launch, doubling as the QA population for the last two weeks. Then hands off and the first paying customer onboards Nov 6."
     },
     {
       "id": "prod-mvp-iterate",
-      "title": "MVP iteration \u2014 first customers",
+      "title": "Iterate the MVP with first customers",
       "workstream": "Product",
       "status": "Future",
-      "owner": "Ashley + Agent",
+      "owner": "Ashley",
       "start": "2026-11-09",
       "end": "2026-12-18",
       "notes": "Runs in tandem with Release 2 (close the loop). Learn deep on the first logos."
     },
     {
       "id": "prod-release-2",
-      "title": "R2 \u2014 Close the loop",
+      "title": "Close the loop (R2)",
       "workstream": "Product",
       "status": "Future",
-      "owner": "Ashley + Agent",
+      "owner": "Ashley",
       "start": "2026-11-09",
       "end": "2026-12-18",
       "notes": "Record calls/Zooms; write fresh detail back into the repository."
     },
     {
       "id": "prod-release-3",
-      "title": "R3 \u2014 VA portal",
+      "title": "Build the VA portal (R3)",
       "workstream": "Product",
       "status": "Future",
-      "owner": "Ashley + Agent",
+      "owner": "Ashley",
       "start": "2026-12-21",
       "end": "2027-01-29",
       "notes": "Internal VA queues, upload, verification. Can start lighter / internal-tool while customer product stays engineer-built."
     },
     {
       "id": "prod-release-4",
-      "title": "R4 \u2014 RPA full-book AMS pull",
+      "title": "Pull the full book from AMS (R4)",
       "workstream": "Product",
       "status": "Future",
-      "owner": "Ashley + Agent",
+      "owner": "Ashley",
       "start": "2027-02-01",
       "end": "2027-03-12",
-      "notes": "Onboarding unlock \u2014 EasyLinks / HawkSoft first. Without this, manual book download caps add rate."
+      "notes": "Onboarding unlock — EasyLinks / HawkSoft first. Without this, manual book download caps add rate."
     },
     {
       "id": "prod-release-5",
-      "title": "R5 \u2014 Gig-style VA onboarding",
+      "title": "Stand up gig-style VA onboarding (R5)",
       "workstream": "Product",
       "status": "Future",
-      "owner": "Ashley + Agent",
+      "owner": "Ashley",
       "start": "2027-03-15",
       "end": "2027-04-23",
       "notes": "Digital training + workflow so VAs come online without heavy babysitting. First VA may become manager/trainer."
     },
     {
       "id": "prod-release-6",
-      "title": "R6 \u2014 AMS replacement (data visibility)",
+      "title": "Replace the AMS for data visibility (R6)",
       "workstream": "Product",
       "status": "Future",
-      "owner": "Ashley + Agent",
+      "owner": "Ashley",
       "start": "2027-04-26",
       "end": "2027-06-04",
       "notes": "Show the repository internally, then to clients. Automated shopping deferred ~2 years (not on this near-term track)."
     },
     {
       "id": "prod-no-ams",
-      "title": "No-AMS launch feasibility (background)",
+      "title": "Conduct AMS research",
       "workstream": "Product",
       "status": "Done",
-      "owner": "Agent",
+      "owner": "Austin",
       "start": "2026-07-13",
       "end": "2026-08-24",
-      "notes": "Path 2 ops architecture drafted (Aug 7): light CSV onboard + weekly renewal report + shortlist RPA + Zapier write-back. Feasibility closed \u2014 we can launch without an AMS API."
+      "notes": "Path 2 ops architecture drafted (Aug 7): light CSV onboard + weekly renewal report + shortlist RPA + Zapier write-back. Feasibility closed — we can launch without an AMS API."
+    },
+    {
+      "id": "ops-okrs",
+      "title": "Establish Q4 OKRs",
+      "workstream": "Ops",
+      "status": "In Flight",
+      "owner": "Ashley",
+      "start": "2026-09-11",
+      "end": "2026-09-17",
+      "notes": "First pass drafted across the four lanes — people, capital, customers, product — then revised by the team at the first weekly on Thursday Sep 17. Becomes the format for the monthly report-out. Monday How Should We is retired; this team runs the weekly from here."
+    },
+    {
+      "id": "ops-va-hire",
+      "title": "Hire the first VA — senior manager",
+      "workstream": "Ops",
+      "status": "Next",
+      "owner": "Davie",
+      "start": "2026-09-14",
+      "end": "2026-09-25",
+      "notes": "Hired in the country where we intend to build the team, treated as a core team member with a title and an exclusivity agreement — not a US W-2 employee. They build the process and hire the next ten. Davie owns the relationship; Austin runs tooling and shopping protocols as a consultant. Offer targeted the week of Sep 21. Blocked on employment agreements."
+    },
+    {
+      "id": "ops-company-insurance",
+      "title": "Secure company insurance — cyber, data liability, workers' comp",
+      "workstream": "Ops",
+      "status": "Next",
+      "owner": "Davie + Patrick",
+      "start": "2026-09-14",
+      "end": "2026-09-30",
+      "notes": "Historically written on the studio. With employees and this data profile it needs its own liability structure now. Bundles with the workers' comp shopping that has to happen anyway."
+    },
+    {
+      "id": "cap-investor-pack",
+      "title": "Build the investor pack",
+      "workstream": "Capital",
+      "status": "Next",
+      "owner": "Patrick + Jacob",
+      "start": "2026-09-11",
+      "end": "2026-09-27",
+      "notes": "Everything ready before the Sep 28 conference: pitch deck, incorporation docs, term sheet, and a data room, so a hallway conversation can end with “can you share that with me.” Content edits on the deck due Sep 21, leaving a week for design. Still to add: investor guidance, an investor CRM, and an outreach cadence."
+    },
+    {
+      "id": "cap-spv",
+      "title": "Frame the SPV",
+      "workstream": "Capital",
+      "status": "Next",
+      "owner": "Patrick",
+      "start": "2026-09-11",
+      "end": "2026-09-27",
+      "notes": "A special purpose vehicle so the network can come in through one instrument. Only the framing is needed before the conference — the event is about soliciting interest, not closing."
+    },
+    {
+      "id": "cap-commitments",
+      "title": "Secure investor commitments",
+      "workstream": "Capital",
+      "status": "Future",
+      "owner": "Patrick + Jacob",
+      "start": "2026-09-28",
+      "end": "2026-10-15",
+      "notes": "Commitments for money by Oct 15. Separate from revenue — pre-selling starts before then and we launch with revenue in October."
+    },
+    {
+      "id": "cap-contracting",
+      "title": "Draft customer contracts with counsel",
+      "workstream": "Capital",
+      "status": "Next",
+      "owner": "Patrick + Austin",
+      "start": "2026-09-14",
+      "end": "2026-10-01",
+      "notes": "Kicks off with a 60-minute call to lay out terms and concerns — 24-month agreement, pricing mechanics, data protections — then a session with counsel. SaaS template from the California firm; insurance-specific language coached separately. Hard constraint: a percentage of premium cannot be tied to a specific policy, cannot be named on a commission account, and the word “commission” cannot appear in the documents."
+    },
+    {
+      "id": "gtm-demos",
+      "title": "Book 120 demos",
+      "workstream": "Go-to-market",
+      "status": "Next",
+      "owner": "Austin + Davie",
+      "start": "2026-09-14",
+      "end": "2026-11-30",
+      "notes": "The one metric that matters. Roughly 90 held at a 75% show rate. Ramp checkpoint is ~18 booked by Oct 2 — September is the fragile part, because paid cannot make up a shortfall it has not learned enough to cover."
+    },
+    {
+      "id": "gtm-paid-social",
+      "title": "Launch paid social v1",
+      "workstream": "Go-to-market",
+      "status": "Next",
+      "owner": "Austin",
+      "start": "2026-09-14",
+      "end": "2026-11-30",
+      "notes": "The swing play. v1 live Sep 18 against a standalone landing page rather than waiting on website v2. The hard part is instrumentation — feeding the algorithms which videos become demos — and the ask is to have it crawling in about a month. Creative, not destination, is the likely blocker."
+    },
+    {
+      "id": "gtm-contracts",
+      "title": "Close ~30 contracts",
+      "workstream": "Go-to-market",
+      "status": "Future",
+      "owner": "Austin + Davie",
+      "start": "2026-11-09",
+      "end": "2026-12-31",
+      "notes": "Roughly a third of held demos. Execution is manual DocuSign first, built into the product later. Open: who preps, QAs, routes and files signed documents, and who owns onboarding when these land while we are stabilizing customer one."
+    },
+    {
+      "id": "prod-m1st",
+      "title": "Conduct the Members 1st pilot",
+      "workstream": "Product",
+      "status": "Done",
+      "owner": "Ashley",
+      "start": "2026-06-17",
+      "end": "2026-08-03",
+      "notes": "First live design-partner pilot. Ten working sessions plus the Aug 3 retro."
+    },
+    {
+      "id": "prod-admin",
+      "title": "Build Upline Admin",
+      "workstream": "Product",
+      "status": "In Flight",
+      "owner": "Ashley + Doug",
+      "start": "2026-09-21",
+      "end": "2026-10-02",
+      "notes": "Back office — invite an agency, configure agents, support roles. Admin skips the visual design pass; wireframes go straight to Doug."
+    },
+    {
+      "id": "prod-stockton-kickoff",
+      "title": "Kick off Stockton Hill",
+      "workstream": "Product",
+      "status": "Next",
+      "owner": "Ashley",
+      "start": "2026-09-18",
+      "end": "2026-09-18",
+      "parentId": "prod-stockton-hill",
+      "notes": "Friday Sep 18. Review Fridays from there — one shopped household at a time."
+    },
+    {
+      "id": "prod-stockton-reviews",
+      "title": "Run Stockton Hill review sessions",
+      "workstream": "Product",
+      "status": "Next",
+      "owner": "Ashley",
+      "start": "2026-09-21",
+      "end": "2026-10-09",
+      "parentId": "prod-stockton-hill",
+      "notes": "Monday, Wednesday, Friday. They react to wireframes on their own households while design is still cheap to change."
+    },
+    {
+      "id": "prod-mvp-wireframes",
+      "title": "Wireframe the client app, end to end",
+      "workstream": "Product",
+      "status": "In Flight",
+      "owner": "Ashley",
+      "start": "2026-09-16",
+      "end": "2026-09-22",
+      "parentId": "prod-mvp-build",
+      "notes": "Handoff to Amanda Monday Sep 21."
+    },
+    {
+      "id": "prod-mvp-magic",
+      "title": "Design the magic-moment screens — v3",
+      "workstream": "Product",
+      "status": "Next",
+      "owner": "Amanda",
+      "start": "2026-09-22",
+      "end": "2026-09-25",
+      "parentId": "prod-mvp-build"
+    },
+    {
+      "id": "prod-mvp-design-pass",
+      "title": "Design-pass the whole customer flow",
+      "workstream": "Product",
+      "status": "Next",
+      "owner": "Amanda",
+      "start": "2026-09-24",
+      "end": "2026-09-25",
+      "parentId": "prod-mvp-build"
+    },
+    {
+      "id": "prod-mvp-design-gate",
+      "title": "Take v4–v5 through the design gate",
+      "workstream": "Product",
+      "status": "Next",
+      "owner": "Ashley + Amanda",
+      "start": "2026-09-28",
+      "end": "2026-10-02",
+      "parentId": "prod-mvp-build",
+      "notes": "Design done Friday Oct 2."
+    },
+    {
+      "id": "prod-mvp-auth",
+      "title": "Build accounts, auth, and multi-tenancy",
+      "workstream": "Product",
+      "status": "In Flight",
+      "owner": "Doug",
+      "start": "2026-09-14",
+      "end": "2026-09-18",
+      "parentId": "prod-mvp-build"
+    },
+    {
+      "id": "prod-mvp-oauth",
+      "title": "Spike Microsoft mailbox OAuth",
+      "workstream": "Product",
+      "status": "In Flight",
+      "owner": "Doug",
+      "start": "2026-09-15",
+      "end": "2026-09-25",
+      "parentId": "prod-mvp-build",
+      "notes": "The piece most likely to overrun. Outreach send sits behind it."
+    },
+    {
+      "id": "prod-mvp-outreach-pass",
+      "title": "Design the outreach email, first pass",
+      "workstream": "Product",
+      "status": "In Flight",
+      "owner": "Doug",
+      "start": "2026-09-16",
+      "end": "2026-09-18",
+      "parentId": "prod-mvp-build"
+    },
+    {
+      "id": "prod-mvp-ams-queue",
+      "title": "Pull AMS renewals and queue on real data",
+      "workstream": "Product",
+      "status": "Next",
+      "owner": "Doug",
+      "start": "2026-09-28",
+      "end": "2026-10-02",
+      "parentId": "prod-mvp-build"
+    },
+    {
+      "id": "prod-mvp-mailbox-send",
+      "title": "Ship Outreach Review and mailbox send",
+      "workstream": "Product",
+      "status": "Next",
+      "owner": "Doug",
+      "start": "2026-10-05",
+      "end": "2026-10-09",
+      "parentId": "prod-mvp-build",
+      "notes": "A real email leaves a real mailbox Friday Oct 9."
+    },
+    {
+      "id": "prod-admin-wireframes",
+      "title": "Wireframe Upline Admin",
+      "workstream": "Product",
+      "status": "Next",
+      "owner": "Ashley",
+      "start": "2026-09-23",
+      "end": "2026-09-25",
+      "parentId": "prod-admin"
+    },
+    {
+      "id": "prod-admin-split",
+      "title": "Split the client and admin apps",
+      "workstream": "Product",
+      "status": "Next",
+      "owner": "Doug",
+      "start": "2026-09-21",
+      "end": "2026-10-02",
+      "parentId": "prod-admin"
+    },
+    {
+      "id": "ops-okrs-draft",
+      "title": "Draft the OKR first pass",
+      "workstream": "Ops",
+      "status": "In Flight",
+      "owner": "Ashley",
+      "start": "2026-09-16",
+      "end": "2026-09-16",
+      "parentId": "ops-okrs"
+    },
+    {
+      "id": "ops-standups",
+      "title": "Run product stand-ups Tue and Thu mornings",
+      "workstream": "Ops",
+      "status": "In Flight",
+      "owner": "Ashley",
+      "start": "2026-09-16",
+      "end": "2026-10-09",
+      "notes": "Heads-down days. Monday and Wednesday stay meeting-heavy."
+    },
+    {
+      "id": "prod-linear-tickets",
+      "title": "Draft Linear tickets in Cursor",
+      "workstream": "Product",
+      "status": "In Flight",
+      "owner": "Doug",
+      "start": "2026-09-17",
+      "end": "2026-10-09"
+    },
+    {
+      "id": "prod-brand-hub",
+      "title": "Tune brand positioning and the design hub",
+      "workstream": "Product",
+      "status": "In Flight",
+      "owner": "Amanda",
+      "start": "2026-09-14",
+      "end": "2026-09-18"
     }
   ]
 }

@@ -1,42 +1,44 @@
 const GOAL =
   'We wanted to align on what we’re building, when and how, what we’re selling, how we’ll sell it, and the milestones to keep everyone moving in the same direction.';
 
-const DECIDED = [
+const DECIDED: {
+  kicker: string;
+  line: string;
+  body: string;
+  points?: string[];
+  href?: string;
+  hrefLabel?: string;
+}[] = [
   {
-    title: 'What Upline is',
-    body: 'The servicing half of the agency, not a tool. Let the human be human; let the AI be the concierge. We never come out as an AMS, and we never position as “Upline Recommends.”',
+    kicker: 'Venture definition',
+    line: 'Upline is the servicing half of the agency, not a tool.',
+    body: 'Let the human be human; let the AI be the concierge. We never come out as an AMS, and we never position as “Upline Recommends.” The agent’s name stays on the recommendation.',
   },
   {
-    title: 'Pricing',
-    body: 'The flat SaaS fee is dead. We price as a percentage of personal-lines premium, 24-month agreement, unlimited seats, shopping all-in or all-out. The percentage itself is still open.',
+    kicker: 'Pricing',
+    line: 'Upline is priced as a percentage of personal-lines premium.',
+    body: 'The flat SaaS fee is dead. A percentage aligns us with the book: if we shop it and they lose revenue, we lose money. The percentage itself is still open.',
+    points: ['24-month agreement', 'Unlimited seats', 'Shopping all-in or all-out', 'Uplift guarantee, not a 90-day out'],
   },
   {
-    title: 'November 6 line',
-    body: 'Seven surfaces above the line: renewal queue, outreach review and send, questionnaire, VA shopping of three carriers, shop results, the insured proposal, and a needs-binding state that cannot silently disappear. The BI dashboard was cut — stats ship as an email.',
+    kicker: 'Launch date',
+    line: 'Product launch November 6.',
+    body: 'Seven surfaces sit above the line. The BI dashboard was cut — stats ship as an email. Design done October 2. Freeze October 23.',
+    href: '#/breadboard',
+    hrefLabel: 'Open the product breadboard',
   },
   {
-    title: 'Go-to-market',
-    body: 'One metric that matters: 120 demos booked by end of November. Paid top-of-funnel video is the swing play. Austin spends more time on GTM than product.',
+    kicker: 'Go-to-market',
+    line: 'One metric that matters: 120 demos by end of November.',
+    body: 'Paid top-of-funnel video is the swing play. Cold outbound continues alongside it. Austin spends more time on go-to-market than product.',
   },
 ];
 
 const TAKEAWAYS = [
-  {
-    title: 'The $699 pitch died in the room',
-    body: 'SaaS pricing made us sound like the thing we said we were not. Percentage of personal-lines premium, a 24-month partnership, and an uplift guarantee instead of a 90-day out. That was the week’s biggest pivot.',
-  },
-  {
-    title: 'The dashboard did not survive keep-or-kill',
-    body: 'Tuesday voted it a flagship. Thursday cut it. The owner still gets the numbers — as a month-in-review email — so November 6 can ship seven surfaces instead of a reporting product.',
-  },
-  {
-    title: 'We are not a tool, and we are not an AMS',
-    body: 'The working analogy is COO: don’t worry about it, we’ve got this. Coming out as a system of record puts us in a feature-parity trap. The agent’s name stays on the recommendation.',
-  },
-  {
-    title: 'GTM is a volume problem, not a deck problem',
-    body: '120 demos booked by November 30 is the number. Paid video is the swing play, outbound stays, and Austin’s time shifts toward go-to-market rather than pulling Doug off the build.',
-  },
+  'The $699 SaaS pitch died. We price as a percentage of personal-lines premium.',
+  'The dashboard was cut from MVP and ships as a month-in-review email.',
+  'We are the servicing half of the agency — not a tool, and not an AMS.',
+  'GTM is a volume problem: 120 demos booked by November 30.',
 ];
 
 const DAYS = [
@@ -77,26 +79,36 @@ export function SprintPage() {
 
       <section className="card phase-card">
         <h2>What we decided</h2>
-        <div className="metric-grid">
+        <div className="sprint-decided">
           {DECIDED.map((item) => (
-            <div key={item.title} className="metric-card">
-              <h3>{item.title}</h3>
+            <article key={item.kicker} className="sprint-decided-card">
+              <p className="sprint-decided-kicker">{item.kicker}</p>
+              <h3>{item.line}</h3>
               <p>{item.body}</p>
-            </div>
+              {item.points ? (
+                <ul className="sprint-decided-points">
+                  {item.points.map((point) => (
+                    <li key={point}>{point}</li>
+                  ))}
+                </ul>
+              ) : null}
+              {item.href ? (
+                <a className="sprint-decided-link" href={item.href}>
+                  {item.hrefLabel} &rarr;
+                </a>
+              ) : null}
+            </article>
           ))}
         </div>
       </section>
 
       <section className="card phase-card">
         <h2>Biggest takeaways from the week</h2>
-        <div className="metric-grid">
-          {TAKEAWAYS.map((item) => (
-            <div key={item.title} className="metric-card">
-              <h3>{item.title}</h3>
-              <p>{item.body}</p>
-            </div>
+        <ul className="sprint-takeaways">
+          {TAKEAWAYS.map((line) => (
+            <li key={line}>{line}</li>
           ))}
-        </div>
+        </ul>
       </section>
 
       <section className="card phase-card">

@@ -184,6 +184,10 @@ export function CustomGantt({
     const el = scrollRef.current;
     if (!el || !todayInRange) return;
     const jump = () => {
+      if (el.scrollWidth <= el.clientWidth + 2) {
+        el.scrollLeft = 0;
+        return;
+      }
       const target = Math.max(0, todayLeft - LABEL_WIDTH - el.clientWidth * 0.28);
       el.scrollLeft = target;
     };

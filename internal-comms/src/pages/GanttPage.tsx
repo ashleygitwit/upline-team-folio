@@ -23,7 +23,9 @@ export function GanttPage({
         <p className="eyebrow">Progress</p>
         <h1 className="hero-title">The 90-day plan</h1>
         <p className="hero-sub">
-          This week · {formatWeekRange()}. Diamonds mark milestones; the vertical line marks today.
+          This week · {formatWeekRange()}. Day shows seven days, week shows four weeks, month shows
+          three months, quarter shows a year. Diamonds mark milestones; the vertical line marks
+          today.
         </p>
       </section>
 

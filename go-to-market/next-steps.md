@@ -116,19 +116,21 @@ Everything above lands in the same five days, and that week is also M0 of the pr
 
 | Day | What |
 | --- | --- |
-| Mon 14 | Stockton Hill kickoff *(or Friday — the date conflicts, see below)* |
-| Wed 16 | SIA conference, QR page live |
-| Thu 17 | Young agents conference |
-| Fri 18 | Young agents day two · website v2 · paid social v1 · product decisions closed and Linear stood up · Stockton Hill kickoff *(or Monday)* |
+| Mon 14 | — |
+| Tue 15 | SIA QR page live · Stockton Hill account setup |
+| Wed 16 | SIA conference · Stockton Hill account setup |
+| Thu 17 | Young agents conference · first team weekly (OKR review) |
+| Fri 18 | Young agents day two · website v2 · paid social v1 · product decisions closed and Linear stood up · **Stockton Hill kickoff** |
 
-Friday the 18th is carrying four launches and a conference. Something on that list should move now,
-while moving it is cheap. My vote is that website v2 slides a week and paid v1 goes live against a
-standalone page, which takes two items off Friday and removes the dependency between them.
+**Friday the 18th is carrying four launches, a conference and a pilot kickoff.** Something on that
+list should move now, while moving it is cheap. My vote is that website v2 slides a week and paid v1
+goes live against a standalone page, which takes two items off Friday and removes the dependency
+between them.
 
-**Also unresolved: the Stockton Hill kickoff date.** `thu-wall.md` says the pilot starts Monday Sept
-14 and the kickoff email needed to go out this week; the Thursday transcript has Ashley kicking off
-Friday Sept 18. The email is drafted and waiting on a contact name at
-`upline-poc/clients/stockton-hill/pilot/week-1/kickoff-email.md`. Either way it is late.
+**Settled Sept 11: the Stockton Hill kickoff is Friday Sept 18**, with setup Tuesday and Wednesday,
+running three weeks of Review Fridays to Oct 9. The kickoff email is drafted and updated for the new
+date at `upline-poc/clients/stockton-hill/pilot/week-1/kickoff-email.md` — the only remaining blocker
+is a contact name, and it is already late.
 
 ---
 
@@ -144,6 +146,7 @@ second customer.
 ## Open questions
 
 - Is paid v1 pointing at a standalone page or waiting for website v2?
+- Does the first team weekly stay on Thursday the 17th, given that Davie is at young agents that day?
 - How many videos exist today?
 - Who covers paid launch mechanics while Austin is at SIA?
 - Does the young agents conference get its own page and its own ask?

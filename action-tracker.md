@@ -89,10 +89,10 @@ Three stages in sequence, not parallel.
 
 | Item | Owner | Due | Next immediate step | Status |
 |---|---|---|---|---|
-| Stockton Hill kickoff email | Ashley | **Overdue** | Waiting on a contact name. Draft is in `upline-poc/clients/stockton-hill/pilot/week-1/kickoff-email.md` | ⚠ |
-| Resolve the Stockton Hill start date — Sep 14 or Sep 18? | Ashley | Sep 11 | `thu-wall.md` and the Thursday transcript disagree | ⚠ |
-| Stockton Hill account setup | Ashley | Sep 18 | Needs a day, maybe two | ○ |
-| Stockton Hill Review Fridays — one shopped household each week | Ashley | Weekly from Sep 18 | Individual sessions, not a group | ○ |
+| Stockton Hill kickoff email | Ashley | **Overdue** | Only blocker is a contact name. Draft is updated for the Sep 18 date at `upline-poc/clients/stockton-hill/pilot/week-1/kickoff-email.md` | ⚠ |
+| ~~Resolve the Stockton Hill start date~~ | Ashley | Sep 11 | **Settled Sep 11: kickoff Friday Sep 18, three weeks to Oct 9.** Setup Tue/Wed Sep 15–16 | ● |
+| Stockton Hill account setup | Ashley | Sep 15–16 | Needs a day, maybe two — before the Friday kickoff | ○ |
+| Stockton Hill Review Fridays — one shopped household each week | Ashley | Sep 25, Oct 2, Oct 9 | Individual sessions, not a group | ○ |
 | Validation with Brandon (owner view) and Stacey (CSR view) | Ashley | Ongoing | Jolene is sales, not a CSR proxy | ○ |
 | **Name the October design partner** | Austin + Jacob | Sep 30 | No candidate on the list. Pilot sequence assumes one | ⚠ |
 | October beta — free shopping, VA practice | Ashley | Oct 1 | Starts alongside M4 | ○ |
