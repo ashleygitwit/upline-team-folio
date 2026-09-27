@@ -765,8 +765,9 @@ h2 {
 }
 
 /* Collapsed rail, desktop only: below 860px the rail is already a drawer.
-   Narrowing --sidebar-w on the shell moves the main column over with it. The
-   toggle stays at the foot, so expanding is a click in the same place. */
+   Narrowing --sidebar-w on the shell moves the main column over with it.
+   Collapsed, the expand toggle sits directly under the mark, where it is easy
+   to find, rather than at the foot. */
 @media (min-width: 861px) {
   .app-shell.is-rail-collapsed {
     --sidebar-w: var(--sidebar-w-rail);
@@ -788,9 +789,8 @@ h2 {
   }
 
   .app-shell.is-rail-collapsed .sidebar-foot {
-    align-self: stretch;
-    justify-content: center;
-    margin-top: auto;
+    padding-top: 0;
+    border-top: 0;
   }
 }
 
