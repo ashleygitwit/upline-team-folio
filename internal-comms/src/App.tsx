@@ -213,7 +213,7 @@ function App() {
 
   const isGantt = route === 'gantt';
   const isWide = route === 'mvp-journey' || route === 'private' || isGantt;
-  const pageClass = `page${isWide ? ' is-wide' : ''}${route === 'home' ? ' is-home' : ''}${isGantt ? ' is-gantt' : ''}`;
+  const pageClass = `page${isWide ? ' is-wide' : ''}${route === 'home' ? ' is-home' : ''}${route === 'brand' ? ' is-brand' : ''}${isGantt ? ' is-gantt' : ''}`;
   const activeNav = navKeyForRoute(route);
 
   return (
