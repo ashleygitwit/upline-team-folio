@@ -7,7 +7,9 @@ import type { WalkProps } from "@/walk";
 /**
  * How the week starts: an email, not a login. Upline writes to Stacey (this is
  * Upline-to-agent mail, so it carries Upline's brand) with one button that
- * opens the week. She could ignore it entirely and the six would still go.
+ * opens Upline. Stacey could ignore it entirely and the six would still go.
+ * Its headline is the same sentence as the banner Stacey lands on, so the two
+ * read as one message.
  */
 export function MondayEmail({ go }: WalkProps) {
   const n = thisWeek.length;
@@ -30,10 +32,10 @@ export function MondayEmail({ go }: WalkProps) {
 
       <div className="px-8 pt-10 pb-12">
         <img src={logo} alt="Upline" className="h-6 w-auto" />
-        <h1 className="mt-10 text-3xl">Good morning, Stacey. This week's six are ready.</h1>
+        <h1 className="mt-10 text-3xl">Good morning, Stacey. Your six renewals go out tomorrow at 9:00 AM.</h1>
         <p className="mt-5 text-base">
-          Each one is drafted in your voice, and they send from your inbox Tuesday at 9:00 AM. You don't need to do
-          anything. If you'd like to look them over first, they're waiting for you.
+          Each one is drafted in your voice and sends from your inbox. You don't need to do anything. If you'd like
+          to look them over first, they're waiting for you.
         </p>
         <Button size="lg" className="mt-8" onClick={() => go("monday")}>
           Look them over

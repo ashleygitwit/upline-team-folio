@@ -29,7 +29,7 @@ import type { WalkProps } from "@/walk";
 /**
  * The Callahans' shop, the one drawer an agent should expect to open. It
  * reads top to bottom the way Stacey would think it through: what came back
- * and what to say about it, which carrier she's putting her name on, and the
+ * and what to say about it, which carrier goes out under Stacey's name, and the
  * email Dana gets. The comparison table and the carrier PDFs are there for
  * whoever wants them, one click down. Nothing goes to Dana until Stacey sends.
  */
@@ -184,7 +184,7 @@ export function RecommendationSheet({
               The email to Dana
             </h3>
             <p className="mt-1 text-sm text-muted-foreground">
-              From {agency.agent.email}, with a link to her page. It goes out when you send it.
+              From {agency.agent.email}, with a link to Dana's page. It goes out when you send it.
             </p>
             <p className="mt-5 text-sm">
               <span className="text-muted-foreground">Subject </span>

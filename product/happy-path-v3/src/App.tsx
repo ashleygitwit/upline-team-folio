@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { DemoBar } from "@/components/DemoBar";
 import { MondayEmail } from "@/screens/MondayEmail";
-import { Home } from "@/screens/Home";
+import { Upline } from "@/screens/Upline";
 import { DanaInbox } from "@/screens/DanaInbox";
 import { Questionnaire } from "@/screens/Questionnaire";
 import { DanaPage } from "@/screens/DanaPage";
@@ -51,16 +51,17 @@ export function App() {
         <DemoBar index={index} onGo={setIndex} />
         <main className="flex-1">
           {screen.id === "monday-email" && <MondayEmail {...props} />}
-          {screen.id === "monday" && <Home key="monday" day="mon" {...props} />}
+          {screen.id === "monday" && <Upline key="monday" day="mon" {...props} />}
+          {screen.id === "renewals" && <Upline key="renewals" day="mon" page="renewals" {...props} />}
           {screen.id === "review" && (
-            <Home key="review" day="mon" openOn={{ kind: "outreach", id: "callahan" }} {...props} />
+            <Upline key="review" day="mon" page="renewals" openOn={{ kind: "outreach", id: "callahan" }} {...props} />
           )}
           {screen.id === "dana-inbox" && <DanaInbox {...props} />}
           {screen.id === "questionnaire" && <Questionnaire {...props} />}
-          {screen.id === "wednesday" && <Home key="wednesday" day="wed" {...props} />}
-          {screen.id === "results" && <Home key="results" day="thu" openOn={{ kind: "rec" }} {...props} />}
+          {screen.id === "wednesday" && <Upline key="wednesday" day="wed" {...props} />}
+          {screen.id === "results" && <Upline key="results" day="thu" openOn={{ kind: "rec" }} {...props} />}
           {screen.id === "dana-page" && <DanaPage {...props} />}
-          {screen.id === "friday" && <Home key="friday" day="fri" {...props} />}
+          {screen.id === "friday" && <Upline key="friday" day="fri" {...props} />}
         </main>
       </div>
     </TooltipProvider>

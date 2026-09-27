@@ -40,7 +40,7 @@ export function DanaPage({ walk, update }: WalkProps) {
               <p className="mt-3 text-base">
                 {pick.current
                   ? `Nothing changes. Your Erie policy renews on ${callahan.renewsLong}.`
-                  : `Stacey will take it from here and confirm with you before ${callahan.renewsLong}. Nothing changes until she does.`}
+                  : `Stacey will take it from here and confirm with you before ${callahan.renewsLong}. Nothing changes until then.`}
               </p>
               <Button
                 variant="link"
@@ -138,9 +138,9 @@ export function DanaPage({ walk, update }: WalkProps) {
               <p className="mt-3 text-sm text-muted-foreground">
                 {pick.current
                   ? "Your policy renews as it is. Nothing to sign."
-                  : `Approving tells Stacey to go ahead. It doesn't put coverage in place yet: she'll finish the paperwork and confirm with you before ${callahan.renewsLong}.`}
+                  : `Approving tells Stacey to go ahead. It doesn't put coverage in place yet: Stacey will finish the paperwork and confirm with you before ${callahan.renewsLong}.`}
               </p>
-              <p className="mt-6 text-base">Rather talk it through? Reply to Stacey's email and she'll call you.</p>
+              <p className="mt-6 text-base">Rather talk it through? Reply to Stacey's email to set up a call.</p>
             </article>
           </div>
         )}

@@ -54,6 +54,8 @@ export type Household = {
   now: number;
   /** Monday's one line on why the price moved. */
   why: string;
+  /** The same household, as a colleague who prepped it would hand it over. */
+  colleague: string;
   subject: string;
   email: string;
   address: string;
@@ -83,6 +85,8 @@ export const thisWeek: Household[] = [
     was: 4820,
     now: 5690,
     why: "Sophie got her license in August. That's most of the jump, and it's all on the auto.",
+    colleague:
+      "Their premium increases by $870 this year, mostly because their daughter Sophie got her license. Big year for them, and since their son Owen is about to go through the same thing a year from now, I'd mention that as something to consider when we look at new plans.",
     subject: "A heads up on your November 15 renewal",
     email: [
       "Hi Dana,",
@@ -100,6 +104,7 @@ export const thisWeek: Household[] = [
       { name: "Dana Callahan", role: "Named insured", note: "Primary contact" },
       { name: "Mike Callahan", role: "Spouse", note: "Named insured" },
       { name: "Sophie Callahan", role: "Driver", note: "Licensed August 2026 · license number missing" },
+      { name: "Owen Callahan", role: "Son", note: "Age 15 · permit next year" },
     ],
     vehicles: ["2019 Honda CR-V", "2016 Toyota Camry"],
     home: ["Roof replaced 2024", "No trampoline", "No dog"],
@@ -124,6 +129,8 @@ export const thisWeek: Household[] = [
     was: 2344,
     now: 2860,
     why: "Grange rerated the Tesla. There are no accidents on file.",
+    colleague:
+      "Ife's auto is up $516, and it isn't anything Ife did: Grange rerated the Tesla. There are no accidents on file, so this one should shop well. I'd lead with that, since nobody likes paying more for nothing.",
     subject: "A heads up on your November 8 renewal",
     email: [
       "Hi Ife,",
@@ -158,6 +165,8 @@ export const thisWeek: Household[] = [
     was: 3614,
     now: 4120,
     why: "Auto-Owners raised rates in Ohio this summer. Nothing changed on their end.",
+    colleague:
+      "Pat and Ellen are up $506 because Auto-Owners raised rates across Ohio this summer. Nothing changed on their end. They have a yellow Lab, so I'd make sure any new home quote doesn't exclude the dog.",
     subject: "A heads up on your November 12 renewal",
     email: [
       "Hi Pat,",
@@ -197,6 +206,8 @@ export const thisWeek: Household[] = [
     was: 3495,
     now: 3880,
     why: "Ohio Mutual is up 11% across the package. There are no claims on file.",
+    colleague:
+      "Gina's home and auto are up $385, about 11% across the package, with no claims. It's the soonest renewal on the list, so if the questionnaire sits, I'd give Gina a call on Thursday.",
     subject: "A heads up on your November 4 renewal",
     email: [
       "Hi Gina,",
@@ -233,6 +244,8 @@ export const thisWeek: Household[] = [
     was: 1780,
     now: 1940,
     why: "Up 9% on the house and the umbrella, with no claims. We'll offer to shop it, gently.",
+    colleague:
+      "Sam and Alex are only up $160, so I kept this one soft: a shop if they want it, no pressure. They have a trampoline and a goldendoodle, so I'd keep the umbrella in anything we bring back.",
     subject: "A heads up on your November 20 renewal",
     email: [
       "Hi Sam,",
@@ -272,6 +285,8 @@ export const thisWeek: Household[] = [
     was: 1680,
     now: 1680,
     why: "Same price as last year. This email is a coverage check, not a price shop.",
+    colleague:
+      "Chris's auto came in at the same $1,680 as last year. I'd still send it: the Tacoma is six years old now, so it's a good moment to ask whether full coverage still makes sense on it.",
     subject: "Your November 18 renewal",
     email: [
       "Hi Chris,",
@@ -289,9 +304,9 @@ export const thisWeek: Household[] = [
       { line: "Personal auto", short: "Auto", current: 1680, renewal: 1680, detail: "1 vehicle · 1 driver" },
     ],
     status: {
-      wed: { label: "Staying", detail: "Chris replied that he's happy with Erie. Nothing else to do this time." },
-      thu: { label: "Staying", detail: "Chris replied that he's happy with Erie. Nothing else to do this time." },
-      fri: { label: "Staying", detail: "Chris replied that he's happy with Erie. Nothing else to do this time." },
+      wed: { label: "Staying", detail: "Chris replied: happy with Erie, no shop needed. Nothing else to do this time." },
+      thu: { label: "Staying", detail: "Chris replied: happy with Erie, no shop needed. Nothing else to do this time." },
+      fri: { label: "Staying", detail: "Chris replied: happy with Erie, no shop needed. Nothing else to do this time." },
     },
   },
 ];
@@ -308,6 +323,34 @@ export const retention = {
   lastYearPct: 92,
   lifeLeads: 11,
 };
+
+/**
+ * The overview's cards: what Stacey has been up to since the first renewals
+ * went out, each said as one number and one sentence.
+ */
+export const activity = [
+  {
+    id: "outreach",
+    eyebrow: "Outreach",
+    figure: "79",
+    label: "emails from your inbox",
+    note: "We drafted 81, and you held two back to call yourself. That's what the skip is for.",
+  },
+  {
+    id: "savings",
+    eyebrow: "Shopping",
+    figure: "$5,328",
+    label: "back in your clients' pockets",
+    note: "Nine of the 23 households we shopped switched, and they're saving $592 a year each on average.",
+  },
+  {
+    id: "leads",
+    eyebrow: "Cross-sell",
+    figure: "11",
+    label: "asked about a life quote",
+    note: "They're with your sales team, and three already have a number.",
+  },
+];
 
 export type Left = {
   id: string;
@@ -327,7 +370,7 @@ export const whoLeft: Left[] = [
     lines: "Auto · Grange",
     date: "Sep 28",
     when: "Renewal passed September 28",
-    what: "Went with Progressive directly. He answered the questionnaire and then stopped replying.",
+    what: "Went with Progressive directly. Marcus answered the questionnaire and then stopped replying.",
     short: "Went with Progressive",
     winBack: true,
   },
@@ -337,7 +380,7 @@ export const whoLeft: Left[] = [
     lines: "Home · Westfield",
     date: "Oct 3",
     when: "Renewal passed October 3",
-    what: "Renewed somewhere else. He never opened the email or the follow-up.",
+    what: "Renewed somewhere else. Tom never opened the email or the follow-up.",
     short: "Renewed somewhere else",
     winBack: true,
   },

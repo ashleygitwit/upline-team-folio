@@ -3,15 +3,17 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { agency } from "@/data";
 
 /**
- * The product's own bar. Deliberately bare: no tabs, because there is one
- * page. Everything else opens from it and closes back to it.
+ * The product's own bar. Deliberately bare: no tabs. The mark takes Stacey
+ * back to the overview; everything else starts from the banner.
  */
-export function AppBar() {
+export function AppBar({ onHome }: { onHome: () => void }) {
   return (
     <header className="border-b bg-card">
       <div className="shell flex h-16 items-center justify-between">
         <div className="flex items-center gap-4">
-          <img src={logo} alt="Upline" className="h-6 w-auto" />
+          <button type="button" onClick={onHome} aria-label="Upline, back to the overview">
+            <img src={logo} alt="" className="h-6 w-auto" />
+          </button>
           <span aria-hidden className="h-5 w-px bg-border" />
           <span className="text-sm text-muted-foreground">{agency.name}</span>
         </div>
