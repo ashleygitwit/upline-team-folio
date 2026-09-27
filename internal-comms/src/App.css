@@ -724,8 +724,80 @@ h2 {
 }
 
 .sidebar-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
   padding-top: 0.85rem;
   border-top: 1px solid var(--border);
+}
+
+/* Collapse control for the rail. Sized and tinted like a nav link so it reads
+   as part of the rail rather than a page action. */
+.rail-toggle {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 2.15rem;
+  height: 2.15rem;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--muted-foreground);
+  cursor: pointer;
+}
+
+.rail-toggle:hover {
+  background: var(--muted);
+  color: var(--primary);
+}
+
+.rail-toggle svg {
+  width: 1.1rem;
+  height: 1.1rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Collapsed rail, desktop only: below 860px the rail is already a drawer.
+   Narrowing --sidebar-w on the shell moves the main column over with it. The
+   toggle stays at the foot, so expanding is a click in the same place. */
+@media (min-width: 861px) {
+  .app-shell.is-rail-collapsed {
+    --sidebar-w: var(--sidebar-w-rail);
+  }
+
+  .app-shell.is-rail-collapsed .site-sidebar {
+    align-items: center;
+    padding-inline: 0;
+  }
+
+  .app-shell.is-rail-collapsed .site-sidebar .brand-lockup {
+    margin: 0 0 1.75rem;
+  }
+
+  .app-shell.is-rail-collapsed .site-sidebar .wordmark,
+  .app-shell.is-rail-collapsed .site-nav,
+  .app-shell.is-rail-collapsed .sidebar-foot .nav-link {
+    display: none;
+  }
+
+  .app-shell.is-rail-collapsed .sidebar-foot {
+    align-self: stretch;
+    justify-content: center;
+    margin-top: auto;
+  }
+}
+
+@media (max-width: 860px) {
+  .rail-toggle {
+    display: none;
+  }
 }
 
 .nav-backdrop {

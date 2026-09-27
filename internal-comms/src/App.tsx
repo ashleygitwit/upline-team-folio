@@ -76,6 +76,18 @@ function navKeyForRoute(route: RouteKey): RouteKey {
   return route;
 }
 
+// Whether the left rail is collapsed to just the mark. Remembered per browser;
+// storage can be unavailable (private windows), so it falls back to open.
+const RAIL_STORAGE_KEY = 'throughline-rail-collapsed';
+
+function readRailCollapsed(): boolean {
+  try {
+    return localStorage.getItem(RAIL_STORAGE_KEY) === '1';
+  } catch {
+    return false;
+  }
+}
+
 function routeFromHash(): RouteKey {
   const parts = window.location.hash.replace(/^#\/?/, '').split('/').filter(Boolean);
   const hash = parts[0] ?? '';
@@ -136,6 +148,15 @@ function App() {
   const [error, setError] = useState<string | null>(null);
   const [route, setRoute] = useState<RouteKey>(routeFromHash());
   const [navOpen, setNavOpen] = useState(false);
+  const [railCollapsed, setRailCollapsed] = useState(readRailCollapsed);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(RAIL_STORAGE_KEY, railCollapsed ? '1' : '0');
+    } catch {
+      /* ignore */
+    }
+  }, [railCollapsed]);
 
   const applyPlan = useCallback((next: VenturePlan, persist = true) => {
     setPlan(next);
@@ -222,7 +243,9 @@ function App() {
   const activeNav = navKeyForRoute(route);
 
   return (
-    <div className={`app-shell${navOpen ? ' is-nav-open' : ''}${isGantt ? ' is-gantt-shell' : ''}`}>
+    <div
+      className={`app-shell${navOpen ? ' is-nav-open' : ''}${railCollapsed ? ' is-rail-collapsed' : ''}${isGantt ? ' is-gantt-shell' : ''}`}
+    >
       <button
         type="button"
         className="nav-backdrop"
@@ -262,6 +285,18 @@ function App() {
           <a className="nav-link nav-link-quiet" href="#/private">
             Private
           </a>
+          <button
+            type="button"
+            className="rail-toggle"
+            aria-label={railCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            title={railCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            onClick={() => setRailCollapsed((collapsed) => !collapsed)}
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <rect x="3" y="4" width="18" height="16" rx="2" />
+              <path d="M9 4v16" />
+            </svg>
+          </button>
         </div>
       </aside>
 
