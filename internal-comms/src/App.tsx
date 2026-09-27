@@ -40,7 +40,7 @@ type RouteKey =
   | 'private';
 
 const NAV_SECTIONS: {
-  id: 'context' | 'progress';
+  id: 'context' | 'progress' | 'prototype';
   label: string;
   items: { key: RouteKey; label: string; href: string }[];
 }[] = [
@@ -65,8 +65,12 @@ const NAV_SECTIONS: {
       { key: 'mvp', label: 'MVP definition', href: '#/mvp' },
       { key: 'okrs', label: 'OKRs', href: '#/okrs' },
       { key: 'gtm', label: 'GTM approach', href: '#/gtm' },
-      { key: 'prototype', label: 'Prototype', href: '#/prototype' },
     ],
+  },
+  {
+    id: 'prototype',
+    label: 'Prototype',
+    items: [{ key: 'prototype', label: 'Ashley_v2_sept_22', href: '#/prototype' }],
   },
 ];
 
