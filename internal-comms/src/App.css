@@ -1761,6 +1761,32 @@ h2 {
   line-height: 1.45;
 }
 
+/* ---- Prototype page ----
+   The prototype brings its own stage, heading and step links, and sizes its
+   frame to the height of the window it runs in. So the page is only that
+   window: the whole main column, edge to edge, with no footer below. */
+.page.is-prototype {
+  max-width: none;
+  padding: 0;
+}
+
+.prototype-frame {
+  display: block;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  border: 0;
+}
+
+/* Below 860px the left rail becomes the sticky top bar, which takes its
+   height out of the window. */
+@media (max-width: 860px) {
+  .prototype-frame {
+    height: calc(100vh - var(--nav-h));
+    height: calc(100dvh - var(--nav-h));
+  }
+}
+
 /* ---- Brand page: the Design Hub on an indigo field ----
    The whole page sits on Indigo 600, so the hero and footer invert the way the
    home page's feature band does. The card and its button reuse the band's glass

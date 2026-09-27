@@ -12,6 +12,7 @@ import { GtmPage } from './pages/GtmPage';
 import { PricingPage } from './pages/PricingPage';
 import { BreadboardPage } from './pages/BreadboardPage';
 import { BrandPage } from './pages/BrandPage';
+import { PrototypePage } from './pages/PrototypePage';
 import { TeamPage } from './pages/TeamPage';
 import { PrivatePage } from './pages/PrivatePage';
 import {
@@ -31,6 +32,7 @@ type RouteKey =
   | 'mvp'
   | 'okrs'
   | 'gtm'
+  | 'prototype'
   | 'pricing'
   | 'breadboard'
   | 'brand'
@@ -63,6 +65,7 @@ const NAV_SECTIONS: {
       { key: 'mvp', label: 'MVP definition', href: '#/mvp' },
       { key: 'okrs', label: 'OKRs', href: '#/okrs' },
       { key: 'gtm', label: 'GTM approach', href: '#/gtm' },
+      { key: 'prototype', label: 'Prototype', href: '#/prototype' },
     ],
   },
 ];
@@ -114,6 +117,7 @@ function routeFromHash(): RouteKey {
     hash === 'mvp' ||
     hash === 'okrs' ||
     hash === 'gtm' ||
+    hash === 'prototype' ||
     hash === 'pricing' ||
     hash === 'breadboard' ||
     hash === 'brand' ||
@@ -212,8 +216,9 @@ function App() {
   }
 
   const isGantt = route === 'gantt';
+  const isPrototype = route === 'prototype';
   const isWide = route === 'mvp-journey' || route === 'private' || isGantt;
-  const pageClass = `page${isWide ? ' is-wide' : ''}${route === 'home' ? ' is-home' : ''}${route === 'brand' ? ' is-brand' : ''}${isGantt ? ' is-gantt' : ''}`;
+  const pageClass = `page${isWide ? ' is-wide' : ''}${route === 'home' ? ' is-home' : ''}${route === 'brand' ? ' is-brand' : ''}${isGantt ? ' is-gantt' : ''}${isPrototype ? ' is-prototype' : ''}`;
   const activeNav = navKeyForRoute(route);
 
   return (
@@ -299,12 +304,13 @@ function App() {
           {route === 'mvp' ? <MvpPage /> : null}
           {route === 'okrs' ? <OkrPage /> : null}
           {route === 'gtm' ? <GtmPage /> : null}
+          {route === 'prototype' ? <PrototypePage /> : null}
           {route === 'pricing' ? <PricingPage /> : null}
           {route === 'brand' ? <BrandPage /> : null}
           {route === 'team' ? <TeamPage /> : null}
           {route === 'private' ? <PrivatePage /> : null}
 
-          {isGantt ? null : (
+          {isGantt || isPrototype ? null : (
             <footer className="site-footer">
               <p>
                 The Upline Through Line · Upline&rsquo;s home base. Present, learnings, and where
