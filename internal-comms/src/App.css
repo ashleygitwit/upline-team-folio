@@ -1762,9 +1762,9 @@ h2 {
 }
 
 /* ---- Prototype page ----
-   The prototype brings its own stage, heading and step links, and sizes its
-   frame to the height of the window it runs in. So the page is only that
-   window: the whole main column, edge to edge, with no footer below. */
+   The demo brings its own top bar, screen menu and app chrome, and scrolls
+   inside its frame. So the page is only that frame: the whole main column,
+   edge to edge, with no footer below. */
 .page.is-prototype {
   max-width: none;
   padding: 0;

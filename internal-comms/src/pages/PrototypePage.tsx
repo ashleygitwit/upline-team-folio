@@ -1,18 +1,16 @@
 /**
- * The MVP prototype from the September sprint week, carried over from the
- * Upline Design Hub as its self-contained export (public/prototype.html).
- *
- * It runs in a frame rather than as components here for two reasons: it
- * keeps its step in the URL hash (#queue, #outreach…), which would collide
- * with this site's #/route hashes, and it is built on Tailwind, which this
- * site does not use. Inside the frame it keeps its own stage, heading and
- * previous/next links, and sizes itself to the frame's height.
+ * Ashley's happy-path demo (v2 draft): Stacey Cole at Stockton Hill Insurance,
+ * walked from sign-in through the renewal queue, the insured's inbox, the
+ * questionnaire, shopping, the recommendation and closing. It is a
+ * self-contained single-file build (public/prototype.html), shown in a frame
+ * so its own styles and state stay apart from this site's. It brings its own
+ * "Jump to" menu and Desktop/Mobile toggle.
  */
 export function PrototypePage() {
   return (
     <iframe
       className="prototype-frame"
-      title="Upline MVP prototype"
+      title="Upline happy-path demo"
       src="/prototype.html"
     />
   );
