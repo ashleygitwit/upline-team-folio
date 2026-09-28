@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { DemoBar } from "@/components/DemoBar";
 import { MondayEmail } from "@/screens/MondayEmail";
+import { MondayNotification } from "@/screens/MondayNotification";
 import { Upline } from "@/screens/Upline";
 import { DanaInbox } from "@/screens/DanaInbox";
 import { Questionnaire } from "@/screens/Questionnaire";
@@ -50,6 +51,7 @@ export function App() {
       <div className="flex min-h-svh flex-col">
         <DemoBar index={index} onGo={setIndex} />
         <main className="flex-1">
+          {screen.id === "monday-notification" && <MondayNotification {...props} />}
           {screen.id === "monday-email" && <MondayEmail {...props} />}
           {screen.id === "monday" && <Upline key="monday" day="mon" {...props} />}
           {screen.id === "renewals" && <Upline key="renewals" day="mon" page="renewals" {...props} />}

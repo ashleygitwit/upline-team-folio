@@ -1,11 +1,12 @@
 import type { PickId } from "./data";
 
 /**
- * The walk: ten stops, one household (the Callahans) from Monday's list to a
+ * The walk: eleven stops, one household (the Callahans) from Monday's list to a
  * bound policy, with the rest of the week moving around them. The presenter
  * bar steps through these in order, and each stop can be jumped to directly.
  */
 export type ScreenId =
+  | "monday-notification"
   | "monday-email"
   | "monday"
   | "renewals"
@@ -18,6 +19,7 @@ export type ScreenId =
   | "friday";
 
 export const screens: { id: ScreenId; label: string; where: string }[] = [
+  { id: "monday-notification", label: "The Monday notification", where: "Stacey's phone · Monday, 8:00 AM" },
   { id: "monday-email", label: "The Monday email", where: "Stacey's inbox · Monday, 8:00 AM" },
   { id: "monday", label: "Monday: Stacey opens Upline", where: "Upline · Monday, October 12" },
   { id: "renewals", label: "Monday: the six going out", where: "Upline · Monday, October 12" },

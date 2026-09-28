@@ -233,6 +233,64 @@
     --primary: var(--agency);
     --ring: var(--agency-accent);
   }
+
+  /* Stacey's iPhone, which is Apple's surface, not Upline's: iOS's own colors,
+     rounded corners and the system font (SF Pro on a Mac, a stand-in
+     elsewhere), scoped here so none of it reaches Upline. */
+  .iphone {
+    --ios-frame: #b9bcc2;
+    --ios-frame-edge: #e6e8ec;
+    --ios-bezel: #000000;
+    --ios-wallpaper:
+      radial-gradient(90% 55% at 85% 100%, #f2a37c 0%, rgb(242 163 124 / 0) 70%),
+      radial-gradient(80% 50% at 10% 15%, #3d5fd9 0%, rgb(61 95 217 / 0) 70%),
+      linear-gradient(180deg, #141a3d 0%, #2d2463 50%, #6b3a6f 100%);
+    --ios-on-glass: #ffffff;
+    --ios-glass: rgb(255 255 255 / 0.16);
+    --ios-glass-edge: rgb(255 255 255 / 0.3);
+    --ios-label-shadow: 0 1px 2px rgb(0 0 0 / 0.3);
+    --ios-banner: rgb(246 246 248 / 0.82);
+    --ios-banner-hover: rgb(250 250 252 / 0.92);
+    --ios-label: #000000;
+    /* iOS's secondary label, darkened from #8a8a8e to pass 4.5:1 on the banner. */
+    --ios-secondary-label: #6c6c70;
+    --ios-mail-top: #22a6ff;
+    --ios-mail-bottom: #1766f5;
+    --ios-badge: #ff3b30;
+    --ring: #ffffff;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
+  }
+  .ios-frame {
+    background: linear-gradient(145deg, var(--ios-frame-edge), var(--ios-frame) 30%, var(--ios-frame) 70%, var(--ios-frame-edge));
+  }
+  .ios-wallpaper { background: var(--ios-wallpaper); }
+  .ios-glass {
+    background: var(--ios-glass);
+    box-shadow: inset 0 0 0 1px var(--ios-glass-edge);
+    -webkit-backdrop-filter: blur(20px) saturate(1.6);
+    backdrop-filter: blur(20px) saturate(1.6);
+  }
+  .ios-on-wallpaper { text-shadow: var(--ios-label-shadow); }
+  .ios-banner {
+    background: var(--ios-banner);
+    -webkit-backdrop-filter: blur(30px) saturate(1.8);
+    backdrop-filter: blur(30px) saturate(1.8);
+    transition: background-color 150ms ease-out;
+  }
+  .ios-banner:hover { background: var(--ios-banner-hover); }
+  .ios-mail-icon { background: linear-gradient(180deg, var(--ios-mail-top), var(--ios-mail-bottom)); }
+}
+
+/* The Mail banner drops out of the Dynamic Island a beat after the home screen
+   shows, the way iOS delivers one. Its job is to show where it came from; the
+   reduced-motion rule below makes it simply appear. */
+@keyframes ios-banner-in {
+  from { transform: translateY(-48px) scale(0.3); opacity: 0; }
+  to { transform: none; opacity: 1; }
+}
+.ios-banner-in {
+  transform-origin: top center;
+  animation: ios-banner-in 420ms cubic-bezier(0.2, 0.9, 0.3, 1.04) 700ms both;
 }
 
 /* Closed-won: the check pops in and draws itself, 400ms, once. Its job is

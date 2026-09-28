@@ -2,9 +2,10 @@ import type { ReactNode } from "react";
 import { cn } from "cn";
 
 /**
- * The ground for everything that happens outside Upline: Stacey's inbox and
- * Dana's phone. Slate, so it never reads as the product, with one caption
- * saying whose screen this is.
+ * The ground for everything that happens outside Upline: Stacey's inbox, her
+ * phone and Dana's phone. Slate, so it never reads as the product, with one
+ * caption saying whose screen this is. A device draws its own frame, so it
+ * gets no card.
  */
 export function Stage({
   caption,
@@ -12,7 +13,7 @@ export function Stage({
   children,
 }: {
   caption: string;
-  size: "phone" | "email";
+  size: "phone" | "email" | "device";
   children: ReactNode;
 }) {
   return (
@@ -20,10 +21,11 @@ export function Stage({
       <p className="eyebrow text-center text-dark-fg">{caption}</p>
       <div
         className={cn(
-          "mx-auto mt-6 bg-card text-foreground",
-          size === "phone"
-            ? "flex h-[min(780px,calc(100svh-var(--demo-bar-h)-9rem))] min-h-[560px] max-w-[390px] flex-col overflow-hidden"
-            : "max-w-[640px]",
+          "mx-auto mt-6",
+          size !== "device" && "bg-card text-foreground",
+          size === "phone" &&
+            "flex h-[min(780px,calc(100svh-var(--demo-bar-h)-9rem))] min-h-[560px] max-w-[390px] flex-col overflow-hidden",
+          size === "email" && "max-w-[640px]",
         )}
       >
         {children}

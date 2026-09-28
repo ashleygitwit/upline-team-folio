@@ -14,7 +14,7 @@ Looking over Monday's renewals is a task agents don't do today, and we're asking
 
 The review's direction was fewer things on screen, said in words, one action at a time (RAMP as the north star).
 
-- **The week starts with an email, not a login.** Upline writes to the agent on Monday with one button. Outreach still sends Tuesday at 9:00 AM if Stacey does nothing, as the strategy sprint decided.
+- **The week starts with an email, not a login.** Upline writes to the agent on Monday with one button. It lands first as a Mail notification on Stacey's phone, and tapping it opens the email. Outreach still sends Tuesday at 9:00 AM if Stacey does nothing, as the strategy sprint decided.
 - **The homepage picks up where the email left off.** A blue banner at the top carries today's one thing. On Monday it's a slim bar like the Founding Members bar on uplineinsurance.com, set inside the page padding, that points to the six rather than repeating the email. On later days it's the full band, with the one thing that needs Stacey, or that nothing does. Under it, an overview of how Stacey is doing.
 - **Retention in words.** No charts. A headline, one sentence against last year, and a strip with a cell per household sent, so the few who left are the thing you notice. Three cards under it say what Stacey has been up to, one number and one sentence each.
 - **The week's renewals get their own page, with no Kanban.** One click from the banner: a flat list with a thumbnail of each household's home and a sentence on why the price moved. On Monday the same six also appear a second way, below a divider, written as a colleague handing over prepped work ("I have six renewal requests queued to send tomorrow…"), so the team can compare the two. "See everyone" is a plain archive.
@@ -22,7 +22,7 @@ The review's direction was fewer things on screen, said in words, one action at 
 - **Recommendation: talking points first, table behind a toggle.** The pick is pre-selected, the carrier PDFs open in a dialog, and it never sends without the agent.
 - **Closing stops at the decided step.** The policyholder approves, the agent binds in the carrier portal and marks it done. The feedback-loop question is on ice.
 
-The walk has ten stops and follows the Callahans end to end (outreach, questionnaire, shop, recommendation, bind), with the other five households moving around them.
+The walk has eleven stops and follows the Callahans end to end (outreach, questionnaire, shop, recommendation, bind), with the other five households moving around them.
 
 ## Brand and components
 
@@ -32,6 +32,7 @@ The walk has ten stops and follows the Callahans end to end (outreach, questionn
 
 ## Placeholders to know about
 
+- The phone is a drawing of an iPhone 18 Pro, not Apple's artwork: its 402 × 874 point screen and the smaller Dynamic Island, with the home screen in iOS's Clear icon style so the notification is the only color on it. It uses the system font, so it shows in SF Pro on a Mac and a stand-in elsewhere. The notification's preview is clamped to the two lines a banner shows.
 - Carrier logos are text. The hub has no marks for Auto-Owners, Erie or Grange.
 - The household thumbnails are flat drawings of each home, standing in for a property photo the real product could pull from the address on file.
 - The colleague notes are written for this walk, including the Callahans' son Owen.
@@ -46,7 +47,7 @@ npm install
 npm run dev
 ```
 
-Opens on port 5305, so it can run beside v3 on 5310. The presenter bar at the top steps through the ten stops; the arrow keys do the same.
+Opens on port 5305, so it can run beside v3 on 5310. The presenter bar at the top steps through the eleven stops; the arrow keys do the same.
 
 ## Publish it to Through Line
 
