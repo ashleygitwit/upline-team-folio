@@ -1,4 +1,5 @@
-import { ArrowRight } from "lucide-react";
+import { useState } from "react";
+import { ArrowRight, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { callahan, dayLabel, money, optionById, options, thisWeek, type Day } from "@/data";
 import type { WalkProps } from "@/walk";
@@ -6,10 +7,12 @@ import type { WalkProps } from "@/walk";
 const words = ["No", "One", "Two", "Three", "Four", "Five", "Six"];
 
 /**
- * The top of the homepage: today's one thing, on the blue band. On Monday it
- * picks up exactly where the email left off (same message, same button), so
- * opening Upline feels like continuing the email rather than starting over.
- * It has to be readable before coffee: one sentence, one button.
+ * The top of the homepage: today's one thing. Monday's is a slim bar modelled
+ * on the Founding Members bar on uplineinsurance.com, set inside the page
+ * padding rather than edge to edge. Stacey has just read the email, so it
+ * points her to the six instead of repeating the email. The later days use the
+ * full blue band. Either way it has to be readable before coffee: one
+ * sentence, one action.
  */
 export function Banner({
   day,
@@ -18,25 +21,30 @@ export function Banner({
   onRenewals,
   onReview,
 }: WalkProps & { day: Day; onRenewals: () => void; onReview: () => void }) {
+  const [dismissed, setDismissed] = useState(false);
   const n = thisWeek.filter((h) => !walk.skipped.includes(h.id)).length;
   const pick = optionById(walk.pick);
   const erie = options.find((o) => o.current)!;
 
+  if (day === "mon") {
+    if (dismissed) return null;
+    return (
+      <Notice
+        message={
+          walk.approvedAll
+            ? `All ${words[n].toLowerCase()} are set for tomorrow at 9 AM.`
+            : `${words[n]} ${n === 1 ? "renewal is" : "renewals are"} going out tomorrow at 9 AM.`
+        }
+        action={walk.approvedAll ? "See them again" : "Look them over"}
+        onClick={onRenewals}
+        onDismiss={() => setDismissed(true)}
+      />
+    );
+  }
+
   let content: { headline: string; sub: string; action?: { label: string; onClick: () => void; arrow?: boolean } };
 
-  if (day === "mon") {
-    content = walk.approvedAll
-      ? {
-          headline: `Good morning, Stacey. All ${words[n].toLowerCase()} are set for tomorrow at 9:00 AM.`,
-          sub: "Nothing else needs you today. Enjoy your coffee.",
-          action: { label: "See them again", onClick: onRenewals, arrow: true },
-        }
-      : {
-          headline: `Good morning, Stacey. Your ${words[n].toLowerCase()} renewals go out tomorrow at 9:00 AM.`,
-          sub: "Each one is drafted in your voice and sends from your inbox. Take a quick look, or let them go.",
-          action: { label: "Look them over", onClick: onRenewals, arrow: true },
-        };
-  } else if (day === "wed") {
+  if (day === "wed") {
     content = {
       headline: "Good morning, Stacey. Nothing needs you today.",
       sub: `Your ${words[n].toLowerCase()} went out Tuesday at 9:00 AM, and the Callahans are already being shopped.`,
@@ -106,6 +114,48 @@ export function Banner({
         )}
       </div>
     </Band>
+  );
+}
+
+/**
+ * The slim bar, matching the marketing site's except for its width: the
+ * sentence and its link are one control, centred on the blue, with a close
+ * button at the right edge. Closing it hides it until the overview next opens.
+ */
+function Notice({
+  message,
+  action,
+  onClick,
+  onDismiss,
+}: {
+  message: string;
+  action: string;
+  onClick: () => void;
+  onDismiss: () => void;
+}) {
+  return (
+    <div className="shell pt-10">
+      <section aria-label="Today" className="band-surface relative flex items-center justify-center px-12 py-2">
+        <button
+          type="button"
+          onClick={onClick}
+          className="group text-center text-sm sm:flex sm:flex-wrap sm:items-center sm:justify-center sm:gap-x-5"
+        >
+          <span>{message}</span>{" "}
+          <span className="whitespace-nowrap underline-offset-4 group-hover:underline">
+            {action} <span aria-hidden>→</span>
+          </span>
+        </button>
+        <button
+          type="button"
+          aria-label="Dismiss"
+          onClick={onDismiss}
+          className="absolute top-1/2 right-6 -translate-y-1/2 text-white/80 transition-colors after:absolute after:-inset-3.5 hover:text-white"
+        >
+          <X className="size-4" />
+        </button>
+      </section>
+    </div>
   );
 }
 
