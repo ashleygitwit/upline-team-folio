@@ -305,7 +305,6 @@ function Scheduled({ day, walk, update, message, onMessage, onClose, onProfile }
           </Button>
         )}
       </div>
-      <p className="px-6 pt-4 pb-1 text-right text-sm text-muted-foreground">Biggest increase first</p>
       <ul className="divide-y border-b">
         {thisWeek.map((h) => {
           const skipped = walk.skipped.includes(h.id);
