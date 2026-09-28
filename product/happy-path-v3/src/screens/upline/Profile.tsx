@@ -296,7 +296,7 @@ function timelineFor(day: Day, walk: Walk, onEdit: () => void): Entry[] {
             <>
               <Email subject={h.subject} body={email} />
               <Button variant="outline" className="mt-5" onClick={onEdit}>
-                Edit in Scheduled
+                Edit the email
               </Button>
             </>
           ),

@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
+import { cn } from "cn";
 import { AppBar } from "@/components/AppBar";
-import { Dock, type Panel } from "@/screens/upline/Dock";
-import { Chat } from "@/screens/upline/Chat";
-import { ChatList } from "@/screens/upline/ChatList";
+import { ChatDock } from "@/screens/upline/Chat";
+import { EmailSheet } from "@/screens/upline/EmailSheet";
 import { Home } from "@/screens/upline/Home";
 import { Profile } from "@/screens/upline/Profile";
 import { Results } from "@/screens/upline/Results";
+import { scheduledId } from "@/screens/upline/Sections";
 import type { Day } from "@/data";
 import { pillById, type PillId } from "@/pills";
 import type { Today } from "@/today";
@@ -15,121 +16,120 @@ export type Page = "home" | "profile" | "results";
 
 /**
  * Upline as Stacey sees it. Three pages: the homepage (a greeting, today's
- * one thing, and a box to ask anything, with Stacey's chats listed down the
- * left), a client's profile, and the results of a shop. Under all of them
- * sits the dock, with what's scheduled and what just happened. The walk can
- * open on any page, with either panel up.
+ * one thing, a box to ask anything, and the three sections a renewal moves
+ * through), a client's profile, and the results of a shop. A household's
+ * email opens in a sheet over whichever page she's on, and once she asks
+ * anything the chat docks along the bottom of every page. The walk can open
+ * on any page, with an email open.
  */
 export function Upline({
   day,
   page: initialPage = "home",
-  panel: initialPanel = null,
   message: initialMessage = null,
   ...props
-}: WalkProps & { day: Day; page?: Page; panel?: Panel | null; message?: string | null }) {
+}: WalkProps & { day: Day; page?: Page; message?: string | null }) {
   const [page, setPage] = useState<Page>(initialPage);
-  const [panel, setPanel] = useState<Panel | null>(initialPanel);
+  // The household whose email is open in the sheet.
   const [message, setMessage] = useState<string | null>(initialMessage);
-  // The chat on screen. `null` is the greeting, where a new chat starts.
-  const [chatId, setChatId] = useState<number | null>(null);
+  // Whether the chat's panel is up, or put down to its tab.
+  const [chatUp, setChatUp] = useState(false);
+  // Bumped to take Stacey down to Scheduled Renewal Emails.
+  const [jump, setJump] = useState(0);
   const { walk, update } = props;
-  const chat = walk.chats.find((c) => c.id === chatId) ?? null;
+  const chat = walk.chats.find((c) => c.day === day) ?? null;
 
   // A new page starts at the top, the way navigating would.
   useEffect(() => {
     window.scrollTo({ top: 0 });
   }, [page]);
 
-  // Going somewhere puts the panels away, so the page isn't opened behind one.
+  useEffect(() => {
+    if (!jump) return;
+    const section = document.getElementById(scheduledId);
+    const calm = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    section?.scrollIntoView({ behavior: calm ? "auto" : "smooth", block: "start" });
+    section?.querySelector("h2")?.focus({ preventScroll: true });
+  }, [jump]);
+
   const open = (to: Page) => {
     setMessage(null);
-    setPanel(null);
     setPage(to);
   };
 
-  const home = () => {
-    setChatId(null);
-    open("home");
-  };
-
-  // A question goes into the chat on screen, as long as it's today's. From
-  // the greeting, or an earlier day's chat, it starts a new one.
-  const ask = (question: string, answer: PillId | null, into = chatId) => {
-    const target = walk.chats.find((c) => c.id === into && c.day === day);
-    if (target) {
+  // A question goes into today's chat, or starts it, and brings the panel up.
+  const ask = (question: string, answer: PillId | null) => {
+    if (chat) {
       update((w) => ({
         chats: w.chats.map((c) =>
-          c.id === target.id ? { ...c, asked: [...c.asked, { key: c.asked.length + 1, question, answer }] } : c,
+          c.id === chat.id ? { ...c, asked: [...c.asked, { key: c.asked.length + 1, question, answer }] } : c,
         ),
       }));
-      return;
+    } else {
+      const id = Math.max(0, ...walk.chats.map((c) => c.id)) + 1;
+      update((w) => ({ chats: [...w.chats, { id, day, title: question, asked: [{ key: 1, question, answer }] }] }));
     }
-    const id = Math.max(0, ...walk.chats.map((c) => c.id)) + 1;
-    update((w) => ({ chats: [...w.chats, { id, day, title: question, asked: [{ key: 1, question, answer }] }] }));
-    setChatId(id);
+    setChatUp(true);
+  };
+
+  const endChat = () => {
+    update((w) => ({ chats: w.chats.filter((c) => c.day !== day) }));
+    setChatUp(false);
   };
 
   const act = (to: NonNullable<Today["action"]>["to"]) => {
     if (to === "done") update({ bound: true });
     else if (to === "results") open("results");
+    else if (to === "everyone") ask(pillById("everyone").question, "everyone");
     else {
-      setMessage(null);
-      setPanel(to);
+      setChatUp(false);
+      open("home");
+      setJump((j) => j + 1);
     }
   };
 
   return (
-    <div className="min-h-[calc(100svh-var(--demo-bar-h))] bg-background pb-(--dock-h)">
-      <AppBar onHome={home} />
+    <div className={cn("min-h-[calc(100svh-var(--demo-bar-h))] bg-background", chat && "pb-(--dock-h)")}>
+      <AppBar onHome={() => open("home")} />
 
       {page === "home" && (
-        <div className="flex h-(--home-h) min-h-[28rem]">
-          <ChatList
-            day={day}
-            chats={walk.chats}
-            open={chatId}
-            onOpen={setChatId}
-            onNew={() => setChatId(null)}
-          />
-          <div className="min-w-0 flex-1">
-            {chat ? (
-              <Chat chat={chat} day={day} onAsk={ask} onAction={act} onNew={() => setChatId(null)} {...props} />
-            ) : (
-              <Home day={day} onAsk={(q, a) => ask(q, a, null)} onAction={act} {...props} />
-            )}
-          </div>
-        </div>
+        <Home
+          day={day}
+          message={message}
+          onAsk={ask}
+          onAction={act}
+          onMessage={setMessage}
+          onProfile={() => open("profile")}
+          onResults={() => open("results")}
+          {...props}
+        />
       )}
       {page === "profile" && (
         <Profile
           day={day}
-          onHome={home}
+          onHome={() => open("home")}
           onResults={() => open("results")}
-          onEdit={() => {
-            setPanel("scheduled");
-            setMessage("callahan");
-          }}
+          onEdit={() => setMessage("callahan")}
           {...props}
         />
       )}
       {page === "results" && (
-        <Results day={day} onProfile={() => open("profile")} onSent={home} {...props} />
+        <Results day={day} onProfile={() => open("profile")} onSent={() => open("home")} {...props} />
       )}
 
-      <Dock
-        day={day}
-        panel={panel}
-        message={message}
-        onPanel={setPanel}
-        onMessage={setMessage}
-        onProfile={() => open("profile")}
-        onResults={() => open("results")}
-        onEveryone={() => {
-          open("home");
-          ask(pillById("everyone").question, "everyone");
-        }}
-        {...props}
-      />
+      <EmailSheet id={message} day={day} onClose={() => setMessage(null)} onProfile={() => open("profile")} {...props} />
+
+      {chat && (
+        <ChatDock
+          chat={chat}
+          day={day}
+          up={chatUp}
+          onUp={setChatUp}
+          onClose={endChat}
+          onAsk={ask}
+          onAction={act}
+          {...props}
+        />
+      )}
     </div>
   );
 }

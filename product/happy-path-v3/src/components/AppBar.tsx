@@ -4,7 +4,7 @@ import { agency } from "@/data";
 
 /**
  * The product's own bar. Deliberately bare: no tabs. The mark takes Stacey
- * back to the homepage; everything else starts from there or from the dock.
+ * back to the homepage; everything else starts from there.
  */
 export function AppBar({ onHome }: { onHome: () => void }) {
   return (

@@ -12,8 +12,12 @@ export type Today = {
   sub?: string;
   /** Said only when Stacey asks what needs her, not in the brief. */
   more?: string;
-  /** The day's one action, and where it goes. `done` marks the Callahans bound. */
-  action?: { label: string; to: "scheduled" | "activity" | "results" | "done"; primary?: boolean };
+  /**
+   * The day's one action, and where it goes: down to Scheduled Renewal Emails,
+   * the "Where does everyone stand?" answer, the results, or `done`, which
+   * marks the Callahans bound.
+   */
+  action?: { label: string; to: "scheduled" | "everyone" | "results" | "done"; primary?: boolean };
   /** Friday, once it's bound: the end of the walk. */
   celebrate?: boolean;
 };
@@ -42,7 +46,7 @@ export function todayFor(day: Day, walk: Walk): Today {
     return {
       lead: "Nothing needs you today.",
       sub: `Your ${word} went out Tuesday at 9:00 AM, and the Callahans are already being shopped.`,
-      action: { label: "See where they stand", to: "activity" },
+      action: { label: "See where they stand", to: "everyone" },
     };
   }
 
@@ -51,7 +55,7 @@ export function todayFor(day: Day, walk: Walk): Today {
       ? {
           lead: "Sent to Dana. Nothing else needs you today.",
           sub: "We'll let you know when Dana answers.",
-          action: { label: "See where the rest stand", to: "activity" },
+          action: { label: "See where the rest stand", to: "everyone" },
         }
       : {
           lead: "Dana and Mike's results are back.",

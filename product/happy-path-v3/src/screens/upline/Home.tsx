@@ -1,19 +1,19 @@
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { agency, dayName, type Day } from "@/data";
-import { matchPill, pillById, pills, type PillId } from "@/pills";
+import { matchPill, pillById, suggested, type PillId } from "@/pills";
 import { AskBox, Suggestions } from "@/screens/upline/Ask";
 import type { AnswerProps } from "@/screens/upline/Answers";
+import { Sections } from "@/screens/upline/Sections";
 import { todayFor } from "@/today";
 import type { WalkProps } from "@/walk";
 
 /**
- * The homepage, and the start of every new chat: a greeting, one sentence on
- * what's going on, and a box to ask anything. It has to be readable before
- * coffee, so nothing else is on the page until Stacey asks for it. How she's
- * doing, who left and where everyone stands are each one question away, and
- * the questions are written out underneath so she doesn't have to think of
- * them. Asking opens a chat, the way Claude does.
+ * The homepage: a greeting, one sentence on what's going on, and a box to ask
+ * anything, with three questions written out underneath so Stacey doesn't
+ * have to think of them. Asking docks a chat along the bottom. It has to be
+ * readable before coffee, so under that sit only the three sections a renewal
+ * moves through, each holding just what needs her.
  */
 export function Home({
   day,
@@ -21,62 +21,67 @@ export function Home({
   update,
   onAsk,
   onAction,
+  ...props
 }: WalkProps & {
   day: Day;
+  message: string | null;
   onAsk: (question: string, answer: PillId | null) => void;
   onAction: AnswerProps["onAction"];
+  onMessage: (id: string) => void;
+  onProfile: () => void;
+  onResults: () => void;
 }) {
   const today = todayFor(day, walk);
 
   return (
-    <div className="h-full overflow-y-auto">
-      <div className="shell pt-(--space-section) pb-(--space-section)">
-        <div className="mx-auto max-w-180">
-          <section aria-labelledby="home-title" className="text-center" aria-live={day === "fri" ? "polite" : undefined}>
-            <h1 id="home-title" className="text-5xl text-balance">
-              Happy {dayName[day]}, {agency.agent.first}
-            </h1>
-            {today.celebrate && (
-              <div className="mt-8 flex justify-center">
-                <Celebration />
-              </div>
-            )}
-            <p className="mx-auto mt-6 max-w-[60ch] font-display text-lg font-normal text-balance text-muted-foreground">
-              {today.lead} {today.sub}
-            </p>
-            {today.action &&
-              (today.action.primary ? (
-                <Button size="lg" className="mt-7" onClick={() => onAction(today.action!.to)}>
-                  {today.action.label}
-                </Button>
-              ) : (
-                <Button
-                  variant="link"
-                  className="mt-5 h-auto p-0 font-sans text-sm"
-                  onClick={() => onAction(today.action!.to)}
-                >
-                  {today.action.label}
-                  <ArrowRight data-icon="inline-end" />
-                </Button>
-              ))}
-            {today.celebrate && (
+    <div className="shell pt-(--space-section) pb-(--space-section)">
+      <div className="mx-auto max-w-180">
+        <section aria-labelledby="home-title" className="text-center" aria-live={day === "fri" ? "polite" : undefined}>
+          <h1 id="home-title" className="text-5xl text-balance">
+            Happy {dayName[day]}, {agency.agent.first}
+          </h1>
+          {today.celebrate && (
+            <div className="mt-8 flex justify-center">
+              <Celebration />
+            </div>
+          )}
+          <p className="mx-auto mt-6 max-w-[60ch] font-display text-lg font-normal text-balance text-muted-foreground">
+            {today.lead} {today.sub}
+          </p>
+          {today.action &&
+            (today.action.primary ? (
+              <Button size="lg" className="mt-7" onClick={() => onAction(today.action!.to)}>
+                {today.action.label}
+              </Button>
+            ) : (
               <Button
                 variant="link"
                 className="mt-5 h-auto p-0 font-sans text-sm"
-                onClick={() => update({ bound: false })}
+                onClick={() => onAction(today.action!.to)}
               >
-                Undo
+                {today.action.label}
+                <ArrowRight data-icon="inline-end" />
               </Button>
-            )}
-          </section>
+            ))}
+          {today.celebrate && (
+            <Button
+              variant="link"
+              className="mt-5 h-auto p-0 font-sans text-sm"
+              onClick={() => update({ bound: false })}
+            >
+              Undo
+            </Button>
+          )}
+        </section>
 
-          <AskBox label="Ask me anything" className="mt-10" onAsk={(q) => onAsk(q, matchPill(q))} />
-          <Suggestions
-            ids={pills.map((p) => p.id)}
-            className="mt-5 justify-center"
-            onAsk={(id) => onAsk(pillById(id).question, id)}
-          />
-        </div>
+        <AskBox label="Ask me anything" className="mt-10" onAsk={(q) => onAsk(q, matchPill(q))} />
+        <Suggestions
+          ids={suggested}
+          className="mt-5 justify-center"
+          onAsk={(id) => onAsk(pillById(id).question, id)}
+        />
+
+        <Sections day={day} walk={walk} update={update} {...props} />
       </div>
     </div>
   );

@@ -2,14 +2,13 @@ import type { Day, PickId } from "./data";
 import type { PillId } from "./pills";
 
 /**
- * The walk: ten stops, one household (the Callahans) from Monday's list to a
+ * The walk: nine stops, one household (the Callahans) from Monday's list to a
  * bound policy, with the rest of the week moving around them. The presenter
  * bar steps through these in order, and each stop can be jumped to directly.
  */
 export type ScreenId =
   | "monday-email"
   | "monday"
-  | "renewals"
   | "review"
   | "dana-inbox"
   | "questionnaire"
@@ -21,7 +20,6 @@ export type ScreenId =
 export const screens: { id: ScreenId; label: string; where: string }[] = [
   { id: "monday-email", label: "The Monday email", where: "Stacey's inbox · Monday, 8:00 AM" },
   { id: "monday", label: "Monday: Stacey opens Upline", where: "Upline · Monday, October 12" },
-  { id: "renewals", label: "Monday: the six going out", where: "Upline · Monday, October 12" },
   { id: "review", label: "Review the Callahans' email", where: "Upline · Monday, October 12" },
   { id: "dana-inbox", label: "Dana's inbox", where: "Dana's phone · Tuesday, 9:02 AM" },
   { id: "questionnaire", label: "Dana's questionnaire", where: "Dana's phone · Tuesday, 7:40 PM" },
@@ -35,9 +33,9 @@ export const screens: { id: ScreenId; label: string; where: string }[] = [
 export type Exchange = { key: number; question: string; answer: PillId | null };
 
 /**
- * A conversation on the homepage, titled by its first question. It belongs to
- * the day it was started on: that day's chats take follow-ups, and an earlier
- * day's opens as it was, read-only.
+ * A conversation with Upline, titled by its first question. There's one a
+ * day at most: it docks along the bottom until Stacey ends it, and the next
+ * question starts a new one.
  */
 export type Chat = { id: number; day: Day; title: string; asked: Exchange[] };
 
