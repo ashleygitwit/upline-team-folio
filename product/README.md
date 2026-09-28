@@ -15,6 +15,7 @@ This is **not** the Upline product codebase. Build implementation stays in [upli
 | [`standups/`](standups/) | Twice-weekly product standup transcripts. Living board: [`standups/board.md`](standups/board.md) |
 | [`2026-08-12-pricing-work-session.md`](2026-08-12-pricing-work-session.md) | Aug 12 pricing work session |
 | [`2026-08-20-path-to-1m.md`](2026-08-20-path-to-1m.md) | TAM / $1M math |
+| [`happy-path-v2.5/`](happy-path-v2.5/) | Clickable prototype of the agent's week before v3 went conversational (Amanda, Sept 27), shown on Through Line |
 | [`happy-path-v3/`](happy-path-v3/) | Clickable prototype of the agent's week (Amanda, Sept 28), shown on Through Line |
 
 ## What does *not* belong here
