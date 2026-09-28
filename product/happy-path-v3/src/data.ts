@@ -434,14 +434,74 @@ export const whoLeft: Left[] = [
   },
 ];
 
-/** Earlier weeks, for the Everyone list. */
-export const earlier = [
+export type Earlier = {
+  id: string;
+  name: string;
+  lines: string;
+  renews: string;
+  mon: string;
+  later: string;
+  /**
+   * Where this household sits on Monday's homepage, if it needs Stacey then:
+   * a recommendation ready to send, or an approval to bind. These follow
+   * Ashley's v2 board. Stacey clears them Monday afternoon, off-camera, so
+   * from Wednesday they're in `later`'s state and off the homepage.
+   */
+  monday?: { section: "shopped" | "closing"; detail: string };
+};
+
+/** Earlier weeks, for the Everyone list and Monday's homepage. */
+export const earlier: Earlier[] = [
   { id: "patel", name: "Priya Patel", lines: "Home + Auto · Erie", renews: "Oct 28", mon: "Shopping, back Tuesday", later: "Recommendation sent Tuesday" },
   { id: "brooks", name: "Kevin Brooks", lines: "Auto · Grange", renews: "Oct 30", mon: "Shopping, back Tuesday", later: "Recommendation sent Tuesday" },
-  { id: "vasquez", name: "Elena Vasquez", lines: "Home + Auto · Travelers", renews: "Oct 22", mon: "Waiting on Elena", later: "Waiting on Elena" },
-  { id: "foss", name: "Raymond Foss", lines: "Home · Nationwide", renews: "Oct 24", mon: "Staying with Nationwide", later: "Staying with Nationwide" },
-  { id: "hart", name: "Linda Hart", lines: "Home + Auto · Erie", renews: "Oct 18", mon: "Bound with Auto-Owners", later: "Bound with Auto-Owners" },
-  { id: "desai", name: "Anika Desai", lines: "Home · Westfield", renews: "Oct 16", mon: "Staying with Westfield", later: "Staying with Westfield" },
+  {
+    id: "vasquez",
+    name: "Elena Vasquez",
+    lines: "Home + Auto · Travelers",
+    renews: "Oct 22",
+    mon: "Recommendation ready to send",
+    later: "Waiting on Elena",
+    monday: {
+      section: "shopped",
+      detail: "Auto-Owners came in at $3,480 for the same coverage, $730 less than Travelers' renewal. It doesn't send until you do.",
+    },
+  },
+  {
+    id: "foss",
+    name: "Raymond Foss",
+    lines: "Home · Nationwide",
+    renews: "Oct 24",
+    mon: "Recommendation ready to send",
+    later: "Staying with Nationwide",
+    monday: {
+      section: "shopped",
+      detail: "The pick is staying with Nationwide at $2,840. Westfield is a little cheaper, but the coverage he has is the better fit.",
+    },
+  },
+  {
+    id: "hart",
+    name: "Linda Hart",
+    lines: "Home + Auto · Erie",
+    renews: "Oct 18",
+    mon: "Approved Auto-Owners, not bound",
+    later: "Bound with Auto-Owners",
+    monday: {
+      section: "closing",
+      detail: "Linda approved Auto-Owners. Bind it in the portal before October 18, then mark it done.",
+    },
+  },
+  {
+    id: "desai",
+    name: "Anika Desai",
+    lines: "Home · Westfield",
+    renews: "Oct 16",
+    mon: "Staying with Westfield, not bound",
+    later: "Staying with Westfield",
+    monday: {
+      section: "closing",
+      detail: "Anika is staying with Westfield. Bind the renewal and confirm the mortgagee clause before October 16, then mark it done.",
+    },
+  },
 ];
 
 /* ------------------------------------------------------------------ *

@@ -4,7 +4,7 @@ import { PersonLink } from "@/components/PersonLink";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { callahan, initials, money, thisWeek, upcoming, type Day, type Household } from "@/data";
+import { callahan, earlier, initials, money, thisWeek, upcoming, type Day, type Household } from "@/data";
 import { badgeVariant, statusFor } from "@/status";
 import { going } from "@/today";
 import type { WalkProps } from "@/walk";
@@ -24,8 +24,8 @@ type SectionsProps = WalkProps & {
 /**
  * The homepage's three sections, in the order a renewal moves through them:
  * what's going out, what's been shopped and needs a look, and what needs
- * closing. Each holds only what needs Stacey, so most days most of them say
- * there's nothing to do, and what's coming instead.
+ * closing. Each holds only what needs Stacey. On a day a section has nothing,
+ * it says so, and what's coming instead.
  */
 export function Sections(props: SectionsProps) {
   return (
@@ -78,7 +78,8 @@ function Face({ name }: { name: string }) {
 
 /**
  * A household's row. The whole row opens what's behind it, and the name on
- * top of it goes to the client's profile instead.
+ * top of it goes to the client's profile instead. Earlier weeks' households
+ * have no page behind them in this prototype, so their rows don't open.
  */
 function Row({
   h,
@@ -88,7 +89,7 @@ function Row({
   aside,
   children,
 }: {
-  h: Household;
+  h: Pick<Household, "id" | "name">;
   selected?: boolean;
   onOpen?: () => void;
   onProfile: () => void;
@@ -121,6 +122,24 @@ function Row({
 }
 
 const opens = <ChevronRight aria-hidden className="size-4 shrink-0 self-center text-muted-foreground" />;
+
+/** Earlier weeks' households that need Stacey on Monday, soonest renewal first. */
+function fromEarlier(day: Day, section: "shopped" | "closing") {
+  if (day !== "mon") return [];
+  return earlier
+    .filter((e) => e.monday?.section === section)
+    .sort((a, b) => Date.parse(`${a.renews} 2026`) - Date.parse(`${b.renews} 2026`));
+}
+
+/** An earlier week's household, with the label its stage carries for the Callahans too. */
+function EarlierRow({ e, label, onProfile }: { e: (typeof earlier)[number]; label: string; onProfile: () => void }) {
+  return (
+    <Row h={e} onProfile={onProfile}>
+      <Badge variant={badgeVariant(label)}>{label}</Badge>
+      <span className="mt-2 block">{e.monday!.detail}</span>
+    </Row>
+  );
+}
 
 /**
  * What's going out. On Monday that's the six, each with the start of its
@@ -215,18 +234,20 @@ function Scheduled({ day, walk, update, message, onMessage, onProfile }: Section
 }
 
 /**
- * Shops whose results are back and waiting on Stacey. In this walk that's
- * the Callahans on Thursday morning, until the recommendation goes to Dana;
- * the row goes to the results.
+ * Shops whose results are back and waiting on Stacey. On Monday that's
+ * Elena Vasquez and Raymond Foss from earlier weeks, as on Ashley's v2
+ * board. In this walk's week it's the Callahans on Thursday morning, until
+ * the recommendation goes to Dana; their row goes to the results.
  */
 function Shopped({ day, walk, onProfile, onResults }: SectionsProps) {
   const h = callahan;
   const skipped = walk.skipped.includes(h.id);
   const ready = day === "thu" && !walk.recSent && !skipped;
   const status = ready ? statusFor(h, day, walk) : null;
+  const others = fromEarlier(day, "shopped");
 
   const empty = {
-    mon: "Nothing to review yet. Priya Patel's and Kevin Brooks's shops come back Tuesday.",
+    mon: "Nothing to review.",
     wed: skipped ? "Nothing to review yet." : "Nothing to review yet. The Callahans are being shopped, back Thursday.",
     thu: walk.recSent
       ? "Nothing to review. Your recommendation went to Dana this morning."
@@ -235,13 +256,18 @@ function Shopped({ day, walk, onProfile, onResults }: SectionsProps) {
   }[day];
 
   return (
-    <Section id="shopped" title="Shopped and ready for review" count={ready ? 1 : 0}>
-      {status ? (
-        <ul>
-          <Row h={h} onOpen={onResults} onProfile={onProfile} aside={opens}>
-            <Badge variant={badgeVariant(status.label)}>{status.label}</Badge>
-            <span className="mt-2 block">{status.detail}</span>
-          </Row>
+    <Section id="shopped" title="Shopped and ready for review" count={others.length + (ready ? 1 : 0)}>
+      {status || others.length > 0 ? (
+        <ul className="divide-y">
+          {status && (
+            <Row h={h} onOpen={onResults} onProfile={onProfile} aside={opens}>
+              <Badge variant={badgeVariant(status.label)}>{status.label}</Badge>
+              <span className="mt-2 block">{status.detail}</span>
+            </Row>
+          )}
+          {others.map((e) => (
+            <EarlierRow key={e.id} e={e} label="Ready for you" onProfile={onProfile} />
+          ))}
         </ul>
       ) : (
         <Empty>{empty}</Empty>
@@ -251,14 +277,17 @@ function Shopped({ day, walk, onProfile, onResults }: SectionsProps) {
 }
 
 /**
- * Approvals Stacey has to bind. In this walk that's the Callahans on Friday,
- * until she marks it done; the row goes to their profile.
+ * Approvals Stacey has to bind. On Monday that's Anika Desai and Linda Hart
+ * from earlier weeks, as on Ashley's v2 board. In this walk's week it's the
+ * Callahans on Friday, until she marks it done; their row goes to their
+ * profile.
  */
 function Closing({ day, walk, onProfile }: SectionsProps) {
   const h = callahan;
   const skipped = walk.skipped.includes(h.id);
   const approved = day === "fri" && !walk.bound && !skipped;
   const status = approved ? statusFor(h, day, walk) : null;
+  const others = fromEarlier(day, "closing");
 
   const empty =
     day === "fri" && walk.bound
@@ -268,13 +297,18 @@ function Closing({ day, walk, onProfile }: SectionsProps) {
         : "Nothing to close yet.";
 
   return (
-    <Section id="closing" title="Closing" count={approved ? 1 : 0}>
-      {status ? (
-        <ul>
-          <Row h={h} onOpen={onProfile} onProfile={onProfile} aside={opens}>
-            <Badge variant={badgeVariant(status.label)}>{status.label}</Badge>
-            <span className="mt-2 block">{status.detail}</span>
-          </Row>
+    <Section id="closing" title="Closing" count={others.length + (approved ? 1 : 0)}>
+      {status || others.length > 0 ? (
+        <ul className="divide-y">
+          {status && (
+            <Row h={h} onOpen={onProfile} onProfile={onProfile} aside={opens}>
+              <Badge variant={badgeVariant(status.label)}>{status.label}</Badge>
+              <span className="mt-2 block">{status.detail}</span>
+            </Row>
+          )}
+          {others.map((e) => (
+            <EarlierRow key={e.id} e={e} label="Approved" onProfile={onProfile} />
+          ))}
         </ul>
       ) : (
         <Empty>{empty}</Empty>

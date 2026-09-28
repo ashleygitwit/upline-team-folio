@@ -14,7 +14,7 @@ export function PersonLink({
   onProfile,
   className,
 }: {
-  h: Household;
+  h: Pick<Household, "id" | "name">;
   onProfile: () => void;
   className?: string;
 }) {
