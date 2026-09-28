@@ -52,14 +52,14 @@ export function App() {
         <main className="flex-1">
           {screen.id === "monday-email" && <MondayEmail {...props} />}
           {screen.id === "monday" && <Upline key="monday" day="mon" {...props} />}
-          {screen.id === "renewals" && <Upline key="renewals" day="mon" page="renewals" {...props} />}
+          {screen.id === "renewals" && <Upline key="renewals" day="mon" panel="scheduled" {...props} />}
           {screen.id === "review" && (
-            <Upline key="review" day="mon" page="renewals" openOn={{ kind: "outreach", id: "callahan" }} {...props} />
+            <Upline key="review" day="mon" panel="scheduled" message="callahan" {...props} />
           )}
           {screen.id === "dana-inbox" && <DanaInbox {...props} />}
           {screen.id === "questionnaire" && <Questionnaire {...props} />}
           {screen.id === "wednesday" && <Upline key="wednesday" day="wed" {...props} />}
-          {screen.id === "results" && <Upline key="results" day="thu" openOn={{ kind: "rec" }} {...props} />}
+          {screen.id === "results" && <Upline key="results" day="thu" page="results" {...props} />}
           {screen.id === "dana-page" && <DanaPage {...props} />}
           {screen.id === "friday" && <Upline key="friday" day="fri" {...props} />}
         </main>

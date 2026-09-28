@@ -6,18 +6,18 @@ This is a prototype, not the product. Everything is canned data in `src/data.ts`
 
 ## Before coffee
 
-Looking over Monday's renewals is a task agents don't do today, and we're asking them to do it before 9:00 AM on a Tuesday. So the Monday email and the homepage have to be enjoyable before the first coffee: quick, painless, and doable while checking the inbox over breakfast. One sentence and one button at the top of every screen; nothing that needs thinking to find.
+Looking over Monday's renewals is a task agents don't do today, and we're asking them to do it before 9:00 AM on a Tuesday. So the Monday email and the homepage have to be enjoyable before the first coffee: quick, painless, and doable while checking the inbox over breakfast. A greeting, one sentence and a box to ask anything; nothing that needs thinking to find.
 
 ## What changed from v2, and why
 
 The review's direction was fewer things on screen, said in words, one action at a time (RAMP as the north star).
 
 - **The week starts with an email, not a login.** Upline writes to the agent on Monday with one button. Outreach still sends Tuesday at 9:00 AM if Stacey does nothing, as the strategy sprint decided.
-- **The homepage picks up where the email left off.** A blue banner at the top carries today's one thing. On Monday it's a slim bar like the Founding Members bar on uplineinsurance.com, set inside the page padding, that points to the six rather than repeating the email. On later days it's the full band, with the one thing that needs Stacey, or that nothing does. Under it, an overview of how Stacey is doing.
-- **Retention in words.** No charts. A headline, one sentence against last year, and a strip with a cell per household sent, so the few who left are the thing you notice. Three cards under it say what Stacey has been up to, one number and one sentence each.
-- **The week's renewals get their own page, with no Kanban.** One click from the banner: a flat list with a thumbnail of each household's home and a sentence on why the price moved. On Monday the same six also appear a second way, below a divider, written as a colleague handing over prepped work ("I have six renewal requests queued to send tomorrow…"), so the team can compare the two. "See everyone" is a plain archive.
-- **Drawers cut down.** Outreach review leads with why the price moved and the email as it will send; the household is one click down. Shape the shop is reduced to the life-quote switch, the one toggle the sprint kept.
-- **Recommendation: talking points first, table behind a toggle.** The pick is pre-selected, the carrier PDFs open in a dialog, and it never sends without the agent.
+- **The homepage is a conversation.** "Happy Monday, Stacey", one sentence on what's going on ("Six renewals are queued to send tomorrow at 9 AM."), and a box that says "Ask me anything". On the days something needs Stacey, the sentence carries the one button for it. Nothing else is on the page until asked for.
+- **How Stacey is doing is an answer, not a dashboard.** The questions an agent would ask are written out under the box: what needs me today, how's my retention, who left, how much have I saved my clients, who's asked about a life quote, where does everyone stand. Retention is still said in words, with the strip that has a cell per household sent, so the few who left are the thing you notice.
+- **A dock along the bottom, the way a messenger has one.** Two tabs at the far right of every Upline page. **Scheduled** holds what's going out, with a count: on Monday the six, each with the start of its email, and one button to say they all look good. A row opens the full email in a column to its left, where it can be edited, approved or skipped; why the price moved, Upline's note on the household, what we'll ask and the household itself are each one click down. **Recent Activity** holds what just happened: where each of the six stands, whoever moved since yesterday first, then the earlier weeks.
+- **Every client has a page.** A client's name is a link wherever it appears. The profile opens on what has happened on the account, newest first, one card per event, and a card opens to the thing itself: the email as it sent, or Dana's questionnaire answers with what Dana added or changed highlighted. Household Details and Carrier Information are tabs.
+- **Shopped results are a page, and their card is the blue one.** When a shop comes back, Recent Activity says so and goes straight to the results. On the profile the same results are a card in the band's blue, so it can't be mistaken for a status update. The page leads with talking points, keeps the table behind a toggle, and holds the email to Dana beside the pick. It never sends without the agent.
 - **Closing stops at the decided step.** The policyholder approves, the agent binds in the carrier portal and marks it done. The feedback-loop question is on ice.
 
 The walk has ten stops and follows the Callahans end to end (outreach, questionnaire, shop, recommendation, bind), with the other five households moving around them.
@@ -30,8 +30,15 @@ The walk has ten stops and follows the Callahans end to end (outreach, questionn
 
 ## Placeholders to know about
 
+- The chat is canned. Each suggested question plays a written answer, and a typed question goes to the suggested one it sounds most like, or gets told there's no answer yet.
+- Only the Callahans have a profile. The other five names are drawn as links and say so when pointed at.
+- The Callahans' history before this week is partly invented: joining in 2021 and the move from Westfield to Erie in 2023. Sophie's license and the roof come from the household on file.
+- Dana's questionnaire answers are written in `src/data.ts`, because the questionnaire in the walk doesn't keep what the presenter types. Sophie's license number and the changed email are invented.
+- After Monday, Scheduled lists the nudges and follow-ups the statuses mention, one line each. Their emails aren't written.
+- Recent Activity has no times on it, only where each household stands that day.
+- The tabs on the profile are a new component in the library's style (`src/components/ui/tabs.tsx`); confirm it against the kit.
 - Carrier logos are text. The hub has no marks for Auto-Owners, Erie or Grange.
-- The household thumbnails are flat drawings of each home, standing in for a property photo the real product could pull from the address on file.
+- The household thumbnails are flat drawings of each home, standing in for a property photo the real product could pull from the address on file. The lists use initials instead.
 - The colleague notes are written for this walk, including the Callahans' son Owen.
 - The retention strip is the one bespoke graphic; the library's Progress is the fallback.
 - The +4 points against last year may not be a number we can get from agencies. The three households who left, and their stories, are invented.

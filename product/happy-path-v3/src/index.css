@@ -119,6 +119,10 @@
   --card-pad: 28px;
   /* The prototype's own presenter bar, which is not part of the product. */
   --demo-bar-h: 48px;
+  /* The dock along the bottom of Upline, and the panels that pop up from it:
+     640 tall, or whatever fits under the presenter bar and the app bar. */
+  --dock-h: 48px;
+  --panel-h: min(40rem, calc(100svh - var(--demo-bar-h) - var(--dock-h) - 5rem));
 }
 
 @theme inline {

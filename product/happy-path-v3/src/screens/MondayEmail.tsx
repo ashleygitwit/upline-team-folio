@@ -8,8 +8,8 @@ import type { WalkProps } from "@/walk";
  * How the week starts: an email, not a login. Upline writes to Stacey (this is
  * Upline-to-agent mail, so it carries Upline's brand) with one button that
  * opens Upline. Stacey could ignore it entirely and the six would still go.
- * Its headline is the same sentence as the banner Stacey lands on, so the two
- * read as one message.
+ * Its headline says what the homepage's brief says, so the two read as one
+ * message.
  */
 export function MondayEmail({ go }: WalkProps) {
   const n = thisWeek.length;

@@ -1,14 +1,14 @@
 import { useState } from "react";
-import { ChevronDown, FileText } from "lucide-react";
+import { ArrowLeft, ChevronDown, FileText } from "lucide-react";
+import { PersonLink } from "@/components/PersonLink";
+import { QuoteDialog } from "@/components/QuoteDialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Field, FieldContent, FieldDescription, FieldLabel, FieldTitle } from "@/components/ui/field";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
-import { QuoteDialog } from "@/screens/sheets/QuoteDialog";
 import {
   agency,
   callahan,
@@ -23,23 +23,23 @@ import {
   type PickId,
   type Quote,
 } from "@/data";
-import { focusPanel } from "@/lib/focus";
 import type { WalkProps } from "@/walk";
 
 /**
- * The Callahans' shop, the one drawer an agent should expect to open. It
- * reads top to bottom the way Stacey would think it through: what came back
- * and what to say about it, which carrier goes out under Stacey's name, and the
- * email Dana gets. The comparison table and the carrier PDFs are there for
+ * The Callahans' shop, the one page an agent should expect to open. It reads
+ * the way Stacey would think it through: what came back and what to say
+ * about it, which carrier goes out under Stacey's name, and the email Dana
+ * gets, which stays beside the rest so the pick and the words that carry it
+ * are seen together. The comparison table and the carrier PDFs are there for
  * whoever wants them, one click down. Nothing goes to Dana until Stacey sends.
  */
-export function RecommendationSheet({
-  open,
+export function Results({
   day,
-  onClose,
   walk,
   update,
-}: WalkProps & { open: boolean; day: Day; onClose: () => void }) {
+  onProfile,
+  onSent,
+}: WalkProps & { day: Day; onProfile: () => void; onSent: () => void }) {
   const [quote, setQuote] = useState<Quote | null>(null);
   const sent = walk.recSent || day === "fri";
   const draft = walk.recDraft ?? recEmails[walk.pick];
@@ -47,31 +47,36 @@ export function RecommendationSheet({
 
   const send = () => {
     update({ recSent: true });
-    onClose();
+    onSent();
   };
 
   return (
-    <Sheet open={open} onOpenChange={(o) => !o && onClose()}>
-      <SheetContent
-        onOpenAutoFocus={focusPanel}
-        className="w-full gap-0 p-0 outline-none data-[side=right]:sm:max-w-[640px]">
-        <SheetHeader className="gap-1 border-b px-7 py-6 pr-16">
-          <SheetTitle className="font-display text-2xl">{callahan.name}</SheetTitle>
-          <SheetDescription>
-            {callahan.lines} · {callahan.carrier} · Renews {callahan.renewsLong} · Shopped Thursday morning
-          </SheetDescription>
-        </SheetHeader>
+    <div className="shell pt-10 pb-(--space-section)">
+      <Button variant="link" className="h-auto p-0 font-sans text-sm" onClick={onProfile}>
+        <ArrowLeft data-icon="inline-start" />
+        {callahan.name}
+      </Button>
 
-        <div className="flex flex-1 flex-col gap-10 overflow-y-auto px-7 py-8 text-base">
-          <p className="font-display text-2xl">
-            Auto-Owners will write the same coverage for {money(4640)}. That's {money(erie.price - 4640)} less than
-            Erie's renewal.
-          </p>
+      <header className="mt-10">
+        <p className="eyebrow text-muted-foreground">Shopped Thursday morning</p>
+        <h1 className="mt-5 max-w-[26ch] text-5xl text-balance">
+          Auto-Owners will write the same coverage for {money(4640)}.
+        </h1>
+        <p className="mt-6 max-w-[60ch] font-display text-lg font-normal text-muted-foreground">
+          That's {money(erie.price - 4640)} less than Erie's renewal.
+        </p>
+        <p className="mt-3 text-sm text-muted-foreground">
+          <PersonLink h={callahan} onProfile={onProfile} /> · {callahan.lines} · {callahan.carrier} · Renews{" "}
+          {callahan.renewsLong}
+        </p>
+      </header>
 
+      <div className="mt-10 grid items-start gap-x-16 gap-y-10 border-t pt-10 text-base lg:grid-cols-[minmax(0,1fr)_24rem]">
+        <div className="flex flex-col gap-10">
           <section aria-labelledby="rec-points">
-            <h3 id="rec-points" className="text-xl">
+            <h2 id="rec-points" className="text-xl">
               What to call out
-            </h3>
+            </h2>
             <ul className="mt-4 flex flex-col gap-3">
               {talkingPoints.map((t) => (
                 <li key={t} className="flex gap-3">
@@ -83,9 +88,9 @@ export function RecommendationSheet({
           </section>
 
           <section aria-labelledby="rec-pick">
-            <h3 id="rec-pick" className="text-xl">
+            <h2 id="rec-pick" className="text-xl">
               Your pick
-            </h3>
+            </h2>
             <p className="mt-1 text-sm text-muted-foreground">Dana sees one option: the one you choose here.</p>
             <RadioGroup
               value={walk.pick}
@@ -151,9 +156,9 @@ export function RecommendationSheet({
           </section>
 
           <section aria-labelledby="rec-quotes">
-            <h3 id="rec-quotes" className="text-xl">
+            <h2 id="rec-quotes" className="text-xl">
               From the carriers
-            </h3>
+            </h2>
             <p className="mt-1 text-sm text-muted-foreground">The quotes as each carrier sent them.</p>
             <div className="mt-4 grid grid-cols-2 gap-3">
               {quotes.map((q) => (
@@ -178,47 +183,47 @@ export function RecommendationSheet({
               ))}
             </div>
           </section>
-
-          <section aria-labelledby="rec-email">
-            <h3 id="rec-email" className="text-xl">
-              The email to Dana
-            </h3>
-            <p className="mt-1 text-sm text-muted-foreground">
-              From {agency.agent.email}, with a link to Dana's page. It goes out when you send it.
-            </p>
-            <p className="mt-5 text-sm">
-              <span className="text-muted-foreground">Subject </span>
-              {recSubject}
-            </p>
-            <Textarea
-              aria-label="Email to Dana"
-              className="mt-2 min-h-[19rem] leading-relaxed"
-              value={draft}
-              readOnly={sent}
-              onChange={(e) => update({ recDraft: e.target.value })}
-            />
-          </section>
         </div>
 
-        <SheetFooter className="border-t px-7 py-5">
+        <section
+          aria-labelledby="rec-email"
+          className="border bg-card p-(--card-pad) lg:sticky lg:top-[calc(var(--demo-bar-h)+2rem)]"
+        >
+          <h2 id="rec-email" className="text-xl">
+            The email to Dana
+          </h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            From {agency.agent.email}, with a link to Dana's page. It goes out when you send it.
+          </p>
+          <p className="mt-5 text-sm">
+            <span className="text-muted-foreground">Subject </span>
+            {recSubject}
+          </p>
+          <Textarea
+            aria-label="Email to Dana"
+            className="mt-2 min-h-[19rem] leading-relaxed"
+            value={draft}
+            readOnly={sent}
+            onChange={(e) => update({ recDraft: e.target.value })}
+          />
           {sent ? (
-            <div className="flex items-center gap-3">
+            <div className="mt-5 flex items-center gap-3">
               <Badge variant="secondary">Sent</Badge>
               <p className="text-sm">Sent to Dana Thursday at 11:20 AM.</p>
             </div>
           ) : (
-            <div className="flex items-center justify-between gap-4">
-              <p className="text-sm text-muted-foreground">Your name is on this one, so it waits for you.</p>
-              <Button size="lg" onClick={send}>
+            <>
+              <Button size="lg" className="mt-5 w-full" onClick={send}>
                 Send to Dana
               </Button>
-            </div>
+              <p className="mt-3 text-sm text-muted-foreground">Your name is on this one, so it waits for you.</p>
+            </>
           )}
-        </SheetFooter>
-      </SheetContent>
+        </section>
+      </div>
 
       <QuoteDialog quote={quote} onClose={() => setQuote(null)} />
-    </Sheet>
+    </div>
   );
 }
 
