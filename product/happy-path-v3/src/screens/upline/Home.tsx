@@ -9,11 +9,12 @@ import { todayFor } from "@/today";
 import type { WalkProps } from "@/walk";
 
 /**
- * The homepage: a greeting, one sentence on what's going on, and a box to ask
- * anything, with three questions written out underneath so Stacey doesn't
- * have to think of them. Asking docks a chat along the bottom. It has to be
- * readable before coffee, so under that sit only the three sections a renewal
- * moves through, each holding just what needs her.
+ * The homepage: a greeting and a box to ask anything, with three questions
+ * written out inside it so Stacey doesn't have to think of them. Asking docks
+ * a chat along the bottom. It has to be readable before coffee, so under that
+ * sit only the three sections a renewal moves through, each holding just what
+ * needs her. From Wednesday a sentence on the day, and its one button, sit
+ * between the greeting and the box.
  */
 export function Home({
   day,
@@ -32,6 +33,9 @@ export function Home({
   onResults: () => void;
 }) {
   const today = todayFor(day, walk);
+  // Monday is just the greeting and the box: the six are right below, under
+  // Scheduled Renewal Emails, so a sentence and a link to them would repeat it.
+  const brief = day !== "mon";
 
   return (
     <div className="shell pt-(--space-section) pb-(--space-section)">
@@ -45,10 +49,13 @@ export function Home({
               <Celebration />
             </div>
           )}
-          <p className="mx-auto mt-6 max-w-[60ch] font-display text-lg font-normal text-balance text-muted-foreground">
-            {today.lead} {today.sub}
-          </p>
-          {today.action &&
+          {brief && (
+            <p className="mx-auto mt-6 max-w-[60ch] font-display text-lg font-normal text-balance text-muted-foreground">
+              {today.lead} {today.sub}
+            </p>
+          )}
+          {brief &&
+            today.action &&
             (today.action.primary ? (
               <Button size="lg" className="mt-7" onClick={() => onAction(today.action!.to)}>
                 {today.action.label}
@@ -74,12 +81,9 @@ export function Home({
           )}
         </section>
 
-        <AskBox label="Ask me anything" className="mt-10" onAsk={(q) => onAsk(q, matchPill(q))} />
-        <Suggestions
-          ids={suggested}
-          className="mt-5 justify-center"
-          onAsk={(id) => onAsk(pillById(id).question, id)}
-        />
+        <AskBox label="Ask me anything" className="mt-10" onAsk={(q) => onAsk(q, matchPill(q))}>
+          <Suggestions ids={suggested} size="sm" onAsk={(id) => onAsk(pillById(id).question, id)} />
+        </AskBox>
 
         <Sections day={day} walk={walk} update={update} {...props} />
       </div>
