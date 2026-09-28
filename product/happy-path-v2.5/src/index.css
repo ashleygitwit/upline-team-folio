@@ -254,8 +254,10 @@
     --ios-label: #000000;
     /* iOS's secondary label, darkened from #8a8a8e to pass 4.5:1 on the banner. */
     --ios-secondary-label: #6c6c70;
-    --ios-mail-top: #22a6ff;
-    --ios-mail-bottom: #1766f5;
+    /* Outlook's app icon, drawn: its blue, the lighter envelope and the dark O tile. */
+    --ios-outlook-light: #28a8ea;
+    --ios-outlook-dark: #0364b8;
+    --ios-outlook-tile: #0a2767;
     --ios-badge: #ff3b30;
     --ring: #ffffff;
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
@@ -278,10 +280,37 @@
     transition: background-color 150ms ease-out;
   }
   .ios-banner:hover { background: var(--ios-banner-hover); }
-  .ios-mail-icon { background: linear-gradient(180deg, var(--ios-mail-top), var(--ios-mail-bottom)); }
+  .ios-outlook-icon { background: linear-gradient(135deg, var(--ios-outlook-light), var(--ios-outlook-dark)); }
+
+  /* Stacey's Outlook, which is Microsoft's surface, not Upline's: Fluent's
+     neutrals and brand blue, 4px and 8px corners, and Segoe UI (the system
+     font stands in on a Mac), scoped here. The Upline email inside sets its
+     own font back. */
+  .outlook {
+    --ol-font: "Segoe UI", "Segoe UI Web (West European)", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif;
+    --ol-brand: #0f6cbd;
+    --ol-on-brand: #ffffff;
+    --ol-canvas: #f0f0f0;
+    --ol-card: #ffffff;
+    --ol-search: #ffffff;
+    --ol-selected: #ebf3fc;
+    --ol-stroke: #e0e0e0;
+    --ol-stroke-2: #f0f0f0;
+    --ol-fg-1: #242424;
+    --ol-fg-2: #424242;
+    --ol-fg-3: #616161;
+    --ol-avatar-1: #f9e8ee;
+    --ol-avatar-1-fg: #8a2a4f;
+    --ol-avatar-2: #e6f2e6;
+    --ol-avatar-2-fg: #0e5a0e;
+    --ol-avatar-3: #fdf1e6;
+    --ol-avatar-3-fg: #8a4a0c;
+    font-family: var(--ol-font);
+    color: var(--ol-fg-1);
+  }
 }
 
-/* The Mail banner drops out of the Dynamic Island a beat after the home screen
+/* The Outlook banner drops out of the Dynamic Island a beat after the home screen
    shows, the way iOS delivers one. Its job is to show where it came from; the
    reduced-motion rule below makes it simply appear. */
 @keyframes ios-banner-in {

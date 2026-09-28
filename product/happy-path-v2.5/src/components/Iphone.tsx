@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useId, useState, type ComponentType, type ReactNode } from "react";
 import {
   Activity,
   AudioLines,
@@ -15,7 +15,6 @@ import {
   Heart,
   House,
   ListTodo,
-  Mail,
   Map as MapIcon,
   MessageCircle,
   Music,
@@ -25,7 +24,6 @@ import {
   Search,
   Settings,
   Wallet,
-  type LucideIcon,
 } from "lucide-react";
 
 /**
@@ -123,7 +121,7 @@ function StatusBar({ time }: { time: string }) {
   );
 }
 
-type App = { name: string; Icon: LucideIcon; badge?: number };
+type App = { name: string; Icon: ComponentType<{ className?: string; strokeWidth?: number }>; badge?: number };
 
 const grid: App[] = [
   { name: "Calendar", Icon: Calendar },
@@ -152,12 +150,13 @@ const dock: App[] = [
   { name: "Phone", Icon: Phone },
   { name: "Safari", Icon: Compass },
   { name: "Messages", Icon: MessageCircle },
-  { name: "Mail", Icon: Mail, badge: 1 },
+  { name: "Outlook", Icon: OutlookGlyph, badge: 1 },
 ];
 
 /**
  * A home screen in iOS's Clear icon style: every icon is frosted glass with a
  * white glyph, so the notification is the one thing on the screen with color.
+ * Stacey reads her mail in Outlook, so it's Outlook in the dock.
  * The dock's four columns line up with the grid's.
  */
 export function HomeScreen({ day, date }: { day: string; date: number }) {
@@ -217,12 +216,39 @@ function Icon({ app }: { app: App }) {
   );
 }
 
-/** Mail's own icon, for the notification: a white envelope on Mail's blue. */
-export function MailIcon() {
+/**
+ * Outlook's icon, for the notification: the O tile over an envelope on
+ * Outlook's blue. A drawing standing in for Microsoft's artwork.
+ */
+export function OutlookIcon() {
   return (
-    <svg aria-hidden width="38" height="38" viewBox="0 0 38 38" className="ios-mail-icon shrink-0 rounded-[9px]">
-      <rect x="7" y="11" width="24" height="16" rx="2.5" fill="var(--ios-on-glass)" />
-      <path d="M8.5 12.5 19 20.5l10.5-8" fill="none" stroke="var(--ios-mail-bottom)" strokeWidth="1.4" opacity=".45" />
+    <svg aria-hidden width="38" height="38" viewBox="0 0 38 38" className="ios-outlook-icon shrink-0 rounded-[9px]">
+      <rect x="15" y="11" width="17" height="16" rx="2" fill="var(--ios-on-glass)" opacity=".92" />
+      <path d="M15.5 12.5 23.5 19l8-6.5" fill="none" stroke="var(--ios-outlook-dark)" strokeWidth="1.3" opacity=".5" />
+      <rect x="6" y="12" width="14" height="14" rx="2.5" fill="var(--ios-outlook-tile)" />
+      <ellipse cx="13" cy="19" rx="3.1" ry="3.7" fill="none" stroke="var(--ios-on-glass)" strokeWidth="2" />
+    </svg>
+  );
+}
+
+/** The same mark in the Clear style, for the dock: white, with the O and the tile's edge cut out. */
+function OutlookGlyph({ className }: { className?: string }) {
+  const id = useId();
+  return (
+    <svg viewBox="0 0 30 30" className={className} fill="none">
+      <mask id={`${id}-env`}>
+        <rect width="30" height="30" fill="white" />
+        <rect x="1.5" y="8.5" width="16" height="16" rx="4" fill="black" />
+      </mask>
+      <mask id={`${id}-tile`}>
+        <rect width="30" height="30" fill="white" />
+        <ellipse cx="9.5" cy="16.5" rx="2.6" ry="3.2" stroke="black" strokeWidth="1.8" />
+      </mask>
+      <g mask={`url(#${id}-env)`} stroke="currentColor" strokeWidth="1.75" strokeLinejoin="round">
+        <rect x="9" y="8" width="18" height="15" rx="2.5" />
+        <path d="M9.5 10 18 16.5 26.5 10" />
+      </g>
+      <rect x="3" y="10" width="13" height="13" rx="3" fill="currentColor" mask={`url(#${id}-tile)`} />
     </svg>
   );
 }

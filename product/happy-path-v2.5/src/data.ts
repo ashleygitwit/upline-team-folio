@@ -23,6 +23,69 @@ export const agency = {
 export const questionnaireUrl = "stocktonhill.coverage-review.com/d/callahan";
 export const proposalUrl = "stocktonhill.coverage-review.com/p/callahan";
 
+/**
+ * Monday's email from Upline to Stacey. Its subject and opening are what her
+ * phone's notification shows, so both read from here.
+ */
+export const mondayNote = {
+  from: "Upline",
+  subject: "Your renewals are ready to send",
+  opening: "Good morning Stacey, Your six renewals go out tomorrow at 9AM.",
+  body: "You don't need to do anything, each one is drafted in your voice and sends from your inbox. If you'd like to look them over first, they're ready for your review.",
+  time: "8:00 AM",
+  sent: "Mon 10/12/2026 8:00 AM",
+};
+
+export type InboxMessage = {
+  id: string;
+  from: string;
+  initials: string;
+  /** Which of Outlook's avatar colors the sender gets. */
+  tone: 1 | 2 | 3;
+  subject: string;
+  preview: string;
+  time: string;
+  group: "Today" | "Yesterday" | "Last week";
+  unread?: boolean;
+};
+
+/**
+ * The rest of Stacey's Outlook inbox on Monday morning, under Upline's email.
+ * Written for the walk; Linda Hart is the household already bound this season.
+ */
+export const staceyInbox: InboxMessage[] = [
+  {
+    id: "hart",
+    from: "Linda Hart",
+    initials: "LH",
+    tone: 1,
+    subject: "Re: Your Auto-Owners policy",
+    preview: "Thanks Stacey, the ID cards came through and the new payment date works for us.",
+    time: "Sun 7:48 PM",
+    group: "Yesterday",
+  },
+  {
+    id: "ao",
+    from: "Auto-Owners Insurance",
+    initials: "AO",
+    tone: 2,
+    subject: "Your September statement is ready",
+    preview: "Your commission statement for September is ready to view in the agency portal.",
+    time: "Fri 10/9",
+    group: "Last week",
+  },
+  {
+    id: "erie",
+    from: "Erie Insurance",
+    initials: "EI",
+    tone: 3,
+    subject: "Agent newsletter: October",
+    preview: "Winter driving reminders to share with your clients, and what's new in the portal.",
+    time: "Thu 10/8",
+    group: "Last week",
+  },
+];
+
 export type Day = "mon" | "wed" | "thu" | "fri";
 
 export const dayLabel: Record<Day, string> = {

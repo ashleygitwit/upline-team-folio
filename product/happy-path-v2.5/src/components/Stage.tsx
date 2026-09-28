@@ -4,8 +4,8 @@ import { cn } from "cn";
 /**
  * The ground for everything that happens outside Upline: Stacey's inbox, her
  * phone and Dana's phone. Slate, so it never reads as the product, with one
- * caption saying whose screen this is. A device draws its own frame, so it
- * gets no card.
+ * caption saying whose screen this is. A device or an app window draws its
+ * own frame, so it gets no card.
  */
 export function Stage({
   caption,
@@ -13,7 +13,7 @@ export function Stage({
   children,
 }: {
   caption: string;
-  size: "phone" | "email" | "device";
+  size: "phone" | "window" | "device";
   children: ReactNode;
 }) {
   return (
@@ -22,10 +22,11 @@ export function Stage({
       <div
         className={cn(
           "mx-auto mt-6",
-          size !== "device" && "bg-card text-foreground",
+          size === "phone" && "bg-card text-foreground",
           size === "phone" &&
             "flex h-[min(780px,calc(100svh-var(--demo-bar-h)-9rem))] min-h-[560px] max-w-[390px] flex-col overflow-hidden",
-          size === "email" && "max-w-[640px]",
+          size === "window" &&
+            "flex h-[min(860px,calc(100svh-var(--demo-bar-h)-9rem))] min-h-[560px] max-w-[1280px] flex-col",
         )}
       >
         {children}
