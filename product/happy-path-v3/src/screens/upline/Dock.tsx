@@ -12,7 +12,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { Field, FieldLabel } from "@/components/ui/field";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
-import { agency, earlier, initials, money, thisWeek, upcoming, type Day, type Household } from "@/data";
+import { agency, days, earlier, initials, money, thisWeek, upcoming, type Day, type Household } from "@/data";
 import { badgeVariant, statusFor } from "@/status";
 import { going } from "@/today";
 import type { Walk, WalkProps } from "@/walk";
@@ -30,8 +30,6 @@ type DockProps = WalkProps & {
   onResults: () => void;
   onEveryone: () => void;
 };
-
-const days: Day[] = ["mon", "wed", "thu", "fri"];
 
 /** Whether a household's standing moved since the day before. */
 function isNew(h: Household, day: Day, walk: Walk) {

@@ -18,8 +18,8 @@ export function DemoBar({ index, onGo }: { index: number; onGo: (i: number) => v
   const last = screens.length - 1;
 
   return (
-    <div className="sticky top-0 z-40 border-b border-dark-border bg-dark-bg text-dark-fg [--ring:#ffffff]">
-      <div className="flex h-(--demo-bar-h) items-center justify-between gap-4 px-4">
+    <div className="sticky top-0 z-40 h-(--demo-bar-h) border-b border-dark-border bg-dark-bg text-dark-fg [--ring:#ffffff]">
+      <div className="flex h-full items-center justify-between gap-4 px-4">
         <div className="flex min-w-0 items-center gap-3">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

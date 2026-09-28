@@ -1,4 +1,5 @@
-import type { PickId } from "./data";
+import type { Day, PickId } from "./data";
+import type { PillId } from "./pills";
 
 /**
  * The walk: ten stops, one household (the Callahans) from Monday's list to a
@@ -30,6 +31,16 @@ export const screens: { id: ScreenId; label: string; where: string }[] = [
   { id: "friday", label: "Friday: bind it", where: "Upline · Friday, October 16" },
 ];
 
+/** One question and what it's answered with. `null` has no answer written. */
+export type Exchange = { key: number; question: string; answer: PillId | null };
+
+/**
+ * A conversation on the homepage, titled by its first question. It belongs to
+ * the day it was started on: that day's chats take follow-ups, and an earlier
+ * day's opens as it was, read-only.
+ */
+export type Chat = { id: number; day: Day; title: string; asked: Exchange[] };
+
 /**
  * What the presenter has done so far. It survives stepping back and forth, and
  * anything skipped by jumping ahead falls back to the default: the outreach
@@ -48,6 +59,7 @@ export type Walk = {
   danaApproved: boolean;
   bound: boolean;
   notesDrafted: boolean;
+  chats: Chat[];
 };
 
 export const initialWalk: Walk = {
@@ -63,6 +75,7 @@ export const initialWalk: Walk = {
   danaApproved: false,
   bound: false,
   notesDrafted: false,
+  chats: [],
 };
 
 export type WalkProps = {

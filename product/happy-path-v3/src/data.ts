@@ -26,6 +26,9 @@ export const proposalUrl = "stocktonhill.coverage-review.com/p/callahan";
 
 export type Day = "mon" | "wed" | "thu" | "fri";
 
+/** The walk's days, in order. */
+export const days: Day[] = ["mon", "wed", "thu", "fri"];
+
 export const dayLabel: Record<Day, string> = {
   mon: "Monday, October 12",
   wed: "Wednesday, October 14",

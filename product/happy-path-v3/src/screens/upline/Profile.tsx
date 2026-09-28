@@ -13,6 +13,7 @@ import {
   callahanHistory,
   carrierHistory,
   danaAnswers,
+  days,
   money,
   optionById,
   options,
@@ -187,7 +188,7 @@ export function Profile({
  */
 function timelineFor(day: Day, walk: Walk, onEdit: () => void): Entry[] {
   const h = callahan;
-  const at = ["mon", "wed", "thu", "fri"].indexOf(day);
+  const at = days.indexOf(day);
   const pick = optionById(walk.pick);
   const erie = options.find((o) => o.current)!;
   const email = walk.drafts[h.id] ?? h.email;

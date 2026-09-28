@@ -14,6 +14,8 @@ export type AnswerProps = WalkProps & {
   onAction: (to: NonNullable<Today["action"]>["to"]) => void;
   /** Asks a follow-up, as if Stacey had picked its pill. */
   onAsk: (id: PillId) => void;
+  /** An earlier day's chat: the answer as it was, with nothing to press. */
+  readOnly?: boolean;
 };
 
 /**
@@ -31,7 +33,7 @@ export function Answer({ id, ...props }: AnswerProps & { id: PillId | null }) {
   return <p>I can't answer that one in this prototype yet. The questions below are the ones I know.</p>;
 }
 
-function TodayAnswer({ day, walk, onAction }: AnswerProps) {
+function TodayAnswer({ day, walk, onAction, readOnly }: AnswerProps) {
   const today = todayFor(day, walk);
   return (
     <>
@@ -39,7 +41,7 @@ function TodayAnswer({ day, walk, onAction }: AnswerProps) {
         {today.lead} {today.sub}
       </p>
       {today.more && <p className="mt-4">{today.more}</p>}
-      {today.action && (
+      {today.action && !readOnly && (
         <Button
           variant={today.action.primary ? "default" : "outline"}
           className="mt-5"
@@ -52,7 +54,7 @@ function TodayAnswer({ day, walk, onAction }: AnswerProps) {
   );
 }
 
-function RetentionAnswer({ onAsk }: AnswerProps) {
+function RetentionAnswer({ onAsk, readOnly }: AnswerProps) {
   const { drafted, sent, stayed, pct, lastYearPct, since } = retention;
   const left = sent - stayed;
   const outreach = activity.find((a) => a.id === "outreach")!;
@@ -81,10 +83,12 @@ function RetentionAnswer({ onAsk }: AnswerProps) {
         <span className="text-muted-foreground">{stayed} stayed</span>
         <span className="flex items-center gap-3">
           <span className="text-muted-foreground">{left} left</span>
-          <Button variant="link" className="h-auto p-0 font-sans text-sm" onClick={() => onAsk("left")}>
-            See who
-            <ArrowRight data-icon="inline-end" />
-          </Button>
+          {!readOnly && (
+            <Button variant="link" className="h-auto p-0 font-sans text-sm" onClick={() => onAsk("left")}>
+              See who
+              <ArrowRight data-icon="inline-end" />
+            </Button>
+          )}
         </span>
       </div>
 
@@ -94,7 +98,7 @@ function RetentionAnswer({ onAsk }: AnswerProps) {
   );
 }
 
-function LeftAnswer({ walk, update }: AnswerProps) {
+function LeftAnswer({ walk, update, readOnly }: AnswerProps) {
   const winBack = whoLeft.filter((l) => l.winBack);
   const names = winBack.map((l) => l.name.split(" ")[0]).join(" and ");
 
@@ -123,9 +127,11 @@ function LeftAnswer({ walk, update }: AnswerProps) {
           Drafted. Both notes will be in Monday's list for you to look over before they send.
         </p>
       ) : (
-        <Button className="mt-5" onClick={() => update({ notesDrafted: true })}>
-          Draft a note to {names}
-        </Button>
+        !readOnly && (
+          <Button className="mt-5" onClick={() => update({ notesDrafted: true })}>
+            Draft a note to {names}
+          </Button>
+        )
       )}
     </>
   );

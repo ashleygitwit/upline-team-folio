@@ -122,6 +122,10 @@
   /* The dock along the bottom of Upline, and the panels that pop up from it:
      640 tall, or whatever fits under the presenter bar and the app bar. */
   --dock-h: 48px;
+  /* The app bar is 64 tall plus its hairline. The homepage and its chats fill
+     what's left between it and the dock, and scroll inside that. */
+  --app-bar-h: 65px;
+  --home-h: calc(100svh - var(--demo-bar-h) - var(--app-bar-h) - var(--dock-h));
   --panel-h: min(40rem, calc(100svh - var(--demo-bar-h) - var(--dock-h) - 5rem));
 }
 
