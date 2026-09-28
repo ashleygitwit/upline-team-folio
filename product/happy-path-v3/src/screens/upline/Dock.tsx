@@ -41,64 +41,121 @@ function isNew(h: Household, day: Day, walk: Walk) {
 /**
  * The bar along the bottom of every Upline page, with what's scheduled and
  * what just happened one click away. Each tab pops its panel up above it, the
- * way a messenger does, and the page underneath stays where it was. A message
- * opens in its own column to the panel's left.
+ * way a messenger does, and the page underneath stays where it was. Opening
+ * a message gives that household a tab of its own, left of Scheduled, and
+ * the email pops up out of it. Every panel's right edge sits on its tab's
+ * right edge, so the household's tab leaves room under Scheduled's panel.
  */
 export function Dock({ day, panel, message, onPanel, onMessage, walk, ...rest }: DockProps) {
-  const group = useRef<HTMLDivElement>(null);
-  const tabs = useRef<Record<Panel, HTMLButtonElement | null>>({ scheduled: null, activity: null });
+  const panelBox = useRef<HTMLDivElement>(null);
+  const messageBox = useRef<HTMLDivElement>(null);
+  const tabs = useRef<Record<Panel | "message", HTMLButtonElement | null>>({
+    scheduled: null,
+    activity: null,
+    message: null,
+  });
   const mounted = useRef(false);
 
+  // A household's window opens up, and can be put down to its tab. A
+  // different household, or the same one opened again, comes up open.
+  const [down, setDown] = useState(false);
+  const [downFor, setDownFor] = useState(message);
+  if (message !== downFor) {
+    setDownFor(message);
+    setDown(false);
+  }
+  const h = thisWeek.find((x) => x.id === message) ?? null;
+
   const scheduled = day === "mon" ? going(walk) : upcoming[day].filter((u) => !walk.skipped.includes(u.id)).length;
-  const fresh = thisWeek.filter((h) => isNew(h, day, walk)).length;
+  const fresh = thisWeek.filter((x) => isNew(x, day, walk)).length;
 
-  // Opening a panel moves focus into it; the stop the walk opens on does not.
+  // Opening a panel or a message moves focus into it; the stop the walk
+  // opens on does not.
   useEffect(() => {
-    if (mounted.current && panel) group.current?.focus();
-    mounted.current = true;
+    if (mounted.current && panel) panelBox.current?.focus();
   }, [panel]);
+  useEffect(() => {
+    if (mounted.current && message && !down) messageBox.current?.focus();
+  }, [message, down]);
+  useEffect(() => {
+    mounted.current = true;
+  }, []);
 
-  const close = () => {
+  const closePanel = () => {
     const from = panel;
-    onMessage(null);
     onPanel(null);
     if (from) tabs.current[from]?.focus();
   };
 
-  const toggle = (p: Panel) => {
-    onMessage(null);
-    onPanel(panel === p ? null : p);
+  const putDown = () => {
+    setDown(true);
+    tabs.current.message?.focus();
   };
 
-  const onKeyDown = (e: React.KeyboardEvent) => {
+  const closeMessage = () => {
+    onMessage(null);
+    if (panel) panelBox.current?.focus();
+    else tabs.current.scheduled?.focus();
+  };
+
+  const openMessage = (id: string) => {
+    onMessage(id);
+    setDown(false);
+  };
+
+  const onEscape = (e: React.KeyboardEvent, then: () => void) => {
     if (e.key !== "Escape") return;
     e.stopPropagation();
-    if (message) onMessage(null);
-    else close();
+    then();
   };
 
-  const shown = { day, walk, message, onMessage, onClose: close, ...rest };
+  const shown = { day, walk, message, onMessage: openMessage, onClose: closePanel, ...rest };
+  const rise = "fixed bottom-(--dock-h) z-30 flex h-(--panel-h) outline-none animate-in duration-200 fade-in-0 slide-in-from-bottom-2";
 
   return (
     <>
       {panel && (
         <div
-          ref={group}
+          ref={panelBox}
           tabIndex={-1}
-          onKeyDown={onKeyDown}
-          className={cn(
-            "fixed right-0 bottom-(--dock-h) z-30 flex h-(--panel-h) max-w-full justify-end outline-none",
-            "animate-in duration-200 fade-in-0 slide-in-from-bottom-2",
-            panel === "scheduled" && "min-[1120px]:right-60",
-          )}
+          onKeyDown={(e) => onEscape(e, closePanel)}
+          className={cn(rise, panel === "scheduled" ? "right-60" : "right-0")}
         >
-          {message && <Message key={message} id={message} {...shown} />}
           {panel === "scheduled" ? <Scheduled {...shown} /> : <Activity {...shown} />}
+        </div>
+      )}
+
+      {h && !down && (
+        <div
+          ref={messageBox}
+          tabIndex={-1}
+          onKeyDown={(e) => onEscape(e, putDown)}
+          className={cn(rise, "right-150 max-w-[calc(100vw-37.5rem)]")}
+        >
+          <Message
+            key={h.id}
+            id={h.id}
+            joined={panel === "scheduled"}
+            onPutDown={putDown}
+            onDone={closeMessage}
+            {...shown}
+          />
         </div>
       )}
 
       <footer className="fixed inset-x-0 bottom-0 z-30 border-t bg-card">
         <div className="flex h-(--dock-h) justify-end">
+          {h && (
+            <HouseholdTab
+              ref={(el) => {
+                tabs.current.message = el;
+              }}
+              h={h}
+              open={!down}
+              onToggle={() => (down ? setDown(false) : putDown())}
+              onClose={closeMessage}
+            />
+          )}
           <Tab
             ref={(el) => {
               tabs.current.scheduled = el;
@@ -106,7 +163,7 @@ export function Dock({ day, panel, message, onPanel, onMessage, walk, ...rest }:
             label="Scheduled"
             count={scheduled}
             open={panel === "scheduled"}
-            onClick={() => toggle("scheduled")}
+            onClick={() => onPanel(panel === "scheduled" ? null : "scheduled")}
           />
           <Tab
             ref={(el) => {
@@ -115,11 +172,57 @@ export function Dock({ day, panel, message, onPanel, onMessage, walk, ...rest }:
             label="Recent Activity"
             count={fresh}
             open={panel === "activity"}
-            onClick={() => toggle("activity")}
+            onClick={() => onPanel(panel === "activity" ? null : "activity")}
           />
         </div>
       </footer>
     </>
+  );
+}
+
+/**
+ * The household's own tab, the way a messenger docks a conversation: who
+ * it's with, a way to put it up or down, and a way to close it. It's wider
+ * than the other two so a couple's names fit.
+ */
+function HouseholdTab({
+  ref,
+  h,
+  open,
+  onToggle,
+  onClose,
+}: {
+  ref: React.Ref<HTMLButtonElement>;
+  h: Household;
+  open: boolean;
+  onToggle: () => void;
+  onClose: () => void;
+}) {
+  return (
+    <div className={cn("mr-30 flex h-full w-72 items-center border-x transition-colors", open && "bg-background")}>
+      <button
+        ref={ref}
+        type="button"
+        aria-expanded={open}
+        aria-label={`Email to ${h.name}`}
+        onClick={onToggle}
+        className="flex h-full min-w-0 flex-1 items-center gap-3 pr-2 pl-4 text-left font-display text-sm font-medium transition-colors hover:bg-background focus-visible:-outline-offset-2"
+      >
+        <Avatar size="sm">
+          <AvatarFallback>{initials(h.name)}</AvatarFallback>
+        </Avatar>
+        <span className="min-w-0 flex-1 truncate">{h.name}</span>
+        {open ? (
+          <ChevronDown aria-hidden className="size-4 shrink-0 text-muted-foreground" />
+        ) : (
+          <ChevronUp aria-hidden className="size-4 shrink-0 text-muted-foreground" />
+        )}
+      </button>
+      <Button variant="ghost" size="icon-sm" className="mr-2" onClick={onClose}>
+        <X />
+        <span className="sr-only">Close the email to {h.name}</span>
+      </Button>
+    </div>
   );
 }
 
@@ -168,7 +271,8 @@ function Tab({
 type Shown = WalkProps & {
   day: Day;
   message: string | null;
-  onMessage: (id: string | null) => void;
+  /** Opens a household's email in its own window. */
+  onMessage: (id: string) => void;
   onClose: () => void;
   onProfile: () => void;
   onResults: () => void;
@@ -313,7 +417,7 @@ function Scheduled({ day, walk, update, message, onMessage, onClose, onProfile }
               key={h.id}
               h={h}
               selected={message === h.id}
-              onOpen={() => onMessage(message === h.id ? null : h.id)}
+              onOpen={() => onMessage(h.id)}
               onProfile={onProfile}
               aside={
                 <span className="flex shrink-0 items-center gap-2 text-muted-foreground tabular-nums">
@@ -354,7 +458,7 @@ function Activity({ day, walk, message, onMessage, onClose, onProfile, onResults
             const status = statusFor(h, day as Exclude<Day, "mon">, walk);
             const ready = h.id === "callahan" && status.label === "Ready for you";
             const open =
-              h.id === "callahan" ? (ready ? onResults : onProfile) : () => onMessage(message === h.id ? null : h.id);
+              h.id === "callahan" ? (ready ? onResults : onProfile) : () => onMessage(h.id);
             return (
               <Row
                 key={h.id}
@@ -405,12 +509,27 @@ function Activity({ day, walk, message, onMessage, onClose, onProfile, onResults
 }
 
 /**
- * One household's email in full, in its own column beside the list. The
- * email comes first, exactly as it will send. Why the price moved, Upline's
+ * One household's email in full, popped up out of its own tab. The email
+ * comes first, exactly as it will send. Why the price moved, Upline's
  * note, what we'll ask and the household are each one click down. Ideally
  * nobody edits anything, because the drafts are good.
  */
-function Message({ id, day, walk, update, onMessage, onProfile }: Shown & { id: string }) {
+function Message({
+  id,
+  day,
+  walk,
+  update,
+  joined,
+  onPutDown,
+  onDone,
+  onProfile,
+}: Shown & {
+  id: string;
+  /** Sitting against Scheduled's panel, which draws the edge they share. */
+  joined: boolean;
+  onPutDown: () => void;
+  onDone: () => void;
+}) {
   const [confirmSkip, setConfirmSkip] = useState(false);
   const h = thisWeek.find((x) => x.id === id);
   if (!h) return null;
@@ -421,7 +540,7 @@ function Message({ id, day, walk, update, onMessage, onProfile }: Shown & { id: 
   const life = walk.lifeQuote[h.id] ?? true;
   const increase = h.now - h.was;
   const status = day === "mon" ? null : statusFor(h, day, walk);
-  const close = () => onMessage(null);
+  const close = onDone;
 
   const looksGood = () => {
     update((w) => ({ approved: [...new Set([...w.approved, h.id])] }));
@@ -436,7 +555,7 @@ function Message({ id, day, walk, update, onMessage, onProfile }: Shown & { id: 
   return (
     <section
       aria-label={`Email to ${h.name}`}
-      className="flex w-120 min-w-0 flex-col border border-r-0 border-b-0 bg-card"
+      className={cn("flex w-120 min-w-0 flex-col border border-b-0 bg-card", joined && "border-r-0")}
     >
       <header className="flex items-start gap-4 border-b py-5 pr-4 pl-6">
         <HomeThumb id={h.id} className="size-10" />
@@ -446,9 +565,9 @@ function Message({ id, day, walk, update, onMessage, onProfile }: Shown & { id: 
             {h.lines} · {h.carrier} · Renews {h.renewsLong}
           </p>
         </div>
-        <Button variant="ghost" size="icon-sm" className="-mt-0.5" onClick={close}>
-          <X />
-          <span className="sr-only">Close</span>
+        <Button variant="ghost" size="icon-sm" className="-mt-0.5" onClick={onPutDown}>
+          <ChevronDown />
+          <span className="sr-only">Minimize</span>
         </Button>
       </header>
 
