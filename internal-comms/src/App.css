@@ -594,10 +594,14 @@ h2 {
   min-height: 100vh;
 }
 
+/* --main-offset is how far the fixed rail pushes the column in: the rail's
+   width on desktop, zero where the rail becomes a drawer. The feature band
+   reads it to break out to this column rather than the whole viewport. */
 .app-main {
+  --main-offset: var(--sidebar-w);
   min-width: 0;
-  margin-left: var(--sidebar-w);
-  width: calc(100% - var(--sidebar-w));
+  margin-left: var(--main-offset);
+  width: calc(100% - var(--main-offset));
 }
 
 .app-shell.is-gantt-shell {
@@ -881,11 +885,13 @@ h2 {
 
 /* ---- Feature band ----
    An indigo block that breaks out of the page shell to sit almost full-bleed,
-   while its content stays on the same 928px measure as the rest of the page. */
+   while its content stays on the same 928px measure as the rest of the page.
+   It breaks out to the main column, not the viewport, so it clears the fixed
+   rail instead of running under it. */
 .feature-band {
   --band-inset: 1.5rem;
-  margin-left: calc(50% - 50vw + var(--band-inset));
-  margin-right: calc(50% - 50vw + var(--band-inset));
+  margin-left: calc(50% - (100vw - var(--main-offset)) / 2 + var(--band-inset));
+  margin-right: calc(50% - (100vw - var(--main-offset)) / 2 + var(--band-inset));
   margin-bottom: var(--space-section);
   padding: var(--space-section) max(var(--card-pad), var(--shell-pad));
   border-radius: calc(var(--radius) * 1.5);
@@ -1987,8 +1993,7 @@ code {
   }
 
   .app-main {
-    margin-left: 0;
-    width: 100%;
+    --main-offset: 0px;
   }
 
   .site-sidebar {
