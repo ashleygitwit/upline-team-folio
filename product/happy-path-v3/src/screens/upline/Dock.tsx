@@ -473,7 +473,7 @@ function Message({ id, day, walk, update, onMessage, onProfile }: Shown & { id: 
           </p>
           <Textarea
             aria-label={`Email to ${h.first}`}
-            className="mt-2 min-h-[21rem] leading-relaxed"
+            className="mt-2 min-h-[21rem] bg-background leading-relaxed"
             value={draft}
             readOnly={!editable}
             onChange={(e) => update((w) => ({ drafts: { ...w.drafts, [h.id]: e.target.value } }))}
