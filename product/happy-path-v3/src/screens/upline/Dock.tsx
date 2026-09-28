@@ -289,7 +289,7 @@ function Scheduled({ day, walk, update, message, onMessage, onClose, onProfile }
 
   return (
     <Frame title="Scheduled to send tomorrow at 9 AM" onClose={onClose}>
-      <div className="border-b px-6 py-5">
+      <div className="border-b bg-background px-6 py-5">
         <p className="text-sm">
           {walk.approvedAll
             ? "Nice. You can still open any of them before then."

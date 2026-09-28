@@ -201,7 +201,7 @@ export function Results({
           </p>
           <Textarea
             aria-label="Email to Dana"
-            className="mt-2 min-h-[19rem] leading-relaxed"
+            className="mt-2 min-h-[19rem] bg-background leading-relaxed"
             value={draft}
             readOnly={sent}
             onChange={(e) => update({ recDraft: e.target.value })}

@@ -393,7 +393,8 @@ function Email({ subject, body }: { subject: string; body: string }) {
         <span className="text-muted-foreground">Subject </span>
         {subject}
       </p>
-      <div className="mt-4 flex flex-col gap-4">
+      {/* The same box as the editable emails, so a sent email reads the same way. */}
+      <div className="mt-2 flex flex-col gap-4 border bg-background px-2.5 py-2 leading-relaxed">
         {body.split(/\n\n+/).map((p, i) => (
           <p key={i} className="break-words">
             {p}
