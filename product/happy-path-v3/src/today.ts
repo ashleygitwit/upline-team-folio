@@ -28,7 +28,6 @@ export type Today = {
  */
 export function todayFor(day: Day, walk: Walk): Today {
   const n = going(walk);
-  const word = words[n].toLowerCase();
   const pick = optionById(walk.pick);
   const erie = options.find((o) => o.current)!;
 
@@ -42,8 +41,7 @@ export function todayFor(day: Day, walk: Walk): Today {
 
   if (day === "wed") {
     return {
-      lead: "Nothing needs you today.",
-      sub: `Your ${word} went out Tuesday at 9:00 AM, and the Callahans are already being shopped.`,
+      lead: "All scheduled renewal emails went out Tuesday at 9AM, and the Callahans are being shopped.",
       action: { label: "See where they stand", to: "everyone" },
     };
   }

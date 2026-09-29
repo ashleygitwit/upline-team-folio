@@ -13,15 +13,18 @@ import ridgeMask from "@/assets/band/band-ridge.webp";
  *   on the band's blue 600 (public/home/band-mountain.webp and
  *   band-grain.webp, BAND_MOUNTAIN in its site.ts), centred.
  * - `ridge`: the Websites page's gray band, the ridge in gray 200 on gray 100
- *   (public/band/band-ridge.webp and band-ridge-grain.webp, BAND_RIDGE),
- *   standing on the band's foot, as the hub anchors it.
+ *   (public/band/band-ridge.webp and band-ridge-grain.webp, BAND_RIDGE). The
+ *   hub stands it on the band's foot, which on its band, about 2:1, shows the
+ *   ridge's lower half across the top and open ground toward the foot.
+ *   Wednesday's band is nearer 4:1, where the foot is only the open ground, so
+ *   it's set 60% down instead, which shows the slice the hub's band shows.
  *
  * The band only ever sits wider than tall here, so the hub's portrait mask
  * isn't carried over.
  */
 const textures = {
   mountain: { mask, grain, anchor: undefined },
-  ridge: { mask: ridgeMask, grain: ridgeGrain, anchor: "center bottom" },
+  ridge: { mask: ridgeMask, grain: ridgeGrain, anchor: "center 60%" },
 };
 
 export function BandGrain({ texture = "mountain" }: { texture?: keyof typeof textures }) {

@@ -71,7 +71,7 @@ export function Sections({ closing = true, ...props }: SectionsProps & { closing
 /**
  * A section's frame: its title above the card, as the Monday email sets it,
  * then its list or a line saying it's empty. A centered title sits under the
- * greeting on Monday's and Wednesday's bands.
+ * greeting on Monday's band.
  */
 function Section({
   id,
@@ -310,23 +310,15 @@ function CloseOut({ e, walk, update }: { e: (typeof earlier)[number] } & Pick<Wa
  * line per household with its carrier's mark, its name and the change. On
  * Monday that's the six, and a line opens that household's drawer on its
  * outreach email. Later in the week it's the nudges and follow-ups Upline
- * sends on its own, each with why it's going. On Wednesday it's the only
- * section with anything in it, so the homepage sets it in its band under a
- * title that says what the day needs.
+ * sends on its own, each with why it's going.
  */
-export function Scheduled({
-  day,
-  walk,
-  household,
-  onHousehold,
-  title = "Scheduled Renewal Emails",
-  centered,
-}: SectionsProps & { title?: string; centered?: boolean }) {
+export function Scheduled({ day, walk, household, onHousehold }: SectionsProps) {
+  const title = "Scheduled Renewal Emails";
 
   if (day !== "mon") {
     const list = upcoming[day].filter((u) => !walk.skipped.includes(u.id));
     return (
-      <Section id={scheduledId} title={title} centered={centered}>
+      <Section id={scheduledId} title={title}>
         {list.length === 0 ? (
           <Empty>Nothing is scheduled.</Empty>
         ) : (
@@ -353,7 +345,7 @@ export function Scheduled({
 
   const n = going(walk);
   return (
-    <Section id={scheduledId} title={title} centered={centered}>
+    <Section id={scheduledId} title={title}>
       <div className="flex flex-col gap-4 px-6 py-5">
         <p className="text-base">
           {words[n]} {n === 1 ? "renewal goes" : "renewals go"} out tomorrow at 9:00 AM, drafted in your voice and sent

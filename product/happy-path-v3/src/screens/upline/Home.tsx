@@ -39,10 +39,11 @@ export function Home(props: HomeProps) {
 
 /**
  * The band Monday and Wednesday open on: "Good morning", as the Monday email
- * greets Stacey, then the day's first section, its title centered under the
- * greeting and its card straight after. Monday's is the blue band under the
- * mountain, as the email's is; Wednesday's is the design hub's gray band under
- * the ridge, the quieter of the two for a day that needs nothing.
+ * greets Stacey, then what's under it, centered: Monday's first section, its
+ * title and its card, and Wednesday's line on the day. Monday's is the blue
+ * band under the mountain, as the email's is; Wednesday's is the design hub's
+ * gray band under the ridge, the quieter of the two for a day that needs
+ * nothing.
  */
 function Hero({ ground, children }: { ground: "blue" | "gray"; children: ReactNode }) {
   const blue = ground === "blue";
@@ -88,15 +89,23 @@ function Monday({ day, ...props }: HomeProps) {
 }
 
 /**
- * Wednesday: nothing to close and nothing back from a shop, so those sections
- * aren't drawn, and there's no ask box. What's left is what goes out on its
- * own, on the gray band under the day's line.
+ * Wednesday: the day's line on the gray band, set as Monday's title under the
+ * greeting is, then what goes out on its own below it. Nothing to close and
+ * nothing back from a shop, so those sections aren't drawn, and there's no
+ * ask box.
  */
 function Wednesday({ day, walk, ...props }: HomeProps) {
   return (
-    <Hero ground="gray">
-      <Scheduled day={day} walk={walk} centered title={todayFor(day, walk).lead} {...props} />
-    </Hero>
+    <>
+      <Hero ground="gray">
+        <p className="text-center font-display text-xl font-medium text-balance">{todayFor(day, walk).lead}</p>
+      </Hero>
+      <div className="shell pb-(--space-section)">
+        <div className="mx-auto mt-(--space-section) max-w-180">
+          <Scheduled day={day} walk={walk} {...props} />
+        </div>
+      </div>
+    </>
   );
 }
 
