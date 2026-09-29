@@ -1,4 +1,4 @@
-import { AlarmClock, ArrowRight, Check, ChevronRight, EllipsisVertical } from "lucide-react";
+import { AlarmClock, ArrowRight, Check, EllipsisVertical } from "lucide-react";
 import { cn } from "cn";
 import { CarrierMark } from "@/components/CarrierMark";
 import { Chips } from "@/components/Chips";
@@ -227,23 +227,27 @@ function EarlierRow({
 }
 
 /**
- * A row's menu, at its top right: where a client's profile now lives, since
- * the name isn't a link, with their renewal history, a way to report an
- * error and, on an Action Needed row, Snooze, which puts the task off until
- * tomorrow, next week or five days before the renewal (that last one isn't
- * offered once the renewal is inside five days). View Profile opens the
- * household's drawer, v2.5's; the renewal history and the report form aren't
- * built yet, so those close the menu and go nowhere. It sits above a row that
- * opens as a whole, whose button covers it.
+ * A row's menu, at its top right on an Action Needed card and at the end of a
+ * Scheduled line: where a client's profile now lives, since the name isn't a
+ * link, with a way to report an error and, on an Action Needed card, Snooze,
+ * which puts the task off until tomorrow, next week or five days before the
+ * renewal (that last one isn't offered once the renewal is inside five days).
+ * View Profile opens the household's drawer, v2.5's; the report form isn't
+ * built yet, so it closes the menu and goes nowhere. View Renewal History was
+ * here too until 2026-09-30; the drawer's Recent activity covers it. It sits
+ * above a row that opens as a whole, whose button covers it.
  */
 function RowMenu({
   name,
   onProfile,
   snooze,
+  className,
 }: {
   name: string;
   onProfile: () => void;
   snooze?: { daysOut: number; onSnooze: (until: SnoozeUntil) => void };
+  /** Where the trigger sits against its row; an Action Needed card's top right by default. */
+  className?: string;
 }) {
   return (
     <DropdownMenu>
@@ -252,7 +256,7 @@ function RowMenu({
           variant="ghost"
           size="icon-sm"
           aria-label={`More for ${name}`}
-          className="relative z-10 -my-1.5 -mr-2 shrink-0 self-start text-muted-foreground"
+          className={cn("relative z-10 -my-1.5 -mr-2 shrink-0 self-start text-muted-foreground", className)}
         >
           <EllipsisVertical />
         </Button>
@@ -275,7 +279,6 @@ function RowMenu({
             </DropdownMenuSubContent>
           </DropdownMenuSub>
         )}
-        <DropdownMenuItem>View Renewal History</DropdownMenuItem>
         <DropdownMenuItem>Report an Error</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
@@ -334,7 +337,7 @@ function CloseOut({ saved, onProfile, onUndo }: { saved: string | undefined; onP
  * it's the nudges and follow-ups Upline sends on its own, each with why it's
  * going.
  */
-function Scheduled({ day, walk, onOutreach }: SectionsProps) {
+function Scheduled({ day, walk, onOutreach, onHousehold }: SectionsProps) {
   const title = "Scheduled Emails";
 
   if (day !== "mon") {
@@ -371,6 +374,7 @@ function Scheduled({ day, walk, onOutreach }: SectionsProps) {
                 key={h.id}
                 h={h}
                 onOpen={() => onOutreach(h.id)}
+                menu={<RowMenu name={h.name} onProfile={() => onHousehold(h.id)} className="self-center" />}
                 aside={
                   <>
                     {skipped ? "Skipped" : increase > 0 ? `+${money(increase)}` : "No change"}
@@ -389,19 +393,22 @@ function Scheduled({ day, walk, onOutreach }: SectionsProps) {
 /**
  * One household on the Scheduled list: the carrier's mark, the name and, on
  * the right, the change or when a nudge goes. A line with `onOpen` opens that
- * household's drawer, and ends in a chevron to say so; the whole line is its
- * button.
+ * household's outreach review, and the whole line is its button; `menu` ends
+ * it with the same three dots as an Action Needed card (it was a chevron
+ * until 2026-09-30).
  */
 function ScheduledRow({
   h,
   selected,
   onOpen,
+  menu,
   aside,
   detail,
 }: {
   h: Household;
   selected?: boolean;
   onOpen?: () => void;
+  menu?: React.ReactNode;
   aside: React.ReactNode;
   detail?: string;
 }) {
@@ -415,7 +422,7 @@ function ScheduledRow({
         </span>
         <span className="flex shrink-0 items-center gap-2 text-muted-foreground tabular-nums">
           {aside}
-          {onOpen && <ChevronRight aria-hidden className="size-4" />}
+          {menu}
         </span>
       </div>
       {detail && <p className="mt-1 ml-7 text-muted-foreground">{detail}</p>}
