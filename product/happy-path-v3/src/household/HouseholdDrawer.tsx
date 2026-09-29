@@ -15,8 +15,8 @@ import type { WalkProps } from "@/walk";
  * same skip and close-out dialogs and the same toast (Queue.tsx there). It
  * opens under the navigation (--sheet-top in index.css). v3 opens it from a
  * Scheduled row, from a row menu's View Profile, and from the Callahans'
- * profile, and its outcomes land in v3's walk: Send marks the email as looking
- * good, Skip outreach skips it, and Close out closes the household with the
+ * profile, and its outcomes land in v3's walk: Send now marks the email as
+ * looking good, Skip outreach skips it, and Close out closes the household with the
  * note as its memo. The Callahans' email links to Dana's questionnaire, which
  * takes the walk there.
  */
@@ -75,10 +75,10 @@ export function HouseholdDrawer({
           <HouseholdSheet
             key={shown.id}
             card={shown}
-            onSendOutreach={(now) => {
+            onSendOutreach={() => {
               update((w) => ({ approved: [...new Set([...w.approved, shown.id])] }));
               onClose();
-              say(now ? `Sent to ${spoken(shown.name)}` : `Sending ${shown.name} Tuesday 9:00`);
+              say(`Sent to ${spoken(shown.name)}`);
             }}
             onSendRec={() => {
               onClose();

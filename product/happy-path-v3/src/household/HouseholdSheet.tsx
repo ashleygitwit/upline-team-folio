@@ -1,18 +1,17 @@
 import { useState } from "react";
-import { ArrowRight, LoaderCircle, Plus, Send, X } from "lucide-react";
+import { ArrowRight, LoaderCircle, Send } from "lucide-react";
 import { cn } from "cn";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Field, FieldContent, FieldDescription, FieldLabel, FieldTitle } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
 import { SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/household/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import {
   agency,
-  callahanFields,
   fileFor,
   money,
   outreachBody,
@@ -43,14 +42,13 @@ const stageTab: Record<Card["col"], { id: Tab; label: string }> = {
  * shop, the recommendation or closing) with the file one tab over. Footer
  * actions follow the stage. A household waiting on its outreach email has no
  * tabs: it opens on the file, under a banner that says when the email goes,
- * and the banner's Review brings up what the Outreach tab held (the policy,
- * the email, shaping the shop and the questionnaire) in a modal over it.
- * The Callahans' drawer, the walk's, has no Skip outreach or Send at its
- * foot; they're in its review instead, as Skip outreach and Send now in a
- * footer that stays under the scrolling review. There the email's
- * questionnaire link is a link, to Dana's questionnaire in the walk
- * (`onOpenQuestionnaire`), as if it opened in another tab, in place of the
- * list of what's in the questionnaire.
+ * and the banner's Review brings up the policy, the email and shaping the
+ * shop in a modal over it, with Skip outreach and Send now in a footer that
+ * stays under the scrolling review rather than at the drawer's foot. The
+ * email's questionnaire link is a link, in place of a list of what's in the
+ * questionnaire: the Callahans' goes to Dana's questionnaire in the walk
+ * (`onOpenQuestionnaire`), as if it opened in another tab, and the others
+ * say they aren't in this prototype.
  *
  * v2.5's drawer (screens/queue/HouseholdSheet.tsx there), ported into v3. The
  * only additions are hooks into v3's walk: `email` shows and saves v3's own
@@ -71,8 +69,8 @@ export function HouseholdSheet({
   skipped,
 }: {
   card: Card;
-  /** `now` for the review's Send now, rather than Tuesday's 9 AM send. */
-  onSendOutreach: (now?: boolean) => void;
+  /** The review's Send now. */
+  onSendOutreach: () => void;
   onSendRec: () => void;
   onOpenResults: () => void;
   onAskCloseOut: () => void;
@@ -92,7 +90,6 @@ export function HouseholdSheet({
   const setOutreach = email?.onChange ?? setDraft;
   const [rec, setRec] = useState(file.rec?.email ?? (card.target ? recBody.join("\n\n") : recDraft(card)));
   const [reviewing, setReviewing] = useState(false);
-  const callahans = card.target;
 
   return (
     <SheetContent
@@ -142,25 +139,19 @@ export function HouseholdSheet({
                   to={card.target ? outreachEmail.to : `${file.namedInsured} <${card.email}>`}
                   subject={email?.subject ?? (card.target ? outreachEmail.subject : "A quick look at your renewal")}
                 >
-                  {callahans && onOpenQuestionnaire ? (
-                    <LinkedEmail body={outreach} onChange={setOutreach} onLink={onOpenQuestionnaire} />
-                  ) : (
-                    <Textarea
-                      aria-label="Outreach email"
-                      value={outreach}
-                      onChange={(e) => setOutreach(e.target.value)}
-                      className="min-h-80 border-0 bg-transparent px-5.5 py-5 text-[15px] leading-relaxed"
-                    />
-                  )}
+                  <LinkedEmail
+                    body={outreach}
+                    onChange={setOutreach}
+                    onLink={card.target ? onOpenQuestionnaire : undefined}
+                  />
                 </EmailFrame>
                 <ShapeTheShop card={card} file={file} life={life} />
-                {!callahans && <QuestionnaireFields card={card} file={file} />}
               </div>
             </div>
             {/* Laid out as the drawer's own footer is: Send now fills the row
                 up to Skip outreach, and once skipped, the line and Undo sit
                 at either end. */}
-            {callahans && onSkipOutreach && (
+            {onSkipOutreach && (
               <div
                 className={cn(
                   "flex items-center border-t px-5 pt-3.5 pb-4",
@@ -179,7 +170,7 @@ export function HouseholdSheet({
                     <Button variant="secondary" size="lg" onClick={onSkipOutreach}>
                       Skip outreach
                     </Button>
-                    <Button size="lg" className="flex-1" onClick={() => onSendOutreach(true)}>
+                    <Button size="lg" className="flex-1" onClick={onSendOutreach}>
                       <Send data-icon="inline-start" />
                       Send now
                     </Button>
@@ -218,25 +209,6 @@ export function HouseholdSheet({
         </Tabs>
       )}
 
-      {onSkipOutreach && !callahans && skipped && (
-        <SheetFooter className="mt-0 flex-row items-center justify-between gap-4 border-t px-5 pt-3.5 pb-4">
-          <p className="text-sm">Skipped. {card.first} won't be emailed this time, and we won't shop it.</p>
-          <Button variant="secondary" size="lg" onClick={skipped.onUndo}>
-            Undo
-          </Button>
-        </SheetFooter>
-      )}
-      {onSkipOutreach && !callahans && !skipped && (
-        <SheetFooter className="mt-0 flex-row items-center justify-end gap-2 border-t px-5 pt-3.5 pb-4">
-          <Button variant="secondary" size="lg" onClick={onSkipOutreach}>
-            Skip outreach
-          </Button>
-          <Button size="lg" className="flex-1" onClick={() => onSendOutreach()}>
-            <Send data-icon="inline-start" />
-            Send
-          </Button>
-        </SheetFooter>
-      )}
       {card.col === "recommend" && (
         <SheetFooter className="mt-0 border-t px-5 pt-3.5 pb-4">
           <Button size="lg" className="w-full" onClick={onSendRec}>
@@ -285,10 +257,11 @@ function ReviewBanner() {
 /**
  * An email's words, still editable, with its questionnaire link as a link:
  * the paragraphs either side of it are two boxes that read as one, and the
- * link line between them goes to the questionnaire. An email with no link
- * line is one box, as any other.
+ * link line between them goes to the questionnaire. Without `onLink` the
+ * link is drawn but says it isn't in this prototype, since only the
+ * Callahans' questionnaire is. An email with no link line is one box.
  */
-function LinkedEmail({ body, onChange, onLink }: { body: string; onChange: (body: string) => void; onLink: () => void }) {
+function LinkedEmail({ body, onChange, onLink }: { body: string; onChange: (body: string) => void; onLink?: () => void }) {
   const paragraphs = body.split(/\n\n+/);
   const at = paragraphs.findIndex((p) => linkLine.test(p));
   // Each box keeps the kit's own padding, so its focus ring has room, and the
@@ -317,13 +290,20 @@ function LinkedEmail({ body, onChange, onLink }: { body: string; onChange: (body
         className={words}
       />
       <p className="my-4 px-2.5 text-[15px] leading-relaxed">
-        <button
-          type="button"
-          onClick={onLink}
-          className="text-left text-primary underline underline-offset-4 hover:no-underline"
-        >
-          {label}
-        </button>
+        {onLink ? (
+          <button type="button" onClick={onLink} className={linkStyle}>
+            {label}
+          </button>
+        ) : (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button type="button" aria-disabled className={linkStyle}>
+                {label}
+              </button>
+            </TooltipTrigger>
+            <TooltipContent>Only the Callahans' questionnaire is in this prototype.</TooltipContent>
+          </Tooltip>
+        )}
         <span className="block text-sm break-all text-muted-foreground">{url.replace(/^https?:\/\//, "")}</span>
       </p>
       <Textarea
@@ -338,6 +318,7 @@ function LinkedEmail({ body, onChange, onLink }: { body: string; onChange: (body
 
 /** A paragraph that's only a link: its words, an arrow, and the address, as Dana's inbox reads it. */
 const linkLine = /^(.*?) → (https?:\/\/\S+)$/;
+const linkStyle = "text-left text-primary underline underline-offset-4 hover:no-underline";
 
 /** The policy as it renews: each line, the total, and why it went up. */
 function PolicyNow({ card, file }: { card: Card; file: HouseholdFile }) {
@@ -457,81 +438,6 @@ function ShapeTheShop({
   );
 }
 
-/** What the household will see in the questionnaire: what we have to confirm, and what we still need to ask. */
-function QuestionnaireFields({ card, file }: { card: Card; file: HouseholdFile }) {
-  const [fields, setFields] = useState(card.target ? callahanFields.confirm : confirmFields(card, file));
-  const [asks, setAsks] = useState(card.target ? callahanFields.ask : newAsks());
-  const [draft, setDraft] = useState("");
-
-  const add = () => {
-    if (!draft.trim()) return;
-    setAsks((a) => [...a, { id: `custom-${a.length}`, prompt: draft.trim() }]);
-    setDraft("");
-  };
-
-  return (
-    <div>
-      <SectionHead className="mb-2">In the questionnaire</SectionHead>
-      <Tabs defaultValue="confirm" className="gap-0">
-        <TabsList className="w-full">
-          <TabsTrigger value="confirm">Pre-filled · {fields.length}</TabsTrigger>
-          <TabsTrigger value="ask">New questions · {asks.length}</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="confirm">
-          <p className="mt-2.5 mb-1 text-sm text-muted-foreground">They'll confirm or fix this. Not new asks.</p>
-          {fields.map((f) => (
-            <div key={f.id} className="flex items-end gap-2 border-t py-2">
-              <label className="flex flex-1 flex-col gap-1">
-                <span className="eyebrow text-muted-foreground">{f.label}</span>
-                <Input
-                  value={f.value}
-                  onChange={(e) =>
-                    setFields((all) => all.map((x) => (x.id === f.id ? { ...x, value: e.target.value } : x)))
-                  }
-                  className="h-8 border-transparent bg-transparent px-0 text-sm font-medium hover:border-border focus-visible:px-2"
-                />
-              </label>
-              <RemoveButton label={`Remove ${f.label}`} onClick={() => setFields((all) => all.filter((x) => x.id !== f.id))} />
-            </div>
-          ))}
-        </TabsContent>
-
-        <TabsContent value="ask">
-          <p className="mt-2.5 mb-1 text-sm text-muted-foreground">Only what we don't already have on file.</p>
-          {asks.map((a) => (
-            <div key={a.id} className="flex items-start gap-2 border-t py-2.5 text-sm">
-              <span className="flex-1">{a.prompt}</span>
-              <RemoveButton label="Remove question" onClick={() => setAsks((all) => all.filter((x) => x.id !== a.id))} />
-            </div>
-          ))}
-          <div className="mt-3 flex gap-2">
-            <Input
-              placeholder="Add a question"
-              aria-label="Add a question"
-              value={draft}
-              onChange={(e) => setDraft(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && add()}
-            />
-            <Button variant="secondary" onClick={add}>
-              <Plus data-icon="inline-start" />
-              Add
-            </Button>
-          </div>
-        </TabsContent>
-      </Tabs>
-    </div>
-  );
-}
-
-function RemoveButton({ label, onClick }: { label: string; onClick: () => void }) {
-  return (
-    <Button variant="ghost" size="icon-xs" aria-label={label} onClick={onClick} className="text-muted-foreground">
-      <X />
-    </Button>
-  );
-}
-
 /** A shop in progress: who we're quoting, and what has happened so far. */
 function Shopping({ card, file, onOpenResults }: { card: Card; file: HouseholdFile; onOpenResults: () => void }) {
   const carriers = file.shopCarriers ?? ["Auto-Owners", "Erie", "Grange"];
@@ -618,20 +524,4 @@ function outreachDraft(card: Card, link: string) {
 
 function recDraft(card: Card) {
   return `Hi ${card.first},\n\nI looked at your ${card.renewal} renewal. I put the pick on a short page so you can see why I didn't go another direction.\n\nThis does not put coverage in place. Reply with a couple of times that work and I'll call you.`;
-}
-
-function confirmFields(card: Card, file: HouseholdFile) {
-  return [
-    { id: "name", label: "Named insured", value: file.namedInsured },
-    { id: "email", label: "Email", value: card.email },
-    { id: "phone", label: "Mobile", value: file.phone },
-    { id: "address", label: "Address", value: file.address },
-  ];
-}
-
-function newAsks() {
-  return [
-    { id: "changed", prompt: "Anything new we should know before we shop?" },
-    { id: "referral", prompt: "Anyone else who should hear from us?" },
-  ];
 }
