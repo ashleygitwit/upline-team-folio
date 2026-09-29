@@ -49,7 +49,7 @@ export function MondayEmail({ go }: WalkProps) {
 
       <div className="px-8 pb-12">
         <Group title="Action Needed">
-          <TodoCard items={needed} cta="Review Tasks" onCta={() => go("card-monday-upline")} />
+          <TodoCard items={needed} cta="View in Upline" onCta={() => go("card-monday-upline")} />
         </Group>
 
         <Group title="Scheduled Emails">
@@ -73,9 +73,6 @@ export function MondayEmail({ go }: WalkProps) {
                   </li>
                 ))}
               </ul>
-              <Button variant="link" size="lg" className="w-full" onClick={() => go("card-monday-upline")}>
-                View on Upline
-              </Button>
             </CardContent>
           </Card>
         </Group>
@@ -100,8 +97,8 @@ function Group({ title, children }: { title: string; children: ReactNode }) {
 
 /**
  * One stage's to-dos in one card, a rule between each, and the stage's one
- * button across the foot of the card. The Scheduled card's foot matches, as a
- * text link, since nothing there needs Jenna.
+ * button across the foot of the card. The Scheduled card has no button, since
+ * nothing there needs Jenna.
  */
 function TodoCard({ items, cta, onCta }: { items: Earlier[]; cta: string; onCta: () => void }) {
   return (
