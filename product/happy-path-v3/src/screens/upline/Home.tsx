@@ -15,6 +15,8 @@ type HomeProps = WalkProps & {
   day: Day;
   household: string | null;
   onAsk: (question: string, answer: PillId | null) => void;
+  /** Brings up the chat without a question. */
+  onChat: () => void;
   onAction: AnswerProps["onAction"];
   onHousehold: (id: string) => void;
   onProfile: () => void;
@@ -65,10 +67,12 @@ function Hero({ ground, children }: { ground: "blue" | "gray"; children: ReactNo
 
 /**
  * Monday: Closing on the band, titled with how many renewals close this week,
- * then the other two sections on the page. A brief, a link or the ask box
- * would only stand between Stacey and them.
+ * then the other two sections on the page. A brief or the ask box would only
+ * stand between Stacey and them, so the way to ask comes after, as one link
+ * under Closing that brings up the chat. It's white and underlined, the band's
+ * link, since the kit's blue link would vanish on the blue.
  */
-function Monday({ day, ...props }: HomeProps) {
+function Monday({ day, onChat, ...props }: HomeProps) {
   const n = mondayNeeds("closing").length;
   return (
     <>
@@ -79,6 +83,15 @@ function Monday({ day, ...props }: HomeProps) {
           title={`You have ${words[n].toLowerCase()} ${n === 1 ? "renewal" : "renewals"} closing this week.`}
           {...props}
         />
+        <div className="mt-(--space-tight) flex justify-center">
+          <Button
+            variant="link"
+            className="h-auto p-0 font-sans text-sm text-primary-foreground underline"
+            onClick={onChat}
+          >
+            Looking for something? Ask us anything.
+          </Button>
+        </div>
       </Hero>
       <div className="shell pb-(--space-section)">
         <div className="mx-auto max-w-180">

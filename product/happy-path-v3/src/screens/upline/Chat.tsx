@@ -46,8 +46,13 @@ export function ChatDock({
   // The newest question comes to the top of the panel, with its answer under
   // it. A question asked from outside the panel, or a suggestion that's now
   // gone from it, moves focus onto the conversation; typing keeps it in the box.
+  // A chat with nothing asked yet puts the focus in the box.
   useEffect(() => {
     if (!up) return;
+    if (!count) {
+      if (!panel.current?.contains(document.activeElement)) panel.current?.querySelector("input")?.focus();
+      return;
+    }
     const last = list.current?.lastElementChild as HTMLElement | null;
     if (!last || !scroller.current) return;
     const calm = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -98,11 +103,11 @@ export function ChatDock({
                 </li>
               ))}
             </ol>
-            {left.length > 0 && <Suggestions ids={left} className="mt-10" onAsk={ask} />}
+            {left.length > 0 && <Suggestions ids={left} className={cn(count > 0 && "mt-10")} onAsk={ask} />}
           </div>
 
           <div className="border-t px-6 py-4">
-            <AskBox label="Reply to Upline" onAsk={(q) => onAsk(q, matchPill(q))} />
+            <AskBox label={count ? "Reply to Upline" : "Ask me anything"} onAsk={(q) => onAsk(q, matchPill(q))} />
           </div>
         </section>
       )}
