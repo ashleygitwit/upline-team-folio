@@ -171,12 +171,7 @@ export function Policyholders({
         Home
       </Button>
 
-      <header className="mt-10">
-        <h1 className="text-4xl">Policyholder List</h1>
-        <p className="mt-2 font-display text-lg font-normal text-muted-foreground">
-          Everyone renewing this season, and where each one stands today.
-        </p>
-      </header>
+      <h1 className="mt-10 text-4xl">Policyholder List</h1>
 
       <div className="mt-8 flex flex-wrap items-center justify-between gap-4">
         {/* One on at a time, drawn as Shape the shop's buttons are: on is
