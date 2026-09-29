@@ -465,7 +465,7 @@ export const earlier: Earlier[] = [
     later: "Waiting on Elena",
     monday: {
       section: "shopped",
-      detail: "Auto-Owners came in at $3,480 for the same coverage, $730 less than Travelers' renewal. It doesn't send until you do.",
+      detail: "Auto-Owners came in at $3,480 for the same coverage, $730 less than Travelers' renewal.",
     },
   },
   {

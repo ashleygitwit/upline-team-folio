@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { Check, ChevronRight } from "lucide-react";
+import { ArrowRight, Check, ChevronRight, EllipsisVertical } from "lucide-react";
 import { cn } from "cn";
 import { CarrierMark } from "@/components/CarrierMark";
 import { PersonLink } from "@/components/PersonLink";
 import { RenewalMeta } from "@/components/RenewalMeta";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { callahan, earlier, mondayNeeds, money, thisWeek, upcoming, type Day, type Household } from "@/data";
 import { statusFor } from "@/status";
 import { going, words } from "@/today";
@@ -109,7 +110,9 @@ const fromEarlier = (day: Day, section: "shopped" | "closing") => (day === "mon"
 
 /**
  * An earlier week's household: its lines, carrier and renewal, then what's
- * needed. Only on Monday. Closing's rows end in a memo and Mark as Closed.
+ * needed, with a menu at the top right. Only on Monday. Shopped's rows end
+ * their note with a link to the full report; Closing's rows end in a memo and
+ * Mark as Closed.
  */
 function EarlierRow({
   e,
@@ -122,11 +125,58 @@ function EarlierRow({
 }) {
   const [lines, carrier] = e.lines.split(" · ");
   return (
-    <Row h={e} onProfile={onProfile}>
+    <Row h={e} onProfile={onProfile} aside={<RowMenu name={e.name} />}>
       <RenewalMeta lines={lines} carrier={carrier} renews={e.renews} day="mon" />
-      <span className="mt-2 block">{e.monday!.detail}</span>
+      <span className="mt-2 block">
+        {e.monday!.detail}
+        {e.monday!.section === "shopped" && (
+          <>
+            {" "}
+            <NotInPrototype tip="Only the Callahans have results in this prototype.">
+              <button
+                type="button"
+                aria-disabled
+                className="inline-flex items-center gap-1 font-medium text-primary underline-offset-4 hover:underline"
+              >
+                View the full report
+                <ArrowRight aria-hidden className="size-3.5" />
+              </button>
+            </NotInPrototype>
+          </>
+        )}
+      </span>
       {closing && <CloseOut e={e} {...closing} />}
     </Row>
+  );
+}
+
+/**
+ * A row's menu, at its top right. What goes in it isn't decided, so for now it
+ * says so when pointed at, as the other households' names do.
+ */
+function RowMenu({ name }: { name: string }) {
+  return (
+    <NotInPrototype tip="This menu isn't built in this prototype yet.">
+      <Button
+        variant="ghost"
+        size="icon-sm"
+        aria-disabled
+        aria-label={`More for ${name}`}
+        className="relative z-10 -my-1.5 -mr-2 shrink-0 self-start text-muted-foreground"
+      >
+        <EllipsisVertical />
+      </Button>
+    </NotInPrototype>
+  );
+}
+
+/** Something drawn as it will be that doesn't do anything in this prototype, and says so. */
+function NotInPrototype({ tip, children }: { tip: string; children: React.ReactElement }) {
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>{children}</TooltipTrigger>
+      <TooltipContent>{tip}</TooltipContent>
+    </Tooltip>
   );
 }
 
@@ -271,8 +321,8 @@ function Scheduled({ day, walk, update, message, onMessage, onProfile }: Section
 /**
  * One household on the Scheduled list: the carrier's mark, the name (which
  * goes to the profile) and, on the right, the change or when a nudge goes.
- * A line with `onOpen` opens that household's email; the rest of the line is
- * its button, under the name.
+ * A line with `onOpen` opens that household's email, and ends in a chevron to
+ * say so; the rest of the line is its button, under the name.
  */
 function ScheduledRow({
   h,
@@ -297,7 +347,10 @@ function ScheduledRow({
           <span className="sr-only">{h.carrier}, </span>
           <PersonLink h={h} onProfile={onProfile} className="relative z-10 truncate" />
         </span>
-        <span className="flex shrink-0 items-center gap-2 text-muted-foreground tabular-nums">{aside}</span>
+        <span className="flex shrink-0 items-center gap-2 text-muted-foreground tabular-nums">
+          {aside}
+          {onOpen && <ChevronRight aria-hidden className="size-4" />}
+        </span>
       </div>
       {detail && <p className="mt-1 ml-7 text-muted-foreground">{detail}</p>}
       {onOpen && (
