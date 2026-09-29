@@ -45,7 +45,6 @@ export type Chat = { id: number; day: Day; title: string; asked: Exchange[] };
  * sends, the pick is Auto-Owners, and Dana approves.
  */
 export type Walk = {
-  approvedAll: boolean;
   approved: string[];
   skipped: string[];
   drafts: Record<string, string>;
@@ -63,7 +62,6 @@ export type Walk = {
 };
 
 export const initialWalk: Walk = {
-  approvedAll: false,
   approved: [],
   skipped: [],
   drafts: {},

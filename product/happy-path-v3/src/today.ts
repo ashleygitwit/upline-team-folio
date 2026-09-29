@@ -34,11 +34,9 @@ export function todayFor(day: Day, walk: Walk): Today {
 
   if (day === "mon") {
     return {
-      lead: walk.approvedAll
-        ? `All ${word} are set for tomorrow at 9 AM.`
-        : `${words[n]} ${n === 1 ? "renewal is" : "renewals are"} queued to send tomorrow at 9 AM.`,
+      lead: `${words[n]} ${n === 1 ? "renewal is" : "renewals are"} queued to send tomorrow at 9 AM.`,
       more: `Each one is drafted in your voice and sends from your inbox. You don't need to do anything. The biggest one this week is Dana and Mike Callahan, up ${money(callahan.now - callahan.was)} because Sophie got her license in August. From earlier weeks, Elena Vasquez's and Raymond Foss's recommendations are ready to send, and Anika Desai and Linda Hart are approved and need binding.`,
-      action: { label: walk.approvedAll ? "See them again" : "Look them over", to: "scheduled" },
+      action: { label: "Look them over", to: "scheduled" },
     };
   }
 

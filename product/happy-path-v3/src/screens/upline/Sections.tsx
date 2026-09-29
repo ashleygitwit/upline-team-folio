@@ -50,11 +50,17 @@ type SectionsProps = WalkProps & {
  * chips, the carrier's mark beside each household, and a renewal inside a week
  * counted down. On a day a section has nothing, it says so, and what's coming
  * instead. On Monday the homepage sets Closing in its band, under the
- * greeting, so `closing={false}` leaves it out here.
+ * greeting, so `closing={false}` leaves it out here, and Shopped and
+ * Scheduled sit as far apart as the band sits above them.
  */
 export function Sections({ closing = true, ...props }: SectionsProps & { closing?: boolean }) {
   return (
-    <div className="mt-(--space-section) flex flex-col gap-(--space-block) text-left">
+    <div
+      className={cn(
+        "mt-(--space-section) flex flex-col text-left",
+        closing ? "gap-(--space-block)" : "gap-(--space-section)",
+      )}
+    >
       {closing && <Closing {...props} />}
       <Shopped {...props} />
       <Scheduled {...props} />
@@ -302,11 +308,11 @@ function CloseOut({ e, walk, update }: { e: (typeof earlier)[number] } & Pick<Wa
 /**
  * What's going out, drawn as the Monday email draws it: a sentence, then one
  * line per household with its carrier's mark, its name and the change. On
- * Monday that's the six, with one button to say they all look good, and a
- * line opens that household's drawer on its outreach email. Later in the week it's the
- * nudges and follow-ups Upline sends on its own, each with why it's going.
+ * Monday that's the six, and a line opens that household's drawer on its
+ * outreach email. Later in the week it's the nudges and follow-ups Upline
+ * sends on its own, each with why it's going.
  */
-function Scheduled({ day, walk, update, household, onHousehold }: SectionsProps) {
+function Scheduled({ day, walk, household, onHousehold }: SectionsProps) {
   const title = "Scheduled Renewal Emails";
 
   if (day !== "mon") {
@@ -341,26 +347,14 @@ function Scheduled({ day, walk, update, household, onHousehold }: SectionsProps)
   return (
     <Section id={scheduledId} title={title}>
       <div className="flex flex-col gap-4 px-6 py-5">
-        <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-3">
-          <p className="max-w-[44ch] text-base">
-            {walk.approvedAll
-              ? "Nice. They send tomorrow at 9:00 AM, and you can still open any of them before then."
-              : `${words[n]} ${n === 1 ? "renewal goes" : "renewals go"} out tomorrow at 9:00 AM, drafted in your voice and sent from your inbox. You don't need to do anything.`}
-          </p>
-          {walk.approvedAll ? (
-            <Button variant="link" className="h-auto p-0 font-sans text-sm" onClick={() => update({ approvedAll: false })}>
-              Undo
-            </Button>
-          ) : (
-            <Button onClick={() => update({ approvedAll: true })} disabled={n === 0}>
-              All {n} look good
-            </Button>
-          )}
-        </div>
+        <p className="text-base">
+          {words[n]} {n === 1 ? "renewal goes" : "renewals go"} out tomorrow at 9:00 AM, drafted in your voice and sent
+          from your inbox. You don't need to do anything.
+        </p>
         <ul className="divide-y border-t text-sm">
           {thisWeek.map((h) => {
             const skipped = walk.skipped.includes(h.id);
-            const approved = !skipped && (walk.approvedAll || walk.approved.includes(h.id));
+            const approved = !skipped && walk.approved.includes(h.id);
             const increase = h.now - h.was;
             return (
               <ScheduledRow
