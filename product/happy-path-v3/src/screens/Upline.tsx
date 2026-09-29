@@ -1,8 +1,8 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { cn } from "cn";
 import { AppBar } from "@/components/AppBar";
+import { HouseholdDrawer } from "@/household/HouseholdDrawer";
 import { ChatDock } from "@/screens/upline/Chat";
-import { EmailSheet } from "@/screens/upline/EmailSheet";
 import { Home } from "@/screens/upline/Home";
 import { Profile } from "@/screens/upline/Profile";
 import { Results } from "@/screens/upline/Results";
@@ -25,12 +25,12 @@ export type Page = "home" | "profile" | "results";
 export function Upline({
   day,
   page: initialPage = "home",
-  message: initialMessage = null,
+  household: initialHousehold = null,
   ...props
-}: WalkProps & { day: Day; page?: Page; message?: string | null }) {
+}: WalkProps & { day: Day; page?: Page; household?: string | null }) {
   const [page, setPage] = useState<Page>(initialPage);
-  // The household whose email is open in the sheet.
-  const [message, setMessage] = useState<string | null>(initialMessage);
+  // The household open in the drawer.
+  const [household, setHousehold] = useState<string | null>(initialHousehold);
   // Whether the chat's panel is up, or put down to its tab.
   const [chatUp, setChatUp] = useState(false);
   // Bumped to take Stacey down to Scheduled Renewal Emails.
@@ -56,15 +56,15 @@ export function Upline({
   // index.css).
   const appBar = useRef<HTMLDivElement>(null);
   useLayoutEffect(() => {
-    if (!message) return;
+    if (!household) return;
     const root = document.documentElement;
     const demoBar = parseFloat(getComputedStyle(root).getPropertyValue("--demo-bar-h")) || 0;
     const appBarBottom = appBar.current?.getBoundingClientRect().bottom ?? 0;
     root.style.setProperty("--sheet-top", `${Math.max(demoBar, appBarBottom)}px`);
-  }, [message]);
+  }, [household]);
 
   const open = (to: Page) => {
-    setMessage(null);
+    setHousehold(null);
     setPage(to);
   };
 
@@ -108,10 +108,10 @@ export function Upline({
       {page === "home" && (
         <Home
           day={day}
-          message={message}
+          household={household}
           onAsk={ask}
           onAction={act}
-          onMessage={setMessage}
+          onHousehold={setHousehold}
           onProfile={() => open("profile")}
           onResults={() => open("results")}
           {...props}
@@ -122,7 +122,7 @@ export function Upline({
           day={day}
           onHome={() => open("home")}
           onResults={() => open("results")}
-          onEdit={() => setMessage("callahan")}
+          onEdit={() => setHousehold("callahan")}
           {...props}
         />
       )}
@@ -130,7 +130,7 @@ export function Upline({
         <Results day={day} onProfile={() => open("profile")} onSent={() => open("home")} {...props} />
       )}
 
-      <EmailSheet id={message} day={day} onClose={() => setMessage(null)} onProfile={() => open("profile")} {...props} />
+      <HouseholdDrawer id={household} onClose={() => setHousehold(null)} walk={props.walk} update={props.update} />
 
       {chat && (
         <ChatDock

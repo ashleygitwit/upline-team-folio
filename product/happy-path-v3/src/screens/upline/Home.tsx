@@ -26,10 +26,10 @@ export function Home({
   ...props
 }: WalkProps & {
   day: Day;
-  message: string | null;
+  household: string | null;
   onAsk: (question: string, answer: PillId | null) => void;
   onAction: AnswerProps["onAction"];
-  onMessage: (id: string) => void;
+  onHousehold: (id: string) => void;
   onProfile: () => void;
   onResults: () => void;
 }) {

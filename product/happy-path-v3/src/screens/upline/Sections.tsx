@@ -22,9 +22,9 @@ export const scheduledId = "scheduled-renewals";
 
 type SectionsProps = WalkProps & {
   day: Day;
-  /** The household whose email is open in the sheet. */
-  message: string | null;
-  onMessage: (id: string) => void;
+  /** The household open in the drawer. */
+  household: string | null;
+  onHousehold: (id: string) => void;
   onProfile: () => void;
   onResults: () => void;
 };
@@ -120,14 +120,18 @@ const fromEarlier = (day: Day, section: "shopped" | "closing") => (day === "mon"
  */
 function EarlierRow({
   e,
+  selected,
+  onProfile,
   closing,
 }: {
   e: (typeof earlier)[number];
+  selected: boolean;
+  onProfile: () => void;
   closing?: Pick<WalkProps, "walk" | "update">;
 }) {
   const [lines, carrier] = e.lines.split(" · ");
   return (
-    <Row h={e} aside={<RowMenu name={e.name} />}>
+    <Row h={e} selected={selected} aside={<RowMenu name={e.name} onProfile={onProfile} />}>
       <RenewalMeta lines={lines} carrier={carrier} renews={e.renews} day="mon" />
       <span className="mt-2 block">
         {e.monday!.detail}
@@ -155,10 +159,11 @@ function EarlierRow({
 /**
  * A row's menu, at its top right: where a client's profile now lives, since
  * the name isn't a link, with their renewal history and a way to report an
- * error. None of the profiles, histories or the report form are built for
- * these households yet, so the items close the menu and go nowhere.
+ * error. View Profile opens the household's drawer, v2.5's; the renewal
+ * history and the report form aren't built yet, so those close the menu and
+ * go nowhere.
  */
-function RowMenu({ name }: { name: string }) {
+function RowMenu({ name, onProfile }: { name: string; onProfile: () => void }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -172,7 +177,7 @@ function RowMenu({ name }: { name: string }) {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-52">
-        <DropdownMenuItem>View Profile</DropdownMenuItem>
+        <DropdownMenuItem onSelect={onProfile}>View Profile</DropdownMenuItem>
         <DropdownMenuItem>View Renewal History</DropdownMenuItem>
         <DropdownMenuItem>Report an Error</DropdownMenuItem>
       </DropdownMenuContent>
@@ -246,10 +251,10 @@ function CloseOut({ e, walk, update }: { e: (typeof earlier)[number] } & Pick<Wa
  * What's going out, drawn as the Monday email draws it: a sentence, then one
  * line per household with its carrier's mark, its name and the change. On
  * Monday that's the six, with one button to say they all look good, and a
- * line opens that household's email in the sheet. Later in the week it's the
+ * line opens that household's drawer on its outreach email. Later in the week it's the
  * nudges and follow-ups Upline sends on its own, each with why it's going.
  */
-function Scheduled({ day, walk, update, message, onMessage }: SectionsProps) {
+function Scheduled({ day, walk, update, household, onHousehold }: SectionsProps) {
   const title = "Scheduled Renewal Emails";
 
   if (day !== "mon") {
@@ -309,8 +314,8 @@ function Scheduled({ day, walk, update, message, onMessage }: SectionsProps) {
               <ScheduledRow
                 key={h.id}
                 h={h}
-                selected={message === h.id}
-                onOpen={() => onMessage(h.id)}
+                selected={household === h.id}
+                onOpen={() => onHousehold(h.id)}
                 aside={
                   <>
                     {skipped ? "Skipped" : increase > 0 ? `+${money(increase)}` : "No change"}
@@ -329,7 +334,7 @@ function Scheduled({ day, walk, update, message, onMessage }: SectionsProps) {
 /**
  * One household on the Scheduled list: the carrier's mark, the name and, on
  * the right, the change or when a nudge goes. A line with `onOpen` opens that
- * household's email, and ends in a chevron to say so; the whole line is its
+ * household's drawer, and ends in a chevron to say so; the whole line is its
  * button.
  */
 function ScheduledRow({
@@ -361,7 +366,7 @@ function ScheduledRow({
       {detail && <p className="mt-1 ml-7 text-muted-foreground">{detail}</p>}
       {onOpen && (
         <button type="button" aria-pressed={selected} onClick={onOpen} className="absolute inset-0">
-          <span className="sr-only">Open {h.name}'s email</span>
+          <span className="sr-only">Open {h.name}</span>
         </button>
       )}
     </li>
@@ -374,7 +379,7 @@ function ScheduledRow({
  * board. In this walk's week it's the Callahans on Thursday morning, until
  * the recommendation goes to Dana; their row goes to the results.
  */
-function Shopped({ day, walk, onResults }: SectionsProps) {
+function Shopped({ day, walk, household, onHousehold, onResults }: SectionsProps) {
   const h = callahan;
   const skipped = walk.skipped.includes(h.id);
   const ready = day === "thu" && !walk.recSent && !skipped;
@@ -401,7 +406,7 @@ function Shopped({ day, walk, onResults }: SectionsProps) {
             </Row>
           )}
           {others.map((e) => (
-            <EarlierRow key={e.id} e={e} />
+            <EarlierRow key={e.id} e={e} selected={household === e.id} onProfile={() => onHousehold(e.id)} />
           ))}
         </ul>
       ) : (
@@ -417,7 +422,7 @@ function Shopped({ day, walk, onResults }: SectionsProps) {
  * Callahans on Friday, until she marks it done; their row goes to their
  * profile.
  */
-function Closing({ day, walk, update, onProfile }: SectionsProps) {
+function Closing({ day, walk, update, household, onHousehold, onProfile }: SectionsProps) {
   const h = callahan;
   const skipped = walk.skipped.includes(h.id);
   const approved = day === "fri" && !walk.bound && !skipped;
@@ -442,7 +447,13 @@ function Closing({ day, walk, update, onProfile }: SectionsProps) {
             </Row>
           )}
           {others.map((e) => (
-            <EarlierRow key={e.id} e={e} closing={{ walk, update }} />
+            <EarlierRow
+              key={e.id}
+              e={e}
+              selected={household === e.id}
+              onProfile={() => onHousehold(e.id)}
+              closing={{ walk, update }}
+            />
           ))}
         </ul>
       ) : (
