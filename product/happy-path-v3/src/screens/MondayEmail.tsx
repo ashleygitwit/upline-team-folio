@@ -54,17 +54,12 @@ export function MondayEmail({ go }: WalkProps) {
         </Group>
 
         <Group title="Shopped and ready for review">
-          <TodoCard
-            items={shopped}
-            cta="Review shopped carriers"
-            variant="secondary"
-            onCta={() => go("monday")}
-          />
+          <TodoCard items={shopped} cta="Review shopped carriers" onCta={() => go("monday")} />
         </Group>
 
         <Group title="Scheduled Renewal Emails">
           <Card size="sm">
-            <CardContent>
+            <CardContent className="gap-4">
               <p className="text-base">
                 {words[n]} renewals go out tomorrow at 9:00 AM, drafted in your voice and sent from your inbox. You
                 don't need to do anything. The biggest is Dana and Mike Callahan, up {money(callahan.now - callahan.was)}{" "}
@@ -84,8 +79,8 @@ export function MondayEmail({ go }: WalkProps) {
                   </li>
                 ))}
               </ul>
-              <Button variant="link" className="h-auto self-start p-0 font-sans text-sm" onClick={() => go("monday")}>
-                Look them over
+              <Button variant="link" size="lg" className="w-full" onClick={() => go("monday")}>
+                View on Upline
               </Button>
             </CardContent>
           </Card>
@@ -128,20 +123,10 @@ function renewsIn(renews: string) {
 
 /**
  * One stage's to-dos in one card, a rule between each, and the stage's one
- * button across the foot of the card: blue for closing, which can't wait, and
- * the quiet gray for shops to review.
+ * button across the foot of the card. The Scheduled card's foot matches, as a
+ * text link, since nothing there needs Stacey.
  */
-function TodoCard({
-  items,
-  cta,
-  variant = "default",
-  onCta,
-}: {
-  items: Earlier[];
-  cta: string;
-  variant?: "default" | "secondary";
-  onCta: () => void;
-}) {
+function TodoCard({ items, cta, onCta }: { items: Earlier[]; cta: string; onCta: () => void }) {
   return (
     <Card size="sm">
       <CardContent className="gap-4">
@@ -150,7 +135,7 @@ function TodoCard({
             <Todo key={e.id} e={e} />
           ))}
         </ul>
-        <Button size="lg" variant={variant} className="w-full" onClick={onCta}>
+        <Button size="lg" className="w-full" onClick={onCta}>
           {cta}
         </Button>
       </CardContent>
