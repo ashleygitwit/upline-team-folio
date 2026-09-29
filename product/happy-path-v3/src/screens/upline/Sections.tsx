@@ -3,6 +3,7 @@ import { ArrowRight, Check, ChevronRight, EllipsisVertical } from "lucide-react"
 import { cn } from "cn";
 import { CarrierMark } from "@/components/CarrierMark";
 import { RenewalMeta } from "@/components/RenewalMeta";
+import { ShopPreview } from "@/components/ShopPreview";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -12,7 +13,19 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { callahan, earlier, mondayNeeds, money, thisWeek, upcoming, type Day, type Household } from "@/data";
+import {
+  callahan,
+  earlier,
+  mondayNeeds,
+  money,
+  optionById,
+  options,
+  thisWeek,
+  upcoming,
+  type Day,
+  type Household,
+} from "@/data";
+import { cards, fileFor } from "@/household/data";
 import { statusFor } from "@/status";
 import { going, words } from "@/today";
 import type { WalkProps } from "@/walk";
@@ -83,24 +96,36 @@ function Empty({ children }: { children: React.ReactNode }) {
  * A household's row. The whole row opens what's behind it. The name is plain
  * text, as in the Monday email; a client's profile is in the row's menu.
  * Earlier weeks' households have no page behind them in this prototype, so
- * their rows don't open.
+ * their rows don't open. A row with a picture takes the design hub's template
+ * card layout: the picture on the left, two fifths of the row, and the words
+ * on the right, centered against it, stacked below 640.
  */
 function Row({
   h,
   selected,
   onOpen,
   aside,
+  picture,
   children,
 }: {
   h: Pick<Household, "id" | "name">;
   selected?: boolean;
   onOpen?: () => void;
   aside?: React.ReactNode;
+  picture?: React.ReactNode;
   children: React.ReactNode;
 }) {
   return (
-    <li className={cn("relative flex px-6 py-4", onOpen && "hover:bg-background", selected && "bg-muted hover:bg-muted")}>
-      <div className="min-w-0 flex-1 text-sm">
+    <li
+      className={cn(
+        "relative",
+        picture ? "grid sm:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]" : "flex",
+        onOpen && "hover:bg-background",
+        selected && "bg-muted hover:bg-muted",
+      )}
+    >
+      {picture}
+      <div className={cn("min-w-0 flex-1 px-6 py-4 text-sm", picture && "self-center")}>
         <div className="flex items-baseline justify-between gap-3">
           <p className="truncate font-display text-lg">{h.name}</p>
           {aside}
@@ -124,14 +149,20 @@ function Row({
 
 const opens = <ChevronRight aria-hidden className="size-4 shrink-0 self-center text-muted-foreground" />;
 
+/** What an earlier week's shop came back with, from Ashley's household data, for its row's picture. */
+function shopFor(id: string) {
+  const rec = fileFor(cards.find((c) => c.id === id)!).rec!;
+  return { quotes: rec.options.map((o) => ({ carrier: o.name, price: o.price })), pick: rec.pick };
+}
+
 /** Earlier weeks' households that need Stacey, which is only on Monday. */
 const fromEarlier = (day: Day, section: "shopped" | "closing") => (day === "mon" ? mondayNeeds(section) : []);
 
 /**
  * An earlier week's household: its lines, carrier and renewal, then what's
- * needed, with a menu at the top right. Only on Monday. Shopped's rows end
- * their note with a link to the full report; Closing's rows end in a memo and
- * Mark as Closed.
+ * needed, with a menu at the top right. Only on Monday. Shopped's rows open
+ * on a preview of what the shop came back with and end their note with a link
+ * to the full report; Closing's rows end in a memo and Mark as Closed.
  */
 function EarlierRow({
   e,
@@ -145,12 +176,18 @@ function EarlierRow({
   closing?: Pick<WalkProps, "walk" | "update">;
 }) {
   const [lines, carrier] = e.lines.split(" · ");
+  const shopped = e.monday!.section === "shopped";
   return (
-    <Row h={e} selected={selected} aside={<RowMenu name={e.name} onProfile={onProfile} />}>
+    <Row
+      h={e}
+      selected={selected}
+      aside={<RowMenu name={e.name} onProfile={onProfile} />}
+      picture={shopped && <ShopPreview {...shopFor(e.id)} />}
+    >
       <RenewalMeta lines={lines} carrier={carrier} renews={e.renews} day="mon" />
       <span className="mt-2 block">
         {e.monday!.detail}
-        {e.monday!.section === "shopped" && (
+        {shopped && (
           <>
             {" "}
             <NotInPrototype tip="Only the Callahans have results in this prototype.">
@@ -415,7 +452,12 @@ function Shopped({ day, walk, household, onHousehold, onResults }: SectionsProps
       {status || others.length > 0 ? (
         <ul className="divide-y">
           {status && (
-            <Row h={h} onOpen={onResults} aside={opens}>
+            <Row
+              h={h}
+              onOpen={onResults}
+              aside={opens}
+              picture={<ShopPreview quotes={options} pick={optionById(walk.pick).carrier} />}
+            >
               <RenewalMeta lines={h.lines} carrier={h.carrier} renews={h.renews} day={day} />
               <span className="mt-2 block">{status.detail}</span>
             </Row>
