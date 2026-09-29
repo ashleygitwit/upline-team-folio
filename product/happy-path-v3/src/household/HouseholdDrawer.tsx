@@ -17,14 +17,16 @@ import type { WalkProps } from "@/walk";
  * Scheduled row, from a row menu's View Profile, and from the Callahans'
  * profile, and its outcomes land in v3's walk: Send marks the email as looking
  * good, Skip outreach skips it, and Close out closes the household with the
- * note as its memo.
+ * note as its memo. The Callahans' email links to Dana's questionnaire, which
+ * takes the walk there.
  */
 export function HouseholdDrawer({
   id,
   onClose,
+  onOpenQuestionnaire,
   walk,
   update,
-}: Pick<WalkProps, "walk" | "update"> & { id: string | null; onClose: () => void }) {
+}: Pick<WalkProps, "walk" | "update"> & { id: string | null; onClose: () => void; onOpenQuestionnaire: () => void }) {
   // Keep the last household on screen while the sheet slides away.
   const [shown, setShown] = useState<Card | null>(null);
   const card = cards.find((c) => c.id === id) ?? null;
@@ -85,6 +87,7 @@ export function HouseholdDrawer({
             onOpenResults={() => {}}
             onAskCloseOut={() => setClosing(shown)}
             onSkipOutreach={shown.col === "outreach" ? () => setSkipping(shown) : undefined}
+            onOpenQuestionnaire={onOpenQuestionnaire}
             email={
               h && {
                 subject: h.subject,

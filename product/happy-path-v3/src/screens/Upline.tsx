@@ -150,7 +150,13 @@ export function Upline({
         <Results day={day} onProfile={() => open("profile")} onSent={() => open("home")} {...props} />
       )}
 
-      <HouseholdDrawer id={household} onClose={() => setHousehold(null)} walk={props.walk} update={props.update} />
+      <HouseholdDrawer
+        id={household}
+        onClose={() => setHousehold(null)}
+        onOpenQuestionnaire={() => props.go("questionnaire")}
+        walk={props.walk}
+        update={props.update}
+      />
 
       {chat && (
         <ChatDock

@@ -46,7 +46,10 @@ const stageTab: Record<Card["col"], { id: Tab; label: string }> = {
  * and the banner's Review brings up what the Outreach tab held (the policy,
  * the email, shaping the shop and the questionnaire) in a modal over it.
  * The Callahans' drawer, the walk's, has no stage label over their name and
- * no Skip outreach or Send at its foot.
+ * no Skip outreach or Send at its foot, and it's white, the sheet's own
+ * ground, with their details straight on it rather than in cards. In their
+ * review, the email's questionnaire link is a link, to Dana's questionnaire
+ * in the walk (`onOpenQuestionnaire`), as if it opened in another tab.
  *
  * v2.5's drawer (screens/queue/HouseholdSheet.tsx there), ported into v3. The
  * only additions are hooks into v3's walk: `email` shows and saves v3's own
@@ -61,6 +64,7 @@ export function HouseholdSheet({
   onOpenResults,
   onAskCloseOut,
   onSkipOutreach,
+  onOpenQuestionnaire,
   email,
   life,
   skipped,
@@ -71,6 +75,8 @@ export function HouseholdSheet({
   onOpenResults: () => void;
   onAskCloseOut: () => void;
   onSkipOutreach?: () => void;
+  /** Goes to Dana's questionnaire in the walk, from the Callahans' email. */
+  onOpenQuestionnaire?: () => void;
   email?: { subject: string; body: string; onChange: (body: string) => void };
   life?: { on: boolean; onChange: (on: boolean) => void };
   skipped?: { onUndo: () => void };
@@ -89,7 +95,10 @@ export function HouseholdSheet({
   return (
     <SheetContent
       onOpenAutoFocus={focusPanel}
-      className="w-full gap-0 bg-background p-0 outline-none data-[side=right]:sm:max-w-[640px]"
+      className={cn(
+        "w-full gap-0 p-0 outline-none data-[side=right]:sm:max-w-[640px]",
+        !callahans && "bg-background",
+      )}
     >
       <SheetHeader className="gap-0 px-5 pt-4.5 pb-0 pr-14">
         {!callahans && <p className="eyebrow text-muted-foreground">{columnTitle(card.col)}</p>}
@@ -106,7 +115,7 @@ export function HouseholdSheet({
         <Dialog open={reviewing} onOpenChange={setReviewing}>
           <ReviewBanner />
           <div className="min-h-0 flex-1 overflow-y-auto px-5 pt-4.5 pb-7">
-            <Details card={card} file={file} />
+            <Details card={card} file={file} plain={callahans} />
           </div>
 
           {/* The Outreach tab's page, as a modal over the drawer: the drawer's
@@ -131,12 +140,16 @@ export function HouseholdSheet({
                   to={card.target ? outreachEmail.to : `${file.namedInsured} <${card.email}>`}
                   subject={email?.subject ?? (card.target ? outreachEmail.subject : "A quick look at your renewal")}
                 >
-                  <Textarea
-                    aria-label="Outreach email"
-                    value={outreach}
-                    onChange={(e) => setOutreach(e.target.value)}
-                    className="min-h-80 border-0 bg-transparent px-5.5 py-5 text-[15px] leading-relaxed"
-                  />
+                  {callahans && onOpenQuestionnaire ? (
+                    <LinkedEmail body={outreach} onChange={setOutreach} onLink={onOpenQuestionnaire} />
+                  ) : (
+                    <Textarea
+                      aria-label="Outreach email"
+                      value={outreach}
+                      onChange={(e) => setOutreach(e.target.value)}
+                      className="min-h-80 border-0 bg-transparent px-5.5 py-5 text-[15px] leading-relaxed"
+                    />
+                  )}
                 </EmailFrame>
                 <ShapeTheShop card={card} file={file} life={life} />
                 <QuestionnaireFields card={card} file={file} />
@@ -236,6 +249,63 @@ function ReviewBanner() {
     </DialogTrigger>
   );
 }
+
+/**
+ * An email's words, still editable, with its questionnaire link as a link:
+ * the paragraphs either side of it are two boxes that read as one, and the
+ * link line between them goes to the questionnaire. An email with no link
+ * line is one box, as any other.
+ */
+function LinkedEmail({ body, onChange, onLink }: { body: string; onChange: (body: string) => void; onLink: () => void }) {
+  const paragraphs = body.split(/\n\n+/);
+  const at = paragraphs.findIndex((p) => linkLine.test(p));
+  // Each box keeps the kit's own padding, so its focus ring has room, and the
+  // frame's padding is short by as much, so the words sit where one box's did.
+  const words = "min-h-0 resize-none border-0 bg-transparent text-[15px] leading-relaxed";
+
+  if (at < 0) {
+    return (
+      <div className="p-3">
+        <Textarea aria-label="Outreach email" value={body} onChange={(e) => onChange(e.target.value)} className={words} />
+      </div>
+    );
+  }
+
+  const before = paragraphs.slice(0, at).join("\n\n");
+  const after = paragraphs.slice(at + 1).join("\n\n");
+  const [, label, url] = paragraphs[at].match(linkLine)!;
+  const join = (b: string, a: string) => onChange([b, paragraphs[at], a].filter((part) => part.trim()).join("\n\n"));
+
+  return (
+    <div className="p-3">
+      <Textarea
+        aria-label="Outreach email, before the questionnaire link"
+        value={before}
+        onChange={(e) => join(e.target.value, after)}
+        className={words}
+      />
+      <p className="my-4 px-2.5 text-[15px] leading-relaxed">
+        <button
+          type="button"
+          onClick={onLink}
+          className="text-left text-primary underline underline-offset-4 hover:no-underline"
+        >
+          {label}
+        </button>
+        <span className="block text-sm break-all text-muted-foreground">{url.replace(/^https?:\/\//, "")}</span>
+      </p>
+      <Textarea
+        aria-label="Outreach email, after the questionnaire link"
+        value={after}
+        onChange={(e) => join(before, e.target.value)}
+        className={words}
+      />
+    </div>
+  );
+}
+
+/** A paragraph that's only a link: its words, an arrow, and the address, as Dana's inbox reads it. */
+const linkLine = /^(.*?) → (https?:\/\/\S+)$/;
 
 /** The policy as it renews: each line, the total, and why it went up. */
 function PolicyNow({ card, file }: { card: Card; file: HouseholdFile }) {

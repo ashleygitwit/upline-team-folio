@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { Car, House, Umbrella } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
+import { cn } from "cn";
 import { money, zillow, type Card as Household, type HouseholdFile } from "@/household/data";
 import { SectionHead } from "@/household/parts";
 
@@ -12,10 +13,15 @@ const initials = (name: string) =>
     .join("")
     .slice(0, 2);
 
-/** Everything on file for a household: who to reach, who's in it, what they drive and what they have with us. */
-export function Details({ card, file }: { card: Household; file: HouseholdFile }) {
+/**
+ * Everything on file for a household: who to reach, who's in it, what they
+ * drive and what they have with us. Each section is a card on the drawer's
+ * gray, or, `plain`, set straight on a white drawer, parted by space alone.
+ */
+export function Details({ card, file, plain }: { card: Household; file: HouseholdFile; plain?: boolean }) {
+  const Block = plain ? PlainBlock : CardBlock;
   return (
-    <div className="flex flex-col gap-4">
+    <div className={cn("flex flex-col", plain ? "gap-6" : "gap-4")}>
       <Block title="Contact">
         <dl className="mt-3 grid grid-cols-[auto_1fr] gap-x-3 gap-y-1.5 text-sm">
           <dt className="text-muted-foreground">Named insured</dt>
@@ -106,7 +112,16 @@ export function Details({ card, file }: { card: Household; file: HouseholdFile }
   );
 }
 
-function Block({ title, children }: { title: string; children: ReactNode }) {
+function PlainBlock({ title, children }: { title: string; children: ReactNode }) {
+  return (
+    <section>
+      <SectionHead>{title}</SectionHead>
+      {children}
+    </section>
+  );
+}
+
+function CardBlock({ title, children }: { title: string; children: ReactNode }) {
   return (
     <Card size="sm">
       <CardContent className="gap-0">
