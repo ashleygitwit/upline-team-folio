@@ -487,7 +487,7 @@ export const earlier: Earlier[] = [
     later: "Bound with Auto-Owners",
     monday: {
       section: "closing",
-      detail: "Linda approved Auto-Owners. Bind it in the portal before October 18, then mark it done.",
+      detail: "Linda approved Auto-Owners. Bind it in the portal before October 18.",
     },
   },
   {
@@ -499,7 +499,7 @@ export const earlier: Earlier[] = [
     later: "Staying with Westfield",
     monday: {
       section: "closing",
-      detail: "Anika is staying with Westfield. Bind the renewal and confirm the mortgagee clause before October 16, then mark it done.",
+      detail: "Anika is staying with Westfield. Bind the renewal and confirm the mortgagee clause before October 16.",
     },
   },
 ];
