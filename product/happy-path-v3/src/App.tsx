@@ -6,6 +6,7 @@ import { Upline } from "@/screens/Upline";
 import { DanaInbox } from "@/screens/DanaInbox";
 import { Questionnaire } from "@/screens/Questionnaire";
 import { DanaPage } from "@/screens/DanaPage";
+import { Interlude } from "@/screens/Interlude";
 import { initialWalk, screens, type ScreenId, type Walk } from "@/walk";
 
 export function App() {
@@ -50,6 +51,7 @@ export function App() {
       <div className="flex min-h-svh flex-col">
         <DemoBar index={index} onGo={setIndex} />
         <main className="flex-1">
+          {screen.text && <Interlude key={screen.id} title={screen.label} when={screen.where} text={screen.text} />}
           {screen.id === "monday-email" && <MondayEmail {...props} />}
           {screen.id === "monday" && <Upline key="monday" day="mon" {...props} />}
           {screen.id === "review" && <Upline key="review" day="mon" household="callahan" {...props} />}

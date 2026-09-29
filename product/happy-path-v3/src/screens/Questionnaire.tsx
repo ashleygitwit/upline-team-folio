@@ -47,7 +47,7 @@ export function Questionnaire({ walk, update, go }: WalkProps) {
             <p className="mt-3 text-base">
               That's everything Stacey needs to shop your home and auto. Expect to hear back by Thursday.
             </p>
-            <Button variant="link" className="mt-8 h-auto self-start p-0 font-sans text-sm" onClick={() => go("wednesday")}>
+            <Button variant="link" className="mt-8 h-auto self-start p-0 font-sans text-sm" onClick={() => go("card-wednesday")}>
               Meanwhile, back at Stockton Hill
             </Button>
           </div>

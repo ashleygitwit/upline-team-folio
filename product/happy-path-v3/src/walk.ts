@@ -2,30 +2,77 @@ import type { Day, PickId } from "./data";
 import type { PillId } from "./pills";
 
 /**
- * The walk: nine stops, one household (the Callahans) from Monday's list to a
- * bound policy, with the rest of the week moving around them. The presenter
+ * The walk: fifteen stops, one household (the Callahans) from Monday's list to
+ * a bound policy, with the rest of the week moving around them. The presenter
  * bar steps through these in order, and each stop can be jumped to directly.
+ *
+ * Six of the stops are cards, the ones with `text`: a slate screen before
+ * each change of day or person, with a story title (`label`), the day
+ * (`where`) and a sentence setting up what comes next. They're fixed, so they
+ * tell the usual path; a screen that has gone differently says so itself.
  */
 export type ScreenId =
+  | "card-monday"
   | "monday-email"
   | "monday"
   | "review"
+  | "card-tuesday"
   | "dana-inbox"
   | "questionnaire"
+  | "card-wednesday"
   | "wednesday"
+  | "card-thursday"
   | "thursday"
+  | "card-thursday-evening"
   | "dana-page"
+  | "card-friday"
   | "friday";
 
-export const screens: { id: ScreenId; label: string; where: string }[] = [
+export const screens: { id: ScreenId; label: string; where: string; text?: string }[] = [
+  {
+    id: "card-monday",
+    label: "A new week",
+    where: "Monday, October 12, 8:00 AM",
+    text: "Stacey is an agent at Stockton Hill Insurance. Before she's at her desk, Upline has written to tell her what needs her this week.",
+  },
   { id: "monday-email", label: "The Monday email", where: "Stacey's inbox · Monday, 8:00 AM" },
   { id: "monday", label: "Monday: Stacey opens Upline", where: "Upline · Monday, October 12" },
   { id: "review", label: "Review the Callahans' email", where: "Upline · Monday, October 12" },
+  {
+    id: "card-tuesday",
+    label: "Meanwhile, at the Callahans'",
+    where: "Tuesday, October 13, 9:02 AM",
+    text: "Dana and Mike's home and auto renew with Erie on November 15. Stacey's renewal email has just reached Dana's phone.",
+  },
   { id: "dana-inbox", label: "Dana's inbox", where: "Dana's phone · Tuesday, 9:02 AM" },
   { id: "questionnaire", label: "Dana's questionnaire", where: "Dana's phone · Tuesday, 7:40 PM" },
+  {
+    id: "card-wednesday",
+    label: "Back at the agency",
+    where: "Wednesday, October 14",
+    text: "Dana answered Stacey's questions last night, and Upline has started shopping the Callahans' home and auto.",
+  },
   { id: "wednesday", label: "Wednesday", where: "Upline · Wednesday, October 14" },
+  {
+    id: "card-thursday",
+    label: "The quotes are in",
+    where: "Thursday, October 15",
+    text: "The carriers have come back on the Callahans, and Stacey has a recommendation to make.",
+  },
   { id: "thursday", label: "Thursday: results are back", where: "Upline · Thursday, October 15" },
+  {
+    id: "card-thursday-evening",
+    label: "That evening",
+    where: "Thursday, October 15, 6:12 PM",
+    text: "Dana opens Stacey's recommendation on her phone after work.",
+  },
   { id: "dana-page", label: "Dana's recommendation", where: "Dana's phone · Thursday, 6:12 PM" },
+  {
+    id: "card-friday",
+    label: "Closing the week",
+    where: "Friday, October 16",
+    text: "Dana and Mike said yes. All that's left is for Stacey to bind it in the carrier's portal.",
+  },
   { id: "friday", label: "Friday: bind it", where: "Upline · Friday, October 16" },
 ];
 
