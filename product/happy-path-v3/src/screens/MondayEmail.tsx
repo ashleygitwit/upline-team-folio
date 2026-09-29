@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { BandGrain } from "@/components/BandGrain";
 import { CarrierMark } from "@/components/CarrierMark";
 import { Stage } from "@/components/Stage";
-import { agency, callahan, mondayNeeds, money, retention, thisWeek, type Earlier } from "@/data";
+import { agency, mondayNeeds, money, thisWeek, type Earlier } from "@/data";
 import { words } from "@/today";
 import type { WalkProps } from "@/walk";
 
@@ -62,8 +62,7 @@ export function MondayEmail({ go }: WalkProps) {
             <CardContent className="gap-4">
               <p className="text-base">
                 {words[n]} renewals go out tomorrow at 9:00 AM, drafted in your voice and sent from your inbox. You
-                don't need to do anything. The biggest is Dana and Mike Callahan, up {money(callahan.now - callahan.was)}{" "}
-                because Sophie got her license in August.
+                don't need to do anything.
               </p>
               <ul className="divide-y border-y text-sm">
                 {thisWeek.map((h) => (
@@ -85,10 +84,6 @@ export function MondayEmail({ go }: WalkProps) {
             </CardContent>
           </Card>
         </Group>
-
-        <p className="mt-10 border-t pt-6 text-base">
-          So far this season, {retention.stayed} of the {retention.sent} households you've reached stayed with you.
-        </p>
       </div>
 
       <p className="border-t px-8 py-5 text-sm text-muted-foreground">
