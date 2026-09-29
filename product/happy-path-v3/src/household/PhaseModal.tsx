@@ -9,8 +9,10 @@ import { focusPanel } from "@/lib/focus";
  * shop, its results or the close-out): the drawer's header and ground, its
  * body scrolling under a header that stays, so the close button never scrolls
  * away, and its buttons in a footer under the scroll rather than at the
- * body's foot. It's centered in the window under the presenter's bar, since
- * it's tall enough to reach it.
+ * body's foot. It's centered in the window under the presenter's bar. It's
+ * wider and shorter than the drawer (800 by at most 40rem, against the
+ * drawer's 640 and the full height) so it reads as a dialog over the page,
+ * not a second drawer floating over the first (the 2026-09-29 review).
  */
 export function PhaseModal({
   eyebrow,
@@ -36,8 +38,8 @@ export function PhaseModal({
       onCloseAutoFocus={returnFocus}
       aria-describedby={undefined}
       className={cn(
-        "top-[calc(50%+var(--demo-bar-h)/2)] flex max-h-[calc(100svh-var(--demo-bar-h)-2rem)] flex-col gap-0 overflow-hidden bg-background p-0 outline-none sm:max-w-[640px]",
-        steady && "h-[min(calc(100svh-var(--demo-bar-h)-2rem),52rem)]",
+        "top-[calc(50%+var(--demo-bar-h)/2)] flex max-h-[min(calc(100svh-var(--demo-bar-h)-2rem),40rem)] flex-col gap-0 overflow-hidden bg-background p-0 outline-none sm:max-w-[800px]",
+        steady && "h-[min(calc(100svh-var(--demo-bar-h)-2rem),40rem)]",
       )}
     >
       <DialogHeader className="gap-0 px-5 pt-4.5 pr-14">

@@ -11,7 +11,7 @@ import {
 import { agency } from "@/data";
 
 /**
- * The product's own bar. Deliberately bare: no tabs. The mark takes Stacey
+ * The product's own bar. Deliberately bare: no tabs. The mark takes Jenna
  * back to the homepage, and her name opens her menu: her profile, the list of
  * everyone renewing, and her account settings. The profile and the settings
  * aren't built yet, so they close the menu and go nowhere, as the row menus'

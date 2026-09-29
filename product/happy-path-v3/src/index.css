@@ -248,7 +248,7 @@
     mask: var(--band-mask) center / cover no-repeat;
   }
 
-  /* Stockton Hill's own brand, for everything the policyholder sees: the
+  /* Harbor Point's own brand, for everything the policyholder sees: the
      agency's green and amber from Ashley's v2. Insured-facing surfaces carry no
      Upline, so this overrides --primary and every library component inside
      follows. The amber ring is 3.2:1 on white. */

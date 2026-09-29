@@ -97,7 +97,7 @@ export function EmailFrame({
  * as a link: the paragraphs either side of it are two boxes that read as one,
  * and the link line between them goes to the questionnaire. Without `onLink`
  * the link is drawn but says it isn't in this prototype, since only the
- * Callahans' questionnaire is. An email with no link line is one box.
+ * Pruitts' questionnaire is. An email with no link line is one box.
  */
 export function LinkedEmail({
   body,
@@ -156,7 +156,7 @@ export function LinkedEmail({
                 {label}
               </button>
             </TooltipTrigger>
-            <TooltipContent>Only the Callahans' questionnaire is in this prototype.</TooltipContent>
+            <TooltipContent>Only the Pruitts' questionnaire is in this prototype.</TooltipContent>
           </Tooltip>
         )}
         <span className="block text-sm break-all text-muted-foreground">{url.replace(/^https?:\/\//, "")}</span>
@@ -172,6 +172,6 @@ export function LinkedEmail({
   );
 }
 
-/** A paragraph that's only a link: its words, an arrow, and the address, as Dana's inbox reads it. */
+/** A paragraph that's only a link: its words, an arrow, and the address, as Leah's inbox reads it. */
 const linkLine = /^(.*?) → (https?:\/\/\S+)$/;
 const linkStyle = "text-left text-primary underline underline-offset-4 hover:no-underline";

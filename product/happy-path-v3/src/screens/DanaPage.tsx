@@ -4,13 +4,13 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { AgencyMark, AgencyScope, Stage } from "@/components/Stage";
 import { PlainEmail } from "@/components/PlainEmail";
-import { agency, callahan, money, optionById, options, recEmails, recSubject } from "@/data";
+import { agency, pruitt, money, optionById, options, recEmails, recSubject } from "@/data";
 import type { WalkProps } from "@/walk";
 
 /**
- * Thursday evening: Stacey's email, then the page it links to. The page is
+ * Thursday evening: Jenna's email, then the page it links to. The page is
  * a brief, not a price grid: one pick, the reasoning up front, and a button
- * that says plainly it doesn't put coverage in place. If Stacey picked Erie,
+ * that says plainly it doesn't put coverage in place. If Jenna picked Erie,
  * it shows all three and suggests a call instead.
  */
 export function DanaPage({ walk, update }: WalkProps) {
@@ -20,7 +20,7 @@ export function DanaPage({ walk, update }: WalkProps) {
   const saving = erie.price - pick.price;
 
   return (
-    <Stage caption="Dana's phone · Thursday, October 15, 6:12 PM" size="phone">
+    <Stage caption="Leah's phone · Thursday, October 15, 6:12 PM" size="phone">
       <AgencyScope>
         {view === "email" ? (
           <PlainEmail
@@ -36,11 +36,11 @@ export function DanaPage({ walk, update }: WalkProps) {
               <span aria-hidden className="grid size-12 place-items-center bg-primary text-primary-foreground">
                 <Check className="size-6" />
               </span>
-              <h1 className="mt-6 text-2xl">Thanks, Dana.</h1>
+              <h1 className="mt-6 text-2xl">Thanks, Leah.</h1>
               <p className="mt-3 text-base">
                 {pick.current
-                  ? `Nothing changes. Your Erie policy renews on ${callahan.renewsLong}.`
-                  : `Stacey will take it from here and confirm with you before ${callahan.renewsLong}. Nothing changes until then.`}
+                  ? `Nothing changes. Your Erie policy renews on ${pruitt.renewsLong}.`
+                  : `Jenna will take it from here and confirm with you before ${pruitt.renewsLong}. Nothing changes until then.`}
               </p>
               <Button
                 variant="link"
@@ -59,7 +59,7 @@ export function DanaPage({ walk, update }: WalkProps) {
 
               {pick.current ? (
                 <>
-                  <h1 className="mt-3 text-3xl">My advice: stay with Erie, Dana.</h1>
+                  <h1 className="mt-3 text-3xl">My advice: stay with Erie, Leah.</h1>
                   <p className="mt-4 text-base">
                     I shopped your home and auto with Auto-Owners and Grange too. Here's everything that came back.
                   </p>
@@ -113,7 +113,7 @@ export function DanaPage({ walk, update }: WalkProps) {
               <figure className="mt-8 border-l-3 border-primary pl-4">
                 <blockquote className="text-base">
                   {pick.id === "ao"
-                    ? "Sophie rates cleanly with Auto-Owners, and nothing else on your household needed to change. Grange came in a little under Erie too, but it would have raised your home deductible to $2,500, so I didn't think it was worth it."
+                    ? "Maya rates cleanly with Auto-Owners, and nothing else on your household needed to change. Grange came in a little under Erie too, but it would have raised your home deductible to $2,500, so I didn't think it was worth it."
                     : pick.id === "grange"
                       ? "Grange saves you $480 a year. The tradeoff is a $2,500 home deductible, so if you'd rather keep it at $1,000, let's talk before you decide."
                       : "Staying put is on the table if that's what you'd like. Auto-Owners would save you $1,050 for the same coverage, so it's worth a quick call before you decide."}
@@ -122,13 +122,13 @@ export function DanaPage({ walk, update }: WalkProps) {
                   <Avatar size="sm">
                     <AvatarFallback className="bg-(--agency) text-xs text-white">{agency.agent.initials}</AvatarFallback>
                   </Avatar>
-                  Stacey Cole, {agency.name}
+                  Jenna Ruiz, {agency.name}
                 </figcaption>
               </figure>
 
               {!pick.current && (
                 <p className="mt-8 text-base">
-                  And congratulations on Sophie's license. She's on the new policy as a driver on the Camry.
+                  And congratulations on Maya's license. She's on the new policy as a driver on the Camry.
                 </p>
               )}
 
@@ -138,9 +138,9 @@ export function DanaPage({ walk, update }: WalkProps) {
               <p className="mt-3 text-sm text-muted-foreground">
                 {pick.current
                   ? "Your policy renews as it is. Nothing to sign."
-                  : `Approving tells Stacey to go ahead. It doesn't put coverage in place yet: Stacey will finish the paperwork and confirm with you before ${callahan.renewsLong}.`}
+                  : `Approving tells Jenna to go ahead. It doesn't put coverage in place yet: Jenna will finish the paperwork and confirm with you before ${pruitt.renewsLong}.`}
               </p>
-              <p className="mt-6 text-base">Rather talk it through? Reply to Stacey's email to set up a call.</p>
+              <p className="mt-6 text-base">Rather talk it through? Reply to Jenna's email to set up a call.</p>
             </article>
           </div>
         )}
@@ -153,7 +153,7 @@ function PageHeader() {
   return (
     <header className="flex items-center justify-between border-b px-5 py-4">
       <AgencyMark />
-      <span className="text-sm text-muted-foreground">For the Callahans</span>
+      <span className="text-sm text-muted-foreground">For the Pruitts</span>
     </header>
   );
 }

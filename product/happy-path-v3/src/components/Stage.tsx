@@ -2,8 +2,8 @@ import type { ReactNode } from "react";
 import { cn } from "cn";
 
 /**
- * The ground for everything that happens outside Upline: Stacey's inbox and
- * Dana's phone. Slate, so it never reads as the product, with one caption
+ * The ground for everything that happens outside Upline: Jenna's inbox and
+ * Leah's phone. Slate, so it never reads as the product, with one caption
  * saying whose screen this is.
  */
 export function Stage({
@@ -33,7 +33,7 @@ export function Stage({
 }
 
 /**
- * The agency's own look for everything Dana sees: Stockton Hill's green in
+ * The agency's own look for everything Leah sees: Harbor Point's green in
  * place of Upline's blue, set by overriding the tokens so every library
  * component inside follows. No Upline anywhere on these surfaces.
  */
@@ -44,7 +44,7 @@ export function AgencyScope({ className, children }: { className?: string; child
 export function AgencyMark() {
   return (
     <div className="flex items-baseline gap-1.5 text-(--agency)">
-      <span className="font-display text-lg">Stockton Hill</span>
+      <span className="font-display text-lg">Harbor Point</span>
       <span className="eyebrow">Insurance</span>
     </div>
   );

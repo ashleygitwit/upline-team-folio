@@ -1,9 +1,11 @@
+import { Fragment } from "react";
 import { ArrowLeft, ArrowRight, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { screens } from "@/walk";
@@ -29,15 +31,23 @@ export function DemoBar({ index, onGo }: { index: number; onGo: (i: number) => v
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start" className="w-72">
+              {/* Each card heads the screens it introduces: pick the card to set
+                  the stage, or a screen to skip past it. */}
               {screens.map((s, i) => (
-                <DropdownMenuItem
-                  key={s.id}
-                  onSelect={() => onGo(i)}
-                  className={i === index ? "font-medium text-primary" : undefined}
-                >
-                  <span className="w-5 font-mono text-xs text-muted-foreground">{i + 1}</span>
-                  {s.label}
-                </DropdownMenuItem>
+                <Fragment key={s.id}>
+                  {s.text && i > 0 && <DropdownMenuSeparator />}
+                  <DropdownMenuItem
+                    onSelect={() => onGo(i)}
+                    className={i === index ? "font-medium text-primary" : undefined}
+                  >
+                    <span className="w-5 font-mono text-xs text-muted-foreground">{i + 1}</span>
+                    {s.text ? (
+                      <span className={i === index ? "eyebrow" : "eyebrow text-muted-foreground"}>{s.label}</span>
+                    ) : (
+                      s.label
+                    )}
+                  </DropdownMenuItem>
+                </Fragment>
               ))}
             </DropdownMenuContent>
           </DropdownMenu>

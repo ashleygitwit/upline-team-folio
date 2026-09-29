@@ -16,7 +16,7 @@ import { Recommendation } from "@/household/Recommendation";
  * The phase modals a drawer opens from its banner and from Recent activity,
  * one per phase that has more to it than a line: the outreach review, a
  * nudge or follow-up, a shop in progress, an earlier week's results and the
- * close-out. The Callahans' results are ShopResults.tsx, since the homepage
+ * close-out. The Pruitts' results are ShopResults.tsx, since the homepage
  * and the chat open them too. Each takes its action in its footer, and once
  * it's done, opens read-only with the footer saying what happened.
  */
@@ -47,7 +47,7 @@ export function OutreachReview({
   skipped?: { onUndo: () => void };
   onSkip?: () => void;
   onSend?: () => void;
-  /** Goes to Dana's questionnaire in the walk, from the Callahans' email. */
+  /** Goes to Leah's questionnaire in the walk, from the Pruitts' email. */
   onOpenQuestionnaire?: () => void;
 }) {
   return (
@@ -103,7 +103,7 @@ export function OutreachReview({
   );
 }
 
-/** A nudge or follow-up: why it's going and when, and its email, which Stacey can edit, send now or skip. */
+/** A nudge or follow-up: why it's going and when, and its email, which Jenna can edit, send now or skip. */
 export function NudgeReview({
   card,
   file,
@@ -178,7 +178,7 @@ export function NudgeReview({
   );
 }
 
-/** A shop in progress: who VA is quoting, which quotes are back, and when the results are due. Nothing needs Stacey. */
+/** A shop in progress: who VA is quoting, which quotes are back, and when the results are due. Nothing needs Jenna. */
 export function ShopInProgress({ card, shop }: { card: Card; shop: Shop }) {
   return (
     <PhaseModal eyebrow={columnTitle("shopping")} title={card.name}>
@@ -209,8 +209,8 @@ export function ShopInProgress({ card, shop }: { card: Card; shop: Shop }) {
 }
 
 /**
- * An earlier week's shop results (Elena's and Raymond's), in the same three
- * steps as the Callahans' (Recommendation.tsx), locked once it has gone.
+ * An earlier week's shop results (Sofia's and Walter's), in the same three
+ * steps as the Pruitts' (Recommendation.tsx), locked once it has gone.
  */
 export function EarlierResults({
   card,
@@ -231,7 +231,7 @@ export function EarlierResults({
 }
 
 /**
- * Approved and waiting on Stacey: what's left to do, and what happened, which
+ * Approved and waiting on Jenna: what's left to do, and what happened, which
  * Close out keeps as the household's memo. Once closed, it reads back the
  * memo and says when.
  */

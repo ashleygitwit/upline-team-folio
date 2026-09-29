@@ -12,7 +12,7 @@ export type AnswerProps = WalkProps & {
   day: Day;
   /** Runs the day's one action, the same one the brief carries. */
   onAction: (to: NonNullable<Today["action"]>["to"]) => void;
-  /** Asks a follow-up, as if Stacey had picked its pill. */
+  /** Asks a follow-up, as if Jenna had picked its pill. */
   onAsk: (id: PillId) => void;
 };
 
@@ -66,7 +66,7 @@ function RetentionAnswer({ onAsk }: AnswerProps) {
         {sent}, and {stayed} of those households stayed.
       </p>
 
-      {/* A cell for every household Stacey sent: filled when they stayed,
+      {/* A cell for every household Jenna sent: filled when they stayed,
           open when they left, so the gap is the thing you notice. */}
       <div
         role="img"
@@ -115,7 +115,7 @@ function LeftAnswer({ walk, update }: AnswerProps) {
         ))}
       </ul>
       <p className="mt-5">
-        Carla and Joe moved out of state, so there's not much to do there. {names} might be worth a note from you.
+        Rita and Paul moved out of state, so there's not much to do there. {names} might be worth a note from you.
       </p>
       {walk.notesDrafted ? (
         <p role="status" className="mt-5 flex items-start gap-3 text-sm">

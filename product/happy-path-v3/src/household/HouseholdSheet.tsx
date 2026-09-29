@@ -1,20 +1,30 @@
 import { useRef, useState, type ReactNode } from "react";
-import { ArrowRight } from "lucide-react";
+import { AlarmClock, ArrowRight } from "lucide-react";
 import { cn } from "cn";
+import { Chips } from "@/components/Chips";
+import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/household/tabs";
-import { callahan, nudgeByKey, thisWeek, type Day } from "@/data";
+import { pruitt, nudgeByKey, type Day } from "@/data";
 import { activityFor, nudgeState, type Activity, type Banner, type Opens } from "@/household/activity";
 import { columnTitle, spoken } from "@/household/columns";
 import { fileFor, money, type Card } from "@/household/data";
 import { focusPanel } from "@/lib/focus";
 import { Details } from "@/household/Details";
 import { Notes } from "@/household/Notes";
-import { CloseOut, EarlierResults, NudgeReview, OutreachReview, ShopInProgress } from "@/household/phases";
+import { OutreachFor } from "@/household/Outreach";
+import { CloseOut, EarlierResults, NudgeReview, ShopInProgress } from "@/household/phases";
 import { RecentActivity } from "@/household/RecentActivity";
 import { ReturnFocus } from "@/household/returnFocus";
-import type { WalkProps } from "@/walk";
+import { changedFields, chipsFor, daysOut, isSnoozed, needsAction, snoozeLabel, snoozes } from "@/tasks";
+import type { SnoozeUntil, WalkProps } from "@/walk";
 
 type Tab = "details" | "activity" | "notes";
 
@@ -23,21 +33,21 @@ type Tab = "details" | "activity" | "notes";
  * Policyholder List. Every household has the same drawer: the stage it's in
  * over its name, a banner when something is going on, and three tabs, which
  * always open on Details. Recent activity is what's coming up and what has
- * happened; Notes is Stacey's own.
+ * happened; Notes is Jenna's own.
  *
- * The banner is blue when it needs Stacey (results to review, an approval to
+ * The banner is blue when it needs Jenna (results to review, an approval to
  * bind) and gray when it only says what's going on (an email or nudge
  * scheduled, a shop running, a recommendation out). It opens that phase's
  * modal, and so do the lines in Recent activity that have more behind them:
  * the outreach review, a nudge, the shop, the results or the close-out,
  * each with its buttons in its footer. What's shown follows the walk's day
- * (activity.ts), and what Stacey does in a modal lands in the walk: the email
- * she edits is the one Dana gets, Send now and Skip mark the email or nudge,
+ * (activity.ts), and what Jenna does in a modal lands in the walk: the email
+ * she edits is the one Leah gets, Send now and Skip mark the email or nudge,
  * sending a recommendation or closing out moves the household on, and notes
  * stay for the rest of the walk.
  *
- * The Callahans' results are `results`, the content of a dialog that the
- * homepage and the chat open on their own too. Their email links to Dana's
+ * The Pruitts' results are `results`, the content of a dialog that the
+ * homepage and the chat open on their own too. Their email links to Leah's
  * questionnaire (`onOpenQuestionnaire`), as if it opened in another tab.
  *
  * Started as v2.5's drawer (screens/queue/HouseholdSheet.tsx there).
@@ -58,24 +68,39 @@ export function HouseholdSheet({
   onDone: (said: string) => void;
   /** Asks before skipping the household's outreach. */
   onSkipOutreach: () => void;
-  /** Goes to Dana's questionnaire in the walk, from the Callahans' email. */
+  /** Goes to Leah's questionnaire in the walk, from the Pruitts' email. */
   onOpenQuestionnaire: () => void;
-  /** The Callahans' shop results: the content of a dialog. */
+  /** The Pruitts' shop results: the content of a dialog. */
   results: ReactNode;
 }) {
   const file = fileFor(card);
-  const h = thisWeek.find((x) => x.id === card.id);
   const activity: Activity = activityFor(card.id, day, walk) ?? {
     stage: columnTitle(card.col),
     banner: null,
     upNext: [],
     past: [],
   };
-  // "Dana and Mike", "Ife": who the household is, in a sentence.
+  // "Leah and Tom", "Tobi": who the household is, in a sentence.
   const who = card.name.includes("&") ? spoken(card.name.replace(/\s+\S+$/, "")) : card.first;
 
   const [tab, setTab] = useState<Tab>("details");
   const [open, setOpen] = useState<Opens | null>(null);
+
+  // A task on today's Action Needed list can be snoozed from the banner, and
+  // while it's snoozed the banner says so instead, with Undo.
+  const snoozed = isSnoozed(card.id, day, walk);
+  const snooze =
+    activity.banner?.tone === "blue" && needsAction(card.id, day, walk)
+      ? {
+          daysOut: daysOut(card.id, day),
+          onSnooze: (until: SnoozeUntil) => update((w) => ({ snoozed: { ...w.snoozed, [card.id]: { until, day } } })),
+        }
+      : undefined;
+  const unsnooze = () =>
+    update((w) => {
+      const { [card.id]: _, ...rest } = w.snoozed;
+      return { snoozed: rest };
+    });
   const [rec, setRec] = useState(file.rec?.email ?? "");
 
   // A phase modal gives the focus back to the banner or line that opened it.
@@ -90,40 +115,18 @@ export function HouseholdSheet({
     opener.current.focus();
   };
 
-  const email = h && {
-    subject: h.subject,
-    body: walk.drafts[h.id] ?? h.email,
-    onChange: (body: string) => update((w) => ({ drafts: { ...w.drafts, [h.id]: body } })),
-  };
-  const skipped = h && walk.skipped.includes(h.id);
-
   const modal = (() => {
     switch (open?.phase) {
       case "outreach":
         return (
-          <OutreachReview
+          <OutreachFor
             card={card}
-            file={file}
-            email={email}
-            life={
-              h && {
-                on: walk.lifeQuote[h.id] ?? true,
-                onChange: (on) => update((w) => ({ lifeQuote: { ...w.lifeQuote, [h.id]: on } })),
-              }
-            }
-            sent={activity.outreachSent}
-            skipped={
-              skipped ? { onUndo: () => update((w) => ({ skipped: w.skipped.filter((x) => x !== card.id) })) } : undefined
-            }
-            onSkip={h && onSkipOutreach}
-            onSend={
-              h &&
-              (() => {
-                update((w) => ({ approved: [...new Set([...w.approved, card.id])] }));
-                onDone(`Sent to ${spoken(card.name)}`);
-              })
-            }
-            onOpenQuestionnaire={card.id === callahan.id ? onOpenQuestionnaire : undefined}
+            day={day}
+            walk={walk}
+            update={update}
+            onDone={onDone}
+            onSkipOutreach={onSkipOutreach}
+            onOpenQuestionnaire={onOpenQuestionnaire}
           />
         );
       case "nudge": {
@@ -159,7 +162,7 @@ export function HouseholdSheet({
       case "shopping":
         return activity.shop ? <ShopInProgress card={card} shop={activity.shop} /> : null;
       case "results":
-        return card.id === callahan.id ? (
+        return card.id === pruitt.id ? (
           results
         ) : (
           <EarlierResults
@@ -182,7 +185,7 @@ export function HouseholdSheet({
             onCloseOut={(note) => {
               update((w) => ({
                 closed: { ...w.closed, [card.id]: note },
-                ...(card.id === callahan.id ? { bound: true } : {}),
+                ...(card.id === pruitt.id ? { bound: true } : {}),
               }));
               onDone("Closed out");
             }}
@@ -213,9 +216,19 @@ export function HouseholdSheet({
             : `+${card.jumpPct}% (${money(card.was)} → ${money(card.premium)})`}{" "}
           · {card.lines} · renews {card.renewal}
         </SheetDescription>
+        <Chips chips={chipsFor(card.id, day, walk)} className="mt-2.5" />
       </SheetHeader>
 
-      {activity.banner && <StatusBanner {...activity.banner} onOpen={openPhase} />}
+      {snoozed ? (
+        <StatusBanner
+          tone="gray"
+          text={`Snoozed ${snoozeLabel(walk.snoozed[card.id].until)}.`}
+          onOpen={openPhase}
+          undo={unsnooze}
+        />
+      ) : (
+        activity.banner && <StatusBanner {...activity.banner} onOpen={openPhase} snooze={snooze} />
+      )}
 
       <Tabs
         value={tab}
@@ -237,7 +250,7 @@ export function HouseholdSheet({
         </TabsList>
 
         <TabsContent value="details" className="min-h-0 overflow-y-auto px-5 pt-4.5 pb-7">
-          <Details card={card} file={file} />
+          <Details card={card} file={file} changed={changedFields(card.id, day, walk)} />
         </TabsContent>
 
         <TabsContent value="activity" className="min-h-0 overflow-y-auto px-5 pt-4.5 pb-7">
@@ -279,39 +292,88 @@ export function HouseholdSheet({
  * What's going on with the household, and a way to it, over the tabs:
  * uplineinsurance.com's founding-member banner (Navbar.tsx there), a strip
  * across the drawer with the message on the left and its link on the right,
- * underlined on hover. Blue with white type when it needs Stacey; the quiet
+ * underlined on hover. Blue with white type when it needs Jenna; the quiet
  * gray, with the link in blue, when it doesn't. The whole strip is the one
  * target, as there, and its focus ring is inside it, since a ring outside it
  * would be cut off at the drawer's edges. A banner with nowhere to go is only
- * its message.
+ * its message. A blue banner for a task on today's list ends in a clock,
+ * which snoozes it; a snoozed banner is gray and ends in Undo.
  */
-function StatusBanner({ text, tone, opens, onOpen }: Banner & { onOpen: (opens: Opens, from: HTMLElement) => void }) {
+function StatusBanner({
+  text,
+  tone,
+  opens,
+  onOpen,
+  snooze,
+  undo,
+}: Banner & {
+  onOpen: (opens: Opens, from: HTMLElement) => void;
+  snooze?: { daysOut: number; onSnooze: (until: SnoozeUntil) => void };
+  undo?: () => void;
+}) {
   const blue = tone === "blue";
   const strip = cn(
-    "mt-3.5 flex w-full items-center justify-between gap-4 px-5 py-2 text-left text-sm",
+    "flex w-full items-center justify-between gap-4 px-5 py-2 text-left text-sm",
     blue ? "bg-primary text-primary-foreground" : "bg-muted text-foreground",
   );
-  if (!opens) return <p className={strip}>{text}</p>;
+  if (undo) {
+    return (
+      <div className={cn("mt-3.5", strip)}>
+        <span>{text}</span>
+        <Button variant="link" className="h-auto p-0 font-sans text-sm" onClick={undo}>
+          Undo
+        </Button>
+      </div>
+    );
+  }
+  if (!opens) return <p className={cn("mt-3.5", strip)}>{text}</p>;
   return (
-    <button
-      type="button"
-      onClick={(e) => onOpen(opens, e.currentTarget)}
-      className={cn(
-        "group pointer-coarse:min-h-11 focus-visible:-outline-offset-4",
-        strip,
-        blue && "focus-visible:outline-primary-foreground",
-      )}
-    >
-      <span>{text}</span>
-      <span
+    <div className={cn("mt-3.5 flex items-stretch", blue ? "bg-primary" : "bg-muted")}>
+      <button
+        type="button"
+        onClick={(e) => onOpen(opens, e.currentTarget)}
         className={cn(
-          "flex shrink-0 items-center gap-1 font-medium underline-offset-4 group-hover:underline",
-          !blue && "text-primary",
+          "group min-w-0 flex-1 pointer-coarse:min-h-11 focus-visible:-outline-offset-4",
+          strip,
+          blue && "focus-visible:outline-primary-foreground",
         )}
       >
-        {opens.action}
-        <ArrowRight aria-hidden className="size-3.5" />
-      </span>
-    </button>
+        <span>{text}</span>
+        <span
+          className={cn(
+            "flex shrink-0 items-center gap-1 font-medium underline-offset-4 group-hover:underline",
+            !blue && "text-primary",
+          )}
+        >
+          {opens.action}
+          <ArrowRight aria-hidden className="size-3.5" />
+        </span>
+      </button>
+      {snooze && (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              aria-label="Snooze"
+              className="mr-2 self-center text-primary-foreground hover:bg-primary-foreground/15 hover:text-primary-foreground focus-visible:outline-primary-foreground"
+            >
+              <AlarmClock />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-60">
+            {snoozes.map((s) => (
+              <DropdownMenuItem
+                key={s.until}
+                disabled={s.until === "beforeRenewal" && snooze.daysOut <= 5}
+                onSelect={() => snooze.onSnooze(s.until)}
+              >
+                {s.label}
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      )}
+    </div>
   );
 }

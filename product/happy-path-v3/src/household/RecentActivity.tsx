@@ -9,7 +9,7 @@ type OnOpen = (opens: Opens, from: HTMLElement) => void;
 /**
  * A household's Recent activity: what's coming up, then what has happened,
  * newest first, on one rail with the time on the left. Most lines are a line
- * of text, with a link where there's a modal behind them. What needs Stacey
+ * of text, with a link where there's a modal behind them. What needs Jenna
  * is a card with a button, and its dot is the blue one, so it's the first
  * thing the eye finds.
  */
@@ -42,7 +42,7 @@ function Group({ title, items, next, onOpen }: { title: string; items: Item[]; n
 /**
  * One line: its time, its dot on the rail, and what happened. The rail runs
  * between the first dot and the last. A line to come has an open dot; one
- * that's happened has a gray one; one that needs Stacey has the blue one and
+ * that's happened has a gray one; one that needs Jenna has the blue one and
  * is a card, so it sits lower on the rail, level with the card's heading.
  * The time has a column of its own once the drawer is 28rem wide; narrower
  * (a phone), it sits over what happened, level with the dot, so the card

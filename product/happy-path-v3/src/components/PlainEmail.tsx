@@ -2,7 +2,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { agency } from "@/data";
 
 /**
- * An email from Stacey as Dana reads it: plain text from Stacey's own
+ * An email from Jenna as Leah reads it: plain text from Jenna's own
  * mailbox, not a designed blast, because a bulk-mail look is the fear. The
  * one link in it is the only thing on the screen that does anything.
  */

@@ -12,7 +12,7 @@ import type { Chat as ChatType, WalkProps } from "@/walk";
 /**
  * The chat, docked along the bottom the way a messenger docks a conversation.
  * Asking anything on the homepage starts it: a tab appears at the right of a
- * footer, and the conversation pops up out of it with Stacey's questions and
+ * footer, and the conversation pops up out of it with Jenna's questions and
  * Upline's answers, the suggested questions not yet asked, and a box to
  * reply. The tab puts it down and brings it back, and its × ends the chat,
  * so the next question starts a new one. The page underneath stays put.
