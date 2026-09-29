@@ -21,6 +21,7 @@ type HomeProps = WalkProps & {
   onHousehold: (id: string) => void;
   onProfile: () => void;
   onResults: () => void;
+  onPolicyholders: () => void;
 };
 
 /**
@@ -104,11 +105,14 @@ function Monday({ day, onChat, ...props }: HomeProps) {
 
 /**
  * Wednesday: the day's line on the gray band, set as Monday's title under the
- * greeting is, and the ask box under it, as Thursday and Friday have it; then
- * what goes out on its own below the band. Nothing to close and nothing back
- * from a shop, so those sections aren't drawn.
+ * greeting is, and the ask box under it, as Thursday and Friday have it, with
+ * one link under the box to the Policyholder List, for a day with nothing to
+ * act on; then what goes out on its own below the band. Nothing to close and
+ * nothing back from a shop, so those sections aren't drawn. The link is the
+ * kit's blue, underlined as Monday's band link is, since the gray band keeps
+ * the page's colors.
  */
-function Wednesday({ day, walk, onAsk, ...props }: HomeProps) {
+function Wednesday({ day, walk, onAsk, onPolicyholders, ...props }: HomeProps) {
   return (
     <>
       <Hero ground="gray">
@@ -116,6 +120,11 @@ function Wednesday({ day, walk, onAsk, ...props }: HomeProps) {
         <AskBox label="Ask me anything" className="mt-10" onAsk={(q) => onAsk(q, matchPill(q))}>
           <Suggestions ids={suggested} size="sm" onAsk={(id) => onAsk(pillById(id).question, id)} />
         </AskBox>
+        <div className="mt-(--space-tight) flex justify-center">
+          <Button variant="link" className="h-auto p-0 font-sans text-sm underline" onClick={onPolicyholders}>
+            Want to review progress on your full book? View your Policyholder List.
+          </Button>
+        </div>
       </Hero>
       <div className="shell pb-(--space-section)">
         <div className="mx-auto mt-(--space-section) max-w-180">

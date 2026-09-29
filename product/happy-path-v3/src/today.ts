@@ -41,7 +41,7 @@ export function todayFor(day: Day, walk: Walk): Today {
 
   if (day === "wed") {
     return {
-      lead: "All scheduled renewal emails went out Tuesday at 9AM, and the Callahans are being shopped.",
+      lead: "No tasks need immediate action today. All scheduled renewal emails went out Tuesday and the Callahans are being shopped.",
       action: { label: "See where they stand", to: "everyone" },
     };
   }

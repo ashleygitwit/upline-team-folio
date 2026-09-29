@@ -136,6 +136,7 @@ export function Upline({
           onHousehold={setHousehold}
           onProfile={() => open("profile")}
           onResults={() => open("results")}
+          onPolicyholders={() => open("policyholders")}
           {...props}
         />
       )}
