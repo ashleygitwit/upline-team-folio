@@ -2,9 +2,14 @@ import { useState } from "react";
 import { ArrowRight, Check, ChevronRight, EllipsisVertical } from "lucide-react";
 import { cn } from "cn";
 import { CarrierMark } from "@/components/CarrierMark";
-import { PersonLink } from "@/components/PersonLink";
 import { RenewalMeta } from "@/components/RenewalMeta";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { callahan, earlier, mondayNeeds, money, thisWeek, upcoming, type Day, type Household } from "@/data";
@@ -60,22 +65,21 @@ function Empty({ children }: { children: React.ReactNode }) {
 }
 
 /**
- * A household's row. The whole row opens what's behind it, and the name on
- * top of it goes to the client's profile instead. Earlier weeks' households
- * have no page behind them in this prototype, so their rows don't open.
+ * A household's row. The whole row opens what's behind it. The name is plain
+ * text, as in the Monday email; a client's profile is in the row's menu.
+ * Earlier weeks' households have no page behind them in this prototype, so
+ * their rows don't open.
  */
 function Row({
   h,
   selected,
   onOpen,
-  onProfile,
   aside,
   children,
 }: {
   h: Pick<Household, "id" | "name">;
   selected?: boolean;
   onOpen?: () => void;
-  onProfile: () => void;
   aside?: React.ReactNode;
   children: React.ReactNode;
 }) {
@@ -83,7 +87,7 @@ function Row({
     <li className={cn("relative flex px-6 py-4", onOpen && "hover:bg-background", selected && "bg-muted hover:bg-muted")}>
       <div className="min-w-0 flex-1 text-sm">
         <div className="flex items-baseline justify-between gap-3">
-          <PersonLink h={h} onProfile={onProfile} className="relative z-10 truncate font-display text-lg" />
+          <p className="truncate font-display text-lg">{h.name}</p>
           {aside}
         </div>
         {onOpen ? (
@@ -116,16 +120,14 @@ const fromEarlier = (day: Day, section: "shopped" | "closing") => (day === "mon"
  */
 function EarlierRow({
   e,
-  onProfile,
   closing,
 }: {
   e: (typeof earlier)[number];
-  onProfile: () => void;
   closing?: Pick<WalkProps, "walk" | "update">;
 }) {
   const [lines, carrier] = e.lines.split(" · ");
   return (
-    <Row h={e} onProfile={onProfile} aside={<RowMenu name={e.name} />}>
+    <Row h={e} aside={<RowMenu name={e.name} />}>
       <RenewalMeta lines={lines} carrier={carrier} renews={e.renews} day="mon" />
       <span className="mt-2 block">
         {e.monday!.detail}
@@ -151,22 +153,30 @@ function EarlierRow({
 }
 
 /**
- * A row's menu, at its top right. What goes in it isn't decided, so for now it
- * says so when pointed at, as the other households' names do.
+ * A row's menu, at its top right: where a client's profile now lives, since
+ * the name isn't a link, with their renewal history and a way to report an
+ * error. None of the profiles, histories or the report form are built for
+ * these households yet, so the items close the menu and go nowhere.
  */
 function RowMenu({ name }: { name: string }) {
   return (
-    <NotInPrototype tip="This menu isn't built in this prototype yet.">
-      <Button
-        variant="ghost"
-        size="icon-sm"
-        aria-disabled
-        aria-label={`More for ${name}`}
-        className="relative z-10 -my-1.5 -mr-2 shrink-0 self-start text-muted-foreground"
-      >
-        <EllipsisVertical />
-      </Button>
-    </NotInPrototype>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant="ghost"
+          size="icon-sm"
+          aria-label={`More for ${name}`}
+          className="-my-1.5 -mr-2 shrink-0 self-start text-muted-foreground"
+        >
+          <EllipsisVertical />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-52">
+        <DropdownMenuItem>View Profile</DropdownMenuItem>
+        <DropdownMenuItem>View Renewal History</DropdownMenuItem>
+        <DropdownMenuItem>Report an Error</DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
 
@@ -239,7 +249,7 @@ function CloseOut({ e, walk, update }: { e: (typeof earlier)[number] } & Pick<Wa
  * line opens that household's email in the sheet. Later in the week it's the
  * nudges and follow-ups Upline sends on its own, each with why it's going.
  */
-function Scheduled({ day, walk, update, message, onMessage, onProfile }: SectionsProps) {
+function Scheduled({ day, walk, update, message, onMessage }: SectionsProps) {
   const title = "Scheduled Renewal Emails";
 
   if (day !== "mon") {
@@ -258,7 +268,6 @@ function Scheduled({ day, walk, update, message, onMessage, onProfile }: Section
                   <ScheduledRow
                     key={u.id}
                     h={h}
-                    onProfile={onProfile}
                     aside={`${u.what} · Goes ${u.when}`}
                     detail={u.why}
                   />
@@ -302,7 +311,6 @@ function Scheduled({ day, walk, update, message, onMessage, onProfile }: Section
                 h={h}
                 selected={message === h.id}
                 onOpen={() => onMessage(h.id)}
-                onProfile={onProfile}
                 aside={
                   <>
                     {skipped ? "Skipped" : increase > 0 ? `+${money(increase)}` : "No change"}
@@ -319,23 +327,21 @@ function Scheduled({ day, walk, update, message, onMessage, onProfile }: Section
 }
 
 /**
- * One household on the Scheduled list: the carrier's mark, the name (which
- * goes to the profile) and, on the right, the change or when a nudge goes.
- * A line with `onOpen` opens that household's email, and ends in a chevron to
- * say so; the rest of the line is its button, under the name.
+ * One household on the Scheduled list: the carrier's mark, the name and, on
+ * the right, the change or when a nudge goes. A line with `onOpen` opens that
+ * household's email, and ends in a chevron to say so; the whole line is its
+ * button.
  */
 function ScheduledRow({
   h,
   selected,
   onOpen,
-  onProfile,
   aside,
   detail,
 }: {
   h: Household;
   selected?: boolean;
   onOpen?: () => void;
-  onProfile: () => void;
   aside: React.ReactNode;
   detail?: string;
 }) {
@@ -345,7 +351,7 @@ function ScheduledRow({
         <span className="flex min-w-0 items-center gap-2">
           <CarrierMark carrier={h.carrier} />
           <span className="sr-only">{h.carrier}, </span>
-          <PersonLink h={h} onProfile={onProfile} className="relative z-10 truncate" />
+          <span className="truncate">{h.name}</span>
         </span>
         <span className="flex shrink-0 items-center gap-2 text-muted-foreground tabular-nums">
           {aside}
@@ -368,7 +374,7 @@ function ScheduledRow({
  * board. In this walk's week it's the Callahans on Thursday morning, until
  * the recommendation goes to Dana; their row goes to the results.
  */
-function Shopped({ day, walk, onProfile, onResults }: SectionsProps) {
+function Shopped({ day, walk, onResults }: SectionsProps) {
   const h = callahan;
   const skipped = walk.skipped.includes(h.id);
   const ready = day === "thu" && !walk.recSent && !skipped;
@@ -389,13 +395,13 @@ function Shopped({ day, walk, onProfile, onResults }: SectionsProps) {
       {status || others.length > 0 ? (
         <ul className="divide-y">
           {status && (
-            <Row h={h} onOpen={onResults} onProfile={onProfile} aside={opens}>
+            <Row h={h} onOpen={onResults} aside={opens}>
               <RenewalMeta lines={h.lines} carrier={h.carrier} renews={h.renews} day={day} />
               <span className="mt-2 block">{status.detail}</span>
             </Row>
           )}
           {others.map((e) => (
-            <EarlierRow key={e.id} e={e} onProfile={onProfile} />
+            <EarlierRow key={e.id} e={e} />
           ))}
         </ul>
       ) : (
@@ -430,13 +436,13 @@ function Closing({ day, walk, update, onProfile }: SectionsProps) {
       {status || others.length > 0 ? (
         <ul className="divide-y">
           {status && (
-            <Row h={h} onOpen={onProfile} onProfile={onProfile} aside={opens}>
+            <Row h={h} onOpen={onProfile} aside={opens}>
               <RenewalMeta lines={h.lines} carrier={h.carrier} renews={h.renews} day={day} />
               <span className="mt-2 block">{status.detail}</span>
             </Row>
           )}
           {others.map((e) => (
-            <EarlierRow key={e.id} e={e} onProfile={onProfile} closing={{ walk, update }} />
+            <EarlierRow key={e.id} e={e} closing={{ walk, update }} />
           ))}
         </ul>
       ) : (
