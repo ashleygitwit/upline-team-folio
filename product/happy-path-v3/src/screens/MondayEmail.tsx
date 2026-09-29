@@ -3,9 +3,9 @@ import logo from "@/assets/upline-logo.svg";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { CarrierMark } from "@/components/CarrierMark";
 import { Stage } from "@/components/Stage";
 import { agency, callahan, mondayNeeds, money, retention, thisWeek, type Earlier } from "@/data";
-import { badgeVariant } from "@/status";
 import { words } from "@/today";
 import type { WalkProps } from "@/walk";
 
@@ -44,13 +44,13 @@ export function MondayEmail({ go }: WalkProps) {
 
         <Group title="Closing" count={closing.length}>
           {closing.map((e) => (
-            <Todo key={e.id} e={e} label="Approved" />
+            <Todo key={e.id} e={e} />
           ))}
         </Group>
 
         <Group title="Shopped and ready for review" count={shopped.length}>
           {shopped.map((e) => (
-            <Todo key={e.id} e={e} label="Ready for you" />
+            <Todo key={e.id} e={e} />
           ))}
         </Group>
 
@@ -68,8 +68,12 @@ export function MondayEmail({ go }: WalkProps) {
               </p>
               <ul className="divide-y border-y text-sm">
                 {thisWeek.map((h) => (
-                  <li key={h.id} className="flex justify-between gap-4 py-2">
-                    <span>{h.name}</span>
+                  <li key={h.id} className="flex items-center justify-between gap-4 py-2">
+                    <span className="flex items-center gap-2">
+                      <CarrierMark carrier={h.carrier} />
+                      <span className="sr-only">{h.carrier}, </span>
+                      {h.name}
+                    </span>
                     <span className="text-muted-foreground tabular-nums">
                       {h.now > h.was ? `+${money(h.now - h.was)}` : "No change"}
                     </span>
@@ -108,17 +112,35 @@ function Group({ title, count, children }: { title: string; count?: number; chil
   );
 }
 
-/** One thing Stacey has to do, with the label the homepage gives it. */
-function Todo({ e, label }: { e: Earlier; label: string }) {
+/** The email goes out Monday, October 12, 8:00 AM. */
+const sent = new Date(2026, 9, 12);
+
+const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+/** Inside a week, how long is left says more than the date does. `renews` is "Oct 16". */
+function renewsIn(renews: string) {
+  const [mon, day] = renews.split(" ");
+  const days = Math.round((new Date(2026, months.indexOf(mon), Number(day)).getTime() - sent.getTime()) / 86_400_000);
+  if (days >= 7) return `Renews ${renews}`;
+  return days === 1 ? "Renews tomorrow" : `Renews in ${days} days`;
+}
+
+/** One thing Stacey has to do: who, their lines and carrier, when it renews, and what's needed. */
+function Todo({ e }: { e: Earlier }) {
+  const [line, carrier] = e.lines.split(" · ");
   return (
     <Card size="sm">
       <CardContent className="gap-2">
-        <div className="flex items-baseline justify-between gap-3">
-          <p className="font-display text-lg">{e.name}</p>
-          <Badge variant={badgeVariant(label)}>{label}</Badge>
-        </div>
-        <p className="text-sm text-muted-foreground">
-          {e.lines} · Renews {e.renews}
+        <p className="font-display text-lg">{e.name}</p>
+        <p className="flex flex-wrap items-center gap-x-1.5 text-sm text-muted-foreground">
+          {line}
+          <span aria-hidden>·</span>
+          <span className="inline-flex items-center gap-1.5">
+            <CarrierMark carrier={carrier} />
+            {carrier}
+          </span>
+          <span aria-hidden>·</span>
+          {renewsIn(e.renews)}
         </p>
         <p className="text-base">{e.monday!.detail}</p>
       </CardContent>
