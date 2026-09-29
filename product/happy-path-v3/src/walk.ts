@@ -13,7 +13,7 @@ export type ScreenId =
   | "dana-inbox"
   | "questionnaire"
   | "wednesday"
-  | "results"
+  | "thursday"
   | "dana-page"
   | "friday";
 
@@ -24,7 +24,7 @@ export const screens: { id: ScreenId; label: string; where: string }[] = [
   { id: "dana-inbox", label: "Dana's inbox", where: "Dana's phone · Tuesday, 9:02 AM" },
   { id: "questionnaire", label: "Dana's questionnaire", where: "Dana's phone · Tuesday, 7:40 PM" },
   { id: "wednesday", label: "Wednesday", where: "Upline · Wednesday, October 14" },
-  { id: "results", label: "Thursday: results are back", where: "Upline · Thursday, October 15" },
+  { id: "thursday", label: "Thursday: results are back", where: "Upline · Thursday, October 15" },
   { id: "dana-page", label: "Dana's recommendation", where: "Dana's phone · Thursday, 6:12 PM" },
   { id: "friday", label: "Friday: bind it", where: "Upline · Friday, October 16" },
 ];

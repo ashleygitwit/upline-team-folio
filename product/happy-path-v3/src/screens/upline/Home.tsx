@@ -3,11 +3,11 @@ import { ArrowRight } from "lucide-react";
 import { cn } from "cn";
 import { BandGrain } from "@/components/BandGrain";
 import { Button } from "@/components/ui/button";
-import { agency, dayName, mondayNeeds, type Day } from "@/data";
+import { agency, callahan, dayName, mondayNeeds, type Day } from "@/data";
 import { matchPill, pillById, suggested, type PillId } from "@/pills";
 import { AskBox, Suggestions } from "@/screens/upline/Ask";
 import type { AnswerProps } from "@/screens/upline/Answers";
-import { Closing, Scheduled, Sections } from "@/screens/upline/Sections";
+import { Closing, Scheduled, Sections, Shopped } from "@/screens/upline/Sections";
 import { todayFor, words } from "@/today";
 import type { WalkProps } from "@/walk";
 
@@ -29,25 +29,25 @@ type HomeProps = WalkProps & {
  * written out inside it so Stacey doesn't have to think of them. Asking docks
  * a chat along the bottom. It has to be readable before coffee, so under that
  * sit only the three sections, most pressing first, each holding just what
- * needs her. On Thursday and Friday a sentence on the day, and its one button,
- * sit between the greeting and the box. Monday and Wednesday have no box: they
- * open on a band, as the Monday email does, with the greeting and the day's
- * first section, so what's first is part of the greeting.
+ * needs her. On Friday a sentence on the day, and its one button, sit between
+ * the greeting and the box. Monday, Wednesday and Thursday open on a band
+ * instead, as the Monday email does, with the greeting and the day's first
+ * thing, so what's first is part of the greeting.
  */
 export function Home(props: HomeProps) {
   if (props.day === "mon") return <Monday {...props} />;
   if (props.day === "wed") return <Wednesday {...props} />;
+  if (props.day === "thu") return <Thursday {...props} />;
   return <Weekday {...props} />;
 }
 
 /**
- * The band Monday and Wednesday open on: "Good morning", as the Monday email
- * greets Stacey, then what's under it: Monday's first section, its title
- * centered over its card, and Wednesday's line on the day with the ask box
- * under it. Monday's is the blue
- * band under the mountain, as the email's is; Wednesday's is the design hub's
- * gray band under the ridge, the quieter of the two for a day that needs
- * nothing.
+ * The band Monday, Wednesday and Thursday open on: "Good morning", as the
+ * Monday email greets Stacey, then what's under it: Monday's and Thursday's
+ * first section, its title centered over its card, and Wednesday's line on
+ * the day with the ask box under it. Monday's and Thursday's is the blue band
+ * under the mountain, as the email's is; Wednesday's is the design hub's gray
+ * band under the ridge, the quieter of the two for a day that needs nothing.
  */
 function Hero({ ground, children }: { ground: "blue" | "gray"; children: ReactNode }) {
   const blue = ground === "blue";
@@ -70,8 +70,7 @@ function Hero({ ground, children }: { ground: "blue" | "gray"; children: ReactNo
  * Monday: Closing on the band, titled with how many renewals close this week,
  * then the other two sections on the page. A brief or the ask box would only
  * stand between Stacey and them, so the way to ask comes after, as one link
- * under Closing that brings up the chat. It's white and underlined, the band's
- * link, since the kit's blue link would vanish on the blue.
+ * under Closing that brings up the chat.
  */
 function Monday({ day, onChat, ...props }: HomeProps) {
   const n = mondayNeeds("closing").length;
@@ -84,15 +83,7 @@ function Monday({ day, onChat, ...props }: HomeProps) {
           title={`You have ${words[n].toLowerCase()} ${n === 1 ? "renewal" : "renewals"} closing this week.`}
           {...props}
         />
-        <div className="mt-(--space-tight) flex justify-center">
-          <Button
-            variant="link"
-            className="h-auto p-0 font-sans text-sm text-primary-foreground underline"
-            onClick={onChat}
-          >
-            Looking for something? Ask us anything.
-          </Button>
-        </div>
+        <AskLink onChat={onChat} />
       </Hero>
       <div className="shell pb-(--space-section)">
         <div className="mx-auto max-w-180">
@@ -100,6 +91,61 @@ function Monday({ day, onChat, ...props }: HomeProps) {
         </div>
       </div>
     </>
+  );
+}
+
+/**
+ * Thursday: the Callahans' shop on the band, as Monday sets Closing there,
+ * titled with what happened, and the same link under it to ask. Their row is
+ * Elena's and Raymond's from Monday, and it goes to the results. Once the
+ * recommendation has gone to Dana, or if Stacey skipped the Callahans, the
+ * band says so in place of the card. Below the band, only what goes out on
+ * its own: there's nothing to close on Thursday, so Closing isn't drawn, and
+ * Shopped is in the band.
+ */
+function Thursday({ day, walk, onChat, ...props }: HomeProps) {
+  const skipped = walk.skipped.includes(callahan.id);
+  return (
+    <>
+      <Hero ground="blue">
+        {skipped || walk.recSent ? (
+          <p className="text-center font-display text-xl font-medium text-balance">
+            {skipped
+              ? "Nothing needs you today."
+              : "Your recommendation went to Dana and Mike. We'll let you know when they answer."}
+          </p>
+        ) : (
+          <Shopped
+            day={day}
+            walk={walk}
+            centered
+            title="Shopping has been completed for Dana and Mike Callahan."
+            {...props}
+          />
+        )}
+        <AskLink onChat={onChat} />
+      </Hero>
+      <div className="shell pb-(--space-section)">
+        <div className="mx-auto mt-(--space-section) max-w-180">
+          <Scheduled day={day} walk={walk} {...props} />
+        </div>
+      </div>
+    </>
+  );
+}
+
+/**
+ * The way to ask on a blue band, under what's first: one link that brings up
+ * the chat. It's white and underlined, the band's link, since the kit's blue
+ * link would vanish on the blue.
+ */
+function AskLink({ onChat }: { onChat: () => void }) {
+  return (
+    <div className="mt-(--space-tight) flex justify-center">
+      <Button variant="link" className="h-auto p-0 font-sans text-sm text-primary-foreground underline" onClick={onChat}>
+        Looking for something? Ask us anything.
+      </Button>
+    </div>
   );
 }
 

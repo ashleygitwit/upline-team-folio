@@ -56,7 +56,7 @@ export function App() {
           {screen.id === "dana-inbox" && <DanaInbox {...props} />}
           {screen.id === "questionnaire" && <Questionnaire {...props} />}
           {screen.id === "wednesday" && <Upline key="wednesday" day="wed" {...props} />}
-          {screen.id === "results" && <Upline key="results" day="thu" page="results" {...props} />}
+          {screen.id === "thursday" && <Upline key="thursday" day="thu" {...props} />}
           {screen.id === "dana-page" && <DanaPage {...props} />}
           {screen.id === "friday" && <Upline key="friday" day="fri" {...props} />}
         </main>

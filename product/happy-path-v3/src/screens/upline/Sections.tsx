@@ -217,9 +217,10 @@ function EarlierRow({
 /**
  * A row's menu, at its top right: where a client's profile now lives, since
  * the name isn't a link, with their renewal history and a way to report an
- * error. View Profile opens the household's drawer, v2.5's; the renewal
- * history and the report form aren't built yet, so those close the menu and
- * go nowhere.
+ * error. View Profile opens the household's drawer, v2.5's, on an earlier
+ * week's row, and the Callahans' profile page on theirs; the renewal history
+ * and the report form aren't built yet, so those close the menu and go
+ * nowhere. It sits above a row that opens as a whole, whose button covers it.
  */
 function RowMenu({ name, onProfile }: { name: string; onProfile: () => void }) {
   return (
@@ -229,7 +230,7 @@ function RowMenu({ name, onProfile }: { name: string; onProfile: () => void }) {
           variant="ghost"
           size="icon-sm"
           aria-label={`More for ${name}`}
-          className="-my-1.5 -mr-2 shrink-0 self-start text-muted-foreground"
+          className="relative z-10 -my-1.5 -mr-2 shrink-0 self-start text-muted-foreground"
         >
           <EllipsisVertical />
         </Button>
@@ -423,14 +424,29 @@ function ScheduledRow({
  * Shops whose results are back and waiting on Stacey. On Monday that's
  * Elena Vasquez and Raymond Foss from earlier weeks, as on Ashley's v2
  * board. In this walk's week it's the Callahans on Thursday morning, until
- * the recommendation goes to Dana; their row goes to the results.
+ * the recommendation goes to Dana, drawn as Elena's and Raymond's rows are:
+ * the shop's preview, the menu, and the result ending in View the full
+ * report. The whole row goes to the results, so the report link is part of
+ * the row's button rather than a button of its own. On Thursday the homepage
+ * sets this section in its band, under the greeting, with a centered title,
+ * as Monday sets Closing.
  */
-function Shopped({ day, walk, household, onHousehold, onResults }: SectionsProps) {
+export function Shopped({
+  day,
+  walk,
+  household,
+  onHousehold,
+  onProfile,
+  onResults,
+  title = "Shopped and ready for review",
+  centered,
+}: SectionsProps & { title?: string; centered?: boolean }) {
   const h = callahan;
   const skipped = walk.skipped.includes(h.id);
   const ready = day === "thu" && !walk.recSent && !skipped;
-  const status = ready ? statusFor(h, day, walk) : null;
   const others = fromEarlier(day, "shopped");
+  const pick = options.find((o) => o.id === "ao")!;
+  const erie = options.find((o) => o.current)!;
 
   const empty = {
     mon: "Nothing to review.",
@@ -442,18 +458,25 @@ function Shopped({ day, walk, household, onHousehold, onResults }: SectionsProps
   }[day];
 
   return (
-    <Section id="shopped" title="Shopped and ready for review">
-      {status || others.length > 0 ? (
+    <Section id="shopped" title={title} centered={centered}>
+      {ready || others.length > 0 ? (
         <ul className="divide-y">
-          {status && (
+          {ready && (
             <Row
               h={h}
               onOpen={onResults}
-              aside={opens}
+              aside={<RowMenu name={h.name} onProfile={onProfile} />}
               picture={<ShopPreview quotes={options} pick={optionById(walk.pick).carrier} />}
             >
               <RenewalMeta lines={h.lines} carrier={h.carrier} renews={h.renews} day={day} />
-              <span className="mt-2 block">{status.detail}</span>
+              <span className="mt-2 block">
+                {pick.carrier} came in at {money(pick.price)} for the same coverage, {money(erie.price - pick.price)}{" "}
+                less than {erie.carrier}'s renewal.{" "}
+                <span className="inline-flex items-center gap-1 font-medium text-primary underline-offset-4 hover:underline">
+                  View the full report
+                  <ArrowRight aria-hidden className="size-3.5" />
+                </span>
+              </span>
             </Row>
           )}
           {others.map((e) => (
