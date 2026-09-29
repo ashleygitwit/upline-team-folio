@@ -4,6 +4,7 @@ import { cn } from "cn";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Field, FieldContent, FieldDescription, FieldLabel, FieldTitle } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle } from "@/components/ui/sheet";
@@ -39,8 +40,11 @@ const stageTab: Record<Card["col"], { id: Tab; label: string }> = {
 
 /**
  * A household, opened from the board. It opens on the stage it's in (the
- * outreach email, the shop, the recommendation or closing) with the file one
- * tab over. Footer actions follow the stage.
+ * shop, the recommendation or closing) with the file one tab over. Footer
+ * actions follow the stage. A household waiting on its outreach email has no
+ * tabs: it opens on the file, under a banner that says when the email goes,
+ * and the banner's Review brings up what the Outreach tab held (the policy,
+ * the email, shaping the shop and the questionnaire) in a modal over it.
  *
  * v2.5's drawer (screens/queue/HouseholdSheet.tsx there), ported into v3. The
  * only additions are hooks into v3's walk: `email` shows and saves v3's own
@@ -77,6 +81,7 @@ export function HouseholdSheet({
   const outreach = email?.body ?? draft;
   const setOutreach = email?.onChange ?? setDraft;
   const [rec, setRec] = useState(file.rec?.email ?? (card.target ? recBody.join("\n\n") : recDraft(card)));
+  const [reviewing, setReviewing] = useState(false);
 
   return (
     <SheetContent
@@ -94,52 +99,76 @@ export function HouseholdSheet({
         </SheetDescription>
       </SheetHeader>
 
-      <Tabs value={tab} onValueChange={(v) => setTab(v as Tab)} className="mt-3.5 min-h-0 flex-1 gap-0">
-        <TabsList variant="line" className="w-full justify-start border-b px-4">
-          <TabsTrigger value="details" className="flex-none">
-            Details
-          </TabsTrigger>
-          <TabsTrigger value={stage.id} className="flex-none">
-            {stage.label}
-          </TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="details" className="min-h-0 overflow-y-auto px-5 pt-4.5 pb-7">
-          <Details card={card} file={file} />
-        </TabsContent>
-
-        <TabsContent value="outreach" className="min-h-0 overflow-y-auto px-5 pt-4.5 pb-7">
-          <div className="flex flex-col gap-4">
-            <PolicyNow card={card} file={file} />
-            <EmailFrame
-              toolbar={`From ${agency.agent.name}'s mailbox`}
-              to={card.target ? outreachEmail.to : `${file.namedInsured} <${card.email}>`}
-              subject={email?.subject ?? (card.target ? outreachEmail.subject : "A quick look at your renewal")}
-            >
-              <Textarea
-                aria-label="Outreach email"
-                value={outreach}
-                onChange={(e) => setOutreach(e.target.value)}
-                className="min-h-80 border-0 bg-transparent px-5.5 py-5 text-[15px] leading-relaxed"
-              />
-            </EmailFrame>
-            <ShapeTheShop card={card} file={file} life={life} />
-            <QuestionnaireFields card={card} file={file} />
+      {card.col === "outreach" ? (
+        <Dialog open={reviewing} onOpenChange={setReviewing}>
+          <ReviewBanner />
+          <div className="min-h-0 flex-1 overflow-y-auto px-5 pt-4.5 pb-7">
+            <Details card={card} file={file} />
           </div>
-        </TabsContent>
 
-        <TabsContent value="shopping" className="min-h-0 overflow-y-auto px-5 pt-4.5 pb-7">
-          <Shopping card={card} file={file} onOpenResults={onOpenResults} />
-        </TabsContent>
+          {/* The Outreach tab's page, as a modal over the drawer: the drawer's
+              header and ground, and its body scrolling under a header that
+              stays, so the close button never scrolls away. It's centered in
+              the window under the presenter's bar, since it's tall enough to
+              reach it. */}
+          <DialogContent
+            onOpenAutoFocus={focusPanel}
+            aria-describedby={undefined}
+            className="top-[calc(50%+var(--demo-bar-h)/2)] flex max-h-[calc(100svh-var(--demo-bar-h)-2rem)] flex-col gap-0 overflow-hidden bg-background p-0 outline-none sm:max-w-[640px]"
+          >
+            <DialogHeader className="gap-0 px-5 pt-4.5 pr-14">
+              <p className="eyebrow text-muted-foreground">{stage.label}</p>
+              <DialogTitle className="mt-1.5 font-display text-2xl">{card.name}</DialogTitle>
+            </DialogHeader>
+            <div className="mt-3.5 min-h-0 flex-1 overflow-y-auto border-t px-5 pt-4.5 pb-7">
+              <div className="flex flex-col gap-4">
+                <PolicyNow card={card} file={file} />
+                <EmailFrame
+                  toolbar={`From ${agency.agent.name}'s mailbox`}
+                  to={card.target ? outreachEmail.to : `${file.namedInsured} <${card.email}>`}
+                  subject={email?.subject ?? (card.target ? outreachEmail.subject : "A quick look at your renewal")}
+                >
+                  <Textarea
+                    aria-label="Outreach email"
+                    value={outreach}
+                    onChange={(e) => setOutreach(e.target.value)}
+                    className="min-h-80 border-0 bg-transparent px-5.5 py-5 text-[15px] leading-relaxed"
+                  />
+                </EmailFrame>
+                <ShapeTheShop card={card} file={file} life={life} />
+                <QuestionnaireFields card={card} file={file} />
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+      ) : (
+        <Tabs value={tab} onValueChange={(v) => setTab(v as Tab)} className="mt-3.5 min-h-0 flex-1 gap-0">
+          <TabsList variant="line" className="w-full justify-start border-b px-4">
+            <TabsTrigger value="details" className="flex-none">
+              Details
+            </TabsTrigger>
+            <TabsTrigger value={stage.id} className="flex-none">
+              {stage.label}
+            </TabsTrigger>
+          </TabsList>
 
-        <TabsContent value="rec" className="min-h-0 overflow-y-auto px-5 pt-4.5 pb-7">
-          <Recommendation card={card} file={file} body={rec} setBody={setRec} />
-        </TabsContent>
+          <TabsContent value="details" className="min-h-0 overflow-y-auto px-5 pt-4.5 pb-7">
+            <Details card={card} file={file} />
+          </TabsContent>
 
-        <TabsContent value="closing" className="min-h-0 overflow-y-auto px-5 pt-4.5 pb-7">
-          <Closing card={card} file={file} />
-        </TabsContent>
-      </Tabs>
+          <TabsContent value="shopping" className="min-h-0 overflow-y-auto px-5 pt-4.5 pb-7">
+            <Shopping card={card} file={file} onOpenResults={onOpenResults} />
+          </TabsContent>
+
+          <TabsContent value="rec" className="min-h-0 overflow-y-auto px-5 pt-4.5 pb-7">
+            <Recommendation card={card} file={file} body={rec} setBody={setRec} />
+          </TabsContent>
+
+          <TabsContent value="closing" className="min-h-0 overflow-y-auto px-5 pt-4.5 pb-7">
+            <Closing card={card} file={file} />
+          </TabsContent>
+        </Tabs>
+      )}
 
       {onSkipOutreach && skipped && (
         <SheetFooter className="mt-0 flex-row items-center justify-between gap-4 border-t px-5 pt-3.5 pb-4">
@@ -176,6 +205,32 @@ export function HouseholdSheet({
         </SheetFooter>
       )}
     </SheetContent>
+  );
+}
+
+/**
+ * When the outreach email goes, and a way to it, where the tabs would be:
+ * uplineinsurance.com's founding-member banner (Navbar.tsx there), a strip of
+ * blue with white type across the drawer, the message on the left and its
+ * link on the right, underlined on hover. The whole strip is the one target,
+ * as there, and its focus ring is white and inside it, since a ring outside
+ * it would be cut off at the drawer's edges. It's the review modal's trigger,
+ * so closing the modal puts the focus back on it.
+ */
+function ReviewBanner() {
+  return (
+    <DialogTrigger asChild>
+      <button
+        type="button"
+        className="group mt-3.5 flex w-full items-center justify-between gap-4 bg-primary px-5 py-2 text-left text-sm text-primary-foreground focus-visible:-outline-offset-4 focus-visible:outline-primary-foreground"
+      >
+        <span>Renewal email scheduled for Tues 9AM.</span>
+        <span className="flex shrink-0 items-center gap-1 font-medium underline-offset-4 group-hover:underline">
+          Review
+          <ArrowRight aria-hidden className="size-3.5" />
+        </span>
+      </button>
+    </DialogTrigger>
   );
 }
 
