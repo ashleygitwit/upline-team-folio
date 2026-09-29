@@ -73,7 +73,7 @@ export function Upline({
   const newChatId = () => Math.max(0, ...walk.chats.map((c) => c.id)) + 1;
 
   // A question goes into today's chat, or starts it, and brings the panel up.
-  // A chat opened with nothing asked yet takes its first question as its title.
+  // A chat with nothing asked yet takes its first question as its title.
   const ask = (question: string, answer: PillId | null) => {
     if (chat) {
       update((w) => ({
@@ -90,16 +90,6 @@ export function Upline({
     } else {
       const id = newChatId();
       update((w) => ({ chats: [...w.chats, { id, day, title: question, asked: [{ key: 1, question, answer }] }] }));
-    }
-    setChatUp(true);
-  };
-
-  // Brings up today's chat without a question: the one there is, or a new one
-  // with nothing asked yet, which offers the suggested questions and a box.
-  const openChat = () => {
-    if (!chat) {
-      const id = newChatId();
-      update((w) => ({ chats: [...w.chats, { id, day, title: "Ask us anything", asked: [] }] }));
     }
     setChatUp(true);
   };
@@ -134,8 +124,6 @@ export function Upline({
           day={day}
           household={household}
           onAsk={ask}
-          onChat={openChat}
-          onAction={act}
           onHousehold={setHousehold}
           onResults={() => setResults(true)}
           onPolicyholders={() => open("policyholders")}

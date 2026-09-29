@@ -18,13 +18,12 @@ export type Today = {
    * marks the Callahans bound.
    */
   action?: { label: string; to: "scheduled" | "everyone" | "results" | "done"; primary?: boolean };
-  /** Friday, once it's bound: the end of the walk. */
-  celebrate?: boolean;
 };
 
 /**
  * Today's one thing, by day and by what the presenter has done so far. The
- * homepage's brief says it, and so does the answer to "What needs me today?".
+ * answer to "What needs me today?" says it, and Wednesday's homepage line is
+ * its lead.
  */
 export function todayFor(day: Day, walk: Walk): Today {
   const n = going(walk);
@@ -66,7 +65,6 @@ export function todayFor(day: Day, walk: Walk): Today {
       sub: pick.current
         ? `Erie renews on ${callahan.renewsLong}. One more household that stayed with you.`
         : `${pick.carrier} takes over on ${callahan.renewsLong}, with ${money(erie.price - pick.price)} back for Dana and Mike. One more household that stayed with you.`,
-      celebrate: true,
     };
   }
 

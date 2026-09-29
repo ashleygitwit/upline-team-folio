@@ -37,7 +37,7 @@ export function AskBox({
       <form
         onSubmit={submit}
         className={cn(
-          "border border-input bg-card transition-[color,box-shadow] has-[input:focus-visible]:border-ring has-[input:focus-visible]:ring-3 has-[input:focus-visible]:ring-ring",
+          "border border-input bg-card text-card-foreground transition-[color,box-shadow] has-[input:focus-visible]:border-ring has-[input:focus-visible]:ring-3 has-[input:focus-visible]:ring-ring",
           className,
         )}
       >

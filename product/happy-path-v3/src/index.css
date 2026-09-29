@@ -225,23 +225,15 @@
     color: #ffffff;
     --ring: #ffffff;
   }
-  /* A card set on the band (Monday's Closing) is a light surface again, so it
-     takes back the page's focus ring; the band's white one vanishes on it. */
+  /* A card set on the band (the homepage's ask box) is a light surface again,
+     so it takes back the page's focus ring; the band's white one vanishes on it. */
   .band-surface .bg-card {
     --ring: var(--blue-300);
   }
 
-  /* The gray band, the design hub's Websites page's (GRAY_BAND in its
-     frame.ts): gray 100 under the ridge. Its words keep the page's slate,
-     11.6:1 on gray 100, and its focus ring is the page's own. */
-  .band-gray {
-    background: var(--gray-100);
-  }
-
   /* A band's texture, as the design hub draws it (globals.css there,
      .band-grain): a grain tile that shows only through the art's mask, over
-     the band's own ground. BandGrain sets the URLs, and the anchor for a
-     texture that stands on the band's foot. The tile is 2x, so it repeats
+     the band's own ground. BandGrain sets the URLs. The tile is 2x, so it repeats
      every 128px; the mask covers the band as object-fit: cover would. The
      band must be `relative isolate`. */
   .band-grain {
@@ -253,7 +245,7 @@
     position: absolute;
     inset: 0;
     background: var(--band-grain) 0 0 / 128px 128px repeat;
-    mask: var(--band-mask) var(--band-mask-anchor, center) / cover no-repeat;
+    mask: var(--band-mask) center / cover no-repeat;
   }
 
   /* Stockton Hill's own brand, for everything the policyholder sees: the
@@ -267,23 +259,6 @@
     --primary: var(--agency);
     --ring: var(--agency-accent);
   }
-}
-
-/* Closed-won: the check pops in and draws itself, 400ms, once. Its job is
-   to mark the end of the walk; the reduced-motion rule below shows it still. */
-@keyframes celebrate-pop {
-  0% { transform: scale(0.6); opacity: 0; }
-  60% { transform: scale(1.08); opacity: 1; }
-  100% { transform: scale(1); }
-}
-@keyframes celebrate-draw {
-  from { stroke-dashoffset: 24; }
-  to { stroke-dashoffset: 0; }
-}
-.celebrate-pop { animation: celebrate-pop 320ms cubic-bezier(0.2, 0.8, 0.2, 1) both; }
-.celebrate-draw {
-  stroke-dasharray: 24;
-  animation: celebrate-draw 260ms ease-out 180ms both;
 }
 
 /* A side drawer opens under the navigation, not over it: the presenter's bar
