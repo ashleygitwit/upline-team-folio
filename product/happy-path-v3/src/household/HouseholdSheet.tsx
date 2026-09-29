@@ -1,11 +1,9 @@
 import { useState } from "react";
-import { ArrowRight, LoaderCircle, Send } from "lucide-react";
+import { ArrowRight, Check, LoaderCircle, Send } from "lucide-react";
 import { cn } from "cn";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Field, FieldContent, FieldDescription, FieldLabel, FieldTitle } from "@/components/ui/field";
 import { SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/household/tabs";
@@ -333,7 +331,7 @@ function PolicyNow({ card, file }: { card: Card; file: HouseholdFile }) {
       : `${carrier}'s renewal is up ${pct}%. No claims, no changes on file.`);
 
   return (
-    <div className="border bg-card px-4.5 pt-4 pb-3.5">
+    <div>
       <p className="eyebrow mb-2.5 text-primary">Current policy · {carrier}</p>
       {file.policies.map((p) => (
         <div key={p.line} className="flex items-baseline justify-between gap-3 border-t py-2 text-sm">
@@ -400,39 +398,47 @@ function ShapeTheShop({
     { id: "life", label: "Life", hint: "Ask if they want a life quote while we shop.", locked: false, why: "", on: file.people.length > 1 },
   ];
   const [on, setOn] = useState(() => new Set(rows.filter((r) => r.on && !r.locked).map((r) => r.id)));
+  const toggle = (id: string) =>
+    id === "life" && life
+      ? life.onChange(!life.on)
+      : setOn((s) => {
+          const n = new Set(s);
+          if (n.has(id)) n.delete(id);
+          else n.add(id);
+          return n;
+        });
 
+  // One button each, on or off, with its line said on hover. What doesn't
+  // apply is grayed and does nothing, but stays hoverable (aria-disabled, not
+  // disabled) so it can say why. On is the blue outline with a check, not the
+  // filled blue, which is Send now's.
   return (
-    <div className="bg-muted px-4 pt-3.5 pb-3">
+    <div>
       <SectionHead>Shape the shop</SectionHead>
-      <p className="mt-1.5 mb-2.5 text-sm text-muted-foreground">
-        Check what you want included. Recommended items are on. Grayed items do not apply.
+      <p className="mt-1.5 mb-3 text-sm text-muted-foreground">
+        Pick what you want included. Recommended items are on. Grayed items do not apply.
       </p>
-      <div className="grid gap-2">
-        {rows.map((r) => (
-          <FieldLabel key={r.id} htmlFor={`shape-${card.id}-${r.id}`} className="bg-card">
-            <Field orientation="horizontal" data-disabled={r.locked}>
-              <Checkbox
-                id={`shape-${card.id}-${r.id}`}
-                checked={!r.locked && (r.id === "life" && life ? life.on : on.has(r.id))}
-                disabled={r.locked}
-                onCheckedChange={() =>
-                  r.id === "life" && life
-                    ? life.onChange(!life.on)
-                    : setOn((s) => {
-                        const n = new Set(s);
-                        if (n.has(r.id)) n.delete(r.id);
-                        else n.add(r.id);
-                        return n;
-                      })
-                }
-              />
-              <FieldContent>
-                <FieldTitle>{r.label}</FieldTitle>
-                <FieldDescription>{r.locked ? r.why : r.hint}</FieldDescription>
-              </FieldContent>
-            </Field>
-          </FieldLabel>
-        ))}
+      <div className="flex flex-wrap gap-2">
+        {rows.map((r) => {
+          const pressed = !r.locked && (r.id === "life" && life ? life.on : on.has(r.id));
+          return (
+            <Tooltip key={r.id}>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="outline"
+                  aria-pressed={r.locked ? undefined : pressed}
+                  aria-disabled={r.locked || undefined}
+                  onClick={r.locked ? undefined : () => toggle(r.id)}
+                  className="aria-pressed:border-primary aria-pressed:text-primary aria-pressed:hover:text-primary aria-disabled:cursor-not-allowed aria-disabled:opacity-50 aria-disabled:hover:bg-background"
+                >
+                  {pressed && <Check data-icon="inline-start" />}
+                  {r.label}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>{r.locked ? r.why : r.hint}</TooltipContent>
+            </Tooltip>
+          );
+        })}
       </div>
     </div>
   );
