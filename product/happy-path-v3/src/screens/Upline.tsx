@@ -4,6 +4,7 @@ import { AppBar } from "@/components/AppBar";
 import { HouseholdDrawer } from "@/household/HouseholdDrawer";
 import { ChatDock } from "@/screens/upline/Chat";
 import { Home } from "@/screens/upline/Home";
+import { Policyholders } from "@/screens/upline/Policyholders";
 import { Profile } from "@/screens/upline/Profile";
 import { Results } from "@/screens/upline/Results";
 import { scheduledId } from "@/screens/upline/Sections";
@@ -12,12 +13,13 @@ import { pillById, type PillId } from "@/pills";
 import type { Today } from "@/today";
 import type { WalkProps } from "@/walk";
 
-export type Page = "home" | "profile" | "results";
+export type Page = "home" | "profile" | "results" | "policyholders";
 
 /**
- * Upline as Stacey sees it. Three pages: the homepage (a greeting, today's
+ * Upline as Stacey sees it. Four pages: the homepage (a greeting, today's
  * one thing, a box to ask anything, and the three sections, most pressing
- * first), a client's profile, and the results of a shop. A household's
+ * first), a client's profile, the results of a shop, and the list of
+ * everyone renewing, from the menu on Stacey's name. A household's
  * email opens in a sheet over whichever page she's on, and once she asks
  * anything the chat docks along the bottom of every page. The walk can open
  * on any page, with an email open.
@@ -121,7 +123,7 @@ export function Upline({
   return (
     <div className={cn("min-h-[calc(100svh-var(--demo-bar-h))] bg-background", chat && "pb-(--dock-h)")}>
       <div ref={appBar}>
-        <AppBar onHome={() => open("home")} />
+        <AppBar onHome={() => open("home")} onPolicyholders={() => open("policyholders")} />
       </div>
 
       {page === "home" && (
@@ -148,6 +150,15 @@ export function Upline({
       )}
       {page === "results" && (
         <Results day={day} onProfile={() => open("profile")} onSent={() => open("home")} {...props} />
+      )}
+      {page === "policyholders" && (
+        <Policyholders
+          day={day}
+          household={household}
+          onHome={() => open("home")}
+          onHousehold={setHousehold}
+          {...props}
+        />
       )}
 
       <HouseholdDrawer
