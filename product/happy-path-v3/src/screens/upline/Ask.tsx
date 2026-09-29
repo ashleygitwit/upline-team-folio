@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { pillById, type PillId } from "@/pills";
 
 /**
- * The box Stacey types into, on the homepage and under a chat. On the
+ * The box Jenna types into, on the homepage and under a chat. On the
  * homepage the suggested questions sit inside it, on one row under the line
  * she types on, and the whole box takes the focus ring the field would.
  */
@@ -76,7 +76,7 @@ export function AskBox({
   );
 }
 
-/** The suggested questions, written out so Stacey doesn't have to think of them. */
+/** The suggested questions, written out so Jenna doesn't have to think of them. */
 export function Suggestions({
   ids,
   onAsk,

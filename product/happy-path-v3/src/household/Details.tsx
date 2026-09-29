@@ -1,8 +1,9 @@
 import type { ReactNode } from "react";
-import { Car, House, Umbrella } from "lucide-react";
+import { Car, House, PencilLine, Umbrella } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
 import { money, zillow, type Card as Household, type HouseholdFile } from "@/household/data";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { SectionHead } from "@/household/parts";
 
 const initials = (name: string) =>
@@ -12,8 +13,14 @@ const initials = (name: string) =>
     .join("")
     .slice(0, 2);
 
-/** Everything on file for a household: who to reach, who's in it, what they drive and what they have with us. */
-export function Details({ card, file }: { card: Household; file: HouseholdFile }) {
+/**
+ * Everything on file for a household: who to reach, who's in it, what they
+ * drive and what they have with us. `changed` names the rows the
+ * questionnaire updated (tasks.ts); each carries a marker saying so, since
+ * the agency's system of record is EZLynx and Upline can't write to it yet.
+ */
+export function Details({ card, file, changed = [] }: { card: Household; file: HouseholdFile; changed?: string[] }) {
+  const mark = (field: string) => changed.includes(field) && <Changed />;
   return (
     <div className="flex flex-col gap-4">
       <Block title="Contact">
@@ -21,11 +28,18 @@ export function Details({ card, file }: { card: Household; file: HouseholdFile }
           <dt className="text-muted-foreground">Named insured</dt>
           <dd className="text-right font-medium">{file.namedInsured}</dd>
           <dt className="text-muted-foreground">Phone</dt>
-          <dd className="text-right font-medium">{file.phone}</dd>
+          <dd className="text-right font-medium">
+            {mark("Phone")}
+            {file.phone}
+          </dd>
           <dt className="text-muted-foreground">Email</dt>
-          <dd className="text-right font-medium">{card.email}</dd>
+          <dd className="text-right font-medium">
+            {mark("Email")}
+            {card.email}
+          </dd>
           <dt className="text-muted-foreground">Address</dt>
           <dd className="text-right font-medium">
+            {mark("Address")}
             {file.address}
             <a
               href={zillow(file.address)}
@@ -46,7 +60,10 @@ export function Details({ card, file }: { card: Household; file: HouseholdFile }
               <AvatarFallback className="bg-muted text-foreground">{initials(p.name)}</AvatarFallback>
             </Avatar>
             <div>
-              <p className="font-medium">{p.name}</p>
+              <p className="font-medium">
+                {mark(p.name)}
+                {p.name}
+              </p>
               <p className="text-xs text-muted-foreground">
                 {p.role}
                 {p.note ? ` · ${p.note}` : ""}
@@ -103,6 +120,21 @@ export function Details({ card, file }: { card: Household; file: HouseholdFile }
         </Block>
       )}
     </div>
+  );
+}
+
+/** The marker on a detail the questionnaire changed: a pencil, and on hover or focus, what to do about it. */
+function Changed() {
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <span tabIndex={0} className="mr-1.5 inline-flex align-text-bottom text-primary">
+          <PencilLine className="size-3.5" aria-hidden />
+          <span className="sr-only">Updated in the questionnaire.</span>
+        </span>
+      </TooltipTrigger>
+      <TooltipContent>Updated in the questionnaire. Update this in EZLynx.</TooltipContent>
+    </Tooltip>
   );
 }
 

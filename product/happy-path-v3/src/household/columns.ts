@@ -10,7 +10,7 @@ export const columns: { id: Column; title: string }[] = [
 
 export const columnTitle = (col: Column) => columns.find((c) => c.id === col)!.title;
 
-/** "Dana & Mike Callahan" reads as "Dana and Mike Callahan" in a sentence. */
+/** "Leah & Tom Pruitt" reads as "Leah and Tom Pruitt" in a sentence. */
 export const spoken = (name: string) => name.replace(/\s*&\s*/g, " and ");
 
 export const priceLine = (card: Card) =>

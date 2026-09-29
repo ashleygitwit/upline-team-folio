@@ -1,7 +1,7 @@
-import { useState } from "react";
-import { ArrowRight, Check, ChevronRight, EllipsisVertical } from "lucide-react";
+import { AlarmClock, ArrowRight, Check, ChevronRight, EllipsisVertical } from "lucide-react";
 import { cn } from "cn";
 import { CarrierMark } from "@/components/CarrierMark";
+import { Chips } from "@/components/Chips";
 import { RenewalMeta } from "@/components/RenewalMeta";
 import { ShopPreview } from "@/components/ShopPreview";
 import { Button } from "@/components/ui/button";
@@ -9,28 +9,30 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import {
-  callahan,
-  earlier,
-  mondayNeeds,
+  pruitt,
   money,
   optionById,
   options,
   thisWeek,
   upcoming,
   type Day,
+  type Earlier,
   type Household,
 } from "@/data";
 import { cards, fileFor } from "@/household/data";
 import { statusFor } from "@/status";
+import { actionNeeded, chipsFor, daysOut, snoozeLabel, snoozedTasks, snoozes, type Task } from "@/tasks";
 import { going, words } from "@/today";
-import type { Walk, WalkProps } from "@/walk";
+import type { SnoozeUntil, Walk, WalkProps } from "@/walk";
 
-/** Where "Look them over" takes Stacey. */
+/** Where "Look them over" takes Jenna. */
 export const scheduledId = "scheduled-renewals";
 
 type SectionsProps = WalkProps & {
@@ -38,44 +40,40 @@ type SectionsProps = WalkProps & {
   /** The household open in the drawer. */
   household: string | null;
   onHousehold: (id: string) => void;
-  /** Opens the Callahans' shop results. */
+  /** Opens a household's outreach review on its own. */
+  onOutreach: (id: string) => void;
+  /** Opens the Pruitts' shop results. */
   onResults: () => void;
 };
 
 /**
- * The homepage's three sections, under its band every day, in the Monday
- * email's order, most pressing first: what needs closing, what's been shopped
- * and needs a look, and what's going out, which goes whether Stacey looks or
- * not. Each holds only what needs her, drawn as the Monday email draws it: no
- * counts and no status chips, the carrier's mark beside each household, and a
- * renewal inside a week counted down. A section with nothing in it that day
- * isn't drawn, so the page is only ever what needs her; the band's line says
- * what's going on. They sit as far apart as the band sits above them.
+ * The homepage's two sections, under its band every day, in the Monday
+ * email's order: what needs Jenna this week (approvals to bind and shops to
+ * look over, soonest renewal first), and what's going out, which goes whether
+ * she looks or not. Each holds only what needs her, drawn as the Monday email
+ * draws it: no counts, the carrier's mark beside each household, and a renewal
+ * inside a week counted down. A section with nothing in it that day isn't
+ * drawn, so the page is only ever what needs her; the band's line says what's
+ * going on. They sit as far apart as the band sits above them. They were
+ * three sections, Closing, Shopped and Scheduled, until the 2026-09-29
+ * review found the split more than it was worth.
  */
 export function Sections(props: SectionsProps) {
   const { day, walk } = props;
-  const closing = callahanClosing(day, walk) || fromEarlier(day, "closing").length > 0;
-  const shopped = callahanShopped(day, walk) || fromEarlier(day, "shopped").length > 0;
+  const needed = actionNeeded(day, walk).length > 0 || snoozedTasks(day, walk).length > 0;
   const scheduled = day === "mon" || scheduledLater(day, walk).length > 0;
   return (
     <div className="mt-(--space-section) flex flex-col gap-(--space-section) text-left">
-      {closing && <Closing {...props} />}
-      {shopped && <Shopped {...props} />}
+      {needed && <ActionNeeded {...props} />}
       {scheduled && <Scheduled {...props} />}
     </div>
   );
 }
 
-/** Friday's close-out, until Stacey undoes it; nothing if she skipped them Monday. */
-const callahanClosing = (day: Day, walk: Walk) => day === "fri" && !walk.skipped.includes(callahan.id);
-
-/** Thursday's shop, until the recommendation goes. */
-const callahanShopped = (day: Day, walk: Walk) =>
-  day === "thu" && !walk.recSent && !walk.skipped.includes(callahan.id);
 
 /**
  * After Monday, the nudges and follow-ups going out on their own, less any
- * Stacey sent early or skipped from the household's drawer.
+ * Jenna sent early or skipped from the household's drawer.
  */
 const scheduledLater = (day: Exclude<Day, "mon">, walk: Walk) =>
   upcoming[day].filter((u) => !walk.skipped.includes(u.id) && !walk.nudges[u.nudge]);
@@ -153,24 +151,28 @@ function shopFor(id: string) {
   return { quotes: rec.options.map((o) => ({ carrier: o.name, price: o.price })), pick: rec.pick };
 }
 
-/** Earlier weeks' households that need Stacey, which is only on Monday. */
-const fromEarlier = (day: Day, section: "shopped" | "closing") => (day === "mon" ? mondayNeeds(section) : []);
 
 /**
  * An earlier week's household: its lines, carrier and renewal, then what's
- * needed, with a menu at the top right. Only on Monday. Shopped's rows open
- * on a preview of what the shop came back with and end their note with a link
- * to the full report; Closing's rows end in a memo and Mark as Closed.
+ * needed, with a menu at the top right. Only on Monday. A shopped row opens
+ * on a preview of what the shop came back with and ends its note with a link
+ * to the full report; a closing row ends in View profile, since the work of
+ * closing (binding in the portal, the call, the paperwork) happens outside
+ * Upline, and the drawer is where she closes it out.
  */
 function EarlierRow({
   e,
   selected,
   onProfile,
+  onSnooze,
+  walk,
   closing,
 }: {
-  e: (typeof earlier)[number];
+  e: Earlier;
   selected: boolean;
   onProfile: () => void;
+  onSnooze: (until: SnoozeUntil) => void;
+  walk: Walk;
   closing?: Pick<WalkProps, "walk" | "update">;
 }) {
   const [lines, carrier] = e.lines.split(" · ");
@@ -179,16 +181,17 @@ function EarlierRow({
     <Row
       h={e}
       selected={selected}
-      aside={<RowMenu name={e.name} onProfile={onProfile} />}
+      aside={<RowMenu name={e.name} onProfile={onProfile} snooze={{ daysOut: daysOut(e.id, "mon"), onSnooze }} />}
       picture={shopped && <ShopPreview {...shopFor(e.id)} />}
     >
       <RenewalMeta lines={lines} carrier={carrier} renews={e.renews} day="mon" />
+      <Chips chips={chipsFor(e.id, "mon", walk)} className="mt-2" />
       <span className="mt-2 block">
         {e.monday!.detail}
         {shopped && (
           <>
             {" "}
-            <NotInPrototype tip="Only the Callahans have results in this prototype.">
+            <NotInPrototype tip="Only the Pruitts have results in this prototype.">
               <button
                 type="button"
                 aria-disabled
@@ -203,9 +206,8 @@ function EarlierRow({
       </span>
       {closing && (
         <CloseOut
-          name={e.name}
           saved={closing.walk.closed[e.id]}
-          onClose={(memo) => closing.update((w) => ({ closed: { ...w.closed, [e.id]: memo } }))}
+          onProfile={onProfile}
           onUndo={() => closing.update((w) => ({ closed: without(w.closed, e.id) }))}
         />
       )}
@@ -215,12 +217,23 @@ function EarlierRow({
 
 /**
  * A row's menu, at its top right: where a client's profile now lives, since
- * the name isn't a link, with their renewal history and a way to report an
- * error. View Profile opens the household's drawer, v2.5's; the renewal history
- * and the report form aren't built yet, so those close the menu and go
- * nowhere. It sits above a row that opens as a whole, whose button covers it.
+ * the name isn't a link, with their renewal history, a way to report an
+ * error and, on an Action Needed row, Snooze, which puts the task off until
+ * tomorrow, next week or five days before the renewal (that last one isn't
+ * offered once the renewal is inside five days). View Profile opens the
+ * household's drawer, v2.5's; the renewal history and the report form aren't
+ * built yet, so those close the menu and go nowhere. It sits above a row that
+ * opens as a whole, whose button covers it.
  */
-function RowMenu({ name, onProfile }: { name: string; onProfile: () => void }) {
+function RowMenu({
+  name,
+  onProfile,
+  snooze,
+}: {
+  name: string;
+  onProfile: () => void;
+  snooze?: { daysOut: number; onSnooze: (until: SnoozeUntil) => void };
+}) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -235,6 +248,22 @@ function RowMenu({ name, onProfile }: { name: string; onProfile: () => void }) {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-52">
         <DropdownMenuItem onSelect={onProfile}>View Profile</DropdownMenuItem>
+        {snooze && (
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger>Snooze</DropdownMenuSubTrigger>
+            <DropdownMenuSubContent className="w-60">
+              {snoozes.map((s) => (
+                <DropdownMenuItem
+                  key={s.until}
+                  disabled={s.until === "beforeRenewal" && snooze.daysOut <= 5}
+                  onSelect={() => snooze.onSnooze(s.until)}
+                >
+                  {s.label}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuSubContent>
+          </DropdownMenuSub>
+        )}
         <DropdownMenuItem>View Renewal History</DropdownMenuItem>
         <DropdownMenuItem>Report an Error</DropdownMenuItem>
       </DropdownMenuContent>
@@ -252,79 +281,50 @@ function NotInPrototype({ tip, children }: { tip: string; children: React.ReactE
   );
 }
 
-const without = (closed: Record<string, string>, id: string) => {
-  const { [id]: _, ...rest } = closed;
+const without = <T,>(record: Record<string, T>, id: string) => {
+  const { [id]: _, ...rest } = record;
   return rest;
 };
 
 /**
- * Closing an approval out: an optional memo and Mark as Closed, side by side
- * and flush, the way a field and its button sit. Once it's closed the row says
- * so, with the memo, and Undo puts the field back. `saved` is the memo once
- * closed, and undefined until then.
+ * The foot of a closing row. Until it's closed, View profile opens the
+ * drawer, whose banner leads to Close out: the row doesn't ask for a memo
+ * because closing is a morning's work in the carrier's portal and on the
+ * phone, not a field on the homepage (the 2026-09-29 review). Once closed out
+ * the row says so, with the note she wrote, and Undo reopens it. `saved` is
+ * that note once closed, and undefined until then.
  */
-function CloseOut({
-  name,
-  saved,
-  onClose,
-  onUndo,
-}: {
-  name: string;
-  saved: string | undefined;
-  onClose: (memo: string) => void;
-  onUndo: () => void;
-}) {
-  const [memo, setMemo] = useState("");
-
+function CloseOut({ saved, onProfile, onUndo }: { saved: string | undefined; onProfile: () => void; onUndo: () => void }) {
   if (saved !== undefined) {
     return (
       <p className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1">
         <Check aria-hidden className="size-4 text-primary" />
         <span className="font-medium">Closed</span>
         {saved && <span className="text-muted-foreground">· {saved}</span>}
-        <Button
-          variant="link"
-          className="h-auto p-0 font-sans text-sm"
-          onClick={() => {
-            setMemo(saved);
-            onUndo();
-          }}
-        >
+        <Button variant="link" className="h-auto p-0 font-sans text-sm" onClick={onUndo}>
           Undo
         </Button>
       </p>
     );
   }
-
   return (
-    <form
-      className="mt-3 flex"
-      onSubmit={(ev) => {
-        ev.preventDefault();
-        onClose(memo.trim());
-      }}
-    >
-      <Input
-        aria-label={`Memo for ${name}`}
-        placeholder="Add a memo"
-        value={memo}
-        onChange={(ev) => setMemo(ev.target.value)}
-        className="min-w-0 flex-1 border-r-0 bg-background"
-      />
-      <Button type="submit">Mark as Closed</Button>
-    </form>
+    <Button variant="secondary" className="relative z-10 mt-3" onClick={onProfile}>
+      View profile
+    </Button>
   );
 }
 
 /**
  * What's going out, drawn as the Monday email draws it: a sentence, then one
  * line per household with its carrier's mark, its name and the change. On
- * Monday that's the six, and a line opens that household's drawer on its
- * outreach email. Later in the week it's the nudges and follow-ups Upline
- * sends on its own, each with why it's going.
+ * Monday that's the six, and a line opens that household's outreach review
+ * straight away, not its drawer: reviewing the email is what the line is for
+ * (the 2026-09-29 review), and the drawer is a menu away. Later in the week
+ * it's the nudges and follow-ups Upline sends on its own, each with why it's
+ * going.
  */
-function Scheduled({ day, walk, household, onHousehold }: SectionsProps) {
-  const title = "Scheduled Renewal Emails";
+function Scheduled({ day, walk, onOutreach }: SectionsProps) {
+  const title = "Scheduled Emails";
 
   if (day !== "mon") {
     return (
@@ -359,8 +359,7 @@ function Scheduled({ day, walk, household, onHousehold }: SectionsProps) {
               <ScheduledRow
                 key={h.id}
                 h={h}
-                selected={household === h.id}
-                onOpen={() => onHousehold(h.id)}
+                onOpen={() => onOutreach(h.id)}
                 aside={
                   <>
                     {skipped ? "Skipped" : increase > 0 ? `+${money(increase)}` : "No change"}
@@ -419,93 +418,100 @@ function ScheduledRow({
 }
 
 /**
- * Shops whose results are back and waiting on Stacey. On Monday that's
- * Elena Vasquez and Raymond Foss from earlier weeks, as on Ashley's v2
- * board. In this walk's week it's the Callahans on Thursday morning, until
- * the recommendation goes to Dana, drawn as Elena's and Raymond's rows are:
- * the shop's preview, the menu, and the result ending in View the full
- * report. The whole row opens the results in a modal, so the report link is
- * part of the row's button rather than a button of its own, and the menu's
- * View Profile opens their drawer, as Elena's does hers.
+ * What needs Jenna this week, soonest renewal first. On Monday that's the
+ * earlier weeks' four, as on Ashley's v2 board: Sofia Marin and Walter Kemp
+ * shopped, Diane Mercer and Rhea Iyer approved and waiting to be bound. In
+ * this walk's week it's the Pruitts: their shop on Thursday morning, until the
+ * recommendation goes to Leah, and their approval on Friday. A shopped row is
+ * the shop's preview, the menu, and the result ending in View the full report;
+ * the whole row opens the results in a modal, so the report link is part of
+ * the row's button rather than a button of its own. A closing row is the menu,
+ * what they approved, and View profile; once closed out from the drawer it
+ * says so, and Undo reopens it. Every menu's View Profile opens the drawer,
+ * and its Snooze takes the row off the list and puts it in a quiet line at
+ * the foot, with Undo, so what's put off stays in sight.
  */
-function Shopped({ day, walk, household, onHousehold, onResults }: SectionsProps) {
-  const h = callahan;
-  const ready = callahanShopped(day, walk);
-  const others = fromEarlier(day, "shopped");
+function ActionNeeded({ day, walk, update, household, onHousehold, onResults }: SectionsProps) {
+  const h = pruitt;
   const pick = options.find((o) => o.id === "ao")!;
   const erie = options.find((o) => o.current)!;
-
-  return (
-    <Section id="shopped" title="Shopped and ready for review">
-      <ul className="divide-y">
-        {ready && (
-          <Row
-            h={h}
-            onOpen={onResults}
-            aside={<RowMenu name={h.name} onProfile={() => onHousehold(h.id)} />}
-            picture={<ShopPreview quotes={options} pick={optionById(walk.pick).carrier} />}
-          >
-            <RenewalMeta lines={h.lines} carrier={h.carrier} renews={h.renews} day={day} />
-            <span className="mt-2 block">
-              {pick.carrier} came in at {money(pick.price)} for the same coverage, {money(erie.price - pick.price)}{" "}
-              less than {erie.carrier}'s renewal.{" "}
-              <span className="inline-flex items-center gap-1 font-medium text-primary underline-offset-4 hover:underline">
-                View the full report
-                <ArrowRight aria-hidden className="size-3.5" />
-              </span>
-            </span>
-          </Row>
-        )}
-        {others.map((e) => (
-          <EarlierRow key={e.id} e={e} selected={household === e.id} onProfile={() => onHousehold(e.id)} />
-        ))}
-      </ul>
-    </Section>
+  const snooze = (id: string) => (until: SnoozeUntil) =>
+    update((w) => ({ snoozed: { ...w.snoozed, [id]: { until, day } } }));
+  const unsnooze = (id: string) => update((w) => ({ snoozed: without(w.snoozed, id) }));
+  const snoozed = snoozedTasks(day, walk);
+  const menu = (id: string) => (
+    <RowMenu name={h.name} onProfile={() => onHousehold(id)} snooze={{ daysOut: daysOut(id, day), onSnooze: snooze(id) }} />
   );
-}
-
-/**
- * Approvals Stacey has to bind. On Monday that's Anika Desai and Linda Hart
- * from earlier weeks, as on Ashley's v2 board. In this walk's week it's the
- * Callahans on Friday, drawn as Anika's and Linda's rows are: the menu, whose
- * View Profile opens their drawer, what Dana and Mike approved, and a memo
- * with Mark as Closed, which closes them out (the walk's `bound`) and keeps
- * the memo. Once closed the row says so, and Undo reopens it.
- */
-function Closing({ day, walk, update, household, onHousehold }: SectionsProps) {
-  const h = callahan;
-  const others = fromEarlier(day, "closing");
 
   return (
-    <Section id="closing" title="Closing">
+    <Section id="action-needed" title="Action Needed">
       <ul className="divide-y">
-        {callahanClosing(day, walk) && (
-          <Row
-            h={h}
-            selected={household === h.id}
-            aside={<RowMenu name={h.name} onProfile={() => onHousehold(h.id)} />}
-          >
-            <RenewalMeta lines={h.lines} carrier={h.carrier} renews={h.renews} day={day} />
-            {/* What they approved, said as it was before she closed it. */}
-            <span className="mt-2 block">{statusFor(h, "fri", { ...walk, bound: false }).detail}</span>
-            <CloseOut
-              name={h.name}
-              saved={walk.bound ? (walk.closed[h.id] ?? "") : undefined}
-              onClose={(memo) => update((w) => ({ bound: true, closed: { ...w.closed, [h.id]: memo } }))}
-              onUndo={() => update((w) => ({ bound: false, closed: without(w.closed, h.id) }))}
+        {actionNeeded(day, walk).map((t) =>
+          t.earlier ? (
+            <EarlierRow
+              key={t.id}
+              e={t.earlier}
+              selected={household === t.id}
+              onProfile={() => onHousehold(t.id)}
+              onSnooze={snooze(t.id)}
+              walk={walk}
+              closing={t.kind === "closing" ? { walk, update } : undefined}
             />
-          </Row>
+          ) : t.kind === "shopped" ? (
+            <Row
+              key="pruitt-shopped"
+              h={h}
+              onOpen={onResults}
+              aside={menu(h.id)}
+              picture={<ShopPreview quotes={options} pick={optionById(walk.pick).carrier} />}
+            >
+              <RenewalMeta lines={h.lines} carrier={h.carrier} renews={h.renews} day={day} />
+              <Chips chips={chipsFor(h.id, day, walk)} className="mt-2" />
+              <span className="mt-2 block">
+                {pick.carrier} came in at {money(pick.price)} for the same coverage, {money(erie.price - pick.price)}{" "}
+                less than {erie.carrier}'s renewal.{" "}
+                <span className="inline-flex items-center gap-1 font-medium text-primary underline-offset-4 hover:underline">
+                  View the full report
+                  <ArrowRight aria-hidden className="size-3.5" />
+                </span>
+              </span>
+            </Row>
+          ) : (
+            <Row key="pruitt-closing" h={h} selected={household === h.id} aside={menu(h.id)}>
+              <RenewalMeta lines={h.lines} carrier={h.carrier} renews={h.renews} day={day} />
+              <Chips chips={chipsFor(h.id, day, walk)} className="mt-2" />
+              {/* What they approved, said as it was before she closed it. */}
+              <span className="mt-2 block">{statusFor(h, "fri", { ...walk, bound: false }).detail}</span>
+              <CloseOut
+                saved={walk.bound ? (walk.closed[h.id] ?? "") : undefined}
+                onProfile={() => onHousehold(h.id)}
+                onUndo={() => update((w) => ({ bound: false, closed: without(w.closed, h.id) }))}
+              />
+            </Row>
+          ),
         )}
-        {others.map((e) => (
-          <EarlierRow
-            key={e.id}
-            e={e}
-            selected={household === e.id}
-            onProfile={() => onHousehold(e.id)}
-            closing={{ walk, update }}
-          />
-        ))}
+        {snoozed.length > 0 && (
+          <li className="px-6 py-4 text-sm">
+            <p className="flex items-center gap-1.5 font-medium text-muted-foreground">
+              <AlarmClock aria-hidden className="size-4" />
+              Snoozed
+            </p>
+            <ul className="mt-2 flex flex-col gap-1.5">
+              {snoozed.map((t) => (
+                <li key={t.id} className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                  <span className="font-medium">{nameOf(t)}</span>
+                  <span className="text-muted-foreground">· {snoozeLabel(walk.snoozed[t.id].until)}</span>
+                  <Button variant="link" className="h-auto p-0 font-sans text-sm" onClick={() => unsnooze(t.id)}>
+                    Undo
+                  </Button>
+                </li>
+              ))}
+            </ul>
+          </li>
+        )}
       </ul>
     </Section>
   );
 }
+
+const nameOf = (t: Task) => t.earlier?.name ?? pruitt.name;

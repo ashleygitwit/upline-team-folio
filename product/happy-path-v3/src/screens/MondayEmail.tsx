@@ -11,21 +11,19 @@ import { words } from "@/today";
 import type { WalkProps } from "@/walk";
 
 /**
- * How the week starts: an email, not a login. Upline writes to Stacey (this is
+ * How the week starts: an email, not a login. Upline writes to Jenna (this is
  * Upline-to-agent mail, so it carries Upline's brand, and opens on the design
  * hub homepage's band) with everything that needs her this week, one card
- * each, in the order it's due to be dealt with:
- * approvals to bind, then shops whose results are back. The six renewal
- * emails come last and quietest, since they go out Tuesday whether she looks
- * at them or not.
+ * each, soonest renewal first: approvals to bind and shops whose results are
+ * back, in one card under Action Needed. The six renewal emails come last and
+ * quietest, since they go out Tuesday whether she looks at them or not.
  */
 export function MondayEmail({ go }: WalkProps) {
-  const closing = mondayNeeds("closing");
-  const shopped = mondayNeeds("shopped");
+  const needed = mondayNeeds();
   const n = thisWeek.length;
 
   return (
-    <Stage caption="Stacey's inbox · Monday, October 12, 8:00 AM" size="email">
+    <Stage caption="Jenna's inbox · Monday, October 12, 8:00 AM" size="email">
       <div className="border-b px-8 py-5 text-sm">
         <p>
           <span className="inline-block w-16 text-muted-foreground">From</span>Upline
@@ -44,21 +42,17 @@ export function MondayEmail({ go }: WalkProps) {
         <BandGrain />
         <img src={logo} alt="Upline" className="h-6 w-auto self-start" />
         <div>
-          <h1 className="text-4xl">Good morning, Stacey</h1>
+          <h1 className="text-4xl">Good morning, Jenna</h1>
           <p className="mt-3 font-display text-lg">Here's what needs your attention this week.</p>
         </div>
       </header>
 
       <div className="px-8 pb-12">
-        <Group title="Closing">
-          <TodoCard items={closing} cta="Close before renewal" onCta={() => go("card-monday-upline")} />
+        <Group title="Action Needed">
+          <TodoCard items={needed} cta="Review Tasks" onCta={() => go("card-monday-upline")} />
         </Group>
 
-        <Group title="Shopped and ready for review">
-          <TodoCard items={shopped} cta="Review shopped carriers" onCta={() => go("card-monday-upline")} />
-        </Group>
-
-        <Group title="Scheduled Renewal Emails">
+        <Group title="Scheduled Emails">
           <Card size="sm">
             <CardContent className="gap-4">
               <p className="text-base">
@@ -107,7 +101,7 @@ function Group({ title, children }: { title: string; children: ReactNode }) {
 /**
  * One stage's to-dos in one card, a rule between each, and the stage's one
  * button across the foot of the card. The Scheduled card's foot matches, as a
- * text link, since nothing there needs Stacey.
+ * text link, since nothing there needs Jenna.
  */
 function TodoCard({ items, cta, onCta }: { items: Earlier[]; cta: string; onCta: () => void }) {
   return (
@@ -126,7 +120,7 @@ function TodoCard({ items, cta, onCta }: { items: Earlier[]; cta: string; onCta:
   );
 }
 
-/** One thing Stacey has to do: who, their lines and carrier, when it renews, and what's needed. */
+/** One thing Jenna has to do: who, their lines and carrier, when it renews, and what's needed. */
 function Todo({ e }: { e: Earlier }) {
   const [lines, carrier] = e.lines.split(" · ");
   return (

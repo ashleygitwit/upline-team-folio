@@ -1,6 +1,6 @@
 import { BandGrain } from "@/components/BandGrain";
 import { Button } from "@/components/ui/button";
-import { agency, callahan, dayName, mondayNeeds, money, optionById, options, type Day } from "@/data";
+import { agency, pruitt, dayName, mondayNeeds, money, optionById, options, type Day } from "@/data";
 import { matchPill, pillById, suggested, type PillId } from "@/pills";
 import { AskBox, Suggestions } from "@/screens/upline/Ask";
 import { Sections } from "@/screens/upline/Sections";
@@ -12,14 +12,16 @@ type HomeProps = WalkProps & {
   household: string | null;
   onAsk: (question: string, answer: PillId | null) => void;
   onHousehold: (id: string) => void;
-  /** Opens the Callahans' shop results. */
+  /** Opens a household's outreach review on its own, from a Scheduled row. */
+  onOutreach: (id: string) => void;
+  /** Opens the Pruitts' shop results. */
   onResults: () => void;
   onPolicyholders: () => void;
 };
 
 /**
  * The homepage, the same every day: the band, then the sections. It has to be
- * readable before coffee, so the band only greets Stacey, says in one line
+ * readable before coffee, so the band only greets Jenna, says in one line
  * what's going on, and offers the box to ask anything and the way to her
  * whole book; everything she might act on sits below it, in the three
  * sections, most pressing first. Asking docks a chat along the bottom.
@@ -91,16 +93,15 @@ const plural = (n: number, one: string, many: string) => `${words[n].toLowerCase
  * What's going on, in one line, by day and by what the presenter has done so
  * far. Monday counts what's below; Wednesday's is the day's brief, which the
  * chat's "What needs me today?" also reads; Thursday and Friday follow the
- * Callahans.
+ * Pruitts.
  */
 function lineFor(day: Day, walk: Walk): string {
-  const skipped = walk.skipped.includes(callahan.id);
+  const skipped = walk.skipped.includes(pruitt.id);
 
   if (day === "mon") {
-    const closing = mondayNeeds("closing").filter((e) => walk.closed[e.id] === undefined).length;
-    const shopped = mondayNeeds("shopped").length;
+    const open = mondayNeeds().filter((e) => walk.closed[e.id] === undefined).length;
     const n = going(walk);
-    return `You have ${plural(closing, "renewal", "renewals")} closing this week and ${plural(shopped, "shop", "shops")} ready for review. ${words[n]} renewal ${n === 1 ? "email goes" : "emails go"} out tomorrow at 9 AM.`;
+    return `You have ${plural(open, "renewal that needs", "renewals that need")} you this week. ${words[n]} renewal ${n === 1 ? "email goes" : "emails go"} out tomorrow at 9 AM.`;
   }
 
   if (day === "wed") return todayFor(day, walk).lead;
@@ -109,18 +110,18 @@ function lineFor(day: Day, walk: Walk): string {
 
   if (day === "thu") {
     return walk.recSent
-      ? "Your recommendation went to Dana and Mike. We'll let you know when they answer."
-      : "Shopping has been completed for Dana and Mike Callahan.";
+      ? "Your recommendation went to Leah and Tom. We'll let you know when they answer."
+      : "Shopping has been completed for Leah and Tom Pruitt.";
   }
 
   const pick = optionById(walk.pick);
   const erie = options.find((o) => o.current)!;
   if (walk.bound) {
     return pick.current
-      ? `Done. The Callahans are set. Erie renews on ${callahan.renewsLong}.`
-      : `Done. The Callahans are set. ${pick.carrier} takes over on ${callahan.renewsLong}, with ${money(erie.price - pick.price)} back for Dana and Mike.`;
+      ? `Done. The Pruitts are set. Erie renews on ${pruitt.renewsLong}.`
+      : `Done. The Pruitts are set. ${pick.carrier} takes over on ${pruitt.renewsLong}, with ${money(erie.price - pick.price)} back for Leah and Tom.`;
   }
   return pick.current
-    ? "Dana and Mike are staying with Erie. There's nothing to bind, so mark it closed below."
-    : `Dana and Mike said yes to ${pick.carrier}. Bind it in the ${pick.carrier} portal before ${callahan.renewsLong}, then mark it closed below.`;
+    ? "Leah and Tom are staying with Erie. There's nothing to bind, so close it out from their profile below."
+    : `Leah and Tom said yes to ${pick.carrier}. Bind it in the ${pick.carrier} portal before ${pruitt.renewsLong}, then close it out from their profile below.`;
 }

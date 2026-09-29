@@ -128,7 +128,7 @@ export function quoteDoc({
         rows: [
           { label: "Binding", value: "This document does not put coverage in place." },
           { label: "Valid through", value: current ? "Renewal date" : "15 days from quote" },
-          { label: "Produced for", value: "Stockton Hill Insurance" },
+          { label: "Produced for", value: "Harbor Point Insurance" },
         ],
       },
     ],
@@ -136,68 +136,68 @@ export function quoteDoc({
 }
 
 export const agency = {
-  name: `Stockton Hill Insurance`, short: `Stockton Hill`, agent: {
-    name: `Stacey Cole`, first: `Stacey`, initials: `SC`, title: `Account Manager`
-  }, owner: `Brandon Hill`, carrierCount: 7, markets: [`Erie`, `Auto-Owners`, `Grange`, `Ohio Mutual`, `Westfield`, `Cincinnati`, `Nationwide`], questionnaireHost: `stocktonhill.coverage-review.com`, phone: `(614) 555-0140`, email: `stacey@stocktonhillins.com`
+  name: `Harbor Point Insurance`, short: `Harbor Point`, agent: {
+    name: `Jenna Ruiz`, first: `Jenna`, initials: `JR`, title: `Account Manager`
+  }, owner: `Greg Whitaker`, carrierCount: 7, markets: [`Erie`, `Auto-Owners`, `Grange`, `Ohio Mutual`, `Westfield`, `Cincinnati`, `Nationwide`], questionnaireHost: `harborpoint.coverage-review.com`, phone: `(330) 555-0140`, email: `jenna@harborpointins.com`
 }, dana = {
-  name: `Dana Callahan`, first: `Dana`, last: `Callahan`, household: `The Callahans`, initials: `DC`, memberSince: 2018, address: `418 Walnut Ave, Dublin, OH 43017`, email: `dana.callahan@gmail.com`, phone: `(614) 555-0194`, carrier: `Erie`, renewalDate: `November 15, 2026`, daysOut: 34, currentPremium: 4820, renewalPremium: 5690, changeAmt: 870, changePct: 18
-}, questionnaireUrl = `https://${agency.questionnaireHost}/d/callahan`, outreachEmail = {
+  name: `Leah Pruitt`, first: `Leah`, last: `Pruitt`, household: `The Pruitts`, initials: `LP`, memberSince: 2018, address: `2214 Ridgewood Rd, Hudson, OH 44236`, email: `leah.pruitt@gmail.com`, phone: `(330) 555-0194`, carrier: `Erie`, renewalDate: `November 15, 2026`, daysOut: 34, currentPremium: 4820, renewalPremium: 5690, changeAmt: 870, changePct: 18
+}, questionnaireUrl = `https://${agency.questionnaireHost}/d/pruitt`, outreachEmail = {
   subject: `A heads up on your November 15 renewal`, to: `${dana.name} <${dana.email}>`, from: `${agency.agent.name}, ${agency.name}`
 }, outreachBody = [
-  `Hi ${dana.first},`, `Hope you and Mike are doing well. It's that time of year again, and I wanted to give you a heads up on where your renewal is coming in.`, `Your home and auto renew on November 15 at $5,690, which is about $870 more than last year.`, `Increases can come from a few different places, the market, a claim, or a change in coverage during the year. When one comes in like this, I'd like to shop it and see what else is out there for you.`, `Before I can, there are a few details I need to confirm, especially Sophie's driver's license number. It takes about five minutes:`, `Answer a few quick questions → ${questionnaireUrl}`, `Once I have your answers I'll get to work and come back to you well before the 15th.`
+  `Hi ${dana.first},`, `Hope you and Tom are doing well. It's that time of year again, and I wanted to give you a heads up on where your renewal is coming in.`, `Your home and auto renew on November 15 at $5,690, which is about $870 more than last year.`, `Increases can come from a few different places, the market, a claim, or a change in coverage during the year. When one comes in like this, I'd like to shop it and see what else is out there for you.`, `Before I can, there are a few details I need to confirm, especially Maya's driver's license number. It takes about five minutes:`, `Answer a few quick questions → ${questionnaireUrl}`, `Once I have your answers I'll get to work and come back to you well before the 15th.`
 ], recEmail = {
   subject: `I looked at your November renewal`, to: `${dana.name} <${dana.email}>`, from: `${agency.agent.name}, ${agency.name}`
 }, recBody = [
-  `Hi ${dana.first},`, `I shopped your home and auto ahead of November 15. Auto-Owners came back at $4,640 for the same coverage you have with Erie, about $1,050 less than the renewal offer.`, `Sophie rates cleanly, and nothing else on the household needed to change. I put the details on a short page so you can see the pick and why I didn't go another direction.`, `This does not put coverage in place. Reply to this email with a couple of times that work this week and I'll call you to walk it through.`
+  `Hi ${dana.first},`, `I shopped your home and auto ahead of November 15. Auto-Owners came back at $4,640 for the same coverage you have with Erie, about $1,050 less than the renewal offer.`, `Maya rates cleanly, and nothing else on the household needed to change. I put the details on a short page so you can see the pick and why I didn't go another direction.`, `This does not put coverage in place. Reply to this email with a couple of times that work this week and I'll call you to walk it through.`
 ], cards: Card[] = [
   {
-    id: `callahan`, name: `Dana & Mike Callahan`, first: `Dana`, email: `dana.callahan@gmail.com`, kinds: [`home`, `auto`], carrier: `Erie`, lines: `Home + Auto · Erie`, renewal: `Nov 15`, daysOut: 34, jumpPct: 18, was: 4820, premium: 5690, note: `Sophie licensed in August. DL# missing.`, col: `outreach`, target: true
+    id: `pruitt`, name: `Leah & Tom Pruitt`, first: `Leah`, email: `leah.pruitt@gmail.com`, kinds: [`home`, `auto`], carrier: `Erie`, lines: `Home + Auto · Erie`, renewal: `Nov 15`, daysOut: 34, jumpPct: 18, was: 4820, premium: 5690, note: `Maya licensed in August. DL# missing.`, col: `outreach`, target: true
   },
   {
-    id: `brennan`, name: `Pat & Ellen Brennan`, first: `Pat`, email: `pat.brennan@gmail.com`, kinds: [`home`, `auto`], carrier: `Auto-Owners`, lines: `Home + Auto · Auto-Owners`, renewal: `Nov 12`, daysOut: 31, jumpPct: 14, was: 3614, premium: 4120, note: `Neighbor on Walnut. Ready to send.`, col: `outreach`
+    id: `whitmore`, name: `Doug & Carol Whitmore`, first: `Doug`, email: `doug.whitmore@gmail.com`, kinds: [`home`, `auto`], carrier: `Auto-Owners`, lines: `Home + Auto · Auto-Owners`, renewal: `Nov 12`, daysOut: 31, jumpPct: 14, was: 3614, premium: 4120, note: `Neighbor on Ridgewood. Ready to send.`, col: `outreach`
   },
   {
-    id: `okonkwo`, name: `Ife Okonkwo`, first: `Ife`, email: `ife.okonkwo@gmail.com`, kinds: [`auto`], carrier: `Grange`, lines: `Auto · Grange`, renewal: `Nov 8`, daysOut: 27, jumpPct: 22, was: 2344, premium: 2860, note: `Biggest jump this week.`, col: `outreach`
+    id: `adeyemi`, name: `Tobi Adeyemi`, first: `Tobi`, email: `tobi.adeyemi@gmail.com`, kinds: [`auto`], carrier: `Grange`, lines: `Auto · Grange`, renewal: `Nov 8`, daysOut: 27, jumpPct: 22, was: 2344, premium: 2860, note: `Biggest jump this week.`, col: `outreach`
   },
   {
-    id: `miller`, name: `Sam Miller`, first: `Sam`, email: `sam.miller@gmail.com`, kinds: [`home`, `umbrella`], carrier: `Westfield`, lines: `Home + Umbrella · Westfield`, renewal: `Nov 20`, daysOut: 39, jumpPct: 9, was: 1780, premium: 1940, note: `Under 10%. Soft shop offer.`, col: `outreach`
+    id: `lindqvist`, name: `Jordan Lindqvist`, first: `Jordan`, email: `jordan.lindqvist@gmail.com`, kinds: [`home`, `umbrella`], carrier: `Westfield`, lines: `Home + Umbrella · Westfield`, renewal: `Nov 20`, daysOut: 39, jumpPct: 9, was: 1780, premium: 1940, note: `Under 10%. Soft shop offer.`, col: `outreach`
   },
   {
-    id: `nguyen`, name: `Chris Nguyen`, first: `Chris`, email: `chris.nguyen@gmail.com`, kinds: [`auto`], carrier: `Erie`, lines: `Auto · Erie`, renewal: `Nov 18`, daysOut: 37, jumpPct: 0, was: 1680, premium: 1680, note: `Flat. Coverage and deductibles.`, col: `outreach`
+    id: `pham`, name: `Andy Pham`, first: `Andy`, email: `andy.pham@gmail.com`, kinds: [`auto`], carrier: `Erie`, lines: `Auto · Erie`, renewal: `Nov 18`, daysOut: 37, jumpPct: 0, was: 1680, premium: 1680, note: `Flat. Coverage and deductibles.`, col: `outreach`
   },
   {
-    id: `rossi`, name: `Gina Rossi`, first: `Gina`, email: `gina.rossi@gmail.com`, kinds: [`home`, `auto`], carrier: `Ohio Mutual`, lines: `Home + Auto · Ohio Mutual`, renewal: `Nov 4`, daysOut: 23, jumpPct: 11, was: 3495, premium: 3880, note: `Held so Stacey can call first.`, col: `outreach`
+    id: `conti`, name: `Marisa Conti`, first: `Marisa`, email: `marisa.conti@gmail.com`, kinds: [`home`, `auto`], carrier: `Ohio Mutual`, lines: `Home + Auto · Ohio Mutual`, renewal: `Nov 4`, daysOut: 23, jumpPct: 11, was: 3495, premium: 3880, note: `Held so Jenna can call first.`, col: `outreach`
   },
   {
-    id: `patel`, name: `Priya Patel`, first: `Priya`, email: `priya.patel@gmail.com`, kinds: [`home`, `auto`], carrier: `Erie`, lines: `Home + Auto · Erie`, renewal: `Oct 28`, daysOut: 16, jumpPct: 16, was: 4517, premium: 5240, note: `Questionnaire in yesterday. VA on Auto-Owners.`, col: `shopping`
+    id: `rao`, name: `Neha Rao`, first: `Neha`, email: `neha.rao@gmail.com`, kinds: [`home`, `auto`], carrier: `Erie`, lines: `Home + Auto · Erie`, renewal: `Oct 28`, daysOut: 16, jumpPct: 16, was: 4517, premium: 5240, note: `Questionnaire in yesterday. VA on Auto-Owners.`, col: `shopping`
   },
   {
-    id: `brooks`, name: `Kevin Brooks`, first: `Kevin`, email: `kevin.brooks@gmail.com`, kinds: [`auto`], carrier: `Grange`, lines: `Auto · Grange`, renewal: `Oct 30`, daysOut: 18, jumpPct: 19, was: 2025, premium: 2410, note: `Waiting on a missing VIN.`, col: `shopping`
+    id: `yates`, name: `Marcus Yates`, first: `Marcus`, email: `marcus.yates@gmail.com`, kinds: [`auto`], carrier: `Grange`, lines: `Auto · Grange`, renewal: `Oct 30`, daysOut: 18, jumpPct: 19, was: 2025, premium: 2410, note: `Waiting on a missing VIN.`, col: `shopping`
   },
   {
-    id: `vasquez`, name: `Elena Vasquez`, first: `Elena`, email: `elena.vasquez@gmail.com`, kinds: [`home`, `auto`], carrier: `Travelers`, lines: `Home + Auto · Travelers`, renewal: `Oct 22`, daysOut: 10, jumpPct: 18, was: 3568, premium: 4210, note: `Shop done. Rec does not auto-send.`, col: `recommend`
+    id: `marin`, name: `Sofia Marin`, first: `Sofia`, email: `sofia.marin@gmail.com`, kinds: [`home`, `auto`], carrier: `Travelers`, lines: `Home + Auto · Travelers`, renewal: `Oct 22`, daysOut: 10, jumpPct: 18, was: 3568, premium: 4210, note: `Shop done. Rec does not auto-send.`, col: `recommend`
   },
   {
-    id: `foss`, name: `Raymond Foss`, first: `Raymond`, email: `ray.foss@gmail.com`, kinds: [`home`], carrier: `Nationwide`, lines: `Home · Nationwide`, renewal: `Oct 24`, daysOut: 12, jumpPct: 11, was: 2559, premium: 2840, note: `Stay recommendation. Three options on the page.`, col: `recommend`
+    id: `kemp`, name: `Walter Kemp`, first: `Walter`, email: `walter.kemp@gmail.com`, kinds: [`home`], carrier: `Nationwide`, lines: `Home · Nationwide`, renewal: `Oct 24`, daysOut: 12, jumpPct: 11, was: 2559, premium: 2840, note: `Stay recommendation. Three options on the page.`, col: `recommend`
   },
   {
-    id: `hart`, name: `Linda Hart`, first: `Linda`, email: `linda.hart@gmail.com`, kinds: [`home`, `auto`], carrier: `Erie`, lines: `Home + Auto · Erie`, renewal: `Oct 18`, daysOut: 6, jumpPct: 12, was: 3536, premium: 3960, note: `Approved Monday. Not bound.`, col: `binding`, ageDays: 4, owes: [`Bind Auto-Owners in the portal`, `Mark closed in Upline`]
+    id: `mercer`, name: `Diane Mercer`, first: `Diane`, email: `diane.mercer@gmail.com`, kinds: [`home`, `auto`], carrier: `Erie`, lines: `Home + Auto · Erie`, renewal: `Oct 18`, daysOut: 6, jumpPct: 12, was: 3536, premium: 3960, note: `Approved Monday. Not bound.`, col: `binding`, ageDays: 4, owes: [`Bind Auto-Owners in the portal`, `Mark closed in Upline`]
   },
   {
-    id: `desai`, name: `Anika Desai`, first: `Anika`, email: `anika.desai@gmail.com`, kinds: [`home`], carrier: `Westfield`, lines: `Home · Westfield`, renewal: `Oct 16`, daysOut: 4, jumpPct: 8, was: 1593, premium: 1720, note: `Approved last week.`, col: `binding`, ageDays: 6, owes: [`Bind Westfield`, `Confirm mortgagee clause`, `Mark closed in Upline`]
+    id: `iyer`, name: `Rhea Iyer`, first: `Rhea`, email: `rhea.iyer@gmail.com`, kinds: [`home`], carrier: `Westfield`, lines: `Home · Westfield`, renewal: `Oct 16`, daysOut: 4, jumpPct: 8, was: 1593, premium: 1720, note: `Approved last week.`, col: `binding`, ageDays: 6, owes: [`Bind Westfield`, `Confirm mortgagee clause`, `Mark closed in Upline`]
   }
 ];
 const files: Record<string, HouseholdFile> = {
-  callahan: {
-    namedInsured: `Dana Callahan`, phone: `(614) 555-0194`, address: `418 Walnut Ave, Dublin, OH 43017`, people: [
+  pruitt: {
+    namedInsured: `Leah Pruitt`, phone: `(330) 555-0194`, address: `2214 Ridgewood Rd, Hudson, OH 44236`, people: [
       {
-        name: `Dana Callahan`, role: `Named insured`, note: `Primary contact`
+        name: `Leah Pruitt`, role: `Named insured`, note: `Primary contact`
       },
       {
-        name: `Mike Callahan`, role: `Spouse`, note: `Named insured`
+        name: `Tom Pruitt`, role: `Spouse`, note: `Named insured`
       },
       {
-        name: `Sophie Callahan`, role: `Driver`, note: `Licensed Aug 2026 · DL# missing`
+        name: `Maya Pruitt`, role: `Driver`, note: `Licensed Aug 2026 · DL# missing`
       }
     ], vehicles: [
       {
@@ -215,12 +215,12 @@ const files: Record<string, HouseholdFile> = {
       }
     ], home: {
       roof: `Replaced 2024`, trampoline: `No`, dog: `No`
-    }, driver: `Sophie was licensed in August, which is causing the jump in Auto. There are no claims on file.`, shopCarriers: [`Auto-Owners`, `Erie`, `Grange`], timeline: [
+    }, driver: `Maya was licensed in August, which is causing the jump in Auto. There are no claims on file.`, shopCarriers: [`Auto-Owners`, `Erie`, `Grange`], timeline: [
       {
         label: `You sent the outreach email`, date: `Oct 13`, state: `done`
       },
       {
-        label: `Dana completed the questionnaire`, date: `Oct 14`, state: `done`
+        label: `Leah completed the questionnaire`, date: `Oct 14`, state: `done`
       },
       {
         label: `VA is shopping Auto-Owners, Erie, and Grange`, date: `In progress`, state: `now`, detail: `Check back tomorrow for quotes.`
@@ -229,13 +229,13 @@ const files: Record<string, HouseholdFile> = {
         label: `Renewal date. Coverage needs to be in place.`, date: `Nov 15`, state: `soon`
       }
     ]
-  }, brennan: {
-    namedInsured: `Pat Brennan`, phone: `(614) 555-0162`, address: `412 Walnut Ave, Dublin, OH 43017`, people: [
+  }, whitmore: {
+    namedInsured: `Doug Whitmore`, phone: `(330) 555-0162`, address: `2208 Ridgewood Rd, Hudson, OH 44236`, people: [
       {
-        name: `Pat Brennan`, role: `Named insured`
+        name: `Doug Whitmore`, role: `Named insured`
       },
       {
-        name: `Ellen Brennan`, role: `Spouse`, note: `Named insured`
+        name: `Carol Whitmore`, role: `Spouse`, note: `Named insured`
       }
     ], vehicles: [
       {
@@ -254,10 +254,10 @@ const files: Record<string, HouseholdFile> = {
     ], home: {
       roof: `Replaced 2019`, trampoline: `No`, dog: `Yes · yellow Labrador`
     }, driver: `Auto-Owners filed a rate increase in Ohio this summer. There are no claims on file, and nothing changed on their end.`
-  }, okonkwo: {
-    namedInsured: `Ife Okonkwo`, phone: `(614) 555-0118`, address: `88 N High St, Apt 12B, Columbus, OH 43215`, people: [
+  }, adeyemi: {
+    namedInsured: `Tobi Adeyemi`, phone: `(330) 555-0118`, address: `145 S Main St, Apt 4C, Akron, OH 44308`, people: [
       {
-        name: `Ife Okonkwo`, role: `Named insured`
+        name: `Tobi Adeyemi`, role: `Named insured`
       }
     ], vehicles: [
       {
@@ -271,13 +271,13 @@ const files: Record<string, HouseholdFile> = {
         line: `Personal auto`, carrier: `Grange`, current: 2344, renewal: 2860, detail: `2 vehicles · 1 driver`
       }
     ], driver: `Two vehicles, one driver, and a 22% jump. Grange rerated the Tesla. There are no accidents on file.`
-  }, miller: {
-    namedInsured: `Sam Miller`, phone: `(614) 555-0144`, address: `210 Oakmont Dr, Powell, OH 43065`, people: [
+  }, lindqvist: {
+    namedInsured: `Jordan Lindqvist`, phone: `(330) 555-0144`, address: `640 Fairway Ln, Stow, OH 44224`, people: [
       {
-        name: `Sam Miller`, role: `Named insured`
+        name: `Jordan Lindqvist`, role: `Named insured`
       },
       {
-        name: `Alex Miller`, role: `Spouse`
+        name: `Casey Lindqvist`, role: `Spouse`
       }
     ], vehicles: [], policies: [
       {
@@ -289,10 +289,10 @@ const files: Record<string, HouseholdFile> = {
     ], home: {
       roof: `Replaced 2021`, trampoline: `Yes`, dog: `Yes · goldendoodle`
     }, driver: `Westfield is up 9% on the house and the umbrella. Under 10%, and there are no claims. Soft shop is the offer.`
-  }, nguyen: {
-    namedInsured: `Chris Nguyen`, phone: `(614) 555-0177`, address: `15 W 2nd Ave, Columbus, OH 43201`, people: [
+  }, pham: {
+    namedInsured: `Andy Pham`, phone: `(330) 555-0177`, address: `31 Portage Trl, Cuyahoga Falls, OH 44221`, people: [
       {
-        name: `Chris Nguyen`, role: `Named insured`
+        name: `Andy Pham`, role: `Named insured`
       }
     ], vehicles: [
       {
@@ -303,10 +303,10 @@ const files: Record<string, HouseholdFile> = {
         line: `Personal auto`, carrier: `Erie`, current: 1680, renewal: 1680, detail: `1 vehicle · 1 driver`
       }
     ], driver: `Flat renewal. Same number as last year. This one is coverage and deductibles, not price.`
-  }, rossi: {
-    namedInsured: `Gina Rossi`, phone: `(614) 555-0133`, address: `740 S 3rd St, Columbus, OH 43206`, people: [
+  }, conti: {
+    namedInsured: `Marisa Conti`, phone: `(330) 555-0133`, address: `512 Crain Ave, Kent, OH 44240`, people: [
       {
-        name: `Gina Rossi`, role: `Named insured`
+        name: `Marisa Conti`, role: `Named insured`
       }
     ], vehicles: [
       {
@@ -321,17 +321,17 @@ const files: Record<string, HouseholdFile> = {
       }
     ], home: {
       roof: `Replaced 2018`, trampoline: `No`, dog: `No`
-    }, driver: `Ohio Mutual is up 11% on the package. There are no claims on file. Stacey wanted to call first before we email.`
-  }, patel: {
-    namedInsured: `Priya Patel`, phone: `(614) 555-0188`, address: `1022 Cambridge Blvd, Upper Arlington, OH 43221`, people: [
+    }, driver: `Ohio Mutual is up 11% on the package. There are no claims on file. Jenna wanted to call first before we email.`
+  }, rao: {
+    namedInsured: `Neha Rao`, phone: `(330) 555-0188`, address: `1022 Cambridge Dr, Kent, OH 44240`, people: [
       {
-        name: `Priya Patel`, role: `Named insured`
+        name: `Neha Rao`, role: `Named insured`
       },
       {
-        name: `Raj Patel`, role: `Spouse`
+        name: `Vikram Rao`, role: `Spouse`
       },
       {
-        name: `Asha Patel`, role: `Driver`, note: `Age 19`
+        name: `Priyanka Rao`, role: `Driver`, note: `Age 19`
       }
     ], vehicles: [
       {
@@ -354,7 +354,7 @@ const files: Record<string, HouseholdFile> = {
         label: `You sent the outreach email`, date: `Oct 6`, state: `done`
       },
       {
-        label: `Priya completed the questionnaire`, date: `Oct 12`, state: `done`
+        label: `Neha completed the questionnaire`, date: `Oct 12`, state: `done`
       },
       {
         label: `VA is shopping Auto-Owners, Erie, and Grange`, date: `In progress`, state: `now`, detail: `Check back tomorrow for quotes.`
@@ -363,10 +363,10 @@ const files: Record<string, HouseholdFile> = {
         label: `Renewal date. Coverage needs to be in place.`, date: `Oct 28`, state: `soon`
       }
     ]
-  }, brooks: {
-    namedInsured: `Kevin Brooks`, phone: `(614) 555-0109`, address: `4419 Indianola Ave, Columbus, OH 43214`, people: [
+  }, yates: {
+    namedInsured: `Marcus Yates`, phone: `(330) 555-0109`, address: `1902 Sackett Ave, Cuyahoga Falls, OH 44223`, people: [
       {
-        name: `Kevin Brooks`, role: `Named insured`
+        name: `Marcus Yates`, role: `Named insured`
       }
     ], vehicles: [
       {
@@ -381,7 +381,7 @@ const files: Record<string, HouseholdFile> = {
         label: `You sent the outreach email`, date: `Oct 6`, state: `done`
       },
       {
-        label: `Kevin completed the questionnaire`, date: `Oct 11`, state: `done`
+        label: `Marcus completed the questionnaire`, date: `Oct 11`, state: `done`
       },
       {
         label: `VA is shopping Erie, Auto-Owners, and Grange`, date: `In progress`, state: `now`, detail: `Check back tomorrow for quotes.`
@@ -390,13 +390,13 @@ const files: Record<string, HouseholdFile> = {
         label: `Renewal date. Coverage needs to be in place.`, date: `Oct 30`, state: `soon`
       }
     ]
-  }, vasquez: {
-    namedInsured: `Elena Vasquez`, phone: `(614) 555-0155`, address: `390 S Drexel Ave, Bexley, OH 43209`, people: [
+  }, marin: {
+    namedInsured: `Sofia Marin`, phone: `(330) 555-0155`, address: `318 Hickory Ct, Stow, OH 44224`, people: [
       {
-        name: `Elena Vasquez`, role: `Named insured`
+        name: `Sofia Marin`, role: `Named insured`
       },
       {
-        name: `Luis Vasquez`, role: `Spouse`
+        name: `Mateo Marin`, role: `Spouse`
       }
     ], vehicles: [
       {
@@ -415,7 +415,7 @@ const files: Record<string, HouseholdFile> = {
     ], home: {
       roof: `Replaced 2020`, trampoline: `No`, dog: `Yes · beagle`
     }, driver: `Travelers is up 18% on the package. There are no claims on file, and nothing changed on her end.`, rec: {
-      pick: `Auto-Owners`, summary: `Our recommendation: move Elena to Auto-Owners. She'll have the same coverage she currently has with Travelers, but it'll cost her $730 less this year.`, email: `Hi Elena,
+      pick: `Auto-Owners`, summary: `Our recommendation: move Sofia to Auto-Owners. She'll have the same coverage she currently has with Travelers, but it'll cost her $730 less this year.`, email: `Hi Sofia,
 
 I shopped your home and auto ahead of October 22. Auto-Owners came back at $3,480 for the same coverage you have with Travelers, about $730 less than the renewal offer.
 
@@ -474,7 +474,7 @@ This does not put coverage in place. Reply with a couple of times that work this
         }
       ], options: [
         {
-          id: `ao`, name: `Auto-Owners`, lines: `home and auto`, price: 3480, email: `Hi Elena,
+          id: `ao`, name: `Auto-Owners`, lines: `home and auto`, price: 3480, email: `Hi Sofia,
 
 I shopped your home and auto ahead of October 22. Auto-Owners came back at $3,480 for the same coverage you have with Travelers, about $730 less than the renewal offer.
 
@@ -483,7 +483,7 @@ Nothing on the household needed to change.
 This does not put coverage in place. Reply with a couple of times that work this week and I'll call you to walk it through.`
         },
         {
-          id: `travelers`, name: `Travelers`, lines: `home and auto`, price: 4210, current: true, email: `Hi Elena,
+          id: `travelers`, name: `Travelers`, lines: `home and auto`, price: 4210, current: true, email: `Hi Sofia,
 
 I shopped your home and auto ahead of October 22. Travelers is still your current carrier at $4,210.
 
@@ -492,14 +492,14 @@ The other quotes came in, and staying put is on the table if that is what you wa
 This does not change anything on the policy. Reply if you want me to walk through the other quotes anyway.`
         },
         {
-          id: `grange`, name: `Grange`, lines: `home and auto`, price: 3920, email: `Hi Elena,
+          id: `grange`, name: `Grange`, lines: `home and auto`, price: 3920, email: `Hi Sofia,
 
 I shopped your home and auto ahead of October 22. Grange came back at $3,920. It is not the lowest number, but it does raise auto liability to 250/500.
 
 This does not put coverage in place. Reply with a couple of times that work this week and I'll call you to walk it through.`
         },
         {
-          id: `erie`, name: `Erie`, lines: `home and auto`, price: 4050, email: `Hi Elena,
+          id: `erie`, name: `Erie`, lines: `home and auto`, price: 4050, email: `Hi Sofia,
 
 I shopped your home and auto ahead of October 22. Erie came back at $4,050. The home deductible would move to $2,500, which is the tradeoff on that number.
 
@@ -511,7 +511,7 @@ This does not put coverage in place. Reply with a couple of times that work this
         quoteDoc({
           id: `tv-home`, carrier: `Travelers`, title: `Homeowners renewal`, filename: `Travelers_HO3_renewal.pdf`, current: true, premium: `$1,760`, rows: [
             {
-              label: `Named insured`, value: `Elena Vasquez`
+              label: `Named insured`, value: `Sofia Marin`
             },
             {
               label: `Dwelling`, value: `$440,000`
@@ -529,7 +529,7 @@ This does not put coverage in place. Reply with a couple of times that work this
         }), quoteDoc({
           id: `tv-auto`, carrier: `Travelers`, title: `Personal auto renewal`, filename: `Travelers_auto_renewal.pdf`, current: true, premium: `$2,450`, rows: [
             {
-              label: `Named insured`, value: `Elena Vasquez`
+              label: `Named insured`, value: `Sofia Marin`
             },
             {
               label: `Liability`, value: `100/300`
@@ -547,7 +547,7 @@ This does not put coverage in place. Reply with a couple of times that work this
         }), quoteDoc({
           id: `ao`, carrier: `Auto-Owners`, title: `Home and auto quote`, filename: `Auto-Owners_HA_quote.pdf`, premium: `$3,480`, rows: [
             {
-              label: `Named insured`, value: `Elena Vasquez`
+              label: `Named insured`, value: `Sofia Marin`
             },
             {
               label: `Dwelling`, value: `$440,000`
@@ -568,7 +568,7 @@ This does not put coverage in place. Reply with a couple of times that work this
         }), quoteDoc({
           id: `grange`, carrier: `Grange`, title: `Home and auto quote`, filename: `Grange_HA_quote.pdf`, premium: `$3,920`, rows: [
             {
-              label: `Named insured`, value: `Elena Vasquez`
+              label: `Named insured`, value: `Sofia Marin`
             },
             {
               label: `Dwelling`, value: `$440,000`
@@ -589,7 +589,7 @@ This does not put coverage in place. Reply with a couple of times that work this
         }), quoteDoc({
           id: `erie`, carrier: `Erie`, title: `Home and auto quote`, filename: `Erie_HA_quote.pdf`, premium: `$4,050`, rows: [
             {
-              label: `Named insured`, value: `Elena Vasquez`
+              label: `Named insured`, value: `Sofia Marin`
             },
             {
               label: `Dwelling`, value: `$440,000`
@@ -610,10 +610,10 @@ This does not put coverage in place. Reply with a couple of times that work this
         })
       ]
     }
-  }, foss: {
-    namedInsured: `Raymond Foss`, phone: `(614) 555-0121`, address: `27 W Beechwold Blvd, Columbus, OH 43214`, people: [
+  }, kemp: {
+    namedInsured: `Walter Kemp`, phone: `(330) 555-0121`, address: `77 Merriman Rd, Akron, OH 44303`, people: [
       {
-        name: `Raymond Foss`, role: `Named insured`
+        name: `Walter Kemp`, role: `Named insured`
       }
     ], vehicles: [], policies: [
       {
@@ -622,7 +622,7 @@ This does not put coverage in place. Reply with a couple of times that work this
     ], home: {
       roof: `Replaced 2017`, trampoline: `No`, dog: `No`
     }, driver: `Nationwide is up 11% on the house. The roof is from 2017. There are no claims on file.`, rec: {
-      pick: `Nationwide`, summary: `Our recommendation: stay with Nationwide. Westfield is a little cheaper, but the coverage and claims path he already has are a better fit than chasing a small save.`, email: `Hi Raymond,
+      pick: `Nationwide`, summary: `Our recommendation: stay with Nationwide. Westfield is a little cheaper, but the coverage and claims path he already has are a better fit than chasing a small save.`, email: `Hi Walter,
 
 I looked at your October 24 homeowners renewal. Nationwide came in at $2,840. Westfield was a little lower, but the coverage and claims path you already have are a better fit than chasing a small save.
 
@@ -669,28 +669,28 @@ This does not change anything on the policy. Reply if you want me to walk throug
         }
       ], options: [
         {
-          id: `nw`, name: `Nationwide`, lines: `homeowners`, price: 2840, current: true, email: `Hi Raymond,
+          id: `nw`, name: `Nationwide`, lines: `homeowners`, price: 2840, current: true, email: `Hi Walter,
 
 I looked at your October 24 homeowners renewal. Nationwide came in at $2,840. Westfield was a little lower, but the coverage and claims path you already have are a better fit than chasing a small save.
 
 This does not change anything on the policy. Reply if you want me to walk through the other quotes anyway.`
         },
         {
-          id: `west`, name: `Westfield`, lines: `homeowners`, price: 2690, email: `Hi Raymond,
+          id: `west`, name: `Westfield`, lines: `homeowners`, price: 2690, email: `Hi Walter,
 
 I looked at your October 24 homeowners renewal. Westfield came back at $2,690, $150 less than Nationwide. The deductible would drop to $1,000.
 
 This does not put coverage in place. Reply if you want me to walk it through.`
         },
         {
-          id: `om`, name: `Ohio Mutual`, lines: `homeowners`, price: 2780, email: `Hi Raymond,
+          id: `om`, name: `Ohio Mutual`, lines: `homeowners`, price: 2780, email: `Hi Walter,
 
 I looked at your October 24 homeowners renewal. Ohio Mutual came back at $2,780. They pay the roof actual cash value after 15 years, and yours is from 2017.
 
 This does not put coverage in place. Reply if you want me to walk it through.`
         },
         {
-          id: `cin`, name: `Cincinnati`, lines: `homeowners`, price: 2910, email: `Hi Raymond,
+          id: `cin`, name: `Cincinnati`, lines: `homeowners`, price: 2910, email: `Hi Walter,
 
 I looked at your October 24 homeowners renewal. Cincinnati came back at $2,910, which is higher than staying with Nationwide.
 
@@ -702,7 +702,7 @@ This does not put coverage in place. Reply if you want me to walk it through.`
         quoteDoc({
           id: `nw`, carrier: `Nationwide`, title: `Homeowners renewal`, filename: `Nationwide_HO3_renewal.pdf`, current: true, premium: `$2,840`, rows: [
             {
-              label: `Named insured`, value: `Raymond Foss`
+              label: `Named insured`, value: `Walter Kemp`
             },
             {
               label: `Dwelling`, value: `$310,000`
@@ -720,7 +720,7 @@ This does not put coverage in place. Reply if you want me to walk it through.`
         }), quoteDoc({
           id: `west`, carrier: `Westfield`, title: `Homeowners quote`, filename: `Westfield_HO3_quote.pdf`, premium: `$2,690`, rows: [
             {
-              label: `Named insured`, value: `Raymond Foss`
+              label: `Named insured`, value: `Walter Kemp`
             },
             {
               label: `Dwelling`, value: `$310,000`
@@ -738,7 +738,7 @@ This does not put coverage in place. Reply if you want me to walk it through.`
         }), quoteDoc({
           id: `om`, carrier: `Ohio Mutual`, title: `Homeowners quote`, filename: `OhioMutual_HO3_quote.pdf`, premium: `$2,780`, rows: [
             {
-              label: `Named insured`, value: `Raymond Foss`
+              label: `Named insured`, value: `Walter Kemp`
             },
             {
               label: `Dwelling`, value: `$310,000`
@@ -756,7 +756,7 @@ This does not put coverage in place. Reply if you want me to walk it through.`
         }), quoteDoc({
           id: `cin`, carrier: `Cincinnati`, title: `Homeowners quote`, filename: `Cincinnati_HO3_quote.pdf`, premium: `$2,910`, rows: [
             {
-              label: `Named insured`, value: `Raymond Foss`
+              label: `Named insured`, value: `Walter Kemp`
             },
             {
               label: `Dwelling`, value: `$310,000`
@@ -774,10 +774,10 @@ This does not put coverage in place. Reply if you want me to walk it through.`
         })
       ]
     }
-  }, hart: {
-    namedInsured: `Linda Hart`, phone: `(614) 555-0190`, address: `608 S Roosevelt Ave, Columbus, OH 43209`, people: [
+  }, mercer: {
+    namedInsured: `Diane Mercer`, phone: `(330) 555-0190`, address: `860 Diagonal Rd, Akron, OH 44320`, people: [
       {
-        name: `Linda Hart`, role: `Named insured`
+        name: `Diane Mercer`, role: `Named insured`
       }
     ], vehicles: [
       {
@@ -793,7 +793,7 @@ This does not put coverage in place. Reply if you want me to walk it through.`
     ], home: {
       roof: `Replaced 2023`, trampoline: `No`, dog: `No`
     }, driver: `Erie is up 12% on home and auto. There are no claims on file, and nothing changed on her end.`, closing: {
-      title: `Close out Linda Hart's renewal`, sub: `You reached out to Linda Hart and recommended she switch from Erie to Auto-Owners. Record her decision before Oct 18 so this household can leave the queue.`, timeline: [
+      title: `Close out Diane Mercer's renewal`, sub: `You reached out to Diane Mercer and recommended she switch from Erie to Auto-Owners. Record her decision before Oct 18 so this household can leave the queue.`, timeline: [
         {
           label: `You sent the outreach email`, date: `Oct 1`, state: `done`
         },
@@ -807,14 +807,14 @@ This does not put coverage in place. Reply if you want me to walk it through.`
           label: `You sent the recommendation`, date: `Oct 8`, state: `done`, detail: `Switch from Erie to Auto-Owners.`
         },
         {
-          label: `Close out Linda's renewal prior to her renewal date`, date: `Now`, state: `now`
+          label: `Close out Diane's renewal prior to her renewal date`, date: `Now`, state: `now`
         }
       ]
     }
-  }, desai: {
-    namedInsured: `Anika Desai`, phone: `(614) 555-0166`, address: `91 E North Broadway, Columbus, OH 43214`, people: [
+  }, iyer: {
+    namedInsured: `Rhea Iyer`, phone: `(330) 555-0166`, address: `405 Prospect St, Hudson, OH 44236`, people: [
       {
-        name: `Anika Desai`, role: `Named insured`
+        name: `Rhea Iyer`, role: `Named insured`
       }
     ], vehicles: [], policies: [
       {
@@ -823,7 +823,7 @@ This does not put coverage in place. Reply if you want me to walk it through.`
     ], home: {
       roof: `Original 2009`, trampoline: `No`, dog: `Yes · cavalier King Charles`
     }, driver: `Westfield is up 8% on the house. Under 10%. Stay is the recommendation.`, closing: {
-      title: `Close out Anika Desai's renewal`, sub: `You reached out to Anika Desai and recommended she stay with Westfield. Record her decision before Oct 16 so this household can leave the queue.`, timeline: [
+      title: `Close out Rhea Iyer's renewal`, sub: `You reached out to Rhea Iyer and recommended she stay with Westfield. Record her decision before Oct 16 so this household can leave the queue.`, timeline: [
         {
           label: `You sent the outreach email`, date: `Sep 28`, state: `done`
         },
@@ -837,7 +837,7 @@ This does not put coverage in place. Reply if you want me to walk it through.`
           label: `You sent the recommendation`, date: `Oct 6`, state: `done`, detail: `Stay with Westfield.`
         },
         {
-          label: `Close out Anika's renewal prior to her renewal date`, date: `Now`, state: `now`
+          label: `Close out Rhea's renewal prior to her renewal date`, date: `Now`, state: `now`
         }
       ]
     }
@@ -846,16 +846,16 @@ This does not put coverage in place. Reply if you want me to walk it through.`
 export const callahanFields = {
   confirm: [
     {
-      id: `name`, label: `Named insured`, value: `Dana Callahan`
+      id: `name`, label: `Named insured`, value: `Leah Pruitt`
     },
     {
-      id: `email`, label: `Email`, value: `dana.callahan@gmail.com`
+      id: `email`, label: `Email`, value: `leah.pruitt@gmail.com`
     },
     {
-      id: `phone`, label: `Mobile`, value: `(614) 555-0194`
+      id: `phone`, label: `Mobile`, value: `(330) 555-0194`
     },
     {
-      id: `address`, label: `Address`, value: `418 Walnut Ave, Dublin, OH 43017`
+      id: `address`, label: `Address`, value: `2214 Ridgewood Rd, Hudson, OH 44236`
     },
     {
       id: `home`, label: `Home`, value: `Erie HO-3 · dwelling $485,000`
@@ -864,11 +864,11 @@ export const callahanFields = {
       id: `auto`, label: `Vehicles`, value: `2019 Honda CR-V · 2016 Toyota Camry`
     },
     {
-      id: `drivers`, label: `Drivers`, value: `Dana, Mike, Sophie (added Aug 2026)`
+      id: `drivers`, label: `Drivers`, value: `Leah, Tom, Maya (added Aug 2026)`
     }
   ], ask: [
     {
-      id: `dl`, prompt: `What's Sophie's driver's license number?`
+      id: `dl`, prompt: `What's Maya's driver's license number?`
     },
     {
       id: `life`, prompt: `Want us to look at a life insurance quote while we shop?`

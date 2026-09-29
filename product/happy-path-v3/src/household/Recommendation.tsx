@@ -28,7 +28,7 @@ type Step = 1 | 2 | 3;
  * never sends on its own.
  *
  * v3 adds to v2.5's layout: `pick` and `onPick` hand the pick to the walk, so
- * what Stacey picks is what Dana gets, and `sent` says the recommendation has
+ * what Jenna picks is what Leah gets, and `sent` says the recommendation has
  * gone. Then the three steps still open, with the pick and the email locked
  * and step 3's footer saying when it went. Opening it again starts at step 1.
  */
@@ -128,7 +128,16 @@ export function Recommendation({
       {step === 1 && (
         <div>
           {head("Shopping Results")}
-          {words && <p className="mt-3 text-base">{words.story}</p>}
+          {words && (
+            <ul className="mt-3 grid gap-1.5 text-base">
+              {words.story.map((line) => (
+                <li key={line} className="flex gap-2.5">
+                  <span aria-hidden className="mt-2.5 size-2 shrink-0 border border-primary" />
+                  {line}
+                </li>
+              ))}
+            </ul>
+          )}
           {rec && <p className="mt-3 text-base font-medium">{rec.summary}</p>}
           {rec ? (
             <>

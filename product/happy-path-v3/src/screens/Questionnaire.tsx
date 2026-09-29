@@ -7,19 +7,19 @@ import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { AgencyMark, AgencyScope, Stage } from "@/components/Stage";
-import { callahan, changeChoices } from "@/data";
+import { pruitt, changeChoices } from "@/data";
 import type { WalkProps } from "@/walk";
 
 type Step = "contact" | "changed" | "license" | "life" | "referral";
 
 /**
- * Dana's questionnaire, Stockton Hill's and not Upline's. Carried over from
+ * Leah's questionnaire, Harbor Point's and not Upline's. Carried over from
  * v2 on purpose: in the pilot everyone who saw the first question finished,
  * so it stays a questionnaire. One question to a screen. The life question
- * only shows when Stacey left it on in Monday's review.
+ * only shows when Jenna left it on in Monday's review.
  */
 export function Questionnaire({ walk, update, go }: WalkProps) {
-  const askLife = walk.lifeQuote.callahan ?? true;
+  const askLife = walk.lifeQuote.pruitt ?? true;
   const steps: Step[] = ["contact", "changed", "license", ...(askLife ? (["life"] as const) : []), "referral"];
   const [i, setI] = useState(walk.danaAnswered ? steps.length : 0);
   const done = i >= steps.length;
@@ -31,7 +31,7 @@ export function Questionnaire({ walk, update, go }: WalkProps) {
   };
 
   return (
-    <Stage caption="Dana's phone · Tuesday, October 13, 7:40 PM" size="phone">
+    <Stage caption="Leah's phone · Tuesday, October 13, 7:40 PM" size="phone">
       <AgencyScope>
         <header className="flex items-center justify-between border-b px-5 py-4">
           <AgencyMark />
@@ -43,12 +43,12 @@ export function Questionnaire({ walk, update, go }: WalkProps) {
             <span aria-hidden className="grid size-12 place-items-center bg-primary text-primary-foreground">
               <Check className="size-6" />
             </span>
-            <h1 className="mt-6 text-2xl">Thanks, Dana.</h1>
+            <h1 className="mt-6 text-2xl">Thanks, Leah.</h1>
             <p className="mt-3 text-base">
-              That's everything Stacey needs to shop your home and auto. Expect to hear back by Thursday.
+              That's everything Jenna needs to shop your home and auto. Expect to hear back by Thursday.
             </p>
             <Button variant="link" className="mt-8 h-auto self-start p-0 font-sans text-sm" onClick={() => go("card-wednesday")}>
-              Meanwhile, back at Stockton Hill
+              Meanwhile, back at Harbor Point
             </Button>
           </div>
         ) : (
@@ -64,10 +64,10 @@ export function Questionnaire({ walk, update, go }: WalkProps) {
               {step === "contact" && (
                 <Question title="Is this still the best way to reach you?" help="We filled this in from your current policies. Fix anything that's out of date.">
                   <FieldGroup className="gap-4">
-                    <TextField id="q-name" label="Name" defaultValue="Dana Callahan" />
-                    <TextField id="q-email" label="Email" defaultValue="dana.callahan@gmail.com" />
-                    <TextField id="q-phone" label="Phone" defaultValue={callahan.phone} />
-                    <TextField id="q-address" label="Address" defaultValue={callahan.address} />
+                    <TextField id="q-name" label="Name" defaultValue="Leah Pruitt" />
+                    <TextField id="q-email" label="Email" defaultValue="leah.pruitt@gmail.com" />
+                    <TextField id="q-phone" label="Phone" defaultValue={pruitt.phone} />
+                    <TextField id="q-address" label="Address" defaultValue={pruitt.address} />
                   </FieldGroup>
                 </Question>
               )}
@@ -75,7 +75,7 @@ export function Questionnaire({ walk, update, go }: WalkProps) {
               {step === "changed" && (
                 <Question
                   title="Anything new we should know before we shop?"
-                  help="We already have Sophie from August. Tap anything else that applies."
+                  help="We already have Maya from August. Tap anything else that applies."
                 >
                   <FieldGroup className="gap-3">
                     {changeChoices.map((c) => (
@@ -94,12 +94,12 @@ export function Questionnaire({ walk, update, go }: WalkProps) {
 
               {step === "license" && (
                 <Question
-                  title="What's Sophie's driver's license number?"
+                  title="What's Maya's driver's license number?"
                   help="We need it to pull driving records when we quote. Her occupation helps too, because carriers use it to set price."
                 >
                   <FieldGroup className="gap-4">
-                    <TextField id="q-dl" label="Sophie's license number" placeholder="OH license number" />
-                    <TextField id="q-job" label="Sophie's occupation" placeholder="Student, for example" />
+                    <TextField id="q-dl" label="Maya's license number" placeholder="OH license number" />
+                    <TextField id="q-job" label="Maya's occupation" placeholder="Student, for example" />
                   </FieldGroup>
                 </Question>
               )}
@@ -109,7 +109,11 @@ export function Questionnaire({ walk, update, go }: WalkProps) {
                   title="Want a life insurance quote while we shop the rest?"
                   help="No obligation. We'll just come back with a number."
                 >
-                  <RadioGroup defaultValue="yes" className="gap-3">
+                  <RadioGroup
+                    value={walk.danaLife ? "yes" : "no"}
+                    onValueChange={(v) => update({ danaLife: v === "yes" })}
+                    className="gap-3"
+                  >
                     {[
                       { id: "yes", label: "Yes, get me a number" },
                       { id: "no", label: "No thanks" },

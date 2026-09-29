@@ -5,12 +5,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { agency, dayDate } from "@/data";
 import type { Note } from "@/walk";
 
-/** "Wed, Oct 14 · 10:42 AM": the walk's day and the clock time Stacey posted it. */
+/** "Wed, Oct 14 · 10:42 AM": the walk's day and the clock time Jenna posted it. */
 const stamp = (n: Note) =>
   `${dayDate[n.day].toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" })} · ${n.time}`;
 
 /**
- * Stacey's notes on a household: what she's learned about them or how the
+ * Jenna's notes on a household: what she's learned about them or how the
  * renewal is going. The box stays at the foot of the drawer, and each note
  * lands above it, oldest at the top, with her avatar (as Upline's bar draws
  * it), when she wrote it, and what she wrote. It opens empty. Cmd or Ctrl +

@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { ArrowLeft, Check } from "lucide-react";
+import { ArrowLeft, Check, LayoutGrid, List } from "lucide-react";
 import { cn } from "cn";
 import { CarrierMark } from "@/components/CarrierMark";
+import { Chips } from "@/components/Chips";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,19 +11,22 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import { money, thisWeek, whoLeft, type Day } from "@/data";
 import { cards, fileFor } from "@/household/data";
 import { statusFor } from "@/status";
+import { chipsFor, type Chip } from "@/tasks";
 import type { Walk, WalkProps } from "@/walk";
 
-/** The stage filter's buckets, in the order a renewal moves through them. */
+/** The stage filter's buckets, in the order a renewal moves through them. They're the board's columns too. */
 type Group = "scheduled" | "progress" | "ready" | "closing" | "closed" | "left";
 
-const groups: { id: Group; label: string }[] = [
-  { id: "scheduled", label: "Scheduled" },
-  { id: "progress", label: "In progress" },
-  { id: "ready", label: "Ready for you" },
-  { id: "closing", label: "Closing" },
-  { id: "closed", label: "Closed" },
-  { id: "left", label: "Left" },
+const groups: { id: Group; label: string; column: string }[] = [
+  { id: "scheduled", label: "Scheduled", column: "Ready to reach out" },
+  { id: "progress", label: "In progress", column: "Shopping" },
+  { id: "ready", label: "Ready for you", column: "Ready to send rec" },
+  { id: "closing", label: "Closing", column: "Closing" },
+  { id: "closed", label: "Closed", column: "Closed" },
+  { id: "left", label: "Left", column: "Left" },
 ];
+
+type View = "board" | "list";
 
 type Stage = { label: string; group: Group; looksGood?: boolean };
 
@@ -36,6 +40,7 @@ type Row = {
   phone: string | null;
   email: string | null;
   stage: Stage;
+  chips: Chip[];
   /** Whether the row opens the household's drawer. The three who left have no file. */
   opens: boolean;
 };
@@ -46,7 +51,7 @@ const groupOf: Record<string, Group> = {
   Opened: "progress",
   Started: "progress",
   Shopping: "progress",
-  "Sent to Dana": "progress",
+  "Sent to Leah": "progress",
   "Ready for you": "ready",
   Approved: "closing",
   Done: "closed",
@@ -56,17 +61,17 @@ const groupOf: Record<string, Group> = {
 
 /**
  * Earlier weeks' households, Monday and after. Monday follows Ashley's v2
- * board, as the homepage does; Stacey clears them Monday afternoon,
+ * board, as the homepage does; Jenna clears them Monday afternoon,
  * off-camera, so from Wednesday they're in the state `earlier` (data.ts)
  * gives as later.
  */
 const earlierStages: Record<string, [Stage["label"], Group, Stage["label"], Group]> = {
-  patel: ["Shopping", "progress", "Rec sent", "progress"],
-  brooks: ["Shopping", "progress", "Rec sent", "progress"],
-  vasquez: ["Ready for you", "ready", "Rec sent", "progress"],
-  foss: ["Ready for you", "ready", "Staying", "closed"],
-  hart: ["Approved", "closing", "Done", "closed"],
-  desai: ["Approved", "closing", "Staying", "closed"],
+  rao: ["Shopping", "progress", "Rec sent", "progress"],
+  yates: ["Shopping", "progress", "Rec sent", "progress"],
+  marin: ["Ready for you", "ready", "Rec sent", "progress"],
+  kemp: ["Ready for you", "ready", "Staying", "closed"],
+  mercer: ["Approved", "closing", "Done", "closed"],
+  iyer: ["Approved", "closing", "Staying", "closed"],
 };
 
 /** Where a household stands on the walk's day, following what the presenter has done. */
@@ -104,6 +109,7 @@ function rowsFor(day: Day, walk: Walk): Row[] {
       phone: fileFor(c).phone,
       email: c.email,
       stage: stageFor(c.id, day, walk),
+      chips: chipsFor(c.id, day, walk),
       opens: true,
     }))
     .sort((a, b) => when(a.renews) - when(b.renews));
@@ -121,6 +127,7 @@ function rowsFor(day: Day, walk: Walk): Row[] {
         phone: null,
         email: null,
         stage: { label: "Left", group: "left" as const },
+        chips: [],
         opens: false,
       };
     })
@@ -133,13 +140,18 @@ const badgeFor = (g: Group) =>
   g === "ready" || g === "closing" ? "default" : g === "closed" || g === "left" ? "secondary" : "outline";
 
 /**
- * Everyone renewing this season, in one table: who they are, what they have,
- * when it renews, what it costs, where the renewal stands today, and how to
- * reach them. The stage is the chip alone. Stages follow the walk, as the homepage's do. A stage filter
- * and a name search sit above it, and a row opens the household's drawer,
- * the same one the homepage opens. It's the widest page in Upline, so it
- * takes a wider shell than the rest, and the phone and email share a column,
- * so it fits at 1440 without scrolling sideways.
+ * Everyone renewing this season, as a board or a table. The board is the
+ * default (the 2026-09-29 review): Ashley's v2 columns, Ready to reach out,
+ * Shopping, Ready to send rec and Closing, then Closed and Left, one card per
+ * household. The table has the same households as rows: who they are, what
+ * they have, when it renews, what it costs, where the renewal stands today,
+ * and how to reach them, with the stage as a chip. Stages follow the walk, as
+ * the homepage's do. A stage filter and a name search sit above both views
+ * and apply to both, and a card or a row opens the household's drawer, the
+ * same one the homepage opens. It's the widest page in Upline, so it takes a
+ * wider shell than the rest; the table's phone and email share a column, so
+ * it fits at 1440 without scrolling sideways, and the board scrolls inside
+ * itself below that.
  */
 export function Policyholders({
   day,
@@ -154,6 +166,7 @@ export function Policyholders({
   onHome: () => void;
   onHousehold: (id: string) => void;
 }) {
+  const [view, setView] = useState<View>("board");
   const [filter, setFilter] = useState<Group | "all">("all");
   const [query, setQuery] = useState("");
 
@@ -191,16 +204,27 @@ export function Policyholders({
               />
             ))}
         </div>
-        <Input
-          type="search"
-          aria-label="Search policyholders by name"
-          placeholder="Search by name"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          className="w-72"
-        />
+        <div className="flex items-center gap-4">
+          <Input
+            type="search"
+            aria-label="Search policyholders by name"
+            placeholder="Search by name"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            className="w-72"
+          />
+          {/* Board or List, drawn as the stage buttons are and flush, so the
+              pair reads as one control. */}
+          <div role="group" aria-label="View" className="flex">
+            <ViewButton on={view === "board"} onClick={() => setView("board")} label="Board" icon={<LayoutGrid />} />
+            <ViewButton on={view === "list"} onClick={() => setView("list")} label="List" icon={<List />} />
+          </div>
+        </div>
       </div>
 
+      {view === "board" ? (
+        <Board rows={shown} filter={filter} household={household} onHousehold={onHousehold} />
+      ) : (
       <div className="mt-4 border bg-card">
         {shown.length === 0 ? (
           <p className="px-6 py-5 text-base text-muted-foreground">
@@ -232,7 +256,147 @@ export function Policyholders({
           </Table>
         )}
       </div>
+      )}
     </div>
+  );
+}
+
+function ViewButton({ on, onClick, label, icon }: { on: boolean; onClick: () => void; label: string; icon: React.ReactNode }) {
+  return (
+    <Button
+      variant="outline"
+      aria-pressed={on}
+      onClick={onClick}
+      className="-ml-px first:ml-0 aria-pressed:relative aria-pressed:border-primary aria-pressed:text-primary aria-pressed:hover:text-primary"
+    >
+      {icon}
+      {label}
+    </Button>
+  );
+}
+
+/**
+ * The board: one column per stage, a card per household in it, soonest
+ * renewal first as the table sorts them. A column with no one in it stays,
+ * so the board keeps its shape from day to day, unless the stage filter is
+ * on, when only that column is drawn. Below 1280 the board scrolls sideways
+ * inside itself rather than squeezing the cards.
+ */
+function Board({
+  rows,
+  filter,
+  household,
+  onHousehold,
+}: {
+  rows: Row[];
+  filter: Group | "all";
+  household: string | null;
+  onHousehold: (id: string) => void;
+}) {
+  const columns = groups.filter((g) => filter === "all" || g.id === filter);
+  return (
+    <div className="mt-4 overflow-x-auto">
+      <div
+        className="grid items-start gap-3"
+        style={{ gridTemplateColumns: `repeat(${columns.length}, minmax(${filter === "all" ? "11rem" : "16rem"}, 1fr))` }}
+      >
+        {columns.map((g) => {
+          const inCol = rows.filter((r) => r.stage.group === g.id);
+          return (
+            <section
+              key={g.id}
+              aria-label={g.column}
+              className="min-h-70 min-w-0 border bg-muted/45 px-2.5 pt-3 pb-3.5"
+            >
+              <h3 className="mb-2.5 flex min-h-7 items-center gap-2 font-sans text-sm font-semibold">
+                {g.column}
+                <span className="min-w-[1.4rem] bg-card px-1.5 py-px text-center font-mono text-xs font-normal">
+                  {inCol.length}
+                </span>
+              </h3>
+              {inCol.length === 0 ? (
+                <p className="px-1 text-sm text-muted-foreground">No one here today.</p>
+              ) : (
+                <ul className="flex flex-col gap-2">
+                  {inCol.map((r) => (
+                    <BoardCard
+                      key={r.id}
+                      r={r}
+                      selected={household === r.id}
+                      onOpen={r.opens ? () => onHousehold(r.id) : undefined}
+                    />
+                  ))}
+                </ul>
+              )}
+            </section>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+/**
+ * One household on the board, after Ashley's v2 card: the name, its lines
+ * and the change, and the carrier and renewal across the foot. The card is
+ * its own button and opens the drawer; the three who left don't open, and say
+ * so when pointed at.
+ */
+function BoardCard({ r, selected, onOpen }: { r: Row; selected: boolean; onOpen?: () => void }) {
+  const same = r.premium && r.premium.was === r.premium.now;
+  const body = (
+    <>
+      <span className="block px-3.5 pt-3 pb-2.5">
+        <span className="block text-sm leading-tight font-medium">{r.name}</span>
+        <span className="mt-1.5 block text-sm text-muted-foreground">
+          {r.lines}
+          {r.premium && (
+            <>
+              {" · "}
+              {same ? `${money(r.premium.now)}, no change` : `${money(r.premium.was)} → ${money(r.premium.now)}`}
+            </>
+          )}
+        </span>
+        {r.stage.looksGood && (
+          <span className="mt-1.5 flex items-center gap-1 text-xs text-primary">
+            <Check className="size-3.5" aria-hidden />
+            Looks good
+          </span>
+        )}
+        <Chips chips={r.chips} className="mt-2" />
+      </span>
+      <span className="flex items-center justify-between gap-2 border-t px-3.5 pt-2 pb-2.5 text-xs text-muted-foreground">
+        <span className="flex min-w-0 items-center gap-1.5">
+          <CarrierMark carrier={r.carrier} />
+          <span className="truncate">{r.carrier}</span>
+        </span>
+        <span className="whitespace-nowrap">{onOpen ? `Renews ${r.renews}` : `Left ${r.renews}`}</span>
+      </span>
+    </>
+  );
+  const frame = "relative block w-full min-w-0 overflow-hidden border bg-card text-left";
+  return (
+    <li>
+      {onOpen ? (
+        <button
+          type="button"
+          aria-pressed={selected}
+          onClick={onOpen}
+          className={cn(frame, "transition-colors hover:border-primary", selected && "border-primary")}
+        >
+          {body}
+        </button>
+      ) : (
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <div tabIndex={0} className={frame}>
+              {body}
+            </div>
+          </TooltipTrigger>
+          <TooltipContent>Their file isn't in this prototype.</TooltipContent>
+        </Tooltip>
+      )}
+    </li>
   );
 }
 
@@ -302,9 +466,10 @@ function PolicyholderRow({ r, selected, onOpen }: { r: Row; selected: boolean; o
         )}
       </TableCell>
       <TableCell className="py-3 whitespace-normal">
-        <span className="flex items-center gap-2">
+        <span className="flex flex-wrap items-center gap-1.5">
           <Badge variant={badgeFor(r.stage.group)}>{r.stage.label}</Badge>
           {r.stage.looksGood && <Check className="size-4 text-primary" aria-label="Looks good" />}
+          <Chips chips={r.chips} />
         </span>
       </TableCell>
       <TableCell className="py-3 pr-5">

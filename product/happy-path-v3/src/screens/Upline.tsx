@@ -14,10 +14,10 @@ import type { WalkProps } from "@/walk";
 export type Page = "home" | "policyholders";
 
 /**
- * Upline as Stacey sees it. Two pages: the homepage (a greeting, today's one
+ * Upline as Jenna sees it. Two pages: the homepage (a greeting, today's one
  * thing, and the sections that hold what needs her, most pressing first) and
- * the list of everyone renewing, from the menu on Stacey's name. A household
- * opens in a drawer over whichever page she's on, and the Callahans' shop
+ * the list of everyone renewing, from the menu on Jenna's name. A household
+ * opens in a drawer over whichever page she's on, and the Pruitts' shop
  * results open in a modal, from their card, their drawer or the chat. Once
  * she asks anything the chat docks along the bottom of every page. The walk
  * can open on any page, with a household open.
@@ -26,16 +26,19 @@ export function Upline({
   day,
   page: initialPage = "home",
   household: initialHousehold = null,
+  outreach: initialOutreach = null,
   ...props
-}: WalkProps & { day: Day; page?: Page; household?: string | null }) {
+}: WalkProps & { day: Day; page?: Page; household?: string | null; outreach?: string | null }) {
   const [page, setPage] = useState<Page>(initialPage);
   // The household open in the drawer.
   const [household, setHousehold] = useState<string | null>(initialHousehold);
-  // Whether the Callahans' shop results are open on their own.
+  // Whether the Pruitts' shop results are open on their own.
   const [results, setResults] = useState(false);
+  // The household whose outreach review is open on its own, from a Scheduled row.
+  const [outreach, setOutreach] = useState<string | null>(initialOutreach);
   // Whether the chat's panel is up, or put down to its tab.
   const [chatUp, setChatUp] = useState(false);
-  // Bumped to take Stacey down to Scheduled Renewal Emails.
+  // Bumped to take Jenna down to Scheduled Renewal Emails.
   const [jump, setJump] = useState(0);
   const { walk, update } = props;
   const chat = walk.chats.find((c) => c.day === day) ?? null;
@@ -125,6 +128,7 @@ export function Upline({
           household={household}
           onAsk={ask}
           onHousehold={setHousehold}
+          onOutreach={setOutreach}
           onResults={() => setResults(true)}
           onPolicyholders={() => open("policyholders")}
           {...props}
@@ -147,6 +151,8 @@ export function Upline({
         onOpenQuestionnaire={() => props.go("questionnaire")}
         resultsOpen={results}
         onResultsOpen={setResults}
+        outreachOpen={outreach}
+        onOutreachOpen={setOutreach}
         walk={props.walk}
         update={props.update}
       />

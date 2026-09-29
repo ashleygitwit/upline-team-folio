@@ -2,7 +2,7 @@ import { Clock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 /**
- * The card before each change of day or person, and before Stacey first signs
+ * The card before each change of day or person, and before Jenna first signs
  * in to Upline, after BrightFuture's demo (brightfuture-demo.vercel.app/2): the
  * stage's slate, a story title, the day and a sentence, so the screen after it
  * reads as a new day, a new place or someone else's.

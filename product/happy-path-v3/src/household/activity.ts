@@ -12,6 +12,7 @@ import {
 } from "@/data";
 import { columnTitle } from "@/household/columns";
 import { cards } from "@/household/data";
+import { changedFields, isSnoozed, snoozeLabel } from "@/tasks";
 import type { Walk } from "@/walk";
 
 /** A phase's modal, opened from the drawer's banner or from a line in Recent activity. */
@@ -21,12 +22,12 @@ export type Phase = "outreach" | "nudge" | "shopping" | "results" | "closing";
 export type Opens = { phase: Phase; action: string; nudge?: string };
 
 /**
- * One line in Recent activity. A big one needs Stacey, so it's drawn as a
+ * One line in Recent activity. A big one needs Jenna, so it's drawn as a
  * card with `opens` as its button; any other line with `opens` has a link.
  */
 export type Item = { when: string; label: string; detail?: string; opens?: Opens; big?: boolean };
 
-/** The drawer's banner: blue when it needs Stacey, gray when it only says what's going on. */
+/** The drawer's banner: blue when it needs Jenna, gray when it only says what's going on. */
 export type Banner = { text: string; tone: "blue" | "gray"; opens?: Opens };
 
 /** A shop in progress: each carrier, whether its quote is back, and when the results are due. */
@@ -50,7 +51,7 @@ export type Activity = {
   recSent?: string;
   /** What's left before closing out: a sentence and the things to do. */
   closing?: { sub: string; owes: string[] };
-  /** Once closed out, when and what Stacey wrote. */
+  /** Once closed out, when and what Jenna wrote. */
   closed?: { when: string; note: string };
 };
 
@@ -157,7 +158,7 @@ function monday(h: Household, walk: Walk): Activity {
   };
 }
 
-/** Skipped on Monday: Stacey is handling it herself, and the review's Undo brings it back. */
+/** Skipped on Monday: Jenna is handling it herself, and the review's Undo brings it back. */
 function skipped(h: Household): Activity {
   const review: Opens = { phase: "outreach", action: "Review" };
   return {
@@ -189,7 +190,7 @@ export function nudgeState(key: string, day: Day, walk: Walk): NudgeState {
 
 /**
  * A nudge's part in the drawer. Until it goes, it's the banner and a line in
- * Up next; once Stacey sends it early or skips it, the banner says so until
+ * Up next; once Jenna sends it early or skips it, the banner says so until
  * its day. After that it's a line in what has happened.
  */
 function nudge(key: string, day: Day, walk: Walk): { banner: Banner | null; upNext: Item[]; past: Item[] } {
@@ -224,7 +225,7 @@ function nudge(key: string, day: Day, walk: Walk): { banner: Banner | null; upNe
   };
 }
 
-/** The Callahans after Monday: shopped Wednesday, results Thursday, approved Thursday night, closed Friday. */
+/** The Pruitts after Monday: shopped Wednesday, results Thursday, approved Thursday night, closed Friday. */
 function callahanLater(h: Household, day: Day, walk: Walk): Activity {
   const pick = optionById(walk.pick);
   const ao = optionById("ao");
@@ -232,8 +233,8 @@ function callahanLater(h: Household, day: Day, walk: Walk): Activity {
   const carriers = ["Auto-Owners", "Erie", "Grange"];
   const renew = renewal(h.renews);
   const answered: Item[] = [
-    { when: "Tue 7:40 PM", label: "Dana finished the questionnaire" },
-    { when: "Tue 9:02 AM", label: "Dana opened the renewal email" },
+    { when: "Tue 7:40 PM", label: "Leah finished the questionnaire" },
+    { when: "Tue 9:02 AM", label: "Leah opened the renewal email" },
     ...reachedOut(h, walk),
   ];
 
@@ -260,7 +261,7 @@ function callahanLater(h: Household, day: Day, walk: Walk): Activity {
       stage: columnTitle("recommend"),
       banner: {
         tone: "blue",
-        text: "Dana and Mike's Renewal Shopping Results have been updated.",
+        text: "Leah and Tom's Renewal Shopping Results have been updated.",
         opens: { phase: "results", action: "Review" },
       },
       upNext: [renew],
@@ -278,7 +279,7 @@ function callahanLater(h: Household, day: Day, walk: Walk): Activity {
   if (day === "thu") {
     return {
       stage: stage.sent,
-      banner: { tone: "gray", text: "Recommendation sent to Dana and Mike.", opens: resultsView },
+      banner: { tone: "gray", text: "Recommendation sent to Leah and Tom.", opens: resultsView },
       upNext: [renew],
       past: [sentRec, ...shopped],
     };
@@ -286,9 +287,9 @@ function callahanLater(h: Household, day: Day, walk: Walk): Activity {
 
   const approved: Item = {
     when: "Thu 6:20 PM",
-    label: pick.current ? "Dana and Mike are staying with Erie" : `Dana and Mike approved ${pick.carrier}`,
+    label: pick.current ? "Leah and Tom are staying with Erie" : `Leah and Tom approved ${pick.carrier}`,
   };
-  const decided = [{ when: "Thu 6:12 PM", label: "Dana opened your recommendation" }, sentRec, ...shopped];
+  const decided = [{ when: "Thu 6:12 PM", label: "Leah opened your recommendation" }, sentRec, ...shopped];
 
   if (!walk.bound) {
     return {
@@ -296,8 +297,8 @@ function callahanLater(h: Household, day: Day, walk: Walk): Activity {
       banner: {
         tone: "blue",
         text: pick.current
-          ? "Dana and Mike are staying with Erie. Close it out."
-          : `Dana and Mike approved ${pick.carrier}. Bind it before Nov 15.`,
+          ? "Leah and Tom are staying with Erie. Close it out."
+          : `Leah and Tom approved ${pick.carrier}. Bind it before Nov 15.`,
         opens: { phase: "closing", action: "Review" },
       },
       upNext: [renew],
@@ -314,8 +315,8 @@ function callahanLater(h: Household, day: Day, walk: Walk): Activity {
       ],
       closing: {
         sub: pick.current
-          ? "Dana and Mike are staying with Erie. There's nothing to bind: Erie renews on its own on November 15."
-          : `Dana and Mike approved ${pick.carrier} Thursday at 6:20 PM. Bind it in the ${pick.carrier} portal before November 15.`,
+          ? "Leah and Tom are staying with Erie. There's nothing to bind: Erie renews on its own on November 15."
+          : `Leah and Tom approved ${pick.carrier} Thursday at 6:20 PM. Bind it in the ${pick.carrier} portal before November 15.`,
         owes: pick.current ? [] : [`Bind ${pick.carrier} in the portal`],
       },
     };
@@ -342,18 +343,18 @@ function callahanLater(h: Household, day: Day, walk: Walk): Activity {
 
 /** The other five after Monday, from their statuses and the week's nudges (data.ts). */
 const later: Record<string, (h: Household, day: Day, walk: Walk) => Activity> = {
-  callahan: callahanLater,
+  pruitt: callahanLater,
 
-  okonkwo(h, day, walk) {
+  adeyemi(h, day, walk) {
     const opened: Item[] = [
-      { when: "Tue 11:20 AM", label: "Ife opened the renewal email", detail: "No questionnaire yet." },
+      { when: "Tue 11:20 AM", label: "Tobi opened the renewal email", detail: "No questionnaire yet." },
       ...reachedOut(h, walk),
     ];
-    const n = nudge("okonkwo-thu", day, walk);
+    const n = nudge("adeyemi-thu", day, walk);
     if (day === "wed") {
       return { stage: stage.reached, banner: n.banner, upNext: [...n.upNext, renewal(h.renews)], past: [...n.past, ...opened] };
     }
-    const started: Item[] = [{ when: "Thu 10:05 AM", label: "Ife started the questionnaire" }, ...n.past, ...opened];
+    const started: Item[] = [{ when: "Thu 10:05 AM", label: "Tobi started the questionnaire" }, ...n.past, ...opened];
     if (day === "thu") {
       return { stage: stage.reached, banner: n.banner, upNext: [renewal(h.renews)], past: started };
     }
@@ -365,21 +366,21 @@ const later: Record<string, (h: Household, day: Day, walk: Walk) => Activity> = 
       upNext: [dueBack("Mon"), renewal(h.renews)],
       past: [
         shopping("Fri 8:30 AM", carriers, true),
-        { when: "Thu 7:50 PM", label: "Ife finished the questionnaire" },
+        { when: "Thu 7:50 PM", label: "Tobi finished the questionnaire" },
         ...started,
       ],
     };
   },
 
-  brennan(h, day, walk) {
-    const started: Item[] = [{ when: "Tue 8:40 PM", label: "Ellen started the questionnaire" }, ...reachedOut(h, walk)];
+  whitmore(h, day, walk) {
+    const started: Item[] = [{ when: "Tue 8:40 PM", label: "Carol started the questionnaire" }, ...reachedOut(h, walk)];
     if (day === "wed") {
       return { stage: stage.reached, banner: null, upNext: [renewal(h.renews)], past: started };
     }
     const carriers = ["Auto-Owners", "Erie", "Grange"];
     const shopped: Item[] = [
       shopping("Thu 8:30 AM", carriers, true),
-      { when: "Wed 9:15 PM", label: "Ellen finished the questionnaire" },
+      { when: "Wed 9:15 PM", label: "Carol finished the questionnaire" },
       ...started,
     ];
     if (day === "thu") {
@@ -400,32 +401,32 @@ const later: Record<string, (h: Household, day: Day, walk: Walk) => Activity> = 
     };
   },
 
-  rossi(h, day, walk) {
+  conti(h, day, walk) {
     const stopped: Item[] = [
-      { when: "Tue 6:30 PM", label: "Gina stopped partway through the questionnaire", detail: "At the vehicles question." },
-      { when: "Tue 6:10 PM", label: "Gina started the questionnaire" },
+      { when: "Tue 6:30 PM", label: "Marisa stopped partway through the questionnaire", detail: "At the vehicles question." },
+      { when: "Tue 6:10 PM", label: "Marisa started the questionnaire" },
       ...reachedOut(h, walk),
     ];
-    const first = nudge("rossi-thu", day, walk);
+    const first = nudge("conti-thu", day, walk);
     if (day === "wed") {
       return { stage: stage.reached, banner: first.banner, upNext: [...first.upNext, renewal(h.renews)], past: stopped };
     }
-    const next = nudge("rossi-mon", day, walk);
+    const next = nudge("conti-mon", day, walk);
     return {
       stage: stage.reached,
       banner: next.banner,
       upNext: [...next.upNext, renewal(h.renews)],
       past: [
         ...next.past,
-        { when: "Thu 11:00 AM", label: "Gina answered more, then stopped again", detail: "One question left." },
+        { when: "Thu 11:00 AM", label: "Marisa answered more, then stopped again", detail: "One question left." },
         ...first.past,
         ...stopped,
       ],
     };
   },
 
-  miller(h, day, walk) {
-    const n = nudge("miller-fri", day, walk);
+  lindqvist(h, day, walk) {
+    const n = nudge("lindqvist-fri", day, walk);
     return {
       stage: stage.reached,
       banner: n.banner,
@@ -434,7 +435,7 @@ const later: Record<string, (h: Household, day: Day, walk: Walk) => Activity> = 
     };
   },
 
-  nguyen(h, _day, walk) {
+  pham(h, _day, walk) {
     return {
       stage: stage.closed,
       banner: null,
@@ -442,7 +443,7 @@ const later: Record<string, (h: Household, day: Day, walk: Walk) => Activity> = 
       past: [
         {
           when: "Tue 2:15 PM",
-          label: "Chris replied: happy with Erie, no shop needed",
+          label: "Andy replied: happy with Erie, no shop needed",
           detail: "Nothing else to do this time. Erie renews on its own.",
         },
         ...reachedOut(h, walk),
@@ -453,7 +454,7 @@ const later: Record<string, (h: Household, day: Day, walk: Walk) => Activity> = 
 
 /* ------------------------------------------------------------------ *
  * Earlier weeks' six, as Ashley's board has them on Monday and as the
- * Policyholder List has them after, once Stacey clears them Monday
+ * Policyholder List has them after, once Jenna clears them Monday
  * afternoon, off-camera.
  * ------------------------------------------------------------------ */
 
@@ -492,7 +493,7 @@ function shoppingEarlier(
   };
 }
 
-/** Results waiting on Monday. Stacey sends them from the drawer, or off-camera Monday afternoon. */
+/** Results waiting on Monday. Jenna sends them from the drawer, or off-camera Monday afternoon. */
 function readyEarlier(id: string, day: Day, walk: Walk, start: Item[], results: Item, after: (sent: Item[]) => Activity): Activity {
   const e = earlier.find((x) => x.id === id)!;
   const first = e.name.split(" ")[0];
@@ -565,40 +566,40 @@ function closingEarlier(
 }
 
 const earlierWeeks: Record<string, (day: Day, walk: Walk) => Activity> = {
-  patel: (day) =>
+  rao: (day) =>
     shoppingEarlier(
-      "Priya",
+      "Neha",
       day,
       "Oct 28",
       ["Auto-Owners", "Erie", "Grange"],
-      { when: "Mon 7:15 AM", label: "Priya finished the questionnaire" },
+      { when: "Mon 7:15 AM", label: "Neha finished the questionnaire" },
       "Oct 6",
     ),
 
-  brooks: (day) =>
+  yates: (day) =>
     shoppingEarlier(
-      "Kevin",
+      "Marcus",
       day,
       "Oct 30",
       ["Erie", "Auto-Owners", "Grange"],
-      { when: "Oct 11", label: "Kevin finished the questionnaire", detail: "One VIN is still missing." },
+      { when: "Oct 11", label: "Marcus finished the questionnaire", detail: "One VIN is still missing." },
       "Oct 6",
     ),
 
-  vasquez: (day, walk) => ({
+  marin: (day, walk) => ({
     ...readyEarlier(
-      "vasquez",
+      "marin",
       day,
       walk,
       [
         shopping("Oct 7", ["Auto-Owners", "Grange", "Erie"], false),
-        { when: "Oct 6", label: "Elena finished the questionnaire" },
+        { when: "Oct 6", label: "Sofia finished the questionnaire" },
         { when: "Oct 2", label: "Renewal email sent", opens: outreachView },
       ],
       { when: "Oct 9", label: "Shopping results came back" },
       (sent) => ({
         stage: stage.sent,
-        banner: { tone: "gray", text: "Recommendation sent Monday. Waiting on Elena.", opens: resultsView },
+        banner: { tone: "gray", text: "Recommendation sent Monday. Waiting on Sofia.", opens: resultsView },
         upNext: [renewal("Oct 22")],
         past: sent,
       }),
@@ -606,14 +607,14 @@ const earlierWeeks: Record<string, (day: Day, walk: Walk) => Activity> = {
     outreachSent: "Sent October 2.",
   }),
 
-  foss: (day, walk) => ({
+  kemp: (day, walk) => ({
     ...readyEarlier(
-      "foss",
+      "kemp",
       day,
       walk,
       [
         shopping("Oct 6", ["Westfield", "Ohio Mutual", "Cincinnati"], false),
-        { when: "Oct 5", label: "Raymond finished the questionnaire" },
+        { when: "Oct 5", label: "Walter finished the questionnaire" },
         { when: "Oct 2", label: "Renewal email sent", opens: outreachView },
       ],
       { when: "Oct 8", label: "Shopping results came back" },
@@ -624,7 +625,7 @@ const earlierWeeks: Record<string, (day: Day, walk: Walk) => Activity> = {
         past: [
           {
             when: "Tue 10:20 AM",
-            label: "Raymond is staying with Nationwide",
+            label: "Walter is staying with Nationwide",
             detail: "Nothing to bind. Nationwide renews on its own.",
           },
           ...sent,
@@ -634,22 +635,22 @@ const earlierWeeks: Record<string, (day: Day, walk: Walk) => Activity> = {
     outreachSent: "Sent October 2.",
   }),
 
-  hart: (day, walk) => ({
+  mercer: (day, walk) => ({
     ...closingEarlier(
-      "hart",
+      "mercer",
       day,
       walk,
       [
         { when: "Oct 8", label: "You sent the recommendation", detail: "Switch from Erie to Auto-Owners." },
         { when: "Oct 6", label: "Shopping results came back" },
-        { when: "Oct 3", label: "Linda finished the questionnaire" },
+        { when: "Oct 3", label: "Diane finished the questionnaire" },
         { when: "Oct 1", label: "Renewal email sent", opens: outreachView },
       ],
-      { when: "Oct 9", label: "Linda approved Auto-Owners" },
+      { when: "Oct 9", label: "Diane approved Auto-Owners" },
       {
-        banner: "Linda approved Auto-Owners. Bind it before Oct 18.",
+        banner: "Diane approved Auto-Owners. Bind it before Oct 18.",
         detail: "Bind it in the portal before October 18, then close it out.",
-        sub: "Linda approved Auto-Owners on October 9. Bind it in the portal before October 18.",
+        sub: "Diane approved Auto-Owners on October 9. Bind it in the portal before October 18.",
         owes: ["Bind Auto-Owners in the portal"],
         done: "Bound with Auto-Owners.",
       },
@@ -657,22 +658,22 @@ const earlierWeeks: Record<string, (day: Day, walk: Walk) => Activity> = {
     outreachSent: "Sent October 1.",
   }),
 
-  desai: (day, walk) => ({
+  iyer: (day, walk) => ({
     ...closingEarlier(
-      "desai",
+      "iyer",
       day,
       walk,
       [
         { when: "Oct 6", label: "You sent the recommendation", detail: "Stay with Westfield." },
         { when: "Oct 4", label: "Shopping results came back" },
-        { when: "Sep 30", label: "Anika finished the questionnaire" },
+        { when: "Sep 30", label: "Rhea finished the questionnaire" },
         { when: "Sep 28", label: "Renewal email sent", opens: outreachView },
       ],
-      { when: "Oct 8", label: "Anika is staying with Westfield" },
+      { when: "Oct 8", label: "Rhea is staying with Westfield" },
       {
-        banner: "Anika is staying with Westfield. Bind it before Oct 16.",
+        banner: "Rhea is staying with Westfield. Bind it before Oct 16.",
         detail: "Bind the renewal and confirm the mortgagee clause before October 16, then close it out.",
-        sub: "Anika is staying with Westfield. Bind the renewal and confirm the mortgagee clause before October 16.",
+        sub: "Rhea is staying with Westfield. Bind the renewal and confirm the mortgagee clause before October 16.",
         owes: ["Bind Westfield", "Confirm mortgagee clause"],
         done: "Staying with Westfield.",
       },
@@ -688,6 +689,36 @@ const earlierWeeks: Record<string, (day: Day, walk: Walk) => Activity> = {
  * Policyholder List's stages after. `null` for anyone without a file.
  */
 export function activityFor(id: string, day: Day, walk: Walk): Activity | null {
+  const base = baseActivity(id, day, walk);
+  if (!base) return null;
+  const past = [...base.past];
+
+  // What the questionnaire changed on file, said right after the line that
+  // says it came back, so the count sits with its cause.
+  const fields = changedFields(id, day, walk);
+  if (fields.length > 0) {
+    const at = past.findIndex((it) => /questionnaire/i.test(it.label));
+    const line: Item = {
+      when: at >= 0 ? past[at].when : "",
+      label: `${fields.length} ${fields.length === 1 ? "detail" : "details"} changed on file`,
+      detail: `${fields.join(", ")}. Update ${fields.length === 1 ? "it" : "them"} in EZLynx.`,
+    };
+    past.splice(at >= 0 ? at : past.length, 0, line);
+  }
+
+  // Snoozing is the newest thing Jenna did, so it heads the list.
+  const s = walk.snoozed[id];
+  if (s) {
+    past.unshift({
+      when: dayShort[s.day],
+      label: `You snoozed this ${snoozeLabel(s.until)}`,
+      detail: isSnoozed(id, day, walk) ? "It's off the homepage until then." : "It's back on the homepage.",
+    });
+  }
+  return { ...base, past };
+}
+
+function baseActivity(id: string, day: Day, walk: Walk): Activity | null {
   const h = thisWeek.find((x) => x.id === id);
   if (h) {
     if (walk.skipped.includes(id)) return skipped(h);
