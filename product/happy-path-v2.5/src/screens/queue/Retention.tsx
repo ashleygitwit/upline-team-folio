@@ -133,27 +133,30 @@ export function Retention() {
             </div>
           )}
 
-          <table className="sr-only">
-            <caption>Households by week</caption>
-            <thead>
-              <tr>
-                <th scope="col">Week</th>
-                <th scope="col">Teed up</th>
-                <th scope="col">Sent</th>
-                <th scope="col">Renewed</th>
-              </tr>
-            </thead>
-            <tbody>
-              {weeks.map((w) => (
-                <tr key={w.label}>
-                  <th scope="row">{w.label}</th>
-                  <td>{w.queued}</td>
-                  <td>{w.sent}</td>
-                  <td>{w.retained ?? "Available after the renewal date"}</td>
+          {/* A table can't shrink to sr-only's 1px, so the wrapper carries it. */}
+          <div className="sr-only">
+            <table>
+              <caption>Households by week</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Week</th>
+                  <th scope="col">Teed up</th>
+                  <th scope="col">Sent</th>
+                  <th scope="col">Renewed</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {weeks.map((w) => (
+                  <tr key={w.label}>
+                    <th scope="row">{w.label}</th>
+                    <td>{w.queued}</td>
+                    <td>{w.sent}</td>
+                    <td>{w.retained ?? "Available after the renewal date"}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
 

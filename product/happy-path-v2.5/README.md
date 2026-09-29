@@ -23,6 +23,8 @@ Eight stops, with Ashley's names, from the Jump to menu:
 
 Desktop or Mobile shows on the three board stops, as in v2. Mobile draws the board inside a 390-wide phone, with each column as a row of cards to swipe, and sheets and dialogs open inside the phone.
 
+The board's four columns shrink with the page until a column gets too narrow to hold a card on one line per row (254px, so a board narrower than 1052px). Below that it stacks into the mobile layout, whatever the Desktop / Mobile setting. It's measured against the board's own width, so it holds inside Through Line's frame too.
+
 ## What the library changed
 
 - **Components.** Buttons, badges, cards, sheets, dialogs, tabs, fields, inputs, checkboxes, radios, the progress bar and tables are the design hub's own Upline-mode files (`upline-design-hub`, `src/components/ui`). The dialog was re-copied and the tabs copied from the hub on Sept 28, so they're its latest versions.

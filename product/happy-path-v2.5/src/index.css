@@ -8,6 +8,19 @@
    without this the Vega components' dark: styles fire on any machine set to dark. */
 @custom-variant dark (&:is(.dark *));
 
+/* The renewal board keeps its four columns and shrinks them to fit, until a
+   column is too narrow to hold a card on one line per row: 254px, the widest
+   price line (202) plus the card's and the column's padding and borders. Four
+   of those and three 12px gaps is 1052px. Below that the board stacks into
+   Ashley's mobile layout, a row of cards to swipe per column. Measured against
+   the board's own width, not the window's, so it holds inside Through Line's
+   frame and in the Mobile phone. */
+@custom-variant stacked {
+  @container board (width < 1052px) {
+    @slot;
+  }
+}
+
 /* =============================================================================
  * The three Upline faces, latin only, woff2 only. Declared here rather than
  * through @fontsource's own CSS so the single-file build inlines one format,
