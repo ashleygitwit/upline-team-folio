@@ -226,6 +226,23 @@
     --ring: #ffffff;
   }
 
+  /* The band's mountain, as the design hub's homepage draws it (globals.css
+     there, .band-grain): a blue 800 grain tile that shows only through the
+     mountain's mask, over the band's own blue. BandGrain sets the two URLs.
+     The tile is 2x, so it repeats every 128px; the mask covers the band as
+     object-fit: cover would. The band must be `relative isolate`. */
+  .band-grain {
+    position: absolute;
+    inset: 0;
+    z-index: -10;
+  }
+  .band-grain-art {
+    position: absolute;
+    inset: 0;
+    background: var(--band-grain) 0 0 / 128px 128px repeat;
+    mask: var(--band-mask) center / cover no-repeat;
+  }
+
   /* Stockton Hill's own brand, for everything the policyholder sees: the
      agency's green and amber from Ashley's v2. Insured-facing surfaces carry no
      Upline, so this overrides --primary and every library component inside

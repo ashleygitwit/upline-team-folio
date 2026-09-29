@@ -1,8 +1,8 @@
 import type { ReactNode } from "react";
-import logo from "@/assets/upline-logo.svg";
-import { Badge } from "@/components/ui/badge";
+import logo from "@/assets/upline-logo-white.svg";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { BandGrain } from "@/components/BandGrain";
 import { CarrierMark } from "@/components/CarrierMark";
 import { Stage } from "@/components/Stage";
 import { agency, callahan, mondayNeeds, money, retention, thisWeek, type Earlier } from "@/data";
@@ -11,8 +11,9 @@ import type { WalkProps } from "@/walk";
 
 /**
  * How the week starts: an email, not a login. Upline writes to Stacey (this is
- * Upline-to-agent mail, so it carries Upline's brand) with everything that
- * needs her this week, one card each, in the order it's due to be dealt with:
+ * Upline-to-agent mail, so it carries Upline's brand, and opens on the design
+ * hub homepage's band) with everything that needs her this week, one card
+ * each, in the order it's due to be dealt with:
  * approvals to bind, then shops whose results are back. The six renewal
  * emails come last and quietest, since they go out Tuesday whether she looks
  * at them or not.
@@ -38,17 +39,23 @@ export function MondayEmail({ go }: WalkProps) {
         </p>
       </div>
 
-      <div className="px-8 pt-10 pb-12">
-        <img src={logo} alt="Upline" className="h-6 w-auto" />
-        <h1 className="mt-10 text-3xl">Good morning, Stacey. Here's what needs your attention this week.</h1>
+      <header className="band-surface relative isolate flex min-h-[280px] flex-col justify-between gap-12 overflow-clip px-8 pt-8 pb-10">
+        <BandGrain />
+        <img src={logo} alt="Upline" className="h-6 w-auto self-start" />
+        <div>
+          <h1 className="text-4xl">Good morning, Stacey</h1>
+          <p className="mt-3 font-display text-lg">Here's what needs your attention this week.</p>
+        </div>
+      </header>
 
-        <Group title="Closing" count={closing.length}>
+      <div className="px-8 pb-12">
+        <Group title="Closing">
           {closing.map((e) => (
             <Todo key={e.id} e={e} />
           ))}
         </Group>
 
-        <Group title="Shopped and ready for review" count={shopped.length}>
+        <Group title="Shopped and ready for review">
           {shopped.map((e) => (
             <Todo key={e.id} e={e} />
           ))}
@@ -99,14 +106,11 @@ export function MondayEmail({ go }: WalkProps) {
   );
 }
 
-/** One stage of the week: the homepage section's name, its count, and its cards. */
-function Group({ title, count, children }: { title: string; count?: number; children: ReactNode }) {
+/** One stage of the week: the homepage section's name, then its cards. */
+function Group({ title, children }: { title: string; children: ReactNode }) {
   return (
     <section className="mt-10">
-      <h2 className="flex items-center gap-3 text-xl">
-        {title}
-        {count !== undefined && count > 0 && <Badge>{count}</Badge>}
-      </h2>
+      <h2 className="text-xl">{title}</h2>
       <div className="mt-4 flex flex-col gap-3">{children}</div>
     </section>
   );
