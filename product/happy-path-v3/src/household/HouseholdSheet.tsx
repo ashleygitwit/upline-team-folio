@@ -45,11 +45,12 @@ const stageTab: Record<Card["col"], { id: Tab; label: string }> = {
  * tabs: it opens on the file, under a banner that says when the email goes,
  * and the banner's Review brings up what the Outreach tab held (the policy,
  * the email, shaping the shop and the questionnaire) in a modal over it.
- * The Callahans' drawer, the walk's, has no stage label over their name and
- * no Skip outreach or Send at its foot, and it's white, the sheet's own
- * ground, with their details straight on it rather than in cards. In their
- * review, the email's questionnaire link is a link, to Dana's questionnaire
- * in the walk (`onOpenQuestionnaire`), as if it opened in another tab.
+ * The Callahans' drawer, the walk's, has no Skip outreach or Send at its
+ * foot; they're in its review instead, as Skip outreach and Send now in a
+ * footer that stays under the scrolling review. There the email's
+ * questionnaire link is a link, to Dana's questionnaire in the walk
+ * (`onOpenQuestionnaire`), as if it opened in another tab, in place of the
+ * list of what's in the questionnaire.
  *
  * v2.5's drawer (screens/queue/HouseholdSheet.tsx there), ported into v3. The
  * only additions are hooks into v3's walk: `email` shows and saves v3's own
@@ -70,7 +71,8 @@ export function HouseholdSheet({
   skipped,
 }: {
   card: Card;
-  onSendOutreach: () => void;
+  /** `now` for the review's Send now, rather than Tuesday's 9 AM send. */
+  onSendOutreach: (now?: boolean) => void;
   onSendRec: () => void;
   onOpenResults: () => void;
   onAskCloseOut: () => void;
@@ -95,14 +97,14 @@ export function HouseholdSheet({
   return (
     <SheetContent
       onOpenAutoFocus={focusPanel}
-      className={cn(
-        "w-full gap-0 p-0 outline-none data-[side=right]:sm:max-w-[640px]",
-        !callahans && "bg-background",
-      )}
+      // The review's open state outlives the drawer, so a drawer closed from
+      // inside the review (by sending or skipping) opens next time without it.
+      onCloseAutoFocus={() => setReviewing(false)}
+      className="w-full gap-0 bg-background p-0 outline-none data-[side=right]:sm:max-w-[640px]"
     >
       <SheetHeader className="gap-0 px-5 pt-4.5 pb-0 pr-14">
-        {!callahans && <p className="eyebrow text-muted-foreground">{columnTitle(card.col)}</p>}
-        <SheetTitle className={cn("font-display text-2xl", !callahans && "mt-1.5")}>{card.name}</SheetTitle>
+        <p className="eyebrow text-muted-foreground">{columnTitle(card.col)}</p>
+        <SheetTitle className="mt-1.5 font-display text-2xl">{card.name}</SheetTitle>
         <SheetDescription className="mt-2">
           {card.jumpPct === 0
             ? `No change (${money(card.premium)})`
@@ -115,7 +117,7 @@ export function HouseholdSheet({
         <Dialog open={reviewing} onOpenChange={setReviewing}>
           <ReviewBanner />
           <div className="min-h-0 flex-1 overflow-y-auto px-5 pt-4.5 pb-7">
-            <Details card={card} file={file} plain={callahans} />
+            <Details card={card} file={file} />
           </div>
 
           {/* The Outreach tab's page, as a modal over the drawer: the drawer's
@@ -152,9 +154,31 @@ export function HouseholdSheet({
                   )}
                 </EmailFrame>
                 <ShapeTheShop card={card} file={file} life={life} />
-                <QuestionnaireFields card={card} file={file} />
+                {!callahans && <QuestionnaireFields card={card} file={file} />}
               </div>
             </div>
+            {callahans && onSkipOutreach && (
+              <div className="flex items-center justify-between gap-4 border-t px-5 pt-3.5 pb-4">
+                {skipped ? (
+                  <>
+                    <p className="text-sm">Skipped. {card.first} won't be emailed this time, and we won't shop it.</p>
+                    <Button variant="secondary" size="lg" onClick={skipped.onUndo}>
+                      Undo
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button variant="secondary" size="lg" onClick={onSkipOutreach}>
+                      Skip outreach
+                    </Button>
+                    <Button size="lg" onClick={() => onSendOutreach(true)}>
+                      <Send data-icon="inline-start" />
+                      Send now
+                    </Button>
+                  </>
+                )}
+              </div>
+            )}
           </DialogContent>
         </Dialog>
       ) : (
@@ -199,7 +223,7 @@ export function HouseholdSheet({
           <Button variant="secondary" size="lg" onClick={onSkipOutreach}>
             Skip outreach
           </Button>
-          <Button size="lg" className="flex-1" onClick={onSendOutreach}>
+          <Button size="lg" className="flex-1" onClick={() => onSendOutreach()}>
             <Send data-icon="inline-start" />
             Send
           </Button>

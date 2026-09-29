@@ -75,10 +75,10 @@ export function HouseholdDrawer({
           <HouseholdSheet
             key={shown.id}
             card={shown}
-            onSendOutreach={() => {
+            onSendOutreach={(now) => {
               update((w) => ({ approved: [...new Set([...w.approved, shown.id])] }));
               onClose();
-              say(`Sending ${shown.name} Tuesday 9:00`);
+              say(now ? `Sent to ${spoken(shown.name)}` : `Sending ${shown.name} Tuesday 9:00`);
             }}
             onSendRec={() => {
               onClose();
