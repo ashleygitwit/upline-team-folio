@@ -40,7 +40,7 @@ export function AppBar({ onHome, onPolicyholders }: { onHome: () => void; onPoli
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-52">
             <DropdownMenuItem>Profile</DropdownMenuItem>
-            <DropdownMenuItem onSelect={onPolicyholders}>Policy Holder List</DropdownMenuItem>
+            <DropdownMenuItem onSelect={onPolicyholders}>My Policyholder List</DropdownMenuItem>
             <DropdownMenuItem>Account Settings</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

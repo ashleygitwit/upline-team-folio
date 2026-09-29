@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { earlier, money, thisWeek, whoLeft, type Day } from "@/data";
+import { money, thisWeek, whoLeft, type Day } from "@/data";
 import { cards, fileFor } from "@/household/data";
 import { statusFor } from "@/status";
 import type { Walk, WalkProps } from "@/walk";
@@ -24,7 +24,7 @@ const groups: { id: Group; label: string }[] = [
   { id: "left", label: "Left" },
 ];
 
-type Stage = { label: string; detail: string; group: Group; looksGood?: boolean };
+type Stage = { label: string; group: Group; looksGood?: boolean };
 
 type Row = {
   id: string;
@@ -57,7 +57,8 @@ const groupOf: Record<string, Group> = {
 /**
  * Earlier weeks' households, Monday and after. Monday follows Ashley's v2
  * board, as the homepage does; Stacey clears them Monday afternoon,
- * off-camera, so from Wednesday they're in the state `earlier` gives as later.
+ * off-camera, so from Wednesday they're in the state `earlier` (data.ts)
+ * gives as later.
  */
 const earlierStages: Record<string, [Stage["label"], Group, Stage["label"], Group]> = {
   patel: ["Shopping", "progress", "Rec sent", "progress"],
@@ -75,24 +76,17 @@ function stageFor(id: string, day: Day, walk: Walk): Stage {
     const skipped = walk.skipped.includes(id);
     if (day === "mon") {
       return skipped
-        ? { label: "Skipped", detail: "You're handling this one yourself this time.", group: "closed" }
-        : {
-            label: "Scheduled",
-            detail: "Goes out Tuesday at 9:00 AM.",
-            group: "scheduled",
-            looksGood: walk.approved.includes(id),
-          };
+        ? { label: "Skipped", group: "closed" }
+        : { label: "Scheduled", group: "scheduled", looksGood: walk.approved.includes(id) };
     }
-    const s = statusFor(week, day, walk);
-    return { ...s, group: groupOf[s.label] ?? "progress" };
+    const { label } = statusFor(week, day, walk);
+    return { label, group: groupOf[label] ?? "progress" };
   }
 
-  const e = earlier.find((x) => x.id === id)!;
   const [monLabel, monGroup, laterLabel, laterGroup] = earlierStages[id];
-  if (day !== "mon") return { label: laterLabel, detail: `${e.later}.`, group: laterGroup };
-  const memo = walk.closed[id];
-  if (memo !== undefined) return { label: "Closed", detail: memo || "Marked as closed.", group: "closed" };
-  return { label: monLabel, detail: e.monday?.detail ?? `${e.mon}.`, group: monGroup };
+  if (day !== "mon") return { label: laterLabel, group: laterGroup };
+  if (walk.closed[id] !== undefined) return { label: "Closed", group: "closed" };
+  return { label: monLabel, group: monGroup };
 }
 
 const when = (renews: string) => Date.parse(`${renews} 2026`);
@@ -126,7 +120,7 @@ function rowsFor(day: Day, walk: Walk): Row[] {
         premium: null,
         phone: null,
         email: null,
-        stage: { label: "Left", detail: `${l.short}.`, group: "left" as const },
+        stage: { label: "Left", group: "left" as const },
         opens: false,
       };
     })
@@ -141,7 +135,7 @@ const badgeFor = (g: Group) =>
 /**
  * Everyone renewing this season, in one table: who they are, what they have,
  * when it renews, what it costs, where the renewal stands today, and how to
- * reach them. Stages follow the walk, as the homepage's do. A stage filter
+ * reach them. The stage is the chip alone. Stages follow the walk, as the homepage's do. A stage filter
  * and a name search sit above it, and a row opens the household's drawer,
  * the same one the homepage opens. It's the widest page in Upline, so it
  * takes a wider shell than the rest, and the phone and email share a column,
@@ -178,7 +172,7 @@ export function Policyholders({
       </Button>
 
       <header className="mt-10">
-        <h1 className="text-4xl">Policyholders</h1>
+        <h1 className="text-4xl">Policyholder List</h1>
         <p className="mt-2 font-display text-lg font-normal text-muted-foreground">
           Everyone renewing this season, and where each one stands today.
         </p>
@@ -226,7 +220,7 @@ export function Policyholders({
                 <TableHead>Carrier</TableHead>
                 <TableHead>Renews</TableHead>
                 <TableHead>Premium</TableHead>
-                <TableHead className="min-w-72">Stage</TableHead>
+                <TableHead>Stage</TableHead>
                 <TableHead className="pr-5">Contact</TableHead>
               </TableRow>
             </TableHeader>
@@ -317,7 +311,6 @@ function PolicyholderRow({ r, selected, onOpen }: { r: Row; selected: boolean; o
           <Badge variant={badgeFor(r.stage.group)}>{r.stage.label}</Badge>
           {r.stage.looksGood && <Check className="size-4 text-primary" aria-label="Looks good" />}
         </span>
-        <span className="mt-1.5 block text-muted-foreground">{r.stage.detail}</span>
       </TableCell>
       <TableCell className="py-3 pr-5">
         {r.phone ? (
