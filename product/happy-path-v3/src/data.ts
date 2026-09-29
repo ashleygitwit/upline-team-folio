@@ -334,23 +334,107 @@ export const callahan = thisWeek[0];
 
 /**
  * What's scheduled once Tuesday's outreach has gone: the nudges and follow-ups
- * the week's statuses already mention. They are one line each because their
- * emails aren't written yet.
+ * the week's statuses already mention, each keyed to its email in `nudges`.
  */
-export type Upcoming = { id: string; what: string; when: string; why: string };
+export type Upcoming = { id: string; nudge: string; what: string; when: string; why: string };
 
 export const upcoming: Record<Exclude<Day, "mon">, Upcoming[]> = {
   wed: [
-    { id: "okonkwo", what: "Nudge", when: "Thursday", why: "Ife opened the email but hasn't started the questionnaire." },
-    { id: "rossi", what: "Nudge", when: "Thursday", why: "Gina stopped at the vehicles question." },
-    { id: "miller", what: "Follow-up", when: "Friday", why: "Sam hasn't opened the email yet." },
+    { id: "okonkwo", nudge: "okonkwo-thu", what: "Nudge", when: "Thursday", why: "Ife opened the email but hasn't started the questionnaire." },
+    { id: "rossi", nudge: "rossi-thu", what: "Nudge", when: "Thursday", why: "Gina stopped at the vehicles question." },
+    { id: "miller", nudge: "miller-fri", what: "Follow-up", when: "Friday", why: "Sam hasn't opened the email yet." },
   ],
   thu: [
-    { id: "miller", what: "Follow-up", when: "Friday", why: "Sam hasn't opened the email yet." },
-    { id: "rossi", what: "Nudge", when: "Monday", why: "Gina still has one question left after this morning's nudge." },
+    { id: "miller", nudge: "miller-fri", what: "Follow-up", when: "Friday", why: "Sam hasn't opened the email yet." },
+    { id: "rossi", nudge: "rossi-mon", what: "Nudge", when: "Monday", why: "Gina still has one question left after this morning's nudge." },
   ],
-  fri: [{ id: "rossi", what: "Nudge", when: "Monday", why: "Gina still has one question left." }],
+  fri: [{ id: "rossi", nudge: "rossi-mon", what: "Nudge", when: "Monday", why: "Gina still has one question left." }],
 };
+
+/**
+ * A nudge or follow-up and the email it sends, which Stacey can review from
+ * the household's drawer. Each goes at 9:00 AM on `goes`, or next Monday,
+ * after the walk, when that's null. `short` is its day as the drawer's
+ * banner says Tuesday's email ("Tues 9AM").
+ */
+export type Nudge = {
+  key: string;
+  id: string;
+  what: "Nudge" | "Follow-up";
+  goes: Day | null;
+  short: string;
+  why: string;
+  subject: string;
+  email: string;
+};
+
+export const nudges: Nudge[] = [
+  {
+    key: "okonkwo-thu",
+    id: "okonkwo",
+    what: "Nudge",
+    goes: "thu",
+    short: "Thurs",
+    why: "Ife opened the email but hasn't started the questionnaire.",
+    subject: "Re: A heads up on your November 8 renewal",
+    email: [
+      "Hi Ife,",
+      "Just bumping this up in case it got buried. Your auto renews on November 8, and I'd like to shop it before then, since most of the increase is Grange rerating the Tesla.",
+      "The questions take about five minutes:",
+      `Answer a few quick questions → ${link("okonkwo")}`,
+      "Stacey",
+    ].join("\n\n"),
+  },
+  {
+    key: "rossi-thu",
+    id: "rossi",
+    what: "Nudge",
+    goes: "thu",
+    short: "Thurs",
+    why: "Gina stopped at the vehicles question.",
+    subject: "Re: A heads up on your November 4 renewal",
+    email: [
+      "Hi Gina,",
+      "You got most of the way through the questions. There's just the vehicles part left, and then I can start shopping your home and auto before November 4.",
+      `Pick up where you left off → ${link("rossi")}`,
+      "Stacey",
+    ].join("\n\n"),
+  },
+  {
+    key: "rossi-mon",
+    id: "rossi",
+    what: "Nudge",
+    goes: null,
+    short: "Mon",
+    why: "Gina still has one question left.",
+    subject: "Re: A heads up on your November 4 renewal",
+    email: [
+      "Hi Gina,",
+      "You're one question away. Once it's in, I'll shop your home and auto right away, which still gives us time before November 4.",
+      `Finish the last question → ${link("rossi")}`,
+      "If it's easier, reply here and I'll give you a call.",
+      "Stacey",
+    ].join("\n\n"),
+  },
+  {
+    key: "miller-fri",
+    id: "miller",
+    what: "Follow-up",
+    goes: "fri",
+    short: "Fri",
+    why: "Sam hasn't opened the email yet.",
+    subject: "Re: A heads up on your November 20 renewal",
+    email: [
+      "Hi Sam,",
+      "A quick follow-up on my note about your November 20 renewal. It's up about $160 this year. If you'd like me to shop it, the questions take about five minutes:",
+      `Answer a few quick questions → ${link("miller")}`,
+      "If you're happy where you are, no need to do anything.",
+      "Stacey",
+    ].join("\n\n"),
+  },
+];
+
+export const nudgeByKey = (key: string) => nudges.find((n) => n.key === key)!;
 
 /** How the agency is doing since the season's first outreach. */
 export const retention = {

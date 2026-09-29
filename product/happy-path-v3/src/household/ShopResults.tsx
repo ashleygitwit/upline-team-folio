@@ -1,6 +1,5 @@
 import { Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import {
   callahan,
   money,
@@ -14,8 +13,8 @@ import {
 } from "@/data";
 import { columnTitle } from "@/household/columns";
 import { cards, fileFor, quoteDoc, type Rec } from "@/household/data";
+import { PhaseFooter, PhaseModal } from "@/household/PhaseModal";
 import { Recommendation } from "@/household/Recommendation";
-import { focusPanel } from "@/lib/focus";
 import type { WalkProps } from "@/walk";
 
 const ao = optionById("ao");
@@ -73,12 +72,11 @@ const rec: Rec = {
 };
 
 /**
- * The Callahans' shop results, in a modal like the outreach review's: the
- * drawer's header and ground, v2.5's results scrolling under a header that
- * stays, and Send recommendation email in a footer under them. The pick and
- * the email are the walk's, so what Stacey picks and writes here is what Dana
- * gets. Once it has gone, the modal reads the same with the pick and the email
- * locked, and the footer says it went.
+ * The Callahans' shop results, in a phase modal like the outreach review's
+ * (PhaseModal.tsx): v2.5's results, with Send recommendation email in the
+ * footer. The pick and the email are the walk's, so what Stacey picks and
+ * writes here is what Dana gets. Once it has gone, the modal reads the same
+ * with the pick and the email locked, and the footer says it went.
  *
  * It's the content of a dialog, so whoever opens it owns the Dialog: the
  * homepage's card and the chat open it on its own, and the Callahans' drawer
@@ -94,36 +92,33 @@ export function ShopResults({
   const sent = walk.recSent || day === "fri";
 
   return (
-    <DialogContent
-      onOpenAutoFocus={focusPanel}
-      aria-describedby={undefined}
-      className="top-[calc(50%+var(--demo-bar-h)/2)] flex max-h-[calc(100svh-var(--demo-bar-h)-2rem)] flex-col gap-0 overflow-hidden bg-background p-0 outline-none sm:max-w-[640px]"
-    >
-      <DialogHeader className="gap-0 px-5 pt-4.5 pr-14">
-        <p className="eyebrow text-muted-foreground">{columnTitle("recommend")}</p>
-        <DialogTitle className="mt-1.5 font-display text-2xl">{card.name}</DialogTitle>
-      </DialogHeader>
-      <div className="mt-3.5 min-h-0 flex-1 overflow-y-auto border-t px-5 pt-4.5 pb-7">
-        <Recommendation
-          card={card}
-          file={{ ...fileFor(card), rec }}
-          body={walk.recDraft ?? recEmails[walk.pick]}
-          setBody={(body) => update({ recDraft: body })}
-          pick={optionById(walk.pick).carrier}
-          onPick={(name) => update({ pick: options.find((o) => o.carrier === name)!.id, recDraft: null })}
-          locked={sent}
-        />
-      </div>
-      <div className="flex items-center border-t px-5 pt-3.5 pb-4">
-        {sent ? (
-          <p className="text-sm">Sent to Dana and Mike Thursday morning. We'll let you know when they answer.</p>
+    <PhaseModal
+      eyebrow={columnTitle("recommend")}
+      title={card.name}
+      footer={
+        sent ? (
+          <PhaseFooter done>
+            <p className="text-sm">Sent to Dana and Mike Thursday morning. We'll let you know when they answer.</p>
+          </PhaseFooter>
         ) : (
-          <Button size="lg" className="w-full" onClick={onSend}>
-            <Send data-icon="inline-start" />
-            Send recommendation email
-          </Button>
-        )}
-      </div>
-    </DialogContent>
+          <PhaseFooter>
+            <Button size="lg" className="w-full" onClick={onSend}>
+              <Send data-icon="inline-start" />
+              Send recommendation email
+            </Button>
+          </PhaseFooter>
+        )
+      }
+    >
+      <Recommendation
+        card={card}
+        file={{ ...fileFor(card), rec }}
+        body={walk.recDraft ?? recEmails[walk.pick]}
+        setBody={(body) => update({ recDraft: body })}
+        pick={optionById(walk.pick).carrier}
+        onPick={(name) => update({ pick: options.find((o) => o.carrier === name)!.id, recDraft: null })}
+        locked={sent}
+      />
+    </PhaseModal>
   );
 }

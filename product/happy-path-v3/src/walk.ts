@@ -39,6 +39,12 @@ export type Exchange = { key: number; question: string; answer: PillId | null };
  */
 export type Chat = { id: number; day: Day; title: string; asked: Exchange[] };
 
+/** A note Stacey left on a household: the walk's day, the clock time she posted it, and what she wrote. */
+export type Note = { id: number; day: Day; time: string; text: string };
+
+/** A nudge Stacey sent early or skipped, and the day she did it. */
+export type NudgeChoice = { choice: "sent" | "skipped"; day: Day };
+
 /**
  * What the presenter has done so far. It survives stepping back and forth, and
  * anything skipped by jumping ahead falls back to the default: the outreach
@@ -59,6 +65,12 @@ export type Walk = {
   closed: Record<string, string>;
   notesDrafted: boolean;
   chats: Chat[];
+  /** Nudges and follow-ups Stacey sent early or skipped from a drawer, by `nudges` key (data.ts). */
+  nudges: Record<string, NudgeChoice>;
+  /** Earlier weeks' recommendations Stacey sent from a drawer on Monday. */
+  recsSent: string[];
+  /** Each household's notes, oldest first. */
+  notes: Record<string, Note[]>;
 };
 
 export const initialWalk: Walk = {
@@ -75,6 +87,9 @@ export const initialWalk: Walk = {
   closed: {},
   notesDrafted: false,
   chats: [],
+  nudges: {},
+  recsSent: [],
+  notes: {},
 };
 
 export type WalkProps = {

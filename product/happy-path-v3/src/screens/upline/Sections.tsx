@@ -73,9 +73,12 @@ const callahanClosing = (day: Day, walk: Walk) => day === "fri" && !walk.skipped
 const callahanShopped = (day: Day, walk: Walk) =>
   day === "thu" && !walk.recSent && !walk.skipped.includes(callahan.id);
 
-/** After Monday, the nudges and follow-ups going out on their own. */
+/**
+ * After Monday, the nudges and follow-ups going out on their own, less any
+ * Stacey sent early or skipped from the household's drawer.
+ */
 const scheduledLater = (day: Exclude<Day, "mon">, walk: Walk) =>
-  upcoming[day].filter((u) => !walk.skipped.includes(u.id));
+  upcoming[day].filter((u) => !walk.skipped.includes(u.id) && !walk.nudges[u.nudge]);
 
 /** A section's frame: its title above the card, as the Monday email sets it, then its list. */
 function Section({ id, title, children }: { id: string; title: string; children: React.ReactNode }) {

@@ -1,7 +1,9 @@
 import type { ReactNode } from "react";
 import { ArrowDown, ArrowRight, ArrowUp, Car, Check, House, Layers2, Mail, Umbrella } from "lucide-react";
 import { cn } from "cn";
-import type { Card, Kind, TimelineItem } from "@/household/data";
+import { Textarea } from "@/components/ui/textarea";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import type { Card, Kind } from "@/household/data";
 
 export function KindIcon({ kind, className }: { kind: Kind; className?: string }) {
   const Icon = kind === "home" ? House : kind === "auto" ? Car : Umbrella;
@@ -33,40 +35,6 @@ export function Change({ pct, className }: { pct: number; className?: string }) 
 
 export function SectionHead({ children, className }: { children: ReactNode; className?: string }) {
   return <h3 className={cn("eyebrow text-muted-foreground", className)}>{children}</h3>;
-}
-
-/** What has happened on a household, oldest first, with where it stands now. */
-export function Timeline({ items }: { items: TimelineItem[] }) {
-  return (
-    <ol className="grid gap-2">
-      {items.map((it) => (
-        <li
-          key={it.label}
-          className={cn(
-            "grid grid-cols-[92px_12px_1fr] items-start gap-3 border bg-card px-4 py-3.5",
-            it.state === "now" && "border-primary bg-blue-100/30",
-          )}
-        >
-          <time className={cn("pt-0.5 text-sm font-medium text-muted-foreground", it.state === "now" && "text-primary")}>
-            {it.date}
-          </time>
-          <span
-            aria-hidden
-            className={cn(
-              "mt-1.5 size-2.5 justify-self-center",
-              it.state === "done" && "bg-primary",
-              it.state === "now" && "bg-primary ring-4 ring-blue-100",
-              it.state === "soon" && "border-2 border-primary bg-card",
-            )}
-          />
-          <div>
-            <p className="text-base font-medium leading-snug">{it.label}</p>
-            {it.detail && <p className="mt-1 text-sm text-muted-foreground">{it.detail}</p>}
-          </div>
-        </li>
-      ))}
-    </ol>
-  );
 }
 
 /** A quote that matches what the household has today is a check; anything else is written out. */
@@ -123,3 +91,87 @@ export function EmailFrame({
     </div>
   );
 }
+
+/**
+ * An email's words, still editable until it goes, with its questionnaire link
+ * as a link: the paragraphs either side of it are two boxes that read as one,
+ * and the link line between them goes to the questionnaire. Without `onLink`
+ * the link is drawn but says it isn't in this prototype, since only the
+ * Callahans' questionnaire is. An email with no link line is one box.
+ */
+export function LinkedEmail({
+  body,
+  onChange,
+  onLink,
+  readOnly,
+}: {
+  body: string;
+  onChange: (body: string) => void;
+  onLink?: () => void;
+  readOnly?: boolean;
+}) {
+  const paragraphs = body.split(/\n\n+/);
+  const at = paragraphs.findIndex((p) => linkLine.test(p));
+  // Each box keeps the kit's own padding, so its focus ring has room, and the
+  // frame's padding is short by as much, so the words sit where one box's did.
+  const words = "min-h-0 resize-none border-0 bg-transparent text-[15px] leading-relaxed";
+
+  if (at < 0) {
+    return (
+      <div className="p-3">
+        <Textarea
+          aria-label="Email"
+          value={body}
+          readOnly={readOnly}
+          onChange={(e) => onChange(e.target.value)}
+          className={words}
+        />
+      </div>
+    );
+  }
+
+  const before = paragraphs.slice(0, at).join("\n\n");
+  const after = paragraphs.slice(at + 1).join("\n\n");
+  const [, label, url] = paragraphs[at].match(linkLine)!;
+  const join = (b: string, a: string) => onChange([b, paragraphs[at], a].filter((part) => part.trim()).join("\n\n"));
+
+  return (
+    <div className="p-3">
+      <Textarea
+        aria-label="Email, before the questionnaire link"
+        value={before}
+        readOnly={readOnly}
+        onChange={(e) => join(e.target.value, after)}
+        className={words}
+      />
+      <p className="my-4 px-2.5 text-[15px] leading-relaxed">
+        {onLink ? (
+          <button type="button" onClick={onLink} className={linkStyle}>
+            {label}
+          </button>
+        ) : (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button type="button" aria-disabled className={linkStyle}>
+                {label}
+              </button>
+            </TooltipTrigger>
+            <TooltipContent>Only the Callahans' questionnaire is in this prototype.</TooltipContent>
+          </Tooltip>
+        )}
+        <span className="block text-sm break-all text-muted-foreground">{url.replace(/^https?:\/\//, "")}</span>
+      </p>
+      <Textarea
+        aria-label="Email, after the questionnaire link"
+        value={after}
+        readOnly={readOnly}
+        onChange={(e) => join(before, e.target.value)}
+        className={words}
+      />
+    </div>
+  );
+}
+
+/** A paragraph that's only a link: its words, an arrow, and the address, as Dana's inbox reads it. */
+const linkLine = /^(.*?) → (https?:\/\/\S+)$/;
+const linkStyle = "text-left text-primary underline underline-offset-4 hover:no-underline";
