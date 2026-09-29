@@ -4,7 +4,7 @@ import { money } from "@/data";
 
 /**
  * A preview of what a shop came back with, for the picture on a Shopped row:
- * the results page's Your pick list in miniature, each carrier that quoted
+ * a results pick list in miniature, each carrier that quoted
  * with its mark and annual price, and the pick selected. It sits on the
  * design hub's card picture panel, as the hub's template cards set theirs:
  * full bleed to the row's left, top and bottom, never shorter than 16:9.

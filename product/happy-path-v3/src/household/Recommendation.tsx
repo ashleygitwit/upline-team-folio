@@ -16,20 +16,32 @@ import { CovMark, EmailFrame, SectionHead } from "@/household/parts";
  * A shop that has come back: what each carrier offered against what the
  * household has today, the carrier documents, what to call out, the pick, and
  * the email that carries it. The email never sends on its own.
+ *
+ * v3 adds two props to v2.5's: `pick` and `onPick` hand the pick to the walk,
+ * so what Stacey picks is what Dana gets, and `locked` holds the pick and the
+ * email once the recommendation has gone.
  */
 export function Recommendation({
   card,
   file,
   body,
   setBody,
+  pick: pickProp,
+  onPick,
+  locked,
 }: {
   card: Card;
   file: HouseholdFile;
   body: string;
   setBody: (s: string) => void;
+  pick?: string;
+  onPick?: (name: string) => void;
+  locked?: boolean;
 }) {
   const rec = file.rec;
-  const [pick, setPick] = useState(rec?.pick ?? "");
+  const [ownPick, setOwnPick] = useState(rec?.pick ?? "");
+  const pick = pickProp ?? ownPick;
+  const setPick = onPick ?? setOwnPick;
   const [help, setHelp] = useState<string | null>(null);
   const [doc, setDoc] = useState<QuoteDoc | null>(null);
   const first = file.namedInsured.split(" ")[0];
@@ -146,6 +158,7 @@ export function Recommendation({
           <p className="mb-2.5 text-sm text-muted-foreground">Choose the one to include in your email to {first}.</p>
           <RadioGroup
             value={pick}
+            disabled={locked}
             onValueChange={(name) => {
               setPick(name);
               const o = rec.options.find((x) => x.name === name);
@@ -181,6 +194,7 @@ export function Recommendation({
         <Textarea
           aria-label="Recommendation email"
           value={body}
+          readOnly={locked}
           onChange={(e) => setBody(e.target.value)}
           className="min-h-60 border-0 bg-transparent px-5.5 py-5 text-[15px] leading-relaxed"
         />

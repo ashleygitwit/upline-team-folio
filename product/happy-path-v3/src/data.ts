@@ -4,8 +4,7 @@
  * (upline-happy-path-demo.html, Sept 22) so the same people carry across
  * versions. What v2 did not have is written here: the other five outreach
  * emails, the week's statuses by day, the Callahans' shop results and talking
- * points, the three households who left, and the Callahans' profile: their
- * history before this week and Dana's questionnaire answers.
+ * points, and the three households who left.
  */
 
 export const agency = {
@@ -670,102 +669,6 @@ export const changeChoices = [
   { id: "vehicle", label: "A vehicle we don't have on file" },
   { id: "roof", label: "Roof work in the last few years" },
   { id: "dog", label: "A dog in the household" },
-];
-
-/* ------------------------------------------------------------------ *
- * The Callahans' profile
- * ------------------------------------------------------------------ */
-
-/**
- * The Callahans before this week, newest first. Sophie's license and the roof
- * come from the household on file. The carrier history is invented so the
- * timeline has a change of provider to show.
- */
-export type Past = { id: string; date: string; kind: string; title: string; detail: string };
-
-export const callahanHistory: Past[] = [
-  {
-    id: "sophie",
-    date: "Aug 2026",
-    kind: "Updated details",
-    title: "Sophie added as a driver",
-    detail:
-      "Sophie got her license in August and went on the auto policy as the third driver. Her license number was still missing, so it's the first thing this year's questionnaire asks for.",
-  },
-  {
-    id: "roof",
-    date: "2024",
-    kind: "Updated details",
-    title: "Roof replaced",
-    detail: "Dana let us know the roof was replaced. Erie settles it at replacement cost.",
-  },
-  {
-    id: "erie",
-    date: "Nov 2023",
-    kind: "Changed carriers",
-    title: "Moved from Westfield to Erie",
-    detail: "Home and auto moved together at renewal. Same limits and deductibles, written by Erie.",
-  },
-  {
-    id: "joined",
-    date: "Nov 2021",
-    kind: "New client",
-    title: "Joined Stockton Hill",
-    detail: "Home and auto written with Westfield.",
-  },
-];
-
-export const carrierHistory = [
-  { carrier: "Erie", lines: "Home + Auto", span: "November 2023 to today" },
-  { carrier: "Westfield", lines: "Home + Auto", span: "November 2021 to November 2023" },
-];
-
-/**
- * Dana's answers, as the profile shows them. The questionnaire in the walk
- * doesn't keep what the presenter types, so these are written here. `added`
- * is something we didn't have; `changed` replaces what was on file.
- */
-export type Answer = { label: string; value: string; was?: string; change?: "added" | "changed" };
-
-export const danaAnswers: { id: string; question: string; answers: Answer[] }[] = [
-  {
-    id: "contact",
-    question: "Is this still the best way to reach you?",
-    answers: [
-      { label: "Name", value: "Dana Callahan" },
-      { label: "Email", value: "dana@callahanfamily.com", was: "dana.callahan@gmail.com", change: "changed" },
-      { label: "Phone", value: callahan.phone },
-      { label: "Address", value: callahan.address },
-    ],
-  },
-  {
-    id: "changed",
-    question: "Anything new we should know before we shop?",
-    answers: [
-      { label: "A new driver in the household", value: "Yes, Sophie" },
-      { label: "A vehicle we don't have on file", value: "No" },
-      { label: "Roof work in the last few years", value: "No" },
-      { label: "A dog in the household", value: "No" },
-    ],
-  },
-  {
-    id: "license",
-    question: "What's Sophie's driver's license number?",
-    answers: [
-      { label: "Sophie's license number", value: "RS104582", change: "added" },
-      { label: "Sophie's occupation", value: "Student", change: "added" },
-    ],
-  },
-  {
-    id: "life",
-    question: "Want a life insurance quote while we shop the rest?",
-    answers: [{ label: "Life quote", value: "Yes, get me a number", change: "added" }],
-  },
-  {
-    id: "referral",
-    question: "Anyone else who should hear from us?",
-    answers: [{ label: "Referral", value: "No one this time" }],
-  },
 ];
 
 export const money = (n: number) =>

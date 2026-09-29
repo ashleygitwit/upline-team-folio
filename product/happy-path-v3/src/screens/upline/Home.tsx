@@ -19,7 +19,7 @@ type HomeProps = WalkProps & {
   onChat: () => void;
   onAction: AnswerProps["onAction"];
   onHousehold: (id: string) => void;
-  onProfile: () => void;
+  /** Opens the Callahans' shop results. */
   onResults: () => void;
   onPolicyholders: () => void;
 };
@@ -97,7 +97,7 @@ function Monday({ day, onChat, ...props }: HomeProps) {
 /**
  * Thursday: the Callahans' shop on the band, as Monday sets Closing there,
  * titled with what happened, and the same link under it to ask. Their row is
- * Elena's and Raymond's from Monday, and it goes to the results. Once the
+ * Elena's and Raymond's from Monday, and it opens the results in a modal. Once the
  * recommendation has gone to Dana, or if Stacey skipped the Callahans, the
  * band says so in place of the card. Below the band, only what goes out on
  * its own: there's nothing to close on Thursday, so Closing isn't drawn, and

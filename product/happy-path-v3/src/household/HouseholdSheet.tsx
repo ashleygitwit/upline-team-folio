@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { ArrowRight, Check, LoaderCircle, Send } from "lucide-react";
 import { cn } from "cn";
 import { Badge } from "@/components/ui/badge";
@@ -48,6 +48,12 @@ const stageTab: Record<Card["col"], { id: Tab; label: string }> = {
  * (`onOpenQuestionnaire`), as if it opened in another tab, and the others
  * say they aren't in this prototype.
  *
+ * The Callahans' drawer follows the walk's day (`view`): it keeps the
+ * outreach drawer's layout every day, with the eyebrow of the stage they're
+ * in and the day's banner, if any. Thursday's banner opens their shop results
+ * (`results`, a dialog's content) in a modal over the drawer, as Monday's
+ * opens the outreach review.
+ *
  * v2.5's drawer (screens/queue/HouseholdSheet.tsx there), ported into v3. The
  * only additions are hooks into v3's walk: `email` shows and saves v3's own
  * draft, so Dana's inbox gets what Stacey approved; `life` is the walk's life
@@ -65,6 +71,8 @@ export function HouseholdSheet({
   email,
   life,
   skipped,
+  view,
+  results,
 }: {
   card: Card;
   /** The review's Send now. */
@@ -78,6 +86,10 @@ export function HouseholdSheet({
   email?: { subject: string; body: string; onChange: (body: string) => void };
   life?: { on: boolean; onChange: (on: boolean) => void };
   skipped?: { onUndo: () => void };
+  /** The stage to show and the day's banner, for a drawer that follows the walk's day. */
+  view?: { eyebrow: string; banner: Banner | null };
+  /** What the results banner opens: the content of a dialog. */
+  results?: ReactNode;
 }) {
   const file = fileFor(card);
   const stage = stageTab[card.col];
@@ -88,6 +100,9 @@ export function HouseholdSheet({
   const setOutreach = email?.onChange ?? setDraft;
   const [rec, setRec] = useState(file.rec?.email ?? (card.target ? recBody.join("\n\n") : recDraft(card)));
   const [reviewing, setReviewing] = useState(false);
+  // Without a view, only a household waiting on its outreach is drawn without
+  // tabs, under the outreach banner.
+  const banner: Banner | null = view ? view.banner : outreachBanner;
 
   return (
     <SheetContent
@@ -98,7 +113,7 @@ export function HouseholdSheet({
       className="w-full gap-0 bg-background p-0 outline-none data-[side=right]:sm:max-w-[640px]"
     >
       <SheetHeader className="gap-0 px-5 pt-4.5 pb-0 pr-14">
-        <p className="eyebrow text-muted-foreground">{columnTitle(card.col)}</p>
+        <p className="eyebrow text-muted-foreground">{view?.eyebrow ?? columnTitle(card.col)}</p>
         <SheetTitle className="mt-1.5 font-display text-2xl">{card.name}</SheetTitle>
         <SheetDescription className="mt-2">
           {card.jumpPct === 0
@@ -108,75 +123,79 @@ export function HouseholdSheet({
         </SheetDescription>
       </SheetHeader>
 
-      {card.col === "outreach" ? (
+      {view || card.col === "outreach" ? (
         <Dialog open={reviewing} onOpenChange={setReviewing}>
-          <ReviewBanner />
+          {banner ? <ReviewBanner {...banner} /> : <div className="mt-3.5 border-t" />}
           <div className="min-h-0 flex-1 overflow-y-auto px-5 pt-4.5 pb-7">
             <Details card={card} file={file} />
           </div>
+
+          {banner?.opens === "results" && results}
 
           {/* The Outreach tab's page, as a modal over the drawer: the drawer's
               header and ground, and its body scrolling under a header that
               stays, so the close button never scrolls away. It's centered in
               the window under the presenter's bar, since it's tall enough to
               reach it. */}
-          <DialogContent
-            onOpenAutoFocus={focusPanel}
-            aria-describedby={undefined}
-            className="top-[calc(50%+var(--demo-bar-h)/2)] flex max-h-[calc(100svh-var(--demo-bar-h)-2rem)] flex-col gap-0 overflow-hidden bg-background p-0 outline-none sm:max-w-[640px]"
-          >
-            <DialogHeader className="gap-0 px-5 pt-4.5 pr-14">
-              <p className="eyebrow text-muted-foreground">{stage.label}</p>
-              <DialogTitle className="mt-1.5 font-display text-2xl">{card.name}</DialogTitle>
-            </DialogHeader>
-            <div className="mt-3.5 min-h-0 flex-1 overflow-y-auto border-t px-5 pt-4.5 pb-7">
-              <div className="flex flex-col gap-4">
-                <PolicyNow card={card} file={file} />
-                <EmailFrame
-                  toolbar={`From ${agency.agent.name}'s mailbox`}
-                  to={card.target ? outreachEmail.to : `${file.namedInsured} <${card.email}>`}
-                  subject={email?.subject ?? (card.target ? outreachEmail.subject : "A quick look at your renewal")}
+          {banner?.opens === "outreach" && (
+            <DialogContent
+              onOpenAutoFocus={focusPanel}
+              aria-describedby={undefined}
+              className="top-[calc(50%+var(--demo-bar-h)/2)] flex max-h-[calc(100svh-var(--demo-bar-h)-2rem)] flex-col gap-0 overflow-hidden bg-background p-0 outline-none sm:max-w-[640px]"
+            >
+              <DialogHeader className="gap-0 px-5 pt-4.5 pr-14">
+                <p className="eyebrow text-muted-foreground">{stage.label}</p>
+                <DialogTitle className="mt-1.5 font-display text-2xl">{card.name}</DialogTitle>
+              </DialogHeader>
+              <div className="mt-3.5 min-h-0 flex-1 overflow-y-auto border-t px-5 pt-4.5 pb-7">
+                <div className="flex flex-col gap-4">
+                  <PolicyNow card={card} file={file} />
+                  <EmailFrame
+                    toolbar={`From ${agency.agent.name}'s mailbox`}
+                    to={card.target ? outreachEmail.to : `${file.namedInsured} <${card.email}>`}
+                    subject={email?.subject ?? (card.target ? outreachEmail.subject : "A quick look at your renewal")}
+                  >
+                    <LinkedEmail
+                      body={outreach}
+                      onChange={setOutreach}
+                      onLink={card.target ? onOpenQuestionnaire : undefined}
+                    />
+                  </EmailFrame>
+                  <ShapeTheShop card={card} file={file} life={life} />
+                </div>
+              </div>
+              {/* Laid out as the drawer's own footer is: Send now fills the row
+                  up to Skip outreach, and once skipped, the line and Undo sit
+                  at either end. */}
+              {onSkipOutreach && (
+                <div
+                  className={cn(
+                    "flex items-center border-t px-5 pt-3.5 pb-4",
+                    skipped ? "justify-between gap-4" : "justify-end gap-2",
+                  )}
                 >
-                  <LinkedEmail
-                    body={outreach}
-                    onChange={setOutreach}
-                    onLink={card.target ? onOpenQuestionnaire : undefined}
-                  />
-                </EmailFrame>
-                <ShapeTheShop card={card} file={file} life={life} />
-              </div>
-            </div>
-            {/* Laid out as the drawer's own footer is: Send now fills the row
-                up to Skip outreach, and once skipped, the line and Undo sit
-                at either end. */}
-            {onSkipOutreach && (
-              <div
-                className={cn(
-                  "flex items-center border-t px-5 pt-3.5 pb-4",
-                  skipped ? "justify-between gap-4" : "justify-end gap-2",
-                )}
-              >
-                {skipped ? (
-                  <>
-                    <p className="text-sm">Skipped. {card.first} won't be emailed this time, and we won't shop it.</p>
-                    <Button variant="secondary" size="lg" onClick={skipped.onUndo}>
-                      Undo
-                    </Button>
-                  </>
-                ) : (
-                  <>
-                    <Button variant="secondary" size="lg" onClick={onSkipOutreach}>
-                      Skip outreach
-                    </Button>
-                    <Button size="lg" className="flex-1" onClick={onSendOutreach}>
-                      <Send data-icon="inline-start" />
-                      Send now
-                    </Button>
-                  </>
-                )}
-              </div>
-            )}
-          </DialogContent>
+                  {skipped ? (
+                    <>
+                      <p className="text-sm">Skipped. {card.first} won't be emailed this time, and we won't shop it.</p>
+                      <Button variant="secondary" size="lg" onClick={skipped.onUndo}>
+                        Undo
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <Button variant="secondary" size="lg" onClick={onSkipOutreach}>
+                        Skip outreach
+                      </Button>
+                      <Button size="lg" className="flex-1" onClick={onSendOutreach}>
+                        <Send data-icon="inline-start" />
+                        Send now
+                      </Button>
+                    </>
+                  )}
+                </div>
+              )}
+            </DialogContent>
+          )}
         </Dialog>
       ) : (
         <Tabs value={tab} onValueChange={(v) => setTab(v as Tab)} className="mt-3.5 min-h-0 flex-1 gap-0">
@@ -226,25 +245,31 @@ export function HouseholdSheet({
   );
 }
 
+/** A drawer's banner: what it says, its link's word, and which modal it opens. */
+export type Banner = { text: string; action: string; opens: "outreach" | "results" };
+
+const outreachBanner: Banner = { text: "Renewal email scheduled for Tues 9AM.", action: "Review", opens: "outreach" };
+
 /**
- * When the outreach email goes, and a way to it, where the tabs would be:
+ * What's waiting on the household, and a way to it, where the tabs would be:
  * uplineinsurance.com's founding-member banner (Navbar.tsx there), a strip of
  * blue with white type across the drawer, the message on the left and its
  * link on the right, underlined on hover. The whole strip is the one target,
  * as there, and its focus ring is white and inside it, since a ring outside
- * it would be cut off at the drawer's edges. It's the review modal's trigger,
- * so closing the modal puts the focus back on it.
+ * it would be cut off at the drawer's edges. It's its modal's trigger, so
+ * closing the modal puts the focus back on it. Without a banner, a hairline
+ * stands where it would be, as the tabs' rule does.
  */
-function ReviewBanner() {
+function ReviewBanner({ text, action }: Banner) {
   return (
     <DialogTrigger asChild>
       <button
         type="button"
         className="group mt-3.5 flex w-full items-center justify-between gap-4 bg-primary px-5 py-2 text-left text-sm text-primary-foreground focus-visible:-outline-offset-4 focus-visible:outline-primary-foreground"
       >
-        <span>Renewal email scheduled for Tues 9AM.</span>
+        <span>{text}</span>
         <span className="flex shrink-0 items-center gap-1 font-medium underline-offset-4 group-hover:underline">
-          Review
+          {action}
           <ArrowRight aria-hidden className="size-3.5" />
         </span>
       </button>

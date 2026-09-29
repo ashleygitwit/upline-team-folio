@@ -38,7 +38,7 @@ type SectionsProps = WalkProps & {
   /** The household open in the drawer. */
   household: string | null;
   onHousehold: (id: string) => void;
-  onProfile: () => void;
+  /** Opens the Callahans' shop results. */
   onResults: () => void;
 };
 
@@ -217,8 +217,7 @@ function EarlierRow({
 /**
  * A row's menu, at its top right: where a client's profile now lives, since
  * the name isn't a link, with their renewal history and a way to report an
- * error. View Profile opens the household's drawer, v2.5's, on an earlier
- * week's row, and the Callahans' profile page on theirs; the renewal history
+ * error. View Profile opens the household's drawer, v2.5's; the renewal history
  * and the report form aren't built yet, so those close the menu and go
  * nowhere. It sits above a row that opens as a whole, whose button covers it.
  */
@@ -426,8 +425,9 @@ function ScheduledRow({
  * board. In this walk's week it's the Callahans on Thursday morning, until
  * the recommendation goes to Dana, drawn as Elena's and Raymond's rows are:
  * the shop's preview, the menu, and the result ending in View the full
- * report. The whole row goes to the results, so the report link is part of
- * the row's button rather than a button of its own. On Thursday the homepage
+ * report. The whole row opens the results in a modal, so the report link is
+ * part of the row's button rather than a button of its own, and the menu's
+ * View Profile opens their drawer, as Elena's does hers. On Thursday the homepage
  * sets this section in its band, under the greeting, with a centered title,
  * as Monday sets Closing.
  */
@@ -436,7 +436,6 @@ export function Shopped({
   walk,
   household,
   onHousehold,
-  onProfile,
   onResults,
   title = "Shopped and ready for review",
   centered,
@@ -465,7 +464,7 @@ export function Shopped({
             <Row
               h={h}
               onOpen={onResults}
-              aside={<RowMenu name={h.name} onProfile={onProfile} />}
+              aside={<RowMenu name={h.name} onProfile={() => onHousehold(h.id)} />}
               picture={<ShopPreview quotes={options} pick={optionById(walk.pick).carrier} />}
             >
               <RenewalMeta lines={h.lines} carrier={h.carrier} renews={h.renews} day={day} />
@@ -494,7 +493,7 @@ export function Shopped({
  * Approvals Stacey has to bind. On Monday that's Anika Desai and Linda Hart
  * from earlier weeks, as on Ashley's v2 board, under a title that says how
  * many. In this walk's week it's the Callahans on Friday, until she marks it
- * done; their row goes to their profile.
+ * done; their row opens their drawer.
  */
 export function Closing({
   day,
@@ -502,7 +501,6 @@ export function Closing({
   update,
   household,
   onHousehold,
-  onProfile,
   title = "Closing",
   centered,
 }: SectionsProps & { title?: string; centered?: boolean }) {
@@ -524,7 +522,7 @@ export function Closing({
       {status || others.length > 0 ? (
         <ul className="divide-y">
           {status && (
-            <Row h={h} onOpen={onProfile} aside={opens}>
+            <Row h={h} selected={household === h.id} onOpen={() => onHousehold(h.id)} aside={opens}>
               <RenewalMeta lines={h.lines} carrier={h.carrier} renews={h.renews} day={day} />
               <span className="mt-2 block">{status.detail}</span>
             </Row>

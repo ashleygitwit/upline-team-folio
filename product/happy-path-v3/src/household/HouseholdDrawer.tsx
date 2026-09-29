@@ -3,30 +3,72 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Sheet } from "@/components/ui/sheet";
 import { Textarea } from "@/components/ui/textarea";
-import { thisWeek } from "@/data";
-import { spoken } from "@/household/columns";
+import { callahan, thisWeek, type Day } from "@/data";
+import { columnTitle, spoken } from "@/household/columns";
 import { cards, type Card } from "@/household/data";
-import { HouseholdSheet } from "@/household/HouseholdSheet";
+import { HouseholdSheet, type Banner } from "@/household/HouseholdSheet";
+import { ShopResults } from "@/household/ShopResults";
 import { focusPanel } from "@/lib/focus";
-import type { WalkProps } from "@/walk";
+import type { Walk, WalkProps } from "@/walk";
+
+/**
+ * Where the Callahans' drawer stands on each of the walk's days: the stage
+ * over their name and the day's banner. Monday's banner is the outreach
+ * review; Thursday's is their shop results, until the recommendation goes,
+ * and then the same results, read-only. Wednesday (being shopped) and Friday
+ * (approved) need nothing from the drawer. If Stacey skipped them, they stay
+ * where Monday left them, with the review's Undo.
+ */
+function callahanView(day: Day, walk: Walk): { eyebrow: string; banner: Banner | null } {
+  if (day === "mon" || walk.skipped.includes(callahan.id)) {
+    return {
+      eyebrow: columnTitle("outreach"),
+      banner: { text: "Renewal email scheduled for Tues 9AM.", action: "Review", opens: "outreach" },
+    };
+  }
+  if (day === "wed") return { eyebrow: columnTitle("shopping"), banner: null };
+  if (day === "fri") return { eyebrow: columnTitle("binding"), banner: null };
+  return {
+    eyebrow: columnTitle("recommend"),
+    banner: walk.recSent
+      ? { text: "Recommendation sent to Dana and Mike.", action: "View", opens: "results" }
+      : { text: "Dana and Mike's Renewal Shopping Results have been updated.", action: "Review", opens: "results" },
+  };
+}
 
 /**
  * A household's drawer, as v2.5 opens it from its board: the same sheet, the
  * same skip and close-out dialogs and the same toast (Queue.tsx there). It
  * opens under the navigation (--sheet-top in index.css). v3 opens it from a
- * Scheduled row, from a row menu's View Profile, and from the Callahans'
- * profile, and its outcomes land in v3's walk: Send now marks the email as
+ * Scheduled row, from a row menu's View Profile, from the Callahans' Closing
+ * row on Friday, and from the Policyholder List, and its outcomes land in
+ * v3's walk: Send now marks the email as
  * looking good, Skip outreach skips it, and Close out closes the household with the
  * note as its memo. The Callahans' email links to Dana's questionnaire, which
  * takes the walk there.
+ *
+ * It also holds the Callahans' shop results, for opening on their own (from
+ * the homepage's card or the chat) as well as from their drawer's banner, so
+ * sending from either closes what's open and says so in the same toast.
  */
 export function HouseholdDrawer({
   id,
+  day,
   onClose,
   onOpenQuestionnaire,
+  resultsOpen,
+  onResultsOpen,
   walk,
   update,
-}: Pick<WalkProps, "walk" | "update"> & { id: string | null; onClose: () => void; onOpenQuestionnaire: () => void }) {
+}: Pick<WalkProps, "walk" | "update"> & {
+  id: string | null;
+  day: Day;
+  onClose: () => void;
+  onOpenQuestionnaire: () => void;
+  /** Whether the Callahans' shop results are open on their own, outside the drawer. */
+  resultsOpen: boolean;
+  onResultsOpen: (open: boolean) => void;
+}) {
   // Keep the last household on screen while the sheet slides away.
   const [shown, setShown] = useState<Card | null>(null);
   const card = cards.find((c) => c.id === id) ?? null;
@@ -56,6 +98,15 @@ export function HouseholdDrawer({
     onClose();
     say("Skipped · moved to closed for this cycle");
   };
+
+  // The recommendation goes, from the results on their own or over the drawer.
+  const sendRec = () => {
+    update({ recSent: true });
+    onResultsOpen(false);
+    onClose();
+    say("Sent to Dana and Mike");
+  };
+  const results = <ShopResults day={day} walk={walk} update={update} onSend={sendRec} />;
 
   const closeOut = () => {
     if (!closing) return;
@@ -106,9 +157,15 @@ export function HouseholdDrawer({
                 ? { onUndo: () => update((w) => ({ skipped: w.skipped.filter((x) => x !== h.id) })) }
                 : undefined
             }
+            view={shown.id === callahan.id ? callahanView(day, walk) : undefined}
+            results={results}
           />
         )}
       </Sheet>
+
+      <Dialog open={resultsOpen} onOpenChange={onResultsOpen}>
+        {results}
+      </Dialog>
 
       <Dialog open={!!skipping} onOpenChange={(o) => !o && setSkipping(null)}>
         <DialogContent onOpenAutoFocus={focusPanel} className="outline-none">

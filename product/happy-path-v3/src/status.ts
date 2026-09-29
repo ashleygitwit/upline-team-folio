@@ -27,9 +27,3 @@ export function statusFor(h: Household, day: Exclude<Day, "mon">, walk: Walk): S
   }
   return h.status[day];
 }
-
-export function badgeVariant(label: string): "default" | "secondary" | "outline" {
-  if (label === "Ready for you" || label === "Approved") return "default";
-  if (label === "Staying" || label === "Skipped" || label === "Done" || label === "Sent to Dana") return "secondary";
-  return "outline";
-}

@@ -83,7 +83,7 @@ export function zillow(address: string) {
 }
 
 /** A carrier document, drawn as three pages: the summary, the coverage and the conditions. */
-function quoteDoc({
+export function quoteDoc({
   id,
   carrier,
   title,

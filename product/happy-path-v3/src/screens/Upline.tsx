@@ -5,24 +5,22 @@ import { HouseholdDrawer } from "@/household/HouseholdDrawer";
 import { ChatDock } from "@/screens/upline/Chat";
 import { Home } from "@/screens/upline/Home";
 import { Policyholders } from "@/screens/upline/Policyholders";
-import { Profile } from "@/screens/upline/Profile";
-import { Results } from "@/screens/upline/Results";
 import { scheduledId } from "@/screens/upline/Sections";
 import type { Day } from "@/data";
 import { pillById, type PillId } from "@/pills";
 import type { Today } from "@/today";
 import type { WalkProps } from "@/walk";
 
-export type Page = "home" | "profile" | "results" | "policyholders";
+export type Page = "home" | "policyholders";
 
 /**
- * Upline as Stacey sees it. Four pages: the homepage (a greeting, today's
- * one thing, a box to ask anything, and the three sections, most pressing
- * first), a client's profile, the results of a shop, and the list of
- * everyone renewing, from the menu on Stacey's name. A household's
- * email opens in a sheet over whichever page she's on, and once she asks
- * anything the chat docks along the bottom of every page. The walk can open
- * on any page, with an email open.
+ * Upline as Stacey sees it. Two pages: the homepage (a greeting, today's one
+ * thing, and the sections that hold what needs her, most pressing first) and
+ * the list of everyone renewing, from the menu on Stacey's name. A household
+ * opens in a drawer over whichever page she's on, and the Callahans' shop
+ * results open in a modal, from their card, their drawer or the chat. Once
+ * she asks anything the chat docks along the bottom of every page. The walk
+ * can open on any page, with a household open.
  */
 export function Upline({
   day,
@@ -33,6 +31,8 @@ export function Upline({
   const [page, setPage] = useState<Page>(initialPage);
   // The household open in the drawer.
   const [household, setHousehold] = useState<string | null>(initialHousehold);
+  // Whether the Callahans' shop results are open on their own.
+  const [results, setResults] = useState(false);
   // Whether the chat's panel is up, or put down to its tab.
   const [chatUp, setChatUp] = useState(false);
   // Bumped to take Stacey down to Scheduled Renewal Emails.
@@ -111,7 +111,10 @@ export function Upline({
 
   const act = (to: NonNullable<Today["action"]>["to"]) => {
     if (to === "done") update({ bound: true });
-    else if (to === "results") open("results");
+    else if (to === "results") {
+      setChatUp(false);
+      setResults(true);
+    }
     else if (to === "everyone") ask(pillById("everyone").question, "everyone");
     else {
       setChatUp(false);
@@ -134,23 +137,10 @@ export function Upline({
           onChat={openChat}
           onAction={act}
           onHousehold={setHousehold}
-          onProfile={() => open("profile")}
-          onResults={() => open("results")}
+          onResults={() => setResults(true)}
           onPolicyholders={() => open("policyholders")}
           {...props}
         />
-      )}
-      {page === "profile" && (
-        <Profile
-          day={day}
-          onHome={() => open("home")}
-          onResults={() => open("results")}
-          onEdit={() => setHousehold("callahan")}
-          {...props}
-        />
-      )}
-      {page === "results" && (
-        <Results day={day} onProfile={() => open("profile")} onSent={() => open("home")} {...props} />
       )}
       {page === "policyholders" && (
         <Policyholders
@@ -164,8 +154,11 @@ export function Upline({
 
       <HouseholdDrawer
         id={household}
+        day={day}
         onClose={() => setHousehold(null)}
         onOpenQuestionnaire={() => props.go("questionnaire")}
+        resultsOpen={results}
+        onResultsOpen={setResults}
         walk={props.walk}
         update={props.update}
       />
