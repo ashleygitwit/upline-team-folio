@@ -333,12 +333,6 @@ export const thisWeek: Household[] = [
 
 export const callahan = thisWeek[0];
 
-/** Initials for the list avatars: the first name and the family name. */
-export const initials = (name: string) => {
-  const parts = name.split(" ").filter((w) => w !== "&");
-  return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase();
-};
-
 /**
  * What's scheduled once Tuesday's outreach has gone: the nudges and follow-ups
  * the week's statuses already mention. They are one line each because their

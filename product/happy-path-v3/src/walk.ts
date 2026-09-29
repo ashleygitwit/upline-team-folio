@@ -56,6 +56,8 @@ export type Walk = {
   danaAnswered: boolean;
   danaApproved: boolean;
   bound: boolean;
+  /** Earlier weeks' approvals Stacey marked closed on Monday, with her memo. */
+  closed: Record<string, string>;
   notesDrafted: boolean;
   chats: Chat[];
 };
@@ -72,6 +74,7 @@ export const initialWalk: Walk = {
   danaAnswered: false,
   danaApproved: false,
   bound: false,
+  closed: {},
   notesDrafted: false,
   chats: [],
 };

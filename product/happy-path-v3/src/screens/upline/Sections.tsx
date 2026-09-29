@@ -1,11 +1,12 @@
+import { useState } from "react";
 import { Check, ChevronRight } from "lucide-react";
 import { cn } from "cn";
 import { CarrierMark } from "@/components/CarrierMark";
 import { PersonLink } from "@/components/PersonLink";
 import { RenewalMeta } from "@/components/RenewalMeta";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { callahan, earlier, initials, mondayNeeds, money, thisWeek, upcoming, type Day, type Household } from "@/data";
+import { Input } from "@/components/ui/input";
+import { callahan, earlier, mondayNeeds, money, thisWeek, upcoming, type Day, type Household } from "@/data";
 import { statusFor } from "@/status";
 import { going, words } from "@/today";
 import type { WalkProps } from "@/walk";
@@ -57,14 +58,6 @@ function Empty({ children }: { children: React.ReactNode }) {
   return <p className="px-6 py-5 text-base text-muted-foreground">{children}</p>;
 }
 
-function Face({ name }: { name: string }) {
-  return (
-    <Avatar size="lg">
-      <AvatarFallback>{initials(name)}</AvatarFallback>
-    </Avatar>
-  );
-}
-
 /**
  * A household's row. The whole row opens what's behind it, and the name on
  * top of it goes to the client's profile instead. Earlier weeks' households
@@ -86,8 +79,7 @@ function Row({
   children: React.ReactNode;
 }) {
   return (
-    <li className={cn("relative flex gap-3 px-6 py-4", onOpen && "hover:bg-background", selected && "bg-muted hover:bg-muted")}>
-      <Face name={h.name} />
+    <li className={cn("relative flex px-6 py-4", onOpen && "hover:bg-background", selected && "bg-muted hover:bg-muted")}>
       <div className="min-w-0 flex-1 text-sm">
         <div className="flex items-baseline justify-between gap-3">
           <PersonLink h={h} onProfile={onProfile} className="relative z-10 truncate" />
@@ -115,14 +107,78 @@ const opens = <ChevronRight aria-hidden className="size-4 shrink-0 self-center t
 /** Earlier weeks' households that need Stacey, which is only on Monday. */
 const fromEarlier = (day: Day, section: "shopped" | "closing") => (day === "mon" ? mondayNeeds(section) : []);
 
-/** An earlier week's household: its lines, carrier and renewal, then what's needed. Only on Monday. */
-function EarlierRow({ e, onProfile }: { e: (typeof earlier)[number]; onProfile: () => void }) {
+/**
+ * An earlier week's household: its lines, carrier and renewal, then what's
+ * needed. Only on Monday. Closing's rows end in a memo and Mark as Closed.
+ */
+function EarlierRow({
+  e,
+  onProfile,
+  closing,
+}: {
+  e: (typeof earlier)[number];
+  onProfile: () => void;
+  closing?: Pick<WalkProps, "walk" | "update">;
+}) {
   const [lines, carrier] = e.lines.split(" · ");
   return (
     <Row h={e} onProfile={onProfile}>
       <RenewalMeta lines={lines} carrier={carrier} renews={e.renews} day="mon" />
       <span className="mt-2 block">{e.monday!.detail}</span>
+      {closing && <CloseOut e={e} {...closing} />}
     </Row>
+  );
+}
+
+/**
+ * Closing an approval out: an optional memo and Mark as Closed, side by side
+ * and flush, the way a field and its button sit. Once it's closed the row says
+ * so, with the memo, and Undo puts the field back.
+ */
+function CloseOut({ e, walk, update }: { e: (typeof earlier)[number] } & Pick<WalkProps, "walk" | "update">) {
+  const [memo, setMemo] = useState("");
+  const saved = walk.closed[e.id];
+
+  if (saved !== undefined) {
+    return (
+      <p className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1">
+        <Check aria-hidden className="size-4 text-primary" />
+        <span className="font-medium">Closed</span>
+        {saved && <span className="text-muted-foreground">· {saved}</span>}
+        <Button
+          variant="link"
+          className="h-auto p-0 font-sans text-sm"
+          onClick={() => {
+            setMemo(saved);
+            update((w) => {
+              const { [e.id]: _, ...rest } = w.closed;
+              return { closed: rest };
+            });
+          }}
+        >
+          Undo
+        </Button>
+      </p>
+    );
+  }
+
+  return (
+    <form
+      className="mt-3 flex"
+      onSubmit={(ev) => {
+        ev.preventDefault();
+        update((w) => ({ closed: { ...w.closed, [e.id]: memo.trim() } }));
+      }}
+    >
+      <Input
+        aria-label={`Memo for ${e.name}`}
+        placeholder="Add a memo"
+        value={memo}
+        onChange={(ev) => setMemo(ev.target.value)}
+        className="min-w-0 flex-1 border-r-0"
+      />
+      <Button type="submit">Mark as Closed</Button>
+    </form>
   );
 }
 
@@ -302,7 +358,7 @@ function Shopped({ day, walk, onProfile, onResults }: SectionsProps) {
  * Callahans on Friday, until she marks it done; their row goes to their
  * profile.
  */
-function Closing({ day, walk, onProfile }: SectionsProps) {
+function Closing({ day, walk, update, onProfile }: SectionsProps) {
   const h = callahan;
   const skipped = walk.skipped.includes(h.id);
   const approved = day === "fri" && !walk.bound && !skipped;
@@ -327,7 +383,7 @@ function Closing({ day, walk, onProfile }: SectionsProps) {
             </Row>
           )}
           {others.map((e) => (
-            <EarlierRow key={e.id} e={e} onProfile={onProfile} />
+            <EarlierRow key={e.id} e={e} onProfile={onProfile} closing={{ walk, update }} />
           ))}
         </ul>
       ) : (
