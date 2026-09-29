@@ -157,8 +157,16 @@ export function HouseholdSheet({
                 {!callahans && <QuestionnaireFields card={card} file={file} />}
               </div>
             </div>
+            {/* Laid out as the drawer's own footer is: Send now fills the row
+                up to Skip outreach, and once skipped, the line and Undo sit
+                at either end. */}
             {callahans && onSkipOutreach && (
-              <div className="flex items-center justify-between gap-4 border-t px-5 pt-3.5 pb-4">
+              <div
+                className={cn(
+                  "flex items-center border-t px-5 pt-3.5 pb-4",
+                  skipped ? "justify-between gap-4" : "justify-end gap-2",
+                )}
+              >
                 {skipped ? (
                   <>
                     <p className="text-sm">Skipped. {card.first} won't be emailed this time, and we won't shop it.</p>
@@ -171,7 +179,7 @@ export function HouseholdSheet({
                     <Button variant="secondary" size="lg" onClick={onSkipOutreach}>
                       Skip outreach
                     </Button>
-                    <Button size="lg" onClick={() => onSendOutreach(true)}>
+                    <Button size="lg" className="flex-1" onClick={() => onSendOutreach(true)}>
                       <Send data-icon="inline-start" />
                       Send now
                     </Button>
