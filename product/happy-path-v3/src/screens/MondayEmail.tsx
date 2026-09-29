@@ -50,20 +50,17 @@ export function MondayEmail({ go }: WalkProps) {
 
       <div className="px-8 pb-12">
         <Group title="Closing">
-          {closing.map((e) => (
-            <Todo key={e.id} e={e} />
-          ))}
+          <TodoCard items={closing} cta="Close before renewal" onCta={() => go("monday")} />
         </Group>
 
         <Group title="Shopped and ready for review">
-          {shopped.map((e) => (
-            <Todo key={e.id} e={e} />
-          ))}
+          <TodoCard
+            items={shopped}
+            cta="Review shopped carriers"
+            variant="secondary"
+            onCta={() => go("monday")}
+          />
         </Group>
-
-        <Button size="lg" className="mt-8" onClick={() => go("monday")}>
-          Open Upline
-        </Button>
 
         <Group title="Scheduled Renewal Emails">
           <Card size="sm">
@@ -129,25 +126,55 @@ function renewsIn(renews: string) {
   return days === 1 ? "Renews tomorrow" : `Renews in ${days} days`;
 }
 
+/**
+ * One stage's to-dos in one card, a rule between each, and the stage's one
+ * button across the foot of the card: blue for closing, which can't wait, and
+ * the quiet gray for shops to review.
+ */
+function TodoCard({
+  items,
+  cta,
+  variant = "default",
+  onCta,
+}: {
+  items: Earlier[];
+  cta: string;
+  variant?: "default" | "secondary";
+  onCta: () => void;
+}) {
+  return (
+    <Card size="sm">
+      <CardContent className="gap-4">
+        <ul className="divide-y">
+          {items.map((e) => (
+            <Todo key={e.id} e={e} />
+          ))}
+        </ul>
+        <Button size="lg" variant={variant} className="w-full" onClick={onCta}>
+          {cta}
+        </Button>
+      </CardContent>
+    </Card>
+  );
+}
+
 /** One thing Stacey has to do: who, their lines and carrier, when it renews, and what's needed. */
 function Todo({ e }: { e: Earlier }) {
   const [line, carrier] = e.lines.split(" · ");
   return (
-    <Card size="sm">
-      <CardContent className="gap-2">
-        <p className="font-display text-lg">{e.name}</p>
-        <p className="flex flex-wrap items-center gap-x-1.5 text-sm text-muted-foreground">
-          {line}
-          <span aria-hidden>·</span>
-          <span className="inline-flex items-center gap-1.5">
-            <CarrierMark carrier={carrier} />
-            {carrier}
-          </span>
-          <span aria-hidden>·</span>
-          {renewsIn(e.renews)}
-        </p>
-        <p className="text-base">{e.monday!.detail}</p>
-      </CardContent>
-    </Card>
+    <li className="flex flex-col gap-2 py-4 first:pt-0">
+      <p className="font-display text-lg">{e.name}</p>
+      <p className="flex flex-wrap items-center gap-x-1.5 text-sm text-muted-foreground">
+        {line}
+        <span aria-hidden>·</span>
+        <span className="inline-flex items-center gap-1.5">
+          <CarrierMark carrier={carrier} />
+          {carrier}
+        </span>
+        <span aria-hidden>·</span>
+        {renewsIn(e.renews)}
+      </p>
+      <p className="text-base">{e.monday!.detail}</p>
+    </li>
   );
 }
