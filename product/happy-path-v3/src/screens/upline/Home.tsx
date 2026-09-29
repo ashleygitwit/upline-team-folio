@@ -39,8 +39,9 @@ export function Home(props: HomeProps) {
 
 /**
  * The band Monday and Wednesday open on: "Good morning", as the Monday email
- * greets Stacey, then what's under it, centered: Monday's first section, its
- * title and its card, and Wednesday's line on the day. Monday's is the blue
+ * greets Stacey, then what's under it: Monday's first section, its title
+ * centered over its card, and Wednesday's line on the day with the ask box
+ * under it. Monday's is the blue
  * band under the mountain, as the email's is; Wednesday's is the design hub's
  * gray band under the ridge, the quieter of the two for a day that needs
  * nothing.
@@ -90,15 +91,18 @@ function Monday({ day, ...props }: HomeProps) {
 
 /**
  * Wednesday: the day's line on the gray band, set as Monday's title under the
- * greeting is, then what goes out on its own below it. Nothing to close and
- * nothing back from a shop, so those sections aren't drawn, and there's no
- * ask box.
+ * greeting is, and the ask box under it, as Thursday and Friday have it; then
+ * what goes out on its own below the band. Nothing to close and nothing back
+ * from a shop, so those sections aren't drawn.
  */
-function Wednesday({ day, walk, ...props }: HomeProps) {
+function Wednesday({ day, walk, onAsk, ...props }: HomeProps) {
   return (
     <>
       <Hero ground="gray">
         <p className="text-center font-display text-xl font-medium text-balance">{todayFor(day, walk).lead}</p>
+        <AskBox label="Ask me anything" className="mt-10" onAsk={(q) => onAsk(q, matchPill(q))}>
+          <Suggestions ids={suggested} size="sm" onAsk={(id) => onAsk(pillById(id).question, id)} />
+        </AskBox>
       </Hero>
       <div className="shell pb-(--space-section)">
         <div className="mx-auto mt-(--space-section) max-w-180">
