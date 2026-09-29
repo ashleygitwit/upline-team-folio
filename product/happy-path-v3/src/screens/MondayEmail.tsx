@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { BandGrain } from "@/components/BandGrain";
 import { CarrierMark } from "@/components/CarrierMark";
+import { RenewalMeta } from "@/components/RenewalMeta";
 import { Stage } from "@/components/Stage";
 import { agency, mondayNeeds, money, thisWeek, type Earlier } from "@/data";
 import { words } from "@/today";
@@ -103,19 +104,6 @@ function Group({ title, children }: { title: string; children: ReactNode }) {
   );
 }
 
-/** The email goes out Monday, October 12, 8:00 AM. */
-const sent = new Date(2026, 9, 12);
-
-const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-
-/** Inside a week, how long is left says more than the date does. `renews` is "Oct 16". */
-function renewsIn(renews: string) {
-  const [mon, day] = renews.split(" ");
-  const days = Math.round((new Date(2026, months.indexOf(mon), Number(day)).getTime() - sent.getTime()) / 86_400_000);
-  if (days >= 7) return `Renews ${renews}`;
-  return days === 1 ? "Renews tomorrow" : `Renews in ${days} days`;
-}
-
 /**
  * One stage's to-dos in one card, a rule between each, and the stage's one
  * button across the foot of the card. The Scheduled card's foot matches, as a
@@ -140,20 +128,11 @@ function TodoCard({ items, cta, onCta }: { items: Earlier[]; cta: string; onCta:
 
 /** One thing Stacey has to do: who, their lines and carrier, when it renews, and what's needed. */
 function Todo({ e }: { e: Earlier }) {
-  const [line, carrier] = e.lines.split(" · ");
+  const [lines, carrier] = e.lines.split(" · ");
   return (
     <li className="flex flex-col gap-2 py-4 first:pt-0">
       <p className="font-display text-lg">{e.name}</p>
-      <p className="flex flex-wrap items-center gap-x-1.5 text-sm text-muted-foreground">
-        {line}
-        <span aria-hidden>·</span>
-        <span className="inline-flex items-center gap-1.5">
-          <CarrierMark carrier={carrier} />
-          {carrier}
-        </span>
-        <span aria-hidden>·</span>
-        {renewsIn(e.renews)}
-      </p>
+      <RenewalMeta lines={lines} carrier={carrier} renews={e.renews} day="mon" />
       <p className="text-base">{e.monday!.detail}</p>
     </li>
   );

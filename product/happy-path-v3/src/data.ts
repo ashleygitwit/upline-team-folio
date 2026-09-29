@@ -36,6 +36,14 @@ export const dayLabel: Record<Day, string> = {
   fri: "Friday, October 16",
 };
 
+/** Each day's date, for counting down to a renewal. Monday's is the day the Monday email goes out. */
+export const dayDate: Record<Day, Date> = {
+  mon: new Date(2026, 9, 12),
+  wed: new Date(2026, 9, 14),
+  thu: new Date(2026, 9, 15),
+  fri: new Date(2026, 9, 16),
+};
+
 /** The weekday on its own, for the homepage's greeting. */
 export const dayName: Record<Day, string> = {
   mon: "Monday",

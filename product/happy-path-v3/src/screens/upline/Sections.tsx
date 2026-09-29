@@ -1,11 +1,12 @@
 import { Check, ChevronRight } from "lucide-react";
 import { cn } from "cn";
+import { CarrierMark } from "@/components/CarrierMark";
 import { PersonLink } from "@/components/PersonLink";
+import { RenewalMeta } from "@/components/RenewalMeta";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { callahan, earlier, initials, mondayNeeds, money, thisWeek, upcoming, type Day, type Household } from "@/data";
-import { badgeVariant, statusFor } from "@/status";
+import { statusFor } from "@/status";
 import { going } from "@/today";
 import type { WalkProps } from "@/walk";
 
@@ -25,7 +26,9 @@ type SectionsProps = WalkProps & {
  * The homepage's three sections, in the Monday email's order, most pressing
  * first: what needs closing, what's been shopped and needs a look, and what's
  * going out, which goes whether Stacey looks or not. Each holds only what
- * needs her. On a day a section has nothing, it says so, and what's coming
+ * needs her, drawn as the Monday email draws it: no counts and no status
+ * chips, the carrier's mark beside each household, and a renewal inside a week
+ * counted down. On a day a section has nothing, it says so, and what's coming
  * instead.
  */
 export function Sections(props: SectionsProps) {
@@ -38,27 +41,16 @@ export function Sections(props: SectionsProps) {
   );
 }
 
-/** A section's frame: its title and count, then its list or a line saying it's empty. */
-function Section({
-  id,
-  title,
-  count,
-  children,
-}: {
-  id: string;
-  title: string;
-  count: number;
-  children: React.ReactNode;
-}) {
+/** A section's frame: its title, then its list or a line saying it's empty. */
+function Section({ id, title, children }: { id: string; title: string; children: React.ReactNode }) {
   return (
     <section
       id={id}
       aria-labelledby={`${id}-title`}
       className="scroll-mt-[calc(var(--demo-bar-h)+var(--space-tight))] border bg-card"
     >
-      <h2 id={`${id}-title`} tabIndex={-1} className="flex items-center gap-3 border-b px-6 py-5 text-xl">
+      <h2 id={`${id}-title`} tabIndex={-1} className="border-b px-6 py-5 text-xl">
         {title}
-        {count > 0 && <Badge>{count}</Badge>}
       </h2>
       {children}
     </section>
@@ -80,10 +72,13 @@ function Face({ name }: { name: string }) {
 /**
  * A household's row. The whole row opens what's behind it, and the name on
  * top of it goes to the client's profile instead. Earlier weeks' households
- * have no page behind them in this prototype, so their rows don't open.
+ * have no page behind them in this prototype, so their rows don't open. A
+ * `carrier` puts that carrier's mark beside the name, as the Monday email's
+ * Scheduled list does.
  */
 function Row({
   h,
+  carrier,
   selected,
   onOpen,
   onProfile,
@@ -91,6 +86,7 @@ function Row({
   children,
 }: {
   h: Pick<Household, "id" | "name">;
+  carrier?: string;
   selected?: boolean;
   onOpen?: () => void;
   onProfile: () => void;
@@ -101,8 +97,12 @@ function Row({
     <li className={cn("relative flex gap-3 px-6 py-4", onOpen && "hover:bg-background", selected && "bg-muted hover:bg-muted")}>
       <Face name={h.name} />
       <div className="min-w-0 flex-1 text-sm">
-        <div className="flex items-baseline justify-between gap-3">
-          <PersonLink h={h} onProfile={onProfile} className="relative z-10 truncate" />
+        <div className="flex items-center justify-between gap-3">
+          <span className="flex min-w-0 items-center gap-2">
+            {carrier && <CarrierMark carrier={carrier} />}
+            {carrier && <span className="sr-only">{carrier}, </span>}
+            <PersonLink h={h} onProfile={onProfile} className="relative z-10 truncate" />
+          </span>
           {aside}
         </div>
         {onOpen ? (
@@ -127,11 +127,12 @@ const opens = <ChevronRight aria-hidden className="size-4 shrink-0 self-center t
 /** Earlier weeks' households that need Stacey, which is only on Monday. */
 const fromEarlier = (day: Day, section: "shopped" | "closing") => (day === "mon" ? mondayNeeds(section) : []);
 
-/** An earlier week's household, with the label its stage carries for the Callahans too. */
-function EarlierRow({ e, label, onProfile }: { e: (typeof earlier)[number]; label: string; onProfile: () => void }) {
+/** An earlier week's household: its lines, carrier and renewal, then what's needed. Only on Monday. */
+function EarlierRow({ e, onProfile }: { e: (typeof earlier)[number]; onProfile: () => void }) {
+  const [lines, carrier] = e.lines.split(" · ");
   return (
     <Row h={e} onProfile={onProfile}>
-      <Badge variant={badgeVariant(label)}>{label}</Badge>
+      <RenewalMeta lines={lines} carrier={carrier} renews={e.renews} day="mon" />
       <span className="mt-2 block">{e.monday!.detail}</span>
     </Row>
   );
@@ -149,7 +150,7 @@ function Scheduled({ day, walk, update, message, onMessage, onProfile }: Section
   if (day !== "mon") {
     const list = upcoming[day].filter((u) => !walk.skipped.includes(u.id));
     return (
-      <Section id={scheduledId} title={title} count={list.length}>
+      <Section id={scheduledId} title={title}>
         {list.length === 0 ? (
           <Empty>Nothing is scheduled.</Empty>
         ) : (
@@ -161,7 +162,7 @@ function Scheduled({ day, walk, update, message, onMessage, onProfile }: Section
               {list.map((u) => {
                 const h = thisWeek.find((x) => x.id === u.id)!;
                 return (
-                  <Row key={u.id} h={h} onProfile={onProfile}>
+                  <Row key={u.id} h={h} carrier={h.carrier} onProfile={onProfile}>
                     <p>
                       {u.what} · Goes {u.when}
                     </p>
@@ -178,7 +179,7 @@ function Scheduled({ day, walk, update, message, onMessage, onProfile }: Section
 
   const n = going(walk);
   return (
-    <Section id={scheduledId} title={title} count={n}>
+    <Section id={scheduledId} title={title}>
       <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-3 border-b bg-background px-6 py-5">
         <p className="max-w-[44ch] text-sm">
           {walk.approvedAll
@@ -204,6 +205,7 @@ function Scheduled({ day, walk, update, message, onMessage, onProfile }: Section
             <Row
               key={h.id}
               h={h}
+              carrier={h.carrier}
               selected={message === h.id}
               onOpen={() => onMessage(h.id)}
               onProfile={onProfile}
@@ -252,17 +254,17 @@ function Shopped({ day, walk, onProfile, onResults }: SectionsProps) {
   }[day];
 
   return (
-    <Section id="shopped" title="Shopped and ready for review" count={others.length + (ready ? 1 : 0)}>
+    <Section id="shopped" title="Shopped and ready for review">
       {status || others.length > 0 ? (
         <ul className="divide-y">
           {status && (
             <Row h={h} onOpen={onResults} onProfile={onProfile} aside={opens}>
-              <Badge variant={badgeVariant(status.label)}>{status.label}</Badge>
+              <RenewalMeta lines={h.lines} carrier={h.carrier} renews={h.renews} day={day} />
               <span className="mt-2 block">{status.detail}</span>
             </Row>
           )}
           {others.map((e) => (
-            <EarlierRow key={e.id} e={e} label="Ready for you" onProfile={onProfile} />
+            <EarlierRow key={e.id} e={e} onProfile={onProfile} />
           ))}
         </ul>
       ) : (
@@ -293,17 +295,17 @@ function Closing({ day, walk, onProfile }: SectionsProps) {
         : "Nothing to close yet.";
 
   return (
-    <Section id="closing" title="Closing" count={others.length + (approved ? 1 : 0)}>
+    <Section id="closing" title="Closing">
       {status || others.length > 0 ? (
         <ul className="divide-y">
           {status && (
             <Row h={h} onOpen={onProfile} onProfile={onProfile} aside={opens}>
-              <Badge variant={badgeVariant(status.label)}>{status.label}</Badge>
+              <RenewalMeta lines={h.lines} carrier={h.carrier} renews={h.renews} day={day} />
               <span className="mt-2 block">{status.detail}</span>
             </Row>
           )}
           {others.map((e) => (
-            <EarlierRow key={e.id} e={e} label="Approved" onProfile={onProfile} />
+            <EarlierRow key={e.id} e={e} onProfile={onProfile} />
           ))}
         </ul>
       ) : (
