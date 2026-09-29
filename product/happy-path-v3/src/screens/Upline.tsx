@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { cn } from "cn";
 import { AppBar } from "@/components/AppBar";
 import { ChatDock } from "@/screens/upline/Chat";
@@ -51,6 +51,18 @@ export function Upline({
     section?.querySelector("h2")?.focus({ preventScroll: true });
   }, [jump]);
 
+  // A drawer opens under whichever bars are on screen: the presenter's bar,
+  // which always is, and Upline's own, until it scrolls away (--sheet-top in
+  // index.css).
+  const appBar = useRef<HTMLDivElement>(null);
+  useLayoutEffect(() => {
+    if (!message) return;
+    const root = document.documentElement;
+    const demoBar = parseFloat(getComputedStyle(root).getPropertyValue("--demo-bar-h")) || 0;
+    const appBarBottom = appBar.current?.getBoundingClientRect().bottom ?? 0;
+    root.style.setProperty("--sheet-top", `${Math.max(demoBar, appBarBottom)}px`);
+  }, [message]);
+
   const open = (to: Page) => {
     setMessage(null);
     setPage(to);
@@ -89,7 +101,9 @@ export function Upline({
 
   return (
     <div className={cn("min-h-[calc(100svh-var(--demo-bar-h))] bg-background", chat && "pb-(--dock-h)")}>
-      <AppBar onHome={() => open("home")} />
+      <div ref={appBar}>
+        <AppBar onHome={() => open("home")} />
+      </div>
 
       {page === "home" && (
         <Home

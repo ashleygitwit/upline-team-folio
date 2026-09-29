@@ -273,6 +273,20 @@
   animation: celebrate-draw 260ms ease-out 180ms both;
 }
 
+/* A side drawer opens under the navigation, not over it: the presenter's bar
+   and, while it's on screen, Upline's own bar stay in view and undimmed.
+   Upline.tsx measures where the bars end when a drawer opens and writes it
+   into --sheet-top; the page doesn't scroll while a drawer is open, so it
+   holds. Unlayered, so it wins over the sheet's own utilities. */
+[data-slot="sheet-overlay"] {
+  top: var(--sheet-top, 0px);
+}
+[data-slot="sheet-content"][data-side="right"] {
+  top: var(--sheet-top, 0px);
+  bottom: 0;
+  height: auto;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
