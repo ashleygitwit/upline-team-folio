@@ -14,7 +14,8 @@ import type { WalkProps } from "@/walk";
  * a chat along the bottom. It has to be readable before coffee, so under that
  * sit only the three sections, most pressing first, each holding just what
  * needs her. From Wednesday a sentence on the day, and its one button, sit
- * between the greeting and the box.
+ * between the greeting and the box. Monday has no box, only the greeting and
+ * "Let's wrap up some to-dos.", so the to-dos come straight after.
  */
 export function Home({
   day,
@@ -33,9 +34,11 @@ export function Home({
   onResults: () => void;
 }) {
   const today = todayFor(day, walk);
-  // Monday is just the greeting and the box: everything that needs Stacey is
-  // right below in the sections, so a sentence and a link would repeat it.
-  const brief = day !== "mon";
+  // Monday is just the greeting and one line: everything that needs Stacey is
+  // right below in the sections, so a brief, a link or the ask box would only
+  // stand between her and them.
+  const monday = day === "mon";
+  const brief = !monday;
 
   return (
     <div className="shell pt-(--space-section) pb-(--space-section)">
@@ -48,6 +51,11 @@ export function Home({
             <div className="mt-8 flex justify-center">
               <Celebration />
             </div>
+          )}
+          {monday && (
+            <p className="mx-auto mt-6 max-w-[60ch] font-display text-lg font-normal text-balance text-muted-foreground">
+              Let's wrap up some to-dos.
+            </p>
           )}
           {brief && (
             <p className="mx-auto mt-6 max-w-[60ch] font-display text-lg font-normal text-balance text-muted-foreground">
@@ -81,9 +89,11 @@ export function Home({
           )}
         </section>
 
-        <AskBox label="Ask me anything" className="mt-10" onAsk={(q) => onAsk(q, matchPill(q))}>
-          <Suggestions ids={suggested} size="sm" onAsk={(id) => onAsk(pillById(id).question, id)} />
-        </AskBox>
+        {!monday && (
+          <AskBox label="Ask me anything" className="mt-10" onAsk={(q) => onAsk(q, matchPill(q))}>
+            <Suggestions ids={suggested} size="sm" onAsk={(id) => onAsk(pillById(id).question, id)} />
+          </AskBox>
+        )}
 
         <Sections day={day} walk={walk} update={update} {...props} />
       </div>

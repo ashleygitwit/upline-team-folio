@@ -82,7 +82,7 @@ function Row({
     <li className={cn("relative flex px-6 py-4", onOpen && "hover:bg-background", selected && "bg-muted hover:bg-muted")}>
       <div className="min-w-0 flex-1 text-sm">
         <div className="flex items-baseline justify-between gap-3">
-          <PersonLink h={h} onProfile={onProfile} className="relative z-10 truncate" />
+          <PersonLink h={h} onProfile={onProfile} className="relative z-10 truncate font-display text-lg" />
           {aside}
         </div>
         {onOpen ? (
@@ -175,7 +175,7 @@ function CloseOut({ e, walk, update }: { e: (typeof earlier)[number] } & Pick<Wa
         placeholder="Add a memo"
         value={memo}
         onChange={(ev) => setMemo(ev.target.value)}
-        className="min-w-0 flex-1 border-r-0"
+        className="min-w-0 flex-1 border-r-0 bg-background"
       />
       <Button type="submit">Mark as Closed</Button>
     </form>
