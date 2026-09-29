@@ -79,13 +79,24 @@ const scheduledLater = (day: Exclude<Day, "mon">, walk: Walk) =>
   upcoming[day].filter((u) => !walk.skipped.includes(u.id) && !walk.nudges[u.nudge]);
 
 /** A section's frame: its title above the card, as the Monday email sets it, then its list. */
-function Section({ id, title, children }: { id: string; title: string; children: React.ReactNode }) {
+function Section({
+  id,
+  title,
+  cards,
+  children,
+}: {
+  id: string;
+  title: string;
+  /** The list draws its own cards, one per row, instead of sitting in one. */
+  cards?: boolean;
+  children: React.ReactNode;
+}) {
   return (
     <section id={id} aria-labelledby={`${id}-title`} className="scroll-mt-[calc(var(--demo-bar-h)+var(--space-tight))]">
       <h2 id={`${id}-title`} tabIndex={-1} className="text-xl">
         {title}
       </h2>
-      <div className="mt-4 border bg-card text-card-foreground">{children}</div>
+      <div className={cn("mt-4", !cards && "border bg-card text-card-foreground")}>{children}</div>
     </section>
   );
 }
@@ -116,7 +127,7 @@ function Row({
   return (
     <li
       className={cn(
-        "relative",
+        "relative border bg-card text-card-foreground",
         picture ? "grid sm:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]" : "flex",
         onOpen && "hover:bg-background",
         selected && "bg-muted hover:bg-muted",
@@ -429,7 +440,8 @@ function ScheduledRow({
  * what they approved, and View profile; once closed out from the drawer it
  * says so, and Undo reopens it. Every menu's View Profile opens the drawer,
  * and its Snooze takes the row off the list and puts it in a quiet line at
- * the foot, with Undo, so what's put off stays in sight.
+ * the foot, with Undo, so what's put off stays in sight. Each task is its own
+ * card, 16 apart, rather than a row in one shared card.
  */
 function ActionNeeded({ day, walk, update, household, onHousehold, onResults }: SectionsProps) {
   const h = pruitt;
@@ -444,8 +456,8 @@ function ActionNeeded({ day, walk, update, household, onHousehold, onResults }: 
   );
 
   return (
-    <Section id="action-needed" title="Action Needed">
-      <ul className="divide-y">
+    <Section id="action-needed" title="Action Needed" cards>
+      <ul className="flex flex-col gap-4">
         {actionNeeded(day, walk).map((t) =>
           t.earlier ? (
             <EarlierRow
@@ -491,7 +503,7 @@ function ActionNeeded({ day, walk, update, household, onHousehold, onResults }: 
           ),
         )}
         {snoozed.length > 0 && (
-          <li className="px-6 py-4 text-sm">
+          <li className="border bg-card px-6 py-4 text-sm text-card-foreground">
             <p className="flex items-center gap-1.5 font-medium text-muted-foreground">
               <AlarmClock aria-hidden className="size-4" />
               Snoozed
