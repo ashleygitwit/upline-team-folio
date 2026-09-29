@@ -36,7 +36,8 @@ export function Home(props: HomeProps) {
 /**
  * Monday: the greeting and Closing on the band, titled with how many renewals
  * close this week, then the other two sections on the page. A brief, a link or
- * the ask box would only stand between Stacey and them.
+ * the ask box would only stand between Stacey and them. It greets her as the
+ * Monday email does, since she's usually come straight from it.
  */
 function Monday({ day, ...props }: HomeProps) {
   const n = mondayNeeds("closing").length;
@@ -47,11 +48,12 @@ function Monday({ day, ...props }: HomeProps) {
         <div className="shell py-(--space-section)">
           <div className="mx-auto max-w-180">
             <h1 id="home-title" className="text-center text-5xl text-balance">
-              Happy {dayName[day]}, {agency.agent.first}
+              Good morning, {agency.agent.first}
             </h1>
             <div className="mt-(--space-block)">
               <Closing
                 day={day}
+                centered
                 title={`You have ${words[n].toLowerCase()} ${n === 1 ? "renewal" : "renewals"} closing this week.`}
                 {...props}
               />

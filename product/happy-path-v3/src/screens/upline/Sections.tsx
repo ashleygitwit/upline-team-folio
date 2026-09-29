@@ -49,11 +49,25 @@ export function Sections({ closing = true, ...props }: SectionsProps & { closing
   );
 }
 
-/** A section's frame: its title above the card, as the Monday email sets it, then its list or a line saying it's empty. */
-function Section({ id, title, children }: { id: string; title: string; children: React.ReactNode }) {
+/**
+ * A section's frame: its title above the card, as the Monday email sets it,
+ * then its list or a line saying it's empty. A centered title sits under the
+ * greeting on Monday's band.
+ */
+function Section({
+  id,
+  title,
+  centered,
+  children,
+}: {
+  id: string;
+  title: string;
+  centered?: boolean;
+  children: React.ReactNode;
+}) {
   return (
     <section id={id} aria-labelledby={`${id}-title`} className="scroll-mt-[calc(var(--demo-bar-h)+var(--space-tight))]">
-      <h2 id={`${id}-title`} tabIndex={-1} className="text-xl">
+      <h2 id={`${id}-title`} tabIndex={-1} className={cn("text-xl", centered && "text-center text-balance")}>
         {title}
       </h2>
       <div className="mt-4 border bg-card text-card-foreground">{children}</div>
@@ -431,7 +445,8 @@ export function Closing({
   onHousehold,
   onProfile,
   title = "Closing",
-}: SectionsProps & { title?: string }) {
+  centered,
+}: SectionsProps & { title?: string; centered?: boolean }) {
   const h = callahan;
   const skipped = walk.skipped.includes(h.id);
   const approved = day === "fri" && !walk.bound && !skipped;
@@ -446,7 +461,7 @@ export function Closing({
         : "Nothing to close yet.";
 
   return (
-    <Section id="closing" title={title}>
+    <Section id="closing" title={title} centered={centered}>
       {status || others.length > 0 ? (
         <ul className="divide-y">
           {status && (
