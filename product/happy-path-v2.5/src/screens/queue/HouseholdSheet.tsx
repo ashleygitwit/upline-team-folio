@@ -1,0 +1,445 @@
+import { useState } from "react";
+import { ArrowRight, LoaderCircle, Plus, Send, X } from "lucide-react";
+import { cn } from "cn";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Field, FieldContent, FieldDescription, FieldLabel, FieldTitle } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  agency,
+  callahanFields,
+  fileFor,
+  money,
+  outreachBody,
+  outreachEmail,
+  questionnaireUrl,
+  recBody,
+  type Card,
+  type HouseholdFile,
+  type TimelineItem,
+} from "@/data";
+import { focusPanel } from "@/lib/focus";
+import { Details } from "@/screens/queue/Details";
+import { Recommendation } from "@/screens/queue/Recommendation";
+import { columnTitle } from "@/screens/queue/columns";
+import { CarrierLogo, EmailFrame, SectionHead, Timeline } from "@/screens/queue/parts";
+
+type Tab = "details" | "outreach" | "shopping" | "rec" | "closing";
+
+const stageTab: Record<Card["col"], { id: Tab; label: string }> = {
+  outreach: { id: "outreach", label: "Outreach" },
+  shopping: { id: "shopping", label: "Shopping" },
+  recommend: { id: "rec", label: "Recommendation" },
+  binding: { id: "closing", label: "Closing" },
+};
+
+/**
+ * A household, opened from the board. It opens on the stage it's in (the
+ * outreach email, the shop, the recommendation or closing) with the file one
+ * tab over. Footer actions follow the stage.
+ */
+export function HouseholdSheet({
+  card,
+  onSendOutreach,
+  onSendRec,
+  onOpenResults,
+  onAskCloseOut,
+  onSkipOutreach,
+}: {
+  card: Card;
+  onSendOutreach: () => void;
+  onSendRec: () => void;
+  onOpenResults: () => void;
+  onAskCloseOut: () => void;
+  onSkipOutreach?: () => void;
+}) {
+  const file = fileFor(card);
+  const stage = stageTab[card.col];
+  const link = card.target ? questionnaireUrl : `https://${agency.questionnaireHost}/d/${card.id}`;
+  const [tab, setTab] = useState<Tab>(stage.id);
+  const [outreach, setOutreach] = useState(card.target ? outreachBody.join("\n\n") : outreachDraft(card, link));
+  const [rec, setRec] = useState(file.rec?.email ?? (card.target ? recBody.join("\n\n") : recDraft(card)));
+
+  return (
+    <SheetContent
+      onOpenAutoFocus={focusPanel}
+      className="w-full gap-0 bg-background p-0 outline-none data-[side=right]:sm:max-w-[640px]"
+    >
+      <SheetHeader className="gap-0 px-5 pt-4.5 pb-0 pr-14">
+        <p className="eyebrow text-muted-foreground">{columnTitle(card.col)}</p>
+        <SheetTitle className="mt-1.5 font-display text-2xl">{card.name}</SheetTitle>
+        <SheetDescription className="mt-2">
+          {card.jumpPct === 0
+            ? `No change (${money(card.premium)})`
+            : `+${card.jumpPct}% (${money(card.was)} → ${money(card.premium)})`}{" "}
+          · {card.lines} · renews {card.renewal}
+        </SheetDescription>
+      </SheetHeader>
+
+      <Tabs value={tab} onValueChange={(v) => setTab(v as Tab)} className="mt-3.5 min-h-0 flex-1 gap-0">
+        <TabsList variant="line" className="w-full justify-start border-b px-4">
+          <TabsTrigger value="details" className="flex-none">
+            Details
+          </TabsTrigger>
+          <TabsTrigger value={stage.id} className="flex-none">
+            {stage.label}
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="details" className="min-h-0 overflow-y-auto px-5 pt-4.5 pb-7">
+          <Details card={card} file={file} />
+        </TabsContent>
+
+        <TabsContent value="outreach" className="min-h-0 overflow-y-auto px-5 pt-4.5 pb-7">
+          <div className="flex flex-col gap-4">
+            <PolicyNow card={card} file={file} />
+            <EmailFrame
+              toolbar={`From ${agency.agent.name}'s mailbox`}
+              to={card.target ? outreachEmail.to : `${file.namedInsured} <${card.email}>`}
+              subject={card.target ? outreachEmail.subject : "A quick look at your renewal"}
+            >
+              <Textarea
+                aria-label="Outreach email"
+                value={outreach}
+                onChange={(e) => setOutreach(e.target.value)}
+                className="min-h-80 border-0 bg-transparent px-5.5 py-5 text-[15px] leading-relaxed"
+              />
+            </EmailFrame>
+            <ShapeTheShop card={card} file={file} />
+            <QuestionnaireFields card={card} file={file} />
+          </div>
+        </TabsContent>
+
+        <TabsContent value="shopping" className="min-h-0 overflow-y-auto px-5 pt-4.5 pb-7">
+          <Shopping card={card} file={file} onOpenResults={onOpenResults} />
+        </TabsContent>
+
+        <TabsContent value="rec" className="min-h-0 overflow-y-auto px-5 pt-4.5 pb-7">
+          <Recommendation card={card} file={file} body={rec} setBody={setRec} />
+        </TabsContent>
+
+        <TabsContent value="closing" className="min-h-0 overflow-y-auto px-5 pt-4.5 pb-7">
+          <Closing card={card} file={file} />
+        </TabsContent>
+      </Tabs>
+
+      {onSkipOutreach && (
+        <SheetFooter className="mt-0 flex-row items-center justify-end gap-2 border-t px-5 pt-3.5 pb-4">
+          <Button variant="secondary" size="lg" onClick={onSkipOutreach}>
+            Skip outreach
+          </Button>
+          <Button size="lg" className="flex-1" onClick={onSendOutreach}>
+            <Send data-icon="inline-start" />
+            Send
+          </Button>
+        </SheetFooter>
+      )}
+      {card.col === "recommend" && (
+        <SheetFooter className="mt-0 border-t px-5 pt-3.5 pb-4">
+          <Button size="lg" className="w-full" onClick={onSendRec}>
+            <Send data-icon="inline-start" />
+            Send recommendation email
+          </Button>
+        </SheetFooter>
+      )}
+      {card.col === "binding" && (
+        <SheetFooter className="mt-0 border-t px-5 pt-3.5 pb-4">
+          <Button size="lg" className="w-full" onClick={onAskCloseOut}>
+            Close out
+          </Button>
+        </SheetFooter>
+      )}
+    </SheetContent>
+  );
+}
+
+/** The policy as it renews: each line, the total, and why it went up. */
+function PolicyNow({ card, file }: { card: Card; file: HouseholdFile }) {
+  const now = file.policies.reduce((s, p) => s + p.current, 0);
+  const next = file.policies.reduce((s, p) => s + p.renewal, 0);
+  const pct = now === 0 ? 0 : Math.round(((next - now) / now) * 100);
+  const carrier = file.policies[0]?.carrier ?? card.carrier;
+  const why =
+    file.driver ??
+    (pct === 0
+      ? "No change on the renewal. No claims, no changes on file."
+      : `${carrier}'s renewal is up ${pct}%. No claims, no changes on file.`);
+
+  return (
+    <div className="border bg-card px-4.5 pt-4 pb-3.5">
+      <p className="eyebrow mb-2.5 text-primary">Current policy · {carrier}</p>
+      {file.policies.map((p) => (
+        <div key={p.line} className="flex items-baseline justify-between gap-3 border-t py-2 text-sm">
+          <p>
+            <span className="font-medium">{lineName(p.line)}</span>
+            <span className="text-muted-foreground"> renews {p.renews ?? card.renewal}</span>
+          </p>
+          <p className="font-mono whitespace-nowrap">
+            {money(p.current)} <span className="text-muted-foreground">→</span> {money(p.renewal)}
+          </p>
+        </div>
+      ))}
+      <div className="flex items-baseline justify-between gap-3 border-t py-2 text-base">
+        <p>
+          <span className="font-medium">Total</span>
+          <span className="ml-2 text-sm font-medium text-muted-foreground">
+            {pct === 0 ? "No change" : `${pct > 0 ? "+" : ""}${pct}%`}
+          </span>
+        </p>
+        <p className="font-mono text-sm whitespace-nowrap">
+          {money(now)} <span className="text-muted-foreground">→</span> {money(next)}
+        </p>
+      </div>
+      <div className="mt-3 border-t pt-3 text-sm">
+        <p className="mb-1 font-medium">{pct === 0 ? "What is driving it?" : "What is driving the increase?"}</p>
+        <p>{why}</p>
+      </div>
+    </div>
+  );
+}
+
+const lineName = (line: string) => (/auto/i.test(line) ? "Auto" : /umbrella/i.test(line) ? "Umbrella" : "Home");
+
+/** What else to quote while we shop. Lines the household already has with us can't be picked. */
+function ShapeTheShop({ card, file }: { card: Card; file: HouseholdFile }) {
+  const has = (k: string) => card.kinds.includes(k as Card["kinds"][number]);
+  const both = has("home") && has("auto");
+  const rows = [
+    {
+      id: "home",
+      label: "Homeowners",
+      hint: "Quote a home policy while we shop.",
+      locked: has("home"),
+      why: both ? "This individual already has home and auto with us." : "This individual already has homeowners with us.",
+      on: !has("home") && has("auto"),
+    },
+    {
+      id: "auto",
+      label: "Auto",
+      hint: "Quote auto while we shop.",
+      locked: has("auto"),
+      why: both ? "This individual already has home and auto with us." : "This individual already has auto with us.",
+      on: !has("auto") && has("home"),
+    },
+    { id: "medicare", label: "Medicare", hint: "Supplement options at renewal.", locked: true, why: "Not available due to their age.", on: false },
+    { id: "life", label: "Life", hint: "Ask if they want a life quote while we shop.", locked: false, why: "", on: file.people.length > 1 },
+  ];
+  const [on, setOn] = useState(() => new Set(rows.filter((r) => r.on && !r.locked).map((r) => r.id)));
+
+  return (
+    <div className="bg-muted px-4 pt-3.5 pb-3">
+      <SectionHead>Shape the shop</SectionHead>
+      <p className="mt-1.5 mb-2.5 text-sm text-muted-foreground">
+        Check what you want included. Recommended items are on. Grayed items do not apply.
+      </p>
+      <div className="grid gap-2">
+        {rows.map((r) => (
+          <FieldLabel key={r.id} htmlFor={`shape-${card.id}-${r.id}`} className="bg-card">
+            <Field orientation="horizontal" data-disabled={r.locked}>
+              <Checkbox
+                id={`shape-${card.id}-${r.id}`}
+                checked={!r.locked && on.has(r.id)}
+                disabled={r.locked}
+                onCheckedChange={() =>
+                  setOn((s) => {
+                    const n = new Set(s);
+                    if (n.has(r.id)) n.delete(r.id);
+                    else n.add(r.id);
+                    return n;
+                  })
+                }
+              />
+              <FieldContent>
+                <FieldTitle>{r.label}</FieldTitle>
+                <FieldDescription>{r.locked ? r.why : r.hint}</FieldDescription>
+              </FieldContent>
+            </Field>
+          </FieldLabel>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/** What the household will see in the questionnaire: what we have to confirm, and what we still need to ask. */
+function QuestionnaireFields({ card, file }: { card: Card; file: HouseholdFile }) {
+  const [fields, setFields] = useState(card.target ? callahanFields.confirm : confirmFields(card, file));
+  const [asks, setAsks] = useState(card.target ? callahanFields.ask : newAsks());
+  const [draft, setDraft] = useState("");
+
+  const add = () => {
+    if (!draft.trim()) return;
+    setAsks((a) => [...a, { id: `custom-${a.length}`, prompt: draft.trim() }]);
+    setDraft("");
+  };
+
+  return (
+    <div>
+      <SectionHead className="mb-2">In the questionnaire</SectionHead>
+      <Tabs defaultValue="confirm" className="gap-0">
+        <TabsList className="w-full">
+          <TabsTrigger value="confirm">Pre-filled · {fields.length}</TabsTrigger>
+          <TabsTrigger value="ask">New questions · {asks.length}</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="confirm">
+          <p className="mt-2.5 mb-1 text-sm text-muted-foreground">They'll confirm or fix this. Not new asks.</p>
+          {fields.map((f) => (
+            <div key={f.id} className="flex items-end gap-2 border-t py-2">
+              <label className="flex flex-1 flex-col gap-1">
+                <span className="eyebrow text-muted-foreground">{f.label}</span>
+                <Input
+                  value={f.value}
+                  onChange={(e) =>
+                    setFields((all) => all.map((x) => (x.id === f.id ? { ...x, value: e.target.value } : x)))
+                  }
+                  className="h-8 border-transparent bg-transparent px-0 text-sm font-medium hover:border-border focus-visible:px-2"
+                />
+              </label>
+              <RemoveButton label={`Remove ${f.label}`} onClick={() => setFields((all) => all.filter((x) => x.id !== f.id))} />
+            </div>
+          ))}
+        </TabsContent>
+
+        <TabsContent value="ask">
+          <p className="mt-2.5 mb-1 text-sm text-muted-foreground">Only what we don't already have on file.</p>
+          {asks.map((a) => (
+            <div key={a.id} className="flex items-start gap-2 border-t py-2.5 text-sm">
+              <span className="flex-1">{a.prompt}</span>
+              <RemoveButton label="Remove question" onClick={() => setAsks((all) => all.filter((x) => x.id !== a.id))} />
+            </div>
+          ))}
+          <div className="mt-3 flex gap-2">
+            <Input
+              placeholder="Add a question"
+              aria-label="Add a question"
+              value={draft}
+              onChange={(e) => setDraft(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && add()}
+            />
+            <Button variant="secondary" onClick={add}>
+              <Plus data-icon="inline-start" />
+              Add
+            </Button>
+          </div>
+        </TabsContent>
+      </Tabs>
+    </div>
+  );
+}
+
+function RemoveButton({ label, onClick }: { label: string; onClick: () => void }) {
+  return (
+    <Button variant="ghost" size="icon-xs" aria-label={label} onClick={onClick} className="text-muted-foreground">
+      <X />
+    </Button>
+  );
+}
+
+/** A shop in progress: who we're quoting, and what has happened so far. */
+function Shopping({ card, file, onOpenResults }: { card: Card; file: HouseholdFile; onOpenResults: () => void }) {
+  const carriers = file.shopCarriers ?? ["Auto-Owners", "Erie", "Grange"];
+  const items: TimelineItem[] = file.timeline ?? [
+    { label: "You sent the outreach email", date: "Last week", state: "done" },
+    { label: "They completed the questionnaire", date: "Yesterday", state: "done" },
+    {
+      label: `VA is shopping ${carriers.join(", ").replace(/, ([^,]*)$/, " and $1")}`,
+      date: "In progress",
+      state: "now",
+      detail: "Check back tomorrow for quotes.",
+    },
+    { label: "Renewal date. Coverage needs to be in place.", date: card.renewal, state: "soon" },
+  ];
+
+  return (
+    <div className="flex flex-col gap-4">
+      <div className="bg-muted px-5 pt-4.5 pb-4">
+        <Badge variant="outline" className="bg-card">
+          <LoaderCircle className="animate-spin" data-icon="inline-start" />
+          Shopping in progress
+        </Badge>
+        <p className="mt-2.5 font-display text-lg">Check back tomorrow to see updates.</p>
+        <p className="mt-1 text-sm text-muted-foreground">
+          VA is running {carriers.length} carriers for this household, quoted directly with each one.
+        </p>
+        <div className="mt-3.5 grid gap-2">
+          {carriers.map((c) => (
+            <div key={c} className="grid grid-cols-[48px_1fr_auto] items-center gap-3 border bg-card px-3.5 py-3">
+              <CarrierLogo name={c} />
+              <div>
+                <p className="text-base font-medium">{c}</p>
+                <p className="text-sm text-muted-foreground">Quote in progress</p>
+              </div>
+              <span className="eyebrow text-primary">Shopping</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div>
+        <SectionHead className="mb-2">What has happened</SectionHead>
+        <Timeline items={items} />
+      </div>
+
+      {card.target && (
+        <Button variant="outline" size="lg" className="w-full" onClick={onOpenResults}>
+          Quotes are in. Continue
+          <ArrowRight data-icon="inline-end" />
+        </Button>
+      )}
+    </div>
+  );
+}
+
+/** Approved and waiting on the agent: record what happened so the household can leave the board. */
+function Closing({ card, file }: { card: Card; file: HouseholdFile }) {
+  const c = file.closing;
+  return (
+    <div className="flex flex-col gap-4">
+      <div className={cn("border bg-card px-4.5 py-4")}>
+        <h3 className="text-2xl">{c?.title ?? `Close out ${file.namedInsured}'s renewal`}</h3>
+        <p className="mt-2 text-base text-muted-foreground">
+          {c?.sub ??
+            `You reached out and sent a recommendation. Record ${file.namedInsured}'s decision before ${card.renewal} so this household can leave the queue.`}
+        </p>
+      </div>
+      {c && <Timeline items={c.timeline} />}
+    </div>
+  );
+}
+
+function outreachDraft(card: Card, link: string) {
+  const price =
+    card.jumpPct === 0
+      ? `Your ${card.lines} renews ${card.renewal} at ${money(card.premium)}, the same as last year.`
+      : `Your ${card.lines} renews ${card.renewal} at ${money(card.premium)}, which is about ${money(card.premium - card.was)} more than last year.`;
+  const why =
+    card.jumpPct === 0
+      ? "Renewals move for all sorts of reasons, so I always take a look before one rolls over."
+      : "Increases can come from a few different places, the market, a claim, or a change in coverage during the year. When one comes in like this, I'd like to shop it and see what else is out there for you.";
+  return `Hi ${card.first},\n\nHope you're doing well. It's that time of year again, and I wanted to give you a heads up on where your renewal is coming in.\n\n${price}\n\n${why}\n\nBefore I can, there are a few details I need to confirm. It takes about five minutes:\n\nAnswer a few quick questions → ${link}\n\nOnce I have your answers I'll get to work and come back to you well before the renewal.`;
+}
+
+function recDraft(card: Card) {
+  return `Hi ${card.first},\n\nI looked at your ${card.renewal} renewal. I put the pick on a short page so you can see why I didn't go another direction.\n\nThis does not put coverage in place. Reply with a couple of times that work and I'll call you.`;
+}
+
+function confirmFields(card: Card, file: HouseholdFile) {
+  return [
+    { id: "name", label: "Named insured", value: file.namedInsured },
+    { id: "email", label: "Email", value: card.email },
+    { id: "phone", label: "Mobile", value: file.phone },
+    { id: "address", label: "Address", value: file.address },
+  ];
+}
+
+function newAsks() {
+  return [
+    { id: "changed", prompt: "Anything new we should know before we shop?" },
+    { id: "referral", prompt: "Anyone else who should hear from us?" },
+  ];
+}

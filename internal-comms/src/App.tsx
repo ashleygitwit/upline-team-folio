@@ -12,6 +12,7 @@ import { GtmPage } from './pages/GtmPage';
 import { PricingPage } from './pages/PricingPage';
 import { BreadboardPage } from './pages/BreadboardPage';
 import { BrandPage } from './pages/BrandPage';
+import { PrototypePage } from './pages/PrototypePage';
 import { TeamPage } from './pages/TeamPage';
 import { PrivatePage } from './pages/PrivatePage';
 import {
@@ -31,6 +32,9 @@ type RouteKey =
   | 'mvp'
   | 'okrs'
   | 'gtm'
+  | 'prototype'
+  | 'prototype-v2-5'
+  | 'prototype-v3'
   | 'pricing'
   | 'breadboard'
   | 'brand'
@@ -38,7 +42,7 @@ type RouteKey =
   | 'private';
 
 const NAV_SECTIONS: {
-  id: 'context' | 'progress';
+  id: 'context' | 'progress' | 'prototype';
   label: string;
   items: { key: RouteKey; label: string; href: string }[];
 }[] = [
@@ -65,12 +69,33 @@ const NAV_SECTIONS: {
       { key: 'gtm', label: 'GTM approach', href: '#/gtm' },
     ],
   },
+  {
+    id: 'prototype',
+    label: 'Prototype',
+    items: [
+      { key: 'prototype', label: 'Ashley_v2_sept_22', href: '#/prototype' },
+      { key: 'prototype-v2-5', label: 'Amanda_v2.5_sept_27', href: '#/prototype-v2-5' },
+      { key: 'prototype-v3', label: 'Amanda_v3_sept_28', href: '#/prototype-v3' },
+    ],
+  },
 ];
 
 function navKeyForRoute(route: RouteKey): RouteKey {
   if (route === 'mvp-journey') return 'mvp';
   if (route === 'breadboard') return 'sprint';
   return route;
+}
+
+// Whether the left rail is collapsed to just the mark. Remembered per browser;
+// storage can be unavailable (private windows), so it falls back to open.
+const RAIL_STORAGE_KEY = 'throughline-rail-collapsed';
+
+function readRailCollapsed(): boolean {
+  try {
+    return localStorage.getItem(RAIL_STORAGE_KEY) === '1';
+  } catch {
+    return false;
+  }
 }
 
 function routeFromHash(): RouteKey {
@@ -114,6 +139,9 @@ function routeFromHash(): RouteKey {
     hash === 'mvp' ||
     hash === 'okrs' ||
     hash === 'gtm' ||
+    hash === 'prototype' ||
+    hash === 'prototype-v2-5' ||
+    hash === 'prototype-v3' ||
     hash === 'pricing' ||
     hash === 'breadboard' ||
     hash === 'brand' ||
@@ -132,6 +160,15 @@ function App() {
   const [error, setError] = useState<string | null>(null);
   const [route, setRoute] = useState<RouteKey>(routeFromHash());
   const [navOpen, setNavOpen] = useState(false);
+  const [railCollapsed, setRailCollapsed] = useState(readRailCollapsed);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(RAIL_STORAGE_KEY, railCollapsed ? '1' : '0');
+    } catch {
+      /* ignore */
+    }
+  }, [railCollapsed]);
 
   const applyPlan = useCallback((next: VenturePlan, persist = true) => {
     setPlan(next);
@@ -212,12 +249,16 @@ function App() {
   }
 
   const isGantt = route === 'gantt';
+  const isPrototype =
+    route === 'prototype' || route === 'prototype-v2-5' || route === 'prototype-v3';
   const isWide = route === 'mvp-journey' || route === 'private' || isGantt;
-  const pageClass = `page${isWide ? ' is-wide' : ''}${route === 'home' ? ' is-home' : ''}${isGantt ? ' is-gantt' : ''}`;
+  const pageClass = `page${isWide ? ' is-wide' : ''}${route === 'home' ? ' is-home' : ''}${route === 'brand' ? ' is-brand' : ''}${isGantt ? ' is-gantt' : ''}${isPrototype ? ' is-prototype' : ''}`;
   const activeNav = navKeyForRoute(route);
 
   return (
-    <div className={`app-shell${navOpen ? ' is-nav-open' : ''}${isGantt ? ' is-gantt-shell' : ''}`}>
+    <div
+      className={`app-shell${navOpen ? ' is-nav-open' : ''}${railCollapsed ? ' is-rail-collapsed' : ''}${isGantt ? ' is-gantt-shell' : ''}`}
+    >
       <button
         type="button"
         className="nav-backdrop"
@@ -257,6 +298,18 @@ function App() {
           <a className="nav-link nav-link-quiet" href="#/private">
             Private
           </a>
+          <button
+            type="button"
+            className="rail-toggle"
+            aria-label={railCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            title={railCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            onClick={() => setRailCollapsed((collapsed) => !collapsed)}
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <rect x="3" y="4" width="18" height="16" rx="2" />
+              <path d="M9 4v16" />
+            </svg>
+          </button>
         </div>
       </aside>
 
@@ -299,12 +352,21 @@ function App() {
           {route === 'mvp' ? <MvpPage /> : null}
           {route === 'okrs' ? <OkrPage /> : null}
           {route === 'gtm' ? <GtmPage /> : null}
+          {route === 'prototype' ? (
+            <PrototypePage src="/prototype.html" title="Upline happy-path demo, Ashley's v2" />
+          ) : null}
+          {route === 'prototype-v2-5' ? (
+            <PrototypePage src="/prototype-v2-5.html" title="Upline happy-path prototype, Ashley's v2 in the Upline library (v2.5)" />
+          ) : null}
+          {route === 'prototype-v3' ? (
+            <PrototypePage src="/prototype-v3.html" title="Upline happy-path prototype, Amanda's v3" />
+          ) : null}
           {route === 'pricing' ? <PricingPage /> : null}
           {route === 'brand' ? <BrandPage /> : null}
           {route === 'team' ? <TeamPage /> : null}
           {route === 'private' ? <PrivatePage /> : null}
 
-          {isGantt ? null : (
+          {isGantt || isPrototype ? null : (
             <footer className="site-footer">
               <p>
                 The Upline Through Line · Upline&rsquo;s home base. Present, learnings, and where

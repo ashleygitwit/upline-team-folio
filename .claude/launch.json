@@ -6,6 +6,18 @@
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "dev"],
       "port": 5299
+    },
+    {
+      "name": "happy-path-v2.5",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "product/happy-path-v2.5", "run", "dev"],
+      "port": 5305
+    },
+    {
+      "name": "happy-path-v3",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "product/happy-path-v3", "run", "dev"],
+      "port": 5310
     }
   ]
 }

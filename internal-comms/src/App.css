@@ -112,17 +112,6 @@ h2 {
   color: var(--muted-foreground) !important;
 }
 
-.mantra-card blockquote {
-  margin: 0;
-  padding: 0;
-  border: none;
-  font-family: var(--font-display);
-  font-size: 1.25rem;
-  font-weight: 500;
-  line-height: 1.5;
-  color: var(--foreground);
-}
-
 .section-head {
   display: flex;
   flex-wrap: wrap;
@@ -308,7 +297,8 @@ h2 {
    a white card where the indigo pill is correct, keeps it. Both selectors here
    outrank the .arc-cta appearance further down the file on specificity. */
 .secondary-btn,
-.feature-band .arc-cta {
+.feature-band .arc-cta,
+.hub-cta {
   padding: 0.55rem 1rem;
   border: 1px solid var(--border);
   border-radius: var(--radius-pill);
@@ -321,7 +311,8 @@ h2 {
 }
 
 .secondary-btn:hover,
-.feature-band .arc-cta:hover {
+.feature-band .arc-cta:hover,
+.hub-cta:hover {
   background: var(--accent);
 }
 
@@ -603,10 +594,14 @@ h2 {
   min-height: 100vh;
 }
 
+/* --main-offset is how far the fixed rail pushes the column in: the rail's
+   width on desktop, zero where the rail becomes a drawer. The feature band
+   reads it to break out to this column rather than the whole viewport. */
 .app-main {
+  --main-offset: var(--sidebar-w);
   min-width: 0;
-  margin-left: var(--sidebar-w);
-  width: calc(100% - var(--sidebar-w));
+  margin-left: var(--main-offset);
+  width: calc(100% - var(--main-offset));
 }
 
 .app-shell.is-gantt-shell {
@@ -733,8 +728,80 @@ h2 {
 }
 
 .sidebar-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
   padding-top: 0.85rem;
   border-top: 1px solid var(--border);
+}
+
+/* Collapse control for the rail. Sized and tinted like a nav link so it reads
+   as part of the rail rather than a page action. */
+.rail-toggle {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 2.15rem;
+  height: 2.15rem;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--muted-foreground);
+  cursor: pointer;
+}
+
+.rail-toggle:hover {
+  background: var(--muted);
+  color: var(--primary);
+}
+
+.rail-toggle svg {
+  width: 1.1rem;
+  height: 1.1rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Collapsed rail, desktop only: below 860px the rail is already a drawer.
+   Narrowing --sidebar-w on the shell moves the main column over with it.
+   Collapsed, the expand toggle sits directly under the mark, where it is easy
+   to find, rather than at the foot. */
+@media (min-width: 861px) {
+  .app-shell.is-rail-collapsed {
+    --sidebar-w: var(--sidebar-w-rail);
+  }
+
+  .app-shell.is-rail-collapsed .site-sidebar {
+    align-items: center;
+    padding-inline: 0;
+  }
+
+  .app-shell.is-rail-collapsed .site-sidebar .brand-lockup {
+    margin: 0 0 1.75rem;
+  }
+
+  .app-shell.is-rail-collapsed .site-sidebar .wordmark,
+  .app-shell.is-rail-collapsed .site-nav,
+  .app-shell.is-rail-collapsed .sidebar-foot .nav-link {
+    display: none;
+  }
+
+  .app-shell.is-rail-collapsed .sidebar-foot {
+    padding-top: 0;
+    border-top: 0;
+  }
+}
+
+@media (max-width: 860px) {
+  .rail-toggle {
+    display: none;
+  }
 }
 
 .nav-backdrop {
@@ -818,11 +885,13 @@ h2 {
 
 /* ---- Feature band ----
    An indigo block that breaks out of the page shell to sit almost full-bleed,
-   while its content stays on the same 928px measure as the rest of the page. */
+   while its content stays on the same 928px measure as the rest of the page.
+   It breaks out to the main column, not the viewport, so it clears the fixed
+   rail instead of running under it. */
 .feature-band {
   --band-inset: 1.5rem;
-  margin-left: calc(50% - 50vw + var(--band-inset));
-  margin-right: calc(50% - 50vw + var(--band-inset));
+  margin-left: calc(50% - (100vw - var(--main-offset)) / 2 + var(--band-inset));
+  margin-right: calc(50% - (100vw - var(--main-offset)) / 2 + var(--band-inset));
   margin-bottom: var(--space-section);
   padding: var(--space-section) max(var(--card-pad), var(--shell-pad));
   border-radius: calc(var(--radius) * 1.5);
@@ -843,7 +912,8 @@ h2 {
 /* Section labels invert to the brand's lime and stay sentence case — the
    global h2 is an uppercase micro-label, which fights Amanda's type rules
    on long-form band copy. */
-.feature-band h2 {
+.feature-band h2,
+.hub-card h2 {
   color: var(--secondary);
   font-family: var(--font-sans);
   font-size: 0.95rem;
@@ -882,7 +952,8 @@ h2 {
    The journey diagram and embed stay on white surfaces — their labels use brand
    colors that would disappear on indigo. */
 .feature-band .arc-step,
-.feature-band .bet-card {
+.feature-band .bet-card,
+.hub-card {
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.15);
   color: var(--primary-foreground);
@@ -1768,119 +1839,115 @@ h2 {
   line-height: 1.45;
 }
 
-/* ---- Brand: logo trio ---- */
-.brand-subnote {
-  margin: 0 0 0.9rem;
-  font-size: 0.85rem;
-  color: var(--muted-foreground);
+/* ---- Prototype page ----
+   The demo brings its own top bar, screen menu and app chrome, and scrolls
+   inside its frame. So the page is only that frame: the whole main column,
+   edge to edge, with no footer below. */
+.page.is-prototype {
+  max-width: none;
+  padding: 0;
 }
 
-.logo-trio {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
+.prototype-frame {
+  display: block;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  border: 0;
 }
 
-.logo-cell {
-  min-width: 0;
-}
-
-.logo-well {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2.25rem 1.5rem;
-  border-radius: var(--radius);
-}
-
-.logo-well-bordered {
-  border: 1px solid var(--border);
-}
-
-.logo-mark {
-  width: auto;
-  max-width: 78%;
-  height: auto;
-  max-height: 42px;
-}
-
-.logo-cell-label {
-  margin: 0.55rem 0 0;
-  font-size: 0.78rem;
-  font-weight: 600;
-  color: var(--muted-foreground);
-}
-
-/* ---- Brand: palette ramps ---- */
-.brand-ramps {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(96px, 1fr));
-  gap: 1.1rem;
-}
-
-.ramp {
-  min-width: 0;
-}
-
-.ramp-bar {
-  display: flex;
-  flex-direction: column;
-  border-radius: var(--radius);
-  overflow: hidden;
-  border: 1px solid var(--border);
-}
-
-.ramp-step {
-  height: 36px;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  padding: 0 0.55rem;
-  font-family: var(--font-mono);
-  font-size: 0.66rem;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-}
-
-.ramp-name {
-  margin: 0.55rem 0 0;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--foreground);
-}
-
-.ramp-role {
-  margin: 0.05rem 0 0;
-  font-size: 0.72rem;
-  color: var(--muted-foreground);
-}
-
-@media (max-width: 560px) {
-  .logo-trio {
-    grid-template-columns: 1fr;
+/* Below 860px the left rail becomes the sticky top bar, which takes its
+   height out of the window. */
+@media (max-width: 860px) {
+  .prototype-frame {
+    height: calc(100vh - var(--nav-h));
+    height: calc(100dvh - var(--nav-h));
   }
 }
 
-.type-specimen p {
-  margin: 0 0 0.75rem;
-  line-height: 1.2;
+/* ---- Brand page: the Design Hub on an indigo field ----
+   The whole page sits on Indigo 600, so the hero and footer invert the way the
+   home page's feature band does. The card and its button reuse the band's glass
+   card and white pill above rather than carrying their own. */
+.page.is-brand::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: var(--primary);
 }
 
-.type-display {
-  font-family: var(--font-display);
-  font-size: 1.9rem;
-  font-weight: 500;
+.page.is-brand .eyebrow {
+  color: var(--secondary);
 }
 
-.type-sans {
-  font-family: var(--font-sans);
-  font-size: 1.5rem;
-  font-weight: 500;
+.page.is-brand .hero-title {
+  color: var(--primary-foreground);
 }
 
-.type-mono {
-  font-family: var(--font-mono);
-  font-size: 1.15rem;
+.page.is-brand .hero-sub,
+.page.is-brand .site-footer p {
+  color: color-mix(in srgb, var(--primary-foreground) 78%, var(--primary));
+}
+
+.page.is-brand .site-footer {
+  border-top-color: rgba(255, 255, 255, 0.15);
+}
+
+.hub-card {
+  padding: var(--card-pad);
+  border-radius: var(--radius);
+}
+
+/* Steps down with .card on small screens; declared here so it follows the
+   base rule above. */
+@media (max-width: 768px) {
+  .hub-card {
+    padding: 1rem;
+  }
+}
+
+.hub-card-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem var(--space-tight);
+  margin-bottom: var(--space-tight);
+}
+
+.hub-card-head h2 {
+  margin: 0;
+}
+
+.hub-cta {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.hub-card-shot {
+  display: block;
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.hub-card-shot img {
+  display: block;
+  width: 100%;
+  height: auto;
+  transition: transform 0.2s ease;
+}
+
+.hub-card-shot:hover img {
+  transform: scale(1.015);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hub-card-shot img {
+    transition: none;
+  }
 }
 
 /* ---- Footer ---- */
@@ -1926,8 +1993,7 @@ code {
   }
 
   .app-main {
-    margin-left: 0;
-    width: 100%;
+    --main-offset: 0px;
   }
 
   .site-sidebar {
