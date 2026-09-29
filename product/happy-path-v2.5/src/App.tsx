@@ -1,71 +1,99 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useLayoutEffect, useRef, useState, type ComponentType } from "react";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { DemoBar } from "@/components/DemoBar";
-import { MondayEmail } from "@/screens/MondayEmail";
-import { MondayNotification } from "@/screens/MondayNotification";
-import { Upline } from "@/screens/Upline";
-import { DanaInbox } from "@/screens/DanaInbox";
+import { DemoChrome, type Viewport } from "@/components/DemoChrome";
+import { MobileContext } from "@/lib/viewport";
+import { SignIn } from "@/screens/SignIn";
+import { Queue } from "@/screens/queue/Queue";
+import { InsuredInbox, RecEmail } from "@/screens/Phone";
 import { Questionnaire } from "@/screens/Questionnaire";
-import { DanaPage } from "@/screens/DanaPage";
-import { initialWalk, screens, type ScreenId, type Walk } from "@/walk";
+import { Proposal } from "@/screens/Proposal";
+
+export type ScreenProps = { onNext: () => void; onBack: () => void };
+
+/** Ashley's eight stops, in her order and with her names. */
+const screens: { label: string; Comp: ComponentType<ScreenProps>; kanban?: boolean }[] = [
+  { label: "Sign in", Comp: SignIn },
+  { label: "Renewal queue", Comp: (p) => <Queue {...p} phase="outreach" />, kanban: true },
+  { label: "Insured inbox", Comp: InsuredInbox },
+  { label: "Questionnaire", Comp: Questionnaire },
+  { label: "Shopping", Comp: (p) => <Queue {...p} phase="shopping" />, kanban: true },
+  { label: "Rec email", Comp: RecEmail },
+  { label: "Proposal", Comp: Proposal },
+  { label: "Closing", Comp: (p) => <Queue {...p} phase="binding" />, kanban: true },
+];
 
 export function App() {
   const [index, setIndex] = useState(0);
-  const [walk, setWalk] = useState<Walk>(initialWalk);
+  const [viewport, setViewport] = useState<Viewport>("desktop");
   const screen = screens[index];
+  const mobile = viewport === "mobile" && !!screen.kanban;
+  const deviceScreen = useRef<HTMLDivElement>(null);
 
-  const go = useCallback((id: ScreenId) => {
-    setIndex(screens.findIndex((s) => s.id === id));
-  }, []);
-
-  const update = useCallback(
-    (patch: Partial<Walk> | ((w: Walk) => Partial<Walk>)) =>
-      setWalk((w) => ({ ...w, ...(typeof patch === "function" ? patch(w) : patch) })),
-    [],
-  );
-
-  // Each stop starts at the top, the way a new page would.
-  useEffect(() => {
+  const go = useCallback((i: number) => {
+    setIndex(Math.max(0, Math.min(screens.length - 1, i)));
     window.scrollTo({ top: 0 });
-  }, [index]);
-
-  // Arrow keys step through the walk, except while someone is typing, picking
-  // a radio, or working inside a sheet or dialog.
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
-      if (e.metaKey || e.ctrlKey || e.altKey || e.shiftKey) return;
-      const t = e.target as HTMLElement | null;
-      if (t?.closest("input, textarea, select, [contenteditable], [role=radio], [role=menu], [role=menuitem]")) return;
-      if (document.querySelector("[role=dialog]")) return;
-      setIndex((i) => Math.max(0, Math.min(screens.length - 1, i + (e.key === "ArrowRight" ? 1 : -1))));
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
   }, []);
 
-  const props = { walk, update, go };
+  // While the phone is up, tell the stylesheet where its screen is, so sheets
+  // and dialogs open inside it rather than over the whole window.
+  useLayoutEffect(() => {
+    const root = document.documentElement;
+    const el = deviceScreen.current;
+    if (!mobile || !el) return;
+    const place = () => {
+      const r = el.getBoundingClientRect();
+      root.style.setProperty("--device-top", `${r.top}px`);
+      root.style.setProperty("--device-left", `${r.left}px`);
+      root.style.setProperty("--device-width", `${r.width}px`);
+      root.style.setProperty("--device-height", `${r.height}px`);
+    };
+    place();
+    root.dataset.viewport = "mobile";
+    const ro = new ResizeObserver(place);
+    ro.observe(el);
+    window.addEventListener("resize", place);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", place);
+      delete root.dataset.viewport;
+    };
+  }, [mobile]);
+
+  const Comp = screen.Comp;
+  const page = <Comp onNext={() => go(index + 1)} onBack={() => go(index - 1)} />;
 
   return (
     <TooltipProvider>
-      <div className="flex min-h-svh flex-col">
-        <DemoBar index={index} onGo={setIndex} />
-        <main className="flex-1">
-          {screen.id === "monday-notification" && <MondayNotification {...props} />}
-          {screen.id === "monday-email" && <MondayEmail {...props} />}
-          {screen.id === "monday" && <Upline key="monday" day="mon" {...props} />}
-          {screen.id === "renewals" && <Upline key="renewals" day="mon" page="renewals" {...props} />}
-          {screen.id === "review" && (
-            <Upline key="review" day="mon" page="renewals" openOn={{ kind: "outreach", id: "callahan" }} {...props} />
+      <MobileContext.Provider value={mobile}>
+        <div className={mobile ? "flex h-svh flex-col overflow-hidden bg-dark-bg" : "flex min-h-svh flex-col"}>
+          <DemoChrome
+            screens={screens}
+            index={index}
+            onGo={go}
+            showViewport={!!screen.kanban}
+            viewport={viewport}
+            onViewport={setViewport}
+          />
+          {mobile ? (
+            <main className="flex min-h-0 flex-1 justify-center px-4 pt-3.5 pb-4.5">
+              <div className="h-full w-[390px] max-w-full rounded-[28px] border border-dark-border bg-black p-2.5">
+                <div
+                  ref={deviceScreen}
+                  className="relative h-full overflow-auto rounded-[20px] bg-background [transform:translateZ(0)]"
+                >
+                  <div key={index} className="animate-in duration-200 slide-in-from-bottom-1">
+                    {page}
+                  </div>
+                </div>
+              </div>
+            </main>
+          ) : (
+            <main key={index} className="flex-1 animate-in duration-200 slide-in-from-bottom-1">
+              {page}
+            </main>
           )}
-          {screen.id === "dana-inbox" && <DanaInbox {...props} />}
-          {screen.id === "questionnaire" && <Questionnaire {...props} />}
-          {screen.id === "wednesday" && <Upline key="wednesday" day="wed" {...props} />}
-          {screen.id === "results" && <Upline key="results" day="thu" openOn={{ kind: "rec" }} {...props} />}
-          {screen.id === "dana-page" && <DanaPage {...props} />}
-          {screen.id === "friday" && <Upline key="friday" day="fri" {...props} />}
-        </main>
-      </div>
+        </div>
+      </MobileContext.Provider>
     </TooltipProvider>
   );
 }

@@ -356,7 +356,7 @@ function App() {
             <PrototypePage src="/prototype.html" title="Upline happy-path demo, Ashley's v2" />
           ) : null}
           {route === 'prototype-v2-5' ? (
-            <PrototypePage src="/prototype-v2-5.html" title="Upline happy-path prototype, Amanda's v2.5" />
+            <PrototypePage src="/prototype-v2-5.html" title="Upline happy-path prototype, Ashley's v2 in the Upline library (v2.5)" />
           ) : null}
           {route === 'prototype-v3' ? (
             <PrototypePage src="/prototype-v3.html" title="Upline happy-path prototype, Amanda's v3" />
