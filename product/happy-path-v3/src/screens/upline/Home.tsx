@@ -12,7 +12,7 @@ import type { WalkProps } from "@/walk";
  * The homepage: a greeting and a box to ask anything, with three questions
  * written out inside it so Stacey doesn't have to think of them. Asking docks
  * a chat along the bottom. It has to be readable before coffee, so under that
- * sit only the three sections a renewal moves through, each holding just what
+ * sit only the three sections, most pressing first, each holding just what
  * needs her. From Wednesday a sentence on the day, and its one button, sit
  * between the greeting and the box.
  */
@@ -33,8 +33,8 @@ export function Home({
   onResults: () => void;
 }) {
   const today = todayFor(day, walk);
-  // Monday is just the greeting and the box: the six are right below, under
-  // Scheduled Renewal Emails, so a sentence and a link to them would repeat it.
+  // Monday is just the greeting and the box: everything that needs Stacey is
+  // right below in the sections, so a sentence and a link would repeat it.
   const brief = day !== "mon";
 
   return (

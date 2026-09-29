@@ -22,17 +22,18 @@ type SectionsProps = WalkProps & {
 };
 
 /**
- * The homepage's three sections, in the order a renewal moves through them:
- * what's going out, what's been shopped and needs a look, and what needs
- * closing. Each holds only what needs Stacey. On a day a section has nothing,
- * it says so, and what's coming instead.
+ * The homepage's three sections, in the Monday email's order, most pressing
+ * first: what needs closing, what's been shopped and needs a look, and what's
+ * going out, which goes whether Stacey looks or not. Each holds only what
+ * needs her. On a day a section has nothing, it says so, and what's coming
+ * instead.
  */
 export function Sections(props: SectionsProps) {
   return (
     <div className="mt-(--space-section) flex flex-col gap-(--space-block) text-left">
-      <Scheduled {...props} />
-      <Shopped {...props} />
       <Closing {...props} />
+      <Shopped {...props} />
+      <Scheduled {...props} />
     </div>
   );
 }

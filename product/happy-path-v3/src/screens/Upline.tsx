@@ -16,8 +16,8 @@ export type Page = "home" | "profile" | "results";
 
 /**
  * Upline as Stacey sees it. Three pages: the homepage (a greeting, today's
- * one thing, a box to ask anything, and the three sections a renewal moves
- * through), a client's profile, and the results of a shop. A household's
+ * one thing, a box to ask anything, and the three sections, most pressing
+ * first), a client's profile, and the results of a shop. A household's
  * email opens in a sheet over whichever page she's on, and once she asks
  * anything the chat docks along the bottom of every page. The walk can open
  * on any page, with an email open.
