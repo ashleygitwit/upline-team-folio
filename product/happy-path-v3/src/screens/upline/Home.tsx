@@ -1,11 +1,13 @@
+import type { ReactNode } from "react";
 import { ArrowRight } from "lucide-react";
+import { cn } from "cn";
 import { BandGrain } from "@/components/BandGrain";
 import { Button } from "@/components/ui/button";
 import { agency, dayName, mondayNeeds, type Day } from "@/data";
 import { matchPill, pillById, suggested, type PillId } from "@/pills";
 import { AskBox, Suggestions } from "@/screens/upline/Ask";
 import type { AnswerProps } from "@/screens/upline/Answers";
-import { Closing, Sections } from "@/screens/upline/Sections";
+import { Closing, Scheduled, Sections } from "@/screens/upline/Sections";
 import { todayFor, words } from "@/today";
 import type { WalkProps } from "@/walk";
 
@@ -24,49 +26,77 @@ type HomeProps = WalkProps & {
  * written out inside it so Stacey doesn't have to think of them. Asking docks
  * a chat along the bottom. It has to be readable before coffee, so under that
  * sit only the three sections, most pressing first, each holding just what
- * needs her. From Wednesday a sentence on the day, and its one button, sit
- * between the greeting and the box. Monday has no box: it opens on the band,
- * as the Monday email does, with the greeting and the renewals closing this
- * week, so the first to-dos are part of the greeting.
+ * needs her. On Thursday and Friday a sentence on the day, and its one button,
+ * sit between the greeting and the box. Monday and Wednesday have no box: they
+ * open on a band, as the Monday email does, with the greeting and the day's
+ * first section, so what's first is part of the greeting.
  */
 export function Home(props: HomeProps) {
-  return props.day === "mon" ? <Monday {...props} /> : <Weekday {...props} />;
+  if (props.day === "mon") return <Monday {...props} />;
+  if (props.day === "wed") return <Wednesday {...props} />;
+  return <Weekday {...props} />;
 }
 
 /**
- * Monday: the greeting and Closing on the band, titled with how many renewals
- * close this week, then the other two sections on the page. A brief, a link or
- * the ask box would only stand between Stacey and them. It greets her as the
- * Monday email does, since she's usually come straight from it.
+ * The band Monday and Wednesday open on: "Good morning", as the Monday email
+ * greets Stacey, then the day's first section, its title centered under the
+ * greeting and its card straight after. Monday's is the blue band under the
+ * mountain, as the email's is; Wednesday's is the design hub's gray band under
+ * the ridge, the quieter of the two for a day that needs nothing.
+ */
+function Hero({ ground, children }: { ground: "blue" | "gray"; children: ReactNode }) {
+  const blue = ground === "blue";
+  return (
+    <div className={cn(blue ? "band-surface" : "band-gray", "relative isolate overflow-clip")}>
+      <BandGrain texture={blue ? "mountain" : "ridge"} />
+      <div className="shell py-(--space-section)">
+        <div className="mx-auto max-w-180">
+          <h1 id="home-title" className="text-center text-5xl text-balance">
+            Good morning, {agency.agent.first}
+          </h1>
+          <div className="mt-(--space-block)">{children}</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Monday: Closing on the band, titled with how many renewals close this week,
+ * then the other two sections on the page. A brief, a link or the ask box
+ * would only stand between Stacey and them.
  */
 function Monday({ day, ...props }: HomeProps) {
   const n = mondayNeeds("closing").length;
   return (
     <>
-      <div className="band-surface relative isolate overflow-clip">
-        <BandGrain />
-        <div className="shell py-(--space-section)">
-          <div className="mx-auto max-w-180">
-            <h1 id="home-title" className="text-center text-5xl text-balance">
-              Good morning, {agency.agent.first}
-            </h1>
-            <div className="mt-(--space-block)">
-              <Closing
-                day={day}
-                centered
-                title={`You have ${words[n].toLowerCase()} ${n === 1 ? "renewal" : "renewals"} closing this week.`}
-                {...props}
-              />
-            </div>
-          </div>
-        </div>
-      </div>
+      <Hero ground="blue">
+        <Closing
+          day={day}
+          centered
+          title={`You have ${words[n].toLowerCase()} ${n === 1 ? "renewal" : "renewals"} closing this week.`}
+          {...props}
+        />
+      </Hero>
       <div className="shell pb-(--space-section)">
         <div className="mx-auto max-w-180">
           <Sections day={day} closing={false} {...props} />
         </div>
       </div>
     </>
+  );
+}
+
+/**
+ * Wednesday: nothing to close and nothing back from a shop, so those sections
+ * aren't drawn, and there's no ask box. What's left is what goes out on its
+ * own, on the gray band under the day's line.
+ */
+function Wednesday({ day, walk, ...props }: HomeProps) {
+  return (
+    <Hero ground="gray">
+      <Scheduled day={day} walk={walk} centered title={todayFor(day, walk).lead} {...props} />
+    </Hero>
   );
 }
 

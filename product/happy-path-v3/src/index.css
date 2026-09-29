@@ -231,11 +231,19 @@
     --ring: var(--blue-300);
   }
 
-  /* The band's mountain, as the design hub's homepage draws it (globals.css
-     there, .band-grain): a blue 800 grain tile that shows only through the
-     mountain's mask, over the band's own blue. BandGrain sets the two URLs.
-     The tile is 2x, so it repeats every 128px; the mask covers the band as
-     object-fit: cover would. The band must be `relative isolate`. */
+  /* The gray band, the design hub's Websites page's (GRAY_BAND in its
+     frame.ts): gray 100 under the ridge. Its words keep the page's slate,
+     11.6:1 on gray 100, and its focus ring is the page's own. */
+  .band-gray {
+    background: var(--gray-100);
+  }
+
+  /* A band's texture, as the design hub draws it (globals.css there,
+     .band-grain): a grain tile that shows only through the art's mask, over
+     the band's own ground. BandGrain sets the URLs, and the anchor for a
+     texture that stands on the band's foot. The tile is 2x, so it repeats
+     every 128px; the mask covers the band as object-fit: cover would. The
+     band must be `relative isolate`. */
   .band-grain {
     position: absolute;
     inset: 0;
@@ -245,7 +253,7 @@
     position: absolute;
     inset: 0;
     background: var(--band-grain) 0 0 / 128px 128px repeat;
-    mask: var(--band-mask) center / cover no-repeat;
+    mask: var(--band-mask) var(--band-mask-anchor, center) / cover no-repeat;
   }
 
   /* Stockton Hill's own brand, for everything the policyholder sees: the
