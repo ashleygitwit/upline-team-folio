@@ -36,12 +36,13 @@ type SectionsProps = WalkProps & {
  * needs her, drawn as the Monday email draws it: no counts and no status
  * chips, the carrier's mark beside each household, and a renewal inside a week
  * counted down. On a day a section has nothing, it says so, and what's coming
- * instead.
+ * instead. On Monday the homepage sets Closing in its band, under the
+ * greeting, so `closing={false}` leaves it out here.
  */
-export function Sections(props: SectionsProps) {
+export function Sections({ closing = true, ...props }: SectionsProps & { closing?: boolean }) {
   return (
     <div className="mt-(--space-section) flex flex-col gap-(--space-block) text-left">
-      <Closing {...props} />
+      {closing && <Closing {...props} />}
       <Shopped {...props} />
       <Scheduled {...props} />
     </div>
@@ -55,7 +56,7 @@ function Section({ id, title, children }: { id: string; title: string; children:
       <h2 id={`${id}-title`} tabIndex={-1} className="text-xl">
         {title}
       </h2>
-      <div className="mt-4 border bg-card">{children}</div>
+      <div className="mt-4 border bg-card text-card-foreground">{children}</div>
     </section>
   );
 }
@@ -418,11 +419,19 @@ function Shopped({ day, walk, household, onHousehold, onResults }: SectionsProps
 
 /**
  * Approvals Stacey has to bind. On Monday that's Anika Desai and Linda Hart
- * from earlier weeks, as on Ashley's v2 board. In this walk's week it's the
- * Callahans on Friday, until she marks it done; their row goes to their
- * profile.
+ * from earlier weeks, as on Ashley's v2 board, under a title that says how
+ * many. In this walk's week it's the Callahans on Friday, until she marks it
+ * done; their row goes to their profile.
  */
-function Closing({ day, walk, update, household, onHousehold, onProfile }: SectionsProps) {
+export function Closing({
+  day,
+  walk,
+  update,
+  household,
+  onHousehold,
+  onProfile,
+  title = "Closing",
+}: SectionsProps & { title?: string }) {
   const h = callahan;
   const skipped = walk.skipped.includes(h.id);
   const approved = day === "fri" && !walk.bound && !skipped;
@@ -437,7 +446,7 @@ function Closing({ day, walk, update, household, onHousehold, onProfile }: Secti
         : "Nothing to close yet.";
 
   return (
-    <Section id="closing" title="Closing">
+    <Section id="closing" title={title}>
       {status || others.length > 0 ? (
         <ul className="divide-y">
           {status && (

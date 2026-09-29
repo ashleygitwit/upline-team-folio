@@ -225,6 +225,11 @@
     color: #ffffff;
     --ring: #ffffff;
   }
+  /* A card set on the band (Monday's Closing) is a light surface again, so it
+     takes back the page's focus ring; the band's white one vanishes on it. */
+  .band-surface .bg-card {
+    --ring: var(--blue-300);
+  }
 
   /* The band's mountain, as the design hub's homepage draws it (globals.css
      there, .band-grain): a blue 800 grain tile that shows only through the

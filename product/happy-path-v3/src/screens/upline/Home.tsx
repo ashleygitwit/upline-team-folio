@@ -1,30 +1,15 @@
 import { ArrowRight } from "lucide-react";
+import { BandGrain } from "@/components/BandGrain";
 import { Button } from "@/components/ui/button";
-import { agency, dayName, type Day } from "@/data";
+import { agency, dayName, mondayNeeds, type Day } from "@/data";
 import { matchPill, pillById, suggested, type PillId } from "@/pills";
 import { AskBox, Suggestions } from "@/screens/upline/Ask";
 import type { AnswerProps } from "@/screens/upline/Answers";
-import { Sections } from "@/screens/upline/Sections";
-import { todayFor } from "@/today";
+import { Closing, Sections } from "@/screens/upline/Sections";
+import { todayFor, words } from "@/today";
 import type { WalkProps } from "@/walk";
 
-/**
- * The homepage: a greeting and a box to ask anything, with three questions
- * written out inside it so Stacey doesn't have to think of them. Asking docks
- * a chat along the bottom. It has to be readable before coffee, so under that
- * sit only the three sections, most pressing first, each holding just what
- * needs her. From Wednesday a sentence on the day, and its one button, sit
- * between the greeting and the box. Monday has no box, only the greeting and
- * "Let's wrap up some to-dos.", so the to-dos come straight after.
- */
-export function Home({
-  day,
-  walk,
-  update,
-  onAsk,
-  onAction,
-  ...props
-}: WalkProps & {
+type HomeProps = WalkProps & {
   day: Day;
   household: string | null;
   onAsk: (question: string, answer: PillId | null) => void;
@@ -32,13 +17,59 @@ export function Home({
   onHousehold: (id: string) => void;
   onProfile: () => void;
   onResults: () => void;
-}) {
+};
+
+/**
+ * The homepage: a greeting and a box to ask anything, with three questions
+ * written out inside it so Stacey doesn't have to think of them. Asking docks
+ * a chat along the bottom. It has to be readable before coffee, so under that
+ * sit only the three sections, most pressing first, each holding just what
+ * needs her. From Wednesday a sentence on the day, and its one button, sit
+ * between the greeting and the box. Monday has no box: it opens on the band,
+ * as the Monday email does, with the greeting and the renewals closing this
+ * week, so the first to-dos are part of the greeting.
+ */
+export function Home(props: HomeProps) {
+  return props.day === "mon" ? <Monday {...props} /> : <Weekday {...props} />;
+}
+
+/**
+ * Monday: the greeting and Closing on the band, titled with how many renewals
+ * close this week, then the other two sections on the page. A brief, a link or
+ * the ask box would only stand between Stacey and them.
+ */
+function Monday({ day, ...props }: HomeProps) {
+  const n = mondayNeeds("closing").length;
+  return (
+    <>
+      <div className="band-surface relative isolate overflow-clip">
+        <BandGrain />
+        <div className="shell py-(--space-section)">
+          <div className="mx-auto max-w-180">
+            <h1 id="home-title" className="text-center text-5xl text-balance">
+              Happy {dayName[day]}, {agency.agent.first}
+            </h1>
+            <div className="mt-(--space-block)">
+              <Closing
+                day={day}
+                title={`You have ${words[n].toLowerCase()} ${n === 1 ? "renewal" : "renewals"} closing this week.`}
+                {...props}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="shell pb-(--space-section)">
+        <div className="mx-auto max-w-180">
+          <Sections day={day} closing={false} {...props} />
+        </div>
+      </div>
+    </>
+  );
+}
+
+function Weekday({ day, walk, update, onAsk, onAction, ...props }: HomeProps) {
   const today = todayFor(day, walk);
-  // Monday is just the greeting and one line: everything that needs Stacey is
-  // right below in the sections, so a brief, a link or the ask box would only
-  // stand between her and them.
-  const monday = day === "mon";
-  const brief = !monday;
 
   return (
     <div className="shell pt-(--space-section) pb-(--space-section)">
@@ -52,18 +83,10 @@ export function Home({
               <Celebration />
             </div>
           )}
-          {monday && (
-            <p className="mx-auto mt-6 max-w-[60ch] font-display text-lg font-normal text-balance text-muted-foreground">
-              Let's wrap up some to-dos.
-            </p>
-          )}
-          {brief && (
-            <p className="mx-auto mt-6 max-w-[60ch] font-display text-lg font-normal text-balance text-muted-foreground">
-              {today.lead} {today.sub}
-            </p>
-          )}
-          {brief &&
-            today.action &&
+          <p className="mx-auto mt-6 max-w-[60ch] font-display text-lg font-normal text-balance text-muted-foreground">
+            {today.lead} {today.sub}
+          </p>
+          {today.action &&
             (today.action.primary ? (
               <Button size="lg" className="mt-7" onClick={() => onAction(today.action!.to)}>
                 {today.action.label}
@@ -89,11 +112,9 @@ export function Home({
           )}
         </section>
 
-        {!monday && (
-          <AskBox label="Ask me anything" className="mt-10" onAsk={(q) => onAsk(q, matchPill(q))}>
-            <Suggestions ids={suggested} size="sm" onAsk={(id) => onAsk(pillById(id).question, id)} />
-          </AskBox>
-        )}
+        <AskBox label="Ask me anything" className="mt-10" onAsk={(q) => onAsk(q, matchPill(q))}>
+          <Suggestions ids={suggested} size="sm" onAsk={(id) => onAsk(pillById(id).question, id)} />
+        </AskBox>
 
         <Sections day={day} walk={walk} update={update} {...props} />
       </div>
