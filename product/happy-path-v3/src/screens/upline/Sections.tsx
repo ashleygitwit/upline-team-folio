@@ -322,7 +322,7 @@ function CloseOut({ saved, onProfile, onUndo }: { saved: string | undefined; onP
     );
   }
   return (
-    <Button variant="secondary" className="relative z-10 mt-3" onClick={onProfile}>
+    <Button className="relative z-10 mt-3" onClick={onProfile}>
       View profile
     </Button>
   );
