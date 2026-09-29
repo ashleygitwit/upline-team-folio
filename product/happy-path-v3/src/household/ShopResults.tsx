@@ -1,5 +1,3 @@
-import { Send } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import {
   callahan,
   money,
@@ -11,9 +9,7 @@ import {
   talkingPoints,
   type Day,
 } from "@/data";
-import { columnTitle } from "@/household/columns";
 import { cards, fileFor, quoteDoc, type Rec } from "@/household/data";
-import { PhaseFooter, PhaseModal } from "@/household/PhaseModal";
 import { Recommendation } from "@/household/Recommendation";
 import type { WalkProps } from "@/walk";
 
@@ -72,11 +68,10 @@ const rec: Rec = {
 };
 
 /**
- * The Callahans' shop results, in a phase modal like the outreach review's
- * (PhaseModal.tsx): v2.5's results, with Send recommendation email in the
- * footer. The pick and the email are the walk's, so what Stacey picks and
- * writes here is what Dana gets. Once it has gone, the modal reads the same
- * with the pick and the email locked, and the footer says it went.
+ * The Callahans' shop results, in the three steps every shop's results take
+ * (Recommendation.tsx). The pick and the email are the walk's, so what Stacey
+ * picks and writes here is what Dana gets. Once it has gone, the steps read
+ * the same with the pick and the email locked, and step 3 says it went.
  *
  * It's the content of a dialog, so whoever opens it owns the Dialog: the
  * homepage's card and the chat open it on its own, and the Callahans' drawer
@@ -92,33 +87,15 @@ export function ShopResults({
   const sent = walk.recSent || day === "fri";
 
   return (
-    <PhaseModal
-      eyebrow={columnTitle("recommend")}
-      title={card.name}
-      footer={
-        sent ? (
-          <PhaseFooter done>
-            <p className="text-sm">Sent to Dana and Mike Thursday morning. We'll let you know when they answer.</p>
-          </PhaseFooter>
-        ) : (
-          <PhaseFooter>
-            <Button size="lg" className="w-full" onClick={onSend}>
-              <Send data-icon="inline-start" />
-              Send recommendation email
-            </Button>
-          </PhaseFooter>
-        )
-      }
-    >
-      <Recommendation
-        card={card}
-        file={{ ...fileFor(card), rec }}
-        body={walk.recDraft ?? recEmails[walk.pick]}
-        setBody={(body) => update({ recDraft: body })}
-        pick={optionById(walk.pick).carrier}
-        onPick={(name) => update({ pick: options.find((o) => o.carrier === name)!.id, recDraft: null })}
-        locked={sent}
-      />
-    </PhaseModal>
+    <Recommendation
+      card={card}
+      file={{ ...fileFor(card), rec }}
+      body={walk.recDraft ?? recEmails[walk.pick]}
+      setBody={(body) => update({ recDraft: body })}
+      pick={optionById(walk.pick).carrier}
+      onPick={(name) => update({ pick: options.find((o) => o.carrier === name)!.id, recDraft: null })}
+      sent={sent ? "Sent to Dana and Mike Thursday morning. We'll let you know when they answer." : undefined}
+      onSend={onSend}
+    />
   );
 }

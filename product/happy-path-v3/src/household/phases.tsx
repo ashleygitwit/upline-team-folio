@@ -209,9 +209,8 @@ export function ShopInProgress({ card, shop }: { card: Card; shop: Shop }) {
 }
 
 /**
- * An earlier week's shop results (Elena's and Raymond's), drawn as the
- * Callahans' are: v2.5's Recommendation layout with Send recommendation
- * email in the footer, locked once it has gone.
+ * An earlier week's shop results (Elena's and Raymond's), in the same three
+ * steps as the Callahans' (Recommendation.tsx), locked once it has gone.
  */
 export function EarlierResults({
   card,
@@ -228,28 +227,7 @@ export function EarlierResults({
   sent?: string;
   onSend: () => void;
 }) {
-  return (
-    <PhaseModal
-      eyebrow={columnTitle("recommend")}
-      title={card.name}
-      footer={
-        sent ? (
-          <PhaseFooter done>
-            <p className="text-sm">{sent}</p>
-          </PhaseFooter>
-        ) : (
-          <PhaseFooter>
-            <Button size="lg" className="w-full" onClick={onSend}>
-              <Send data-icon="inline-start" />
-              Send recommendation email
-            </Button>
-          </PhaseFooter>
-        )
-      }
-    >
-      <Recommendation card={card} file={file} body={body} setBody={setBody} locked={!!sent} />
-    </PhaseModal>
-  );
+  return <Recommendation card={card} file={file} body={body} setBody={setBody} sent={sent} onSend={onSend} />;
 }
 
 /**

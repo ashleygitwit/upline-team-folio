@@ -16,11 +16,17 @@ export function PhaseModal({
   eyebrow,
   title,
   footer,
+  steady,
   children,
 }: {
   eyebrow: string;
   title: string;
   footer?: ReactNode;
+  /**
+   * Holds one height whatever it's showing, for a modal that steps through
+   * pages, so its footer's buttons stay where the last click was.
+   */
+  steady?: boolean;
   children: ReactNode;
 }) {
   const returnFocus = useContext(ReturnFocus);
@@ -29,13 +35,18 @@ export function PhaseModal({
       onOpenAutoFocus={focusPanel}
       onCloseAutoFocus={returnFocus}
       aria-describedby={undefined}
-      className="top-[calc(50%+var(--demo-bar-h)/2)] flex max-h-[calc(100svh-var(--demo-bar-h)-2rem)] flex-col gap-0 overflow-hidden bg-background p-0 outline-none sm:max-w-[640px]"
+      className={cn(
+        "top-[calc(50%+var(--demo-bar-h)/2)] flex max-h-[calc(100svh-var(--demo-bar-h)-2rem)] flex-col gap-0 overflow-hidden bg-background p-0 outline-none sm:max-w-[640px]",
+        steady && "h-[min(calc(100svh-var(--demo-bar-h)-2rem),52rem)]",
+      )}
     >
       <DialogHeader className="gap-0 px-5 pt-4.5 pr-14">
         <p className="eyebrow text-muted-foreground">{eyebrow}</p>
         <DialogTitle className="mt-1.5 font-display text-2xl">{title}</DialogTitle>
       </DialogHeader>
-      <div className="mt-3.5 min-h-0 flex-1 overflow-y-auto border-t px-5 pt-4.5 pb-7">{children}</div>
+      <div data-phase-body className="mt-3.5 min-h-0 flex-1 overflow-y-auto border-t px-5 pt-4.5 pb-7">
+        {children}
+      </div>
       {footer}
     </DialogContent>
   );
@@ -43,15 +54,18 @@ export function PhaseModal({
 
 /**
  * A phase modal's footer, laid out as the drawer's own was: one button fills
- * the row, a quiet one sits to its left, and once it's done, what happened is
- * said on the left with any Undo on the right.
+ * the row, a quiet one (Skip, Back) sits to its left, and once it's done,
+ * what happened is said on the left with any Undo on the right. On a phone
+ * the buttons stack, the main one on top.
  */
 export function PhaseFooter({ done, children }: { done?: boolean; children: ReactNode }) {
   return (
     <div
       className={cn(
-        "flex items-center border-t px-5 pt-3.5 pb-4",
-        done ? "justify-between gap-4" : "justify-end gap-2",
+        "flex border-t px-5 pt-3.5 pb-4",
+        done
+          ? "items-center justify-between gap-4"
+          : "flex-col-reverse gap-2 sm:flex-row sm:items-center sm:justify-end",
       )}
     >
       {children}
