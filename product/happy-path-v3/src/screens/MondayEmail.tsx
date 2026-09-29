@@ -51,11 +51,11 @@ export function MondayEmail({ go }: WalkProps) {
 
       <div className="px-8 pb-12">
         <Group title="Closing">
-          <TodoCard items={closing} cta="Close before renewal" onCta={() => go("monday")} />
+          <TodoCard items={closing} cta="Close before renewal" onCta={() => go("card-monday-upline")} />
         </Group>
 
         <Group title="Shopped and ready for review">
-          <TodoCard items={shopped} cta="Review shopped carriers" onCta={() => go("monday")} />
+          <TodoCard items={shopped} cta="Review shopped carriers" onCta={() => go("card-monday-upline")} />
         </Group>
 
         <Group title="Scheduled Renewal Emails">
@@ -79,7 +79,7 @@ export function MondayEmail({ go }: WalkProps) {
                   </li>
                 ))}
               </ul>
-              <Button variant="link" size="lg" className="w-full" onClick={() => go("monday")}>
+              <Button variant="link" size="lg" className="w-full" onClick={() => go("card-monday-upline")}>
                 View on Upline
               </Button>
             </CardContent>

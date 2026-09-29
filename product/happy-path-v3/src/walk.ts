@@ -2,18 +2,20 @@ import type { Day, PickId } from "./data";
 import type { PillId } from "./pills";
 
 /**
- * The walk: fifteen stops, one household (the Callahans) from Monday's list to
+ * The walk: sixteen stops, one household (the Callahans) from Monday's list to
  * a bound policy, with the rest of the week moving around them. The presenter
  * bar steps through these in order, and each stop can be jumped to directly.
  *
- * Six of the stops are cards, the ones with `text`: a slate screen before
- * each change of day or person, with a story title (`label`), the day
- * (`where`) and a sentence setting up what comes next. They're fixed, so they
+ * Seven of the stops are cards, the ones with `text`: a slate screen before
+ * each change of day or person and before Stacey first signs in to Upline,
+ * with a story title (`label`), the day (`where`) and a sentence setting up
+ * what comes next. They're fixed, so they
  * tell the usual path; a screen that has gone differently says so itself.
  */
 export type ScreenId =
   | "card-monday"
   | "monday-email"
+  | "card-monday-upline"
   | "monday"
   | "review"
   | "card-tuesday"
@@ -36,6 +38,12 @@ export const screens: { id: ScreenId; label: string; where: string; text?: strin
     text: "Stacey is an agent at Stockton Hill Insurance. Before she's at her desk, Upline has written to tell her what needs her this week.",
   },
   { id: "monday-email", label: "The Monday email", where: "Stacey's inbox · Monday, 8:00 AM" },
+  {
+    id: "card-monday-upline",
+    label: "At her desk",
+    where: "Monday, October 12",
+    text: "Stacey signs in to Upline to work through the list from her email.",
+  },
   { id: "monday", label: "Monday: Stacey opens Upline", where: "Upline · Monday, October 12" },
   { id: "review", label: "Review the Callahans' email", where: "Upline · Monday, October 12" },
   {

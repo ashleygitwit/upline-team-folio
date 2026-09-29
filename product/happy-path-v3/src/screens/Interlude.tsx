@@ -2,9 +2,10 @@ import { Clock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 /**
- * The card before each change of day or person, after BrightFuture's demo
- * (brightfuture-demo.vercel.app/2): the stage's slate, a story title, the day
- * and a sentence, so the screen after it reads as a new day or someone else's.
+ * The card before each change of day or person, and before Stacey first signs
+ * in to Upline, after BrightFuture's demo (brightfuture-demo.vercel.app/2): the
+ * stage's slate, a story title, the day and a sentence, so the screen after it
+ * reads as a new day, a new place or someone else's.
  * No rule beside the title: blue 600 barely shows on slate, and the stage's
  * own captions go without one.
  */
