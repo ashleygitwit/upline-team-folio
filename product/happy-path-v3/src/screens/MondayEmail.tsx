@@ -39,7 +39,7 @@ export function MondayEmail({ go }: WalkProps) {
         </p>
       </div>
 
-      <header className="band-surface relative isolate flex min-h-[280px] flex-col justify-between gap-12 overflow-clip px-8 pt-8 pb-10">
+      <header className="band-surface relative isolate flex flex-col gap-13 overflow-clip px-8 pt-8 pb-10">
         <BandGrain />
         <img src={logo} alt="Upline" className="h-6 w-auto self-start" />
         <div>
