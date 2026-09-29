@@ -4,7 +4,7 @@ import { PersonLink } from "@/components/PersonLink";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { callahan, earlier, initials, money, thisWeek, upcoming, type Day, type Household } from "@/data";
+import { callahan, earlier, initials, mondayNeeds, money, thisWeek, upcoming, type Day, type Household } from "@/data";
 import { badgeVariant, statusFor } from "@/status";
 import { going } from "@/today";
 import type { WalkProps } from "@/walk";
@@ -123,13 +123,8 @@ function Row({
 
 const opens = <ChevronRight aria-hidden className="size-4 shrink-0 self-center text-muted-foreground" />;
 
-/** Earlier weeks' households that need Stacey on Monday, soonest renewal first. */
-function fromEarlier(day: Day, section: "shopped" | "closing") {
-  if (day !== "mon") return [];
-  return earlier
-    .filter((e) => e.monday?.section === section)
-    .sort((a, b) => Date.parse(`${a.renews} 2026`) - Date.parse(`${b.renews} 2026`));
-}
+/** Earlier weeks' households that need Stacey, which is only on Monday. */
+const fromEarlier = (day: Day, section: "shopped" | "closing") => (day === "mon" ? mondayNeeds(section) : []);
 
 /** An earlier week's household, with the label its stage carries for the Callahans too. */
 function EarlierRow({ e, label, onProfile }: { e: (typeof earlier)[number]; label: string; onProfile: () => void }) {

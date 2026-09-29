@@ -504,6 +504,15 @@ export const earlier: Earlier[] = [
   },
 ];
 
+/**
+ * Earlier weeks' households that need Stacey on Monday in one section, soonest
+ * renewal first. The Monday email and the homepage list them the same way.
+ */
+export const mondayNeeds = (section: "shopped" | "closing") =>
+  earlier
+    .filter((e) => e.monday?.section === section)
+    .sort((a, b) => Date.parse(`${a.renews} 2026`) - Date.parse(`${b.renews} 2026`));
+
 /* ------------------------------------------------------------------ *
  * The Callahans' shop
  * ------------------------------------------------------------------ */
