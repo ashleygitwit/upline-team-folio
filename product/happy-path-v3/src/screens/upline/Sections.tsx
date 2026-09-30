@@ -167,7 +167,7 @@ function shopFor(id: string) {
  * An earlier week's household: its lines, carrier and renewal, then what's
  * needed, with a menu at the top right. Only on Monday. A shopped row opens
  * on a preview of what the shop came back with and ends its note with a link
- * to the full report; a closing row ends in View profile, since the work of
+ * to the full report; a closing row ends in View profile and close, since the work of
  * closing (binding in the portal, the call, the paperwork) happens outside
  * Upline, and the drawer is where she closes it out.
  */
@@ -301,7 +301,7 @@ const without = <T,>(record: Record<string, T>, id: string) => {
 };
 
 /**
- * The foot of a closing row. Until it's closed, View profile opens the
+ * The foot of a closing row. Until it's closed, View profile and close opens the
  * drawer, whose banner leads to Close out: the row doesn't ask for a memo
  * because closing is a morning's work in the carrier's portal and on the
  * phone, not a field on the homepage (the 2026-09-29 review). Once closed out
@@ -323,7 +323,7 @@ function CloseOut({ saved, onProfile, onUndo }: { saved: string | undefined; onP
   }
   return (
     <Button className="relative z-10 mt-3" onClick={onProfile}>
-      View profile
+      View profile and close
     </Button>
   );
 }
@@ -444,7 +444,7 @@ function ScheduledRow({
  * the shop's preview, the menu, and the result ending in View the full report;
  * the whole row opens the results in a modal, so the report link is part of
  * the row's button rather than a button of its own. A closing row is the menu,
- * what they approved, and View profile; once closed out from the drawer it
+ * what they approved, and View profile and close; once closed out from the drawer it
  * says so, and Undo reopens it. Every menu's View Profile opens the drawer,
  * and its Snooze takes the row off the list and puts it in a quiet line at
  * the foot, with Undo, so what's put off stays in sight. Each task is its own
