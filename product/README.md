@@ -17,6 +17,7 @@ This is **not** the Upline product codebase. Build implementation stays in [upli
 | [`2026-08-20-path-to-1m.md`](2026-08-20-path-to-1m.md) | TAM / $1M math |
 | [`happy-path-v2.5/`](happy-path-v2.5/) | Ashley's v2 happy path, screen for screen, rebuilt in the Upline shadcn library, shown on Through Line |
 | [`happy-path-v3/`](happy-path-v3/) | Clickable prototype of the agent's week (Amanda, Sept 28), shown on Through Line |
+| [`happy-path-v4/`](happy-path-v4/) | Amanda's v4 (Sept 30), started as a copy of v3, shown on Through Line |
 
 ## What does *not* belong here
 
