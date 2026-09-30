@@ -1,24 +1,12 @@
 import { CarrierMark } from "@/components/CarrierMark";
-import type { Day } from "@/data";
-import { renewsIn } from "@/tasks";
 
 /**
- * A household's lines, its carrier with the carrier's mark, and when it
- * renews, on one line. The Monday email's cards and the homepage's Shopped and
- * Closing rows both carry it. A span, since on the homepage it sits inside the
- * row's button.
+ * A household's lines and its carrier with the carrier's mark, on one line,
+ * as a board card says what's renewing. When it renews is the card's renewal
+ * chip (renewalChip in board.ts), in the color of the card's accent; it sat
+ * at the end of this line until 2026-09-30.
  */
-export function RenewalMeta({
-  lines,
-  carrier,
-  renews,
-  day,
-}: {
-  lines: string;
-  carrier: string;
-  renews: string;
-  day: Day;
-}) {
+export function RenewalMeta({ lines, carrier }: { lines: string; carrier: string }) {
   return (
     <span className="flex flex-wrap items-center gap-x-1.5 text-sm text-muted-foreground">
       {lines}
@@ -27,8 +15,6 @@ export function RenewalMeta({
         <CarrierMark carrier={carrier} />
         {carrier}
       </span>
-      <span aria-hidden>·</span>
-      {renewsIn(renews, day)}
     </span>
   );
 }

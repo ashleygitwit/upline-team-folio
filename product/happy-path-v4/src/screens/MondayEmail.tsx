@@ -5,10 +5,21 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { BandGrain } from "@/components/BandGrain";
 import { CarrierMark } from "@/components/CarrierMark";
+import { Chips } from "@/components/Chips";
 import { Stage } from "@/components/Stage";
-import { accentFor, bigIncrease, boardFor, needsMe, pctLabel, setName, type Accent, type ColumnId, type Entry } from "@/board";
+import {
+  accentFor,
+  bigIncrease,
+  boardFor,
+  needsMe,
+  pctLabel,
+  renewalChip,
+  setName,
+  type Accent,
+  type ColumnId,
+  type Entry,
+} from "@/board";
 import { agency } from "@/data";
-import { renewsIn } from "@/tasks";
 import { initialWalk, type WalkProps } from "@/walk";
 
 /**
@@ -21,8 +32,9 @@ import { initialWalk, type WalkProps } from "@/walk";
  * Action Needed is what the board's Needs me keeps, in three groups: approvals
  * to bind (Ready to close), recommendations to send, and renewals inside ten
  * days that are still open. Each line is a mini line from the board, with its
- * accent and when it renews instead of the change, since what matters here is
- * how long is left. It was the earlier weeks' four until 2026-09-30.
+ * accent and its renewal chip in the accent's color instead of the change,
+ * since what matters here is how long is left. It was the earlier weeks' four
+ * until 2026-09-30.
  *
  * Scheduled Emails comes last and quietest, since they go out Tuesday whether
  * she looks at them or not: the board's Scheduled column, all 48, biggest
@@ -137,9 +149,9 @@ function Group({ title, children }: { title: string; children: ReactNode }) {
   );
 }
 
-/** The accent down a line's left edge, as the board draws it. */
+/** The accent down a line's left edge, as the board draws it (red at 700, as its chip is). */
 const accentBar: Record<Accent, string> = {
-  urgent: "before:bg-destructive",
+  urgent: "before:bg-destructive-strong",
   soon: "before:bg-warning",
   needs: "before:bg-primary",
 };
@@ -147,7 +159,7 @@ const accentBar: Record<Accent, string> = {
 /**
  * One group of Action Needed: its name as the eyebrow, with its count, then
  * a line a household, soonest renewal first: the accent, the carrier's mark,
- * the name, and when it renews.
+ * the name, and its renewal chip, in the accent's color.
  */
 function Todos({ title, items }: { title: string; items: { e: Entry; col: ColumnId }[] }) {
   if (items.length === 0) return null;
@@ -163,7 +175,7 @@ function Todos({ title, items }: { title: string; items: { e: Entry; col: Column
             <li
               key={e.id}
               className={cn(
-                "relative flex items-start justify-between gap-4 py-2 pl-3",
+                "relative flex items-center justify-between gap-4 py-2 pl-3",
                 accent && "before:absolute before:inset-y-0 before:left-0 before:w-[3px]",
                 accent && accentBar[accent],
               )}
@@ -173,7 +185,7 @@ function Todos({ title, items }: { title: string; items: { e: Entry; col: Column
                 <span className="sr-only">{e.carrier}, </span>
                 <span className="min-w-0">{setName(e.name)}</span>
               </span>
-              <span className="shrink-0 text-muted-foreground">{renewsIn(e.renews, "mon")}</span>
+              <Chips chips={[renewalChip(e, "mon", accent)]} className="shrink-0" />
             </li>
           );
         })}

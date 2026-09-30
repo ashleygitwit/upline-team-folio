@@ -2,7 +2,7 @@ import { dayDate, earlier, thisWeek, type Day } from "@/data";
 import { cards } from "@/household/data";
 import { pickLine, pools, shopLine, type Invented } from "@/pipeline";
 import { statusFor } from "@/status";
-import { isSnoozed, renewalDate } from "@/tasks";
+import { isSnoozed, renewalDate, renewsIn, type Chip } from "@/tasks";
 import type { Walk } from "@/walk";
 
 /**
@@ -261,6 +261,20 @@ export function accentFor(e: Entry, col: ColumnId, day: Day, walk: Walk): Accent
   if (days <= 10) return "soon";
   if (col === "ready" || e.approved) return "needs";
   return null;
+}
+
+/**
+ * When it renews, as a chip in the accent's color, so the chip says what the
+ * bar means. Red and orange are about time, so they count down ("Renews in 8
+ * days"); blue and no accent say it as a card always has (the date, counted
+ * down inside a week), blue or gray.
+ */
+export function renewalChip(e: Entry, day: Day, accent: Accent | null): Chip {
+  const days = daysUntil(e.renews, day);
+  const counted =
+    days < 0 ? `Renewed ${e.renews}` : days === 0 ? "Renews today" : days === 1 ? "Renews tomorrow" : `Renews in ${days} days`;
+  const label = accent === "urgent" || accent === "soon" ? counted : renewsIn(e.renews, day);
+  return { id: "renewal", label, tone: accent ?? undefined };
 }
 
 /** Everything the Needs me toggle keeps: anything with an accent. */

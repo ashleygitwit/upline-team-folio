@@ -10,6 +10,7 @@ import {
   boardFor,
   columns,
   pctLabel,
+  renewalChip,
   setName,
   type Accent,
   type ColumnId,
@@ -222,9 +223,13 @@ function Folded({ label, n, onUnfold }: { label: string; n: number; onUnfold: ()
  * Accents and figures
  * ------------------------------------------------------------------ */
 
-/** The accent as a card's left border, replacing its hairline (the hub's card-accent). */
+/**
+ * The accent as a card's left border, replacing its hairline (the hub's
+ * card-accent). Red is red 700, as the renewal chip that explains it is:
+ * red 500 can't carry the chip's text, so the bar steps down with it.
+ */
 const accentBorder: Record<Accent, string> = {
-  urgent: "border-l-3 border-l-destructive",
+  urgent: "border-l-3 border-l-destructive-strong",
   soon: "border-l-3 border-l-warning",
   needs: "border-l-3 border-l-primary",
 };
@@ -235,7 +240,7 @@ const accentBorder: Record<Accent, string> = {
  * card's does.
  */
 const accentBar: Record<Accent, string> = {
-  urgent: "before:bg-destructive",
+  urgent: "before:bg-destructive-strong",
   soon: "before:bg-warning",
   needs: "before:bg-primary",
 };
@@ -306,21 +311,27 @@ function NotBuilt({ className, children }: { className: string; children: React.
 
 /**
  * One household in a mini column: the name and the change in percent, at
- * 14px, and nothing else, so a column of 55 reads as a list of names. A long
- * name wraps rather than being cut short, so nothing depends on a tooltip.
- * The whole line opens the household's drawer, where the renewal email is a
- * click away; an invented line doesn't open, and says so.
+ * 14px, so a column of 55 reads as a list of names. A line with an accent
+ * adds its renewal chip under the name, in the accent's color, so the bar
+ * says what it means; a named household's own chips follow. A long name wraps
+ * rather than being cut short, so nothing depends on a tooltip. The whole
+ * line opens the household's drawer, where the renewal email is a click
+ * away; an invented line doesn't open, and says so.
  */
 function MiniRow({ e, accent, ...props }: BoardProps & { e: Entry; accent: Accent | null }) {
   const { day, walk, household, onHousehold } = props;
   const selected = household === e.id;
   const frame = cn("relative px-3 py-2 text-sm", accent && [bar, accentBar[accent]]);
+  const chips = [...(accent ? [renewalChip(e, day, accent)] : []), ...(e.invented ? [] : chipsFor(e.id, day, walk))];
 
   const line = (
-    <div className="flex items-start gap-2">
-      <span className="min-w-0 flex-1 [overflow-wrap:break-word]">{setName(e.name)}</span>
-      <Pct pct={e.pct} />
-    </div>
+    <>
+      <div className="flex items-start gap-2">
+        <span className="min-w-0 flex-1 [overflow-wrap:break-word]">{setName(e.name)}</span>
+        <Pct pct={e.pct} />
+      </div>
+      <Chips chips={chips} className="mt-1.5" />
+    </>
   );
 
   if (e.invented) return <NotBuilt className={frame}>{line}</NotBuilt>;
@@ -328,7 +339,6 @@ function MiniRow({ e, accent, ...props }: BoardProps & { e: Entry; accent: Accen
   return (
     <li className={cn(frame, "hover:bg-background", selected && "bg-muted hover:bg-muted")}>
       {line}
-      <Chips chips={chipsFor(e.id, day, walk)} className="mt-1.5" />
       <OpenOverlay name={e.name} selected={selected} onOpen={() => onHousehold(e.id)} />
     </li>
   );
@@ -340,22 +350,25 @@ function MiniRow({ e, accent, ...props }: BoardProps & { e: Entry; accent: Accen
 
 /**
  * A card in a full column: the name with the change in percent beside it (as
- * a mini line has it), then what it is and when it renews, last year's price
- * to this year's, any chips, one sentence, and the action if there is one.
- * Everything is 14px, the kit's row size, with the name set apart by the
- * display face and weight. `onOpen` lays the drawer's button over the whole
- * card; `foot` sits above that button, for anything that's a button of its
- * own. The accent replaces the card's left hairline; while its drawer is
- * open, the rest of the edge turns blue.
+ * a mini line has it), then its chips, led by the renewal chip in the color
+ * of the card's accent, so the bar down the edge says what it means; then
+ * what's renewing, last year's price to this year's, one sentence, and the
+ * action if there is one. Everything is 14px, the kit's row size, with the
+ * name set apart by the display face and weight (chips are the kit's 12px
+ * mono). `foot` sits above the card's drawer button, for anything that's a
+ * button of its own. The accent replaces the card's left hairline; while its
+ * drawer is open, the rest of the edge turns blue.
  */
 function Card({
   name,
   pct,
+  chips,
   foot,
   children,
 }: {
   name: string;
   pct: number;
+  chips: Chip[];
   foot?: React.ReactNode;
   children: React.ReactNode;
 }) {
@@ -365,7 +378,8 @@ function Card({
         <h3 className="min-w-0 flex-1 text-sm [overflow-wrap:break-word]">{setName(name)}</h3>
         <Pct pct={pct} />
       </div>
-      <div className="mt-1">{children}</div>
+      <Chips chips={chips} className="mt-2" />
+      <div className="mt-2">{children}</div>
       {foot && <div className="relative z-10">{foot}</div>}
     </div>
   );
@@ -382,10 +396,9 @@ const cardFrame = (accent: Accent | null, selected = false) =>
 function InventedCard({ e, accent, day }: { e: Entry; accent: Accent | null; day: Day }) {
   return (
     <NotBuilt className={cardFrame(accent)}>
-      <Card name={e.name} pct={e.pct}>
-        <RenewalMeta lines={e.lines} carrier={e.carrier} renews={e.renews} day={day} />
+      <Card name={e.name} pct={e.pct} chips={[renewalChip(e, day, accent), ...(e.approved ? [readyToClose] : [])]}>
+        <RenewalMeta lines={e.lines} carrier={e.carrier} />
         <Price e={e} />
-        {e.approved && <Chips chips={[readyToClose]} className="mt-2" />}
         {e.invented!.detail && <span className="mt-2 block">{e.invented!.detail}</span>}
       </Card>
     </NotBuilt>
@@ -495,15 +508,18 @@ function NamedCard({ e, col, accent, ...props }: BoardProps & { e: Entry; col: C
     );
   }
 
-  const chips = [...(e.approved && !snoozed ? [readyToClose] : []), ...chipsFor(e.id, day, walk)];
+  const chips = [
+    renewalChip(e, day, accent),
+    ...(e.approved && !snoozed ? [readyToClose] : []),
+    ...chipsFor(e.id, day, walk),
+  ];
 
   return (
     <li className={cn(cardFrame(accent, selected), "hover:bg-background")}>
       <OpenOverlay name={e.name} selected={selected} onOpen={profile} />
-      <Card name={e.name} pct={e.pct} foot={foot}>
-        <RenewalMeta lines={e.lines} carrier={e.carrier} renews={e.renews} day={day} />
+      <Card name={e.name} pct={e.pct} chips={chips} foot={foot}>
+        <RenewalMeta lines={e.lines} carrier={e.carrier} />
         <Price e={e} />
-        <Chips chips={chips} className="mt-2" />
         {detail && <span className="mt-2 block">{detail}</span>}
       </Card>
     </li>

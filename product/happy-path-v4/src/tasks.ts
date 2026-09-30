@@ -103,7 +103,16 @@ export const isSnoozed = (id: string, day: Day, walk: Walk) => {
  * Chips
  * ------------------------------------------------------------------ */
 
-export type Chip = { id: "snoozed" | "life" | "info" | "closing"; label: string };
+/**
+ * A chip: what it says, and, for the renewal chip on the board and in the
+ * Monday email, the tone of the accent it explains (board.ts), so the chip
+ * and the bar beside it are the same color.
+ */
+export type Chip = {
+  id: "snoozed" | "life" | "info" | "closing" | "renewal";
+  label: string;
+  tone?: "urgent" | "soon" | "needs";
+};
 
 /**
  * What the questionnaire changed on file, by household: how many details,
