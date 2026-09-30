@@ -55,10 +55,11 @@ export type Activity = {
   closed?: { when: string; note: string };
 };
 
+/** The stages between the ones columns.ts names, as the homepage board's columns say them. */
 const stage = {
-  reached: "Reached out",
-  sent: "Rec sent",
-  closed: "Closed",
+  reached: "Awaiting Response",
+  sent: "Recommendation Sent",
+  closed: "Completed",
 };
 
 const dayShort: Record<Day, string> = { mon: "Mon", wed: "Wed", thu: "Thu", fri: "Fri" };

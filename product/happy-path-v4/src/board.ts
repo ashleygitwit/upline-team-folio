@@ -86,7 +86,9 @@ export function namedColumn(id: string, day: Day, walk: Walk): ColumnId {
   const h = thisWeek.find((x) => x.id === id);
   if (!h) return earlierColumn(id, day, walk);
   if (walk.skipped.includes(id)) return "completed";
-  if (day === "mon") return "scheduled";
+  // Send now on Monday sends the email then, so the household is waiting on
+  // an answer from Monday, as its drawer says.
+  if (day === "mon") return walk.approved.includes(id) ? "awaiting" : "scheduled";
   return statusColumn[statusFor(h, day, walk).label] ?? "awaiting";
 }
 

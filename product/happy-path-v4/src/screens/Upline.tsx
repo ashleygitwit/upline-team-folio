@@ -23,7 +23,8 @@ export function Upline({
   const [household, setHousehold] = useState<string | null>(initialHousehold);
   // Whether the Pruitts' shop results are open on their own.
   const [results, setResults] = useState(false);
-  // The household whose outreach review is open on its own, from a board line.
+  // The household whose outreach review is open on its own: the walk's
+  // review stop opens the Pruitts' email this way.
   const [outreach, setOutreach] = useState<string | null>(initialOutreach);
 
   // A drawer opens under whichever bars are on screen: the presenter's bar,
@@ -48,7 +49,6 @@ export function Upline({
         day={day}
         household={household}
         onHousehold={setHousehold}
-        onOutreach={setOutreach}
         onResults={() => setResults(true)}
         {...props}
       />

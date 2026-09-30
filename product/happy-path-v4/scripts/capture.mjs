@@ -98,10 +98,9 @@ async function hover(name) {
   await button(name).hover();
 }
 
-/** Opens a household's drawer from its menu on the homepage's board. */
+/** Opens a household's drawer from its line or card on the homepage's board. */
 async function openProfile(name) {
-  await click(`More for ${name}`);
-  await menuItem("View Profile").click();
+  await click(`Open ${name}`);
   await page.waitForTimeout(250);
 }
 
@@ -185,54 +184,28 @@ const captures = [
     },
   },
   {
-    slug: "04b-card-menu",
-    stop: 4,
-    title: "A board card's menu",
-    via: "The three dots on Rhea Iyer's card",
-    run: async () => {
-      await jump("Monday: Jenna opens Upline");
-      await click("More for Rhea Iyer");
-    },
-  },
-  {
-    slug: "04c-snooze-submenu",
-    stop: 4,
-    title: "Snooze submenu",
-    via: "Card menu → Snooze",
-    run: async () => {
-      await jump("Monday: Jenna opens Upline");
-      await click("More for Rhea Iyer");
-      await menuItem("Snooze").click();
-      await page.waitForTimeout(200);
-    },
-  },
-  {
     slug: "04d-snoozed",
     stop: 4,
-    title: "A snoozed task",
-    via: "Card menu → Snooze → Until tomorrow",
+    title: "A snoozed task, at the foot of its column",
+    via: "Rhea Iyer's drawer → the clock at the end of the banner → Until tomorrow → close the drawer",
     run: async () => {
       await jump("Monday: Jenna opens Upline");
-      await click("More for Rhea Iyer");
-      await menuItem("Snooze").click();
+      await openProfile("Rhea Iyer");
+      await click("Snooze");
       await menuItem("Until tomorrow").click();
-    },
-  },
-  {
-    slug: "04e-scheduled-menu",
-    stop: 4,
-    title: "A Scheduled line's menu",
-    via: "The three dots on the Pruitts' Scheduled line",
-    run: async () => {
-      await jump("Monday: Jenna opens Upline");
-      await click("More for Leah & Tom Pruitt");
+      await page.keyboard.press("Escape");
+      await page.waitForTimeout(400);
+      // The column scrolls inside itself, so bring its foot into view.
+      await page
+        .locator('section[aria-labelledby="col-sent"] .overflow-y-auto')
+        .evaluate((el) => el.scrollTo(0, el.scrollHeight));
     },
   },
   {
     slug: "04j-drawer-details",
     stop: 4,
     title: "Household drawer: Details (blue banner)",
-    via: "Rhea Iyer's card menu → View Profile",
+    via: "Rhea Iyer's card",
     run: async () => {
       await jump("Monday: Jenna opens Upline");
       await openProfile("Rhea Iyer");
@@ -266,7 +239,7 @@ const captures = [
     slug: "04m-drawer-gray-banner",
     stop: 4,
     title: "Household drawer: gray banner (email scheduled)",
-    via: "The Pruitts' Scheduled line menu → View Profile",
+    via: "The Pruitts' Scheduled line",
     run: async () => {
       await jump("Monday: Jenna opens Upline");
       await openProfile("Leah & Tom Pruitt");
@@ -352,7 +325,7 @@ const captures = [
   {
     slug: "04r-not-in-prototype",
     stop: 4,
-    title: "An invented household: no file behind it",
+    title: "An invented household: not built out for the prototype",
     via: "Point at any line or card that isn't one of the named twelve",
     run: async () => {
       await jump("Monday: Jenna opens Upline");
@@ -414,7 +387,7 @@ const captures = [
   {
     slug: "05e-sent-now",
     stop: 5,
-    title: "After Send now: the line is marked Looks good",
+    title: "After Send now: the Pruitts move to Awaiting Response",
     via: "Send now",
     run: async () => {
       await jump("Review the Pruitts' email");
@@ -426,7 +399,7 @@ const captures = [
     slug: "05f-review-over-drawer",
     stop: 5,
     title: "The review opened over the drawer, once sent",
-    via: "Send now → the Pruitts' Scheduled line menu → View Profile → banner → View",
+    via: "Send now → the Pruitts' Awaiting Response line → banner → View",
     run: async () => {
       await jump("Review the Pruitts' email");
       await click("Send now");
@@ -477,7 +450,7 @@ const captures = [
     slug: "10a-pruitts-details-info-updated",
     stop: 10,
     title: "The Pruitts' drawer: Details, with the changed detail marked",
-    via: "The Pruitts' Shopping line menu → View Profile",
+    via: "The Pruitts' Shopping line",
     run: async () => {
       await answerQuestionnaire();
       await jump("Wednesday");
@@ -512,7 +485,7 @@ const captures = [
     slug: "10d-nudge-modal",
     stop: 10,
     title: "Nudge modal",
-    via: "Tobi Adeyemi's Awaiting Response line menu → View Profile → banner → Review",
+    via: "Tobi Adeyemi's Awaiting Response line → banner → Review",
     run: async () => {
       await answerQuestionnaire();
       await jump("Wednesday");
@@ -540,7 +513,7 @@ const captures = [
     slug: "10g-drawer-no-banner",
     stop: 10,
     title: "Household drawer with nothing going on (no banner)",
-    via: "Diane Mercer's Completed card menu → View Profile",
+    via: "Diane Mercer's Completed card",
     run: async () => {
       await answerQuestionnaire();
       await jump("Wednesday");
@@ -628,7 +601,7 @@ const captures = [
     slug: "12f-results-read-only",
     stop: 12,
     title: "Shop results once sent: step 3, read-only",
-    via: "After sending → the Pruitts' card menu → View Profile → banner → View → step 3",
+    via: "After sending → the Pruitts' card → banner → View → step 3",
     run: async () => {
       await answerQuestionnaire();
       await jump("Thursday: results are back");
@@ -647,7 +620,7 @@ const captures = [
     slug: "12g-pruitts-details-blue",
     stop: 12,
     title: "The Pruitts' drawer: Details, results to review",
-    via: "The Pruitts' card menu → View Profile",
+    via: "The Pruitts' card",
     run: async () => {
       await answerQuestionnaire();
       await jump("Thursday: results are back");

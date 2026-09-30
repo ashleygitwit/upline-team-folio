@@ -14,7 +14,7 @@ import { agency } from "@/data";
  * The product's own bar. Deliberately bare: no tabs. The mark takes Jenna
  * back to the homepage, and her name opens her menu: her profile and her
  * account settings. Neither is built yet, so they close the menu and go
- * nowhere, as the row menus' unbuilt items do. My Policyholder List was
+ * nowhere. My Policyholder List was
  * between them until 2026-09-30, when the homepage's board replaced it. The
  * bar runs the page's full width, as the board does, so the mark sits on the
  * same edge as the greeting and the board's first column.

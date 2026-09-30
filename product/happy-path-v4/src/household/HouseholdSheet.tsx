@@ -29,9 +29,9 @@ import type { SnoozeUntil, WalkProps } from "@/walk";
 type Tab = "details" | "activity" | "notes";
 
 /**
- * A household, opened from a card or line on the homepage's board, or a
- * menu's View Profile. Every household has the same drawer: the stage it's in
- * over its name, a banner when something is going on, and three tabs, which
+ * A household, opened from its card or line on the homepage's board. Every
+ * household has the same drawer: the stage it's in, as the board's column
+ * names it, over its name, a banner when something is going on, and three tabs, which
  * always open on Details. Recent activity is what's coming up and what has
  * happened; Notes is Jenna's own.
  *

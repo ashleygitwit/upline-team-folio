@@ -8,10 +8,11 @@ import type { WalkProps } from "@/walk";
 /**
  * A household's outreach review wired to the walk: the email Jenna edits is
  * the one Leah gets, Life decides the questionnaire's life question, Send now
- * marks it as looking good, and Skip asks first. It opens over the drawer
- * (from the banner or Recent activity) and, since the 2026-09-29 review, on
- * its own from a Scheduled line on the homepage, because reviewing the email
- * is the row's whole point and shouldn't sit behind the drawer.
+ * sends it then (so the household moves to Awaiting Response), and Skip asks
+ * first. It opens over the drawer (from the banner or Recent activity) and
+ * on its own at the walk's review stop. From the 2026-09-29 review until
+ * 2026-09-30 a Scheduled line on the homepage opened it on its own too; now
+ * every line opens the drawer.
  */
 export function OutreachFor({
   card,
