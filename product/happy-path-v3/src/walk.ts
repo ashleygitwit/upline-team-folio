@@ -1,5 +1,4 @@
 import type { Day, PickId } from "./data";
-import type { PillId } from "./pills";
 
 /**
  * The walk: sixteen stops, one household (the Pruitts) from Monday's list to
@@ -84,16 +83,6 @@ export const screens: { id: ScreenId; label: string; where: string; text?: strin
   { id: "friday", label: "Friday: bind it", where: "Upline · Friday, October 16" },
 ];
 
-/** One question and what it's answered with. `null` has no answer written. */
-export type Exchange = { key: number; question: string; answer: PillId | null };
-
-/**
- * A conversation with Upline, titled by its first question. There's one a
- * day at most: it docks along the bottom until Jenna ends it, and the next
- * question starts a new one.
- */
-export type Chat = { id: number; day: Day; title: string; asked: Exchange[] };
-
 /** A note Jenna left on a household: the walk's day, the clock time she posted it, and what she wrote. */
 export type Note = { id: number; day: Day; time: string; text: string };
 
@@ -125,7 +114,6 @@ export type Walk = {
   /** Earlier weeks' approvals Jenna marked closed on Monday, with her memo. */
   closed: Record<string, string>;
   notesDrafted: boolean;
-  chats: Chat[];
   /** Nudges and follow-ups Jenna sent early or skipped from a drawer, by `nudges` key (data.ts). */
   nudges: Record<string, NudgeChoice>;
   /** Earlier weeks' recommendations Jenna sent from a drawer on Monday. */
@@ -151,7 +139,6 @@ export const initialWalk: Walk = {
   bound: false,
   closed: {},
   notesDrafted: false,
-  chats: [],
   nudges: {},
   recsSent: [],
   notes: {},

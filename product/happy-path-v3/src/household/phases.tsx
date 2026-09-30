@@ -17,7 +17,7 @@ import { Recommendation } from "@/household/Recommendation";
  * one per phase that has more to it than a line: the outreach review, a
  * nudge or follow-up, a shop in progress, an earlier week's results and the
  * close-out. The Pruitts' results are ShopResults.tsx, since the homepage
- * and the chat open them too. Each takes its action in its footer, and once
+ * opens them too. Each takes its action in its footer, and once
  * it's done, opens read-only with the footer saying what happened.
  */
 

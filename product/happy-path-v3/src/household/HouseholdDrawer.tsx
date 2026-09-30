@@ -21,7 +21,7 @@ import type { WalkProps } from "@/walk";
  * drawer and says so in the toast.
  *
  * It also holds the Pruitts' shop results, for opening on their own (from
- * the homepage's card or the chat) as well as from their drawer's banner, and
+ * the homepage's card) as well as from their drawer's banner, and
  * any household's outreach review on its own (from a Scheduled row on
  * Monday), so sending from any of them closes what's open and says so in the
  * same toast.

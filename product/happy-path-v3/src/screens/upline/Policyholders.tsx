@@ -279,8 +279,10 @@ function ViewButton({ on, onClick, label, icon }: { on: boolean; onClick: () => 
  * The board: one column per stage, a card per household in it, soonest
  * renewal first as the table sorts them. A column with no one in it stays,
  * so the board keeps its shape from day to day, unless the stage filter is
- * on, when only that column is drawn. Below 1280 the board scrolls sideways
- * inside itself rather than squeezing the cards.
+ * on, when only that column is drawn. Each column is wide enough that the
+ * longest carrier and renewal fit on a card's foot without truncating, so all
+ * six don't fit in the shell: the board starts where the page does and scrolls
+ * sideways inside itself, with Left the column most often off the edge.
  */
 function Board({
   rows,
@@ -298,7 +300,7 @@ function Board({
     <div className="mt-4 overflow-x-auto">
       <div
         className="grid items-start gap-3"
-        style={{ gridTemplateColumns: `repeat(${columns.length}, minmax(${filter === "all" ? "11rem" : "16rem"}, 1fr))` }}
+        style={{ gridTemplateColumns: `repeat(${columns.length}, minmax(16rem, 1fr))` }}
       >
         {columns.map((g) => {
           const inCol = rows.filter((r) => r.stage.group === g.id);

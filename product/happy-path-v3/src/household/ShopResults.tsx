@@ -74,7 +74,7 @@ const rec: Rec = {
  * the same with the pick and the email locked, and step 3 says it went.
  *
  * It's the content of a dialog, so whoever opens it owns the Dialog: the
- * homepage's card and the chat open it on its own, and the Pruitts' drawer
+ * homepage's card opens it on its own, and the Pruitts' drawer
  * opens it from its banner, over the drawer.
  */
 export function ShopResults({
