@@ -10,8 +10,8 @@
  *   `npm run export` there.
  * - prototype-v3.html: Amanda's conversational pass (v3, Sept 28), built from
  *   product/happy-path-v3 with `npm run export` there.
- * - prototype-v4.html: Amanda's v4 (Sept 30), started as a copy of v3, built
- *   from product/happy-path-v4 with `npm run export` there.
+ * - prototype-v4.html: Amanda's v4 (Sept 30), v3 with a kanban board for the
+ *   homepage, built from product/happy-path-v4 with `npm run export` there.
  */
 export function PrototypePage({ src, title }: { src: string; title: string }) {
   return <iframe className="prototype-frame" title={title} src={src} />;

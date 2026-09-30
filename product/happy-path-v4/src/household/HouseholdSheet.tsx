@@ -29,8 +29,8 @@ import type { SnoozeUntil, WalkProps } from "@/walk";
 type Tab = "details" | "activity" | "notes";
 
 /**
- * A household, opened from a homepage row, a row menu's View Profile or the
- * Policyholder List. Every household has the same drawer: the stage it's in
+ * A household, opened from a card or line on the homepage's board, or a
+ * menu's View Profile. Every household has the same drawer: the stage it's in
  * over its name, a banner when something is going on, and three tabs, which
  * always open on Details. Recent activity is what's coming up and what has
  * happened; Notes is Jenna's own.
@@ -86,7 +86,7 @@ export function HouseholdSheet({
   const [tab, setTab] = useState<Tab>("details");
   const [open, setOpen] = useState<Opens | null>(null);
 
-  // A task on today's Action Needed list can be snoozed from the banner, and
+  // A task on today's board can be snoozed from the banner, and
   // while it's snoozed the banner says so instead, with Undo.
   const snoozed = isSnoozed(card.id, day, walk);
   const snooze =

@@ -454,7 +454,7 @@ const later: Record<string, (h: Household, day: Day, walk: Walk) => Activity> = 
 
 /* ------------------------------------------------------------------ *
  * Earlier weeks' six, as Ashley's board has them on Monday and as the
- * Policyholder List has them after, once Jenna clears them Monday
+ * homepage's board has them after, once Jenna clears them Monday
  * afternoon, off-camera.
  * ------------------------------------------------------------------ */
 
@@ -685,8 +685,8 @@ const earlierWeeks: Record<string, (day: Day, walk: Walk) => Activity> = {
 /**
  * A household's drawer on the walk's day, following what the presenter has
  * done: this week's six from Monday's email through the week's statuses and
- * nudges, and earlier weeks' six from Ashley's board on Monday to the
- * Policyholder List's stages after. `null` for anyone without a file.
+ * nudges, and earlier weeks' six from Ashley's board on Monday to where the
+ * homepage's board has them after. `null` for anyone without a file.
  */
 export function activityFor(id: string, day: Day, walk: Walk): Activity | null {
   const base = baseActivity(id, day, walk);

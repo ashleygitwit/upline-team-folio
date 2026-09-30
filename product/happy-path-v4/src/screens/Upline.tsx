@@ -1,40 +1,30 @@
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import { AppBar } from "@/components/AppBar";
 import { HouseholdDrawer } from "@/household/HouseholdDrawer";
 import { Home } from "@/screens/upline/Home";
-import { Policyholders } from "@/screens/upline/Policyholders";
 import type { Day } from "@/data";
 import type { WalkProps } from "@/walk";
 
-export type Page = "home" | "policyholders";
-
 /**
- * Upline as Jenna sees it. Two pages: the homepage (a greeting, today's one
- * thing, and the sections that hold what needs her, most pressing first) and
- * the list of everyone renewing, from the menu on Jenna's name. A household
- * opens in a drawer over whichever page she's on, and the Pruitts' shop
- * results open in a modal, from their card or their drawer. The walk can
- * open on any page, with a household open.
+ * Upline as Jenna sees it: one page, the homepage, a greeting and the board
+ * of everyone renewing. The Policyholder List, from the menu on Jenna's name,
+ * came out on 2026-09-30, since the board is the whole book now. A household
+ * opens in a drawer over the board, and the Pruitts' shop results open in a
+ * modal, from their card or their drawer. The walk can open with a household
+ * or an email open.
  */
 export function Upline({
   day,
-  page: initialPage = "home",
   household: initialHousehold = null,
   outreach: initialOutreach = null,
   ...props
-}: WalkProps & { day: Day; page?: Page; household?: string | null; outreach?: string | null }) {
-  const [page, setPage] = useState<Page>(initialPage);
+}: WalkProps & { day: Day; household?: string | null; outreach?: string | null }) {
   // The household open in the drawer.
   const [household, setHousehold] = useState<string | null>(initialHousehold);
   // Whether the Pruitts' shop results are open on their own.
   const [results, setResults] = useState(false);
-  // The household whose outreach review is open on its own, from a Scheduled row.
+  // The household whose outreach review is open on its own, from a board line.
   const [outreach, setOutreach] = useState<string | null>(initialOutreach);
-
-  // A new page starts at the top, the way navigating would.
-  useEffect(() => {
-    window.scrollTo({ top: 0 });
-  }, [page]);
 
   // A drawer opens under whichever bars are on screen: the presenter's bar,
   // which always is, and Upline's own, until it scrolls away (--sheet-top in
@@ -48,37 +38,20 @@ export function Upline({
     root.style.setProperty("--sheet-top", `${Math.max(demoBar, appBarBottom)}px`);
   }, [household]);
 
-  const open = (to: Page) => {
-    setHousehold(null);
-    setPage(to);
-  };
-
   return (
     <div className="min-h-[calc(100svh-var(--demo-bar-h))] bg-background">
       <div ref={appBar}>
-        <AppBar onHome={() => open("home")} onPolicyholders={() => open("policyholders")} />
+        <AppBar onHome={() => setHousehold(null)} />
       </div>
 
-      {page === "home" && (
-        <Home
-          day={day}
-          household={household}
-          onHousehold={setHousehold}
-          onOutreach={setOutreach}
-          onResults={() => setResults(true)}
-          onPolicyholders={() => open("policyholders")}
-          {...props}
-        />
-      )}
-      {page === "policyholders" && (
-        <Policyholders
-          day={day}
-          household={household}
-          onHome={() => open("home")}
-          onHousehold={setHousehold}
-          {...props}
-        />
-      )}
+      <Home
+        day={day}
+        household={household}
+        onHousehold={setHousehold}
+        onOutreach={setOutreach}
+        onResults={() => setResults(true)}
+        {...props}
+      />
 
       <HouseholdDrawer
         id={household}

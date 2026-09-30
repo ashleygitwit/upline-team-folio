@@ -124,6 +124,8 @@ export type Walk = {
   snoozed: Record<string, Snooze>;
   /** Whether Leah said yes to a life quote in her questionnaire. */
   danaLife: boolean;
+  /** Whether Jenna folded the board's Completed column; it stays folded for the walk. */
+  completedHidden: boolean;
 };
 
 export const initialWalk: Walk = {
@@ -144,6 +146,7 @@ export const initialWalk: Walk = {
   notes: {},
   snoozed: {},
   danaLife: true,
+  completedHidden: false,
 };
 
 export type WalkProps = {

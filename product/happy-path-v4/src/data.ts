@@ -4,7 +4,7 @@
  * (upline-happy-path-demo.html, Sept 22) so the same people carry across
  * versions. What v2 did not have is written here: the other five outreach
  * emails, the week's statuses by day, the Pruitts' shop results and talking
- * points, and the three households who left.
+ * points.
  */
 
 export const agency = {
@@ -333,25 +333,6 @@ export const thisWeek: Household[] = [
 export const pruitt = thisWeek[0];
 
 /**
- * What's scheduled once Tuesday's outreach has gone: the nudges and follow-ups
- * the week's statuses already mention, each keyed to its email in `nudges`.
- */
-export type Upcoming = { id: string; nudge: string; what: string; when: string; why: string };
-
-export const upcoming: Record<Exclude<Day, "mon">, Upcoming[]> = {
-  wed: [
-    { id: "adeyemi", nudge: "adeyemi-thu", what: "Nudge", when: "Thursday", why: "Tobi opened the email but hasn't started the questionnaire." },
-    { id: "conti", nudge: "conti-thu", what: "Nudge", when: "Thursday", why: "Marisa stopped at the vehicles question." },
-    { id: "lindqvist", nudge: "lindqvist-fri", what: "Follow-up", when: "Friday", why: "Jordan hasn't opened the email yet." },
-  ],
-  thu: [
-    { id: "lindqvist", nudge: "lindqvist-fri", what: "Follow-up", when: "Friday", why: "Jordan hasn't opened the email yet." },
-    { id: "conti", nudge: "conti-mon", what: "Nudge", when: "Monday", why: "Marisa still has one question left after this morning's nudge." },
-  ],
-  fri: [{ id: "conti", nudge: "conti-mon", what: "Nudge", when: "Monday", why: "Marisa still has one question left." }],
-};
-
-/**
  * A nudge or follow-up and the email it sends, which Jenna can review from
  * the household's drawer. Each goes at 9:00 AM on `goes`, or next Monday,
  * after the walk, when that's null. `short` is its day as the drawer's
@@ -436,50 +417,6 @@ export const nudges: Nudge[] = [
 
 export const nudgeByKey = (key: string) => nudges.find((n) => n.key === key)!;
 
-export type Left = {
-  id: string;
-  name: string;
-  lines: string;
-  date: string;
-  when: string;
-  what: string;
-  short: string;
-  winBack: boolean;
-};
-
-export const whoLeft: Left[] = [
-  {
-    id: "hollis",
-    name: "Derek Hollis",
-    lines: "Auto · Grange",
-    date: "Sep 28",
-    when: "Renewal passed September 28",
-    what: "Went with Progressive directly. Marcus answered the questionnaire and then stopped replying.",
-    short: "Went with Progressive",
-    winBack: true,
-  },
-  {
-    id: "sato",
-    name: "Glen Sato",
-    lines: "Home · Westfield",
-    date: "Oct 3",
-    when: "Renewal passed October 3",
-    what: "Renewed somewhere else. Tom never opened the email or the follow-up.",
-    short: "Renewed somewhere else",
-    winBack: true,
-  },
-  {
-    id: "bianchi",
-    name: "Rita & Paul Bianchi",
-    lines: "Home + Auto · Erie",
-    date: "Sep 21",
-    when: "Renewal passed September 21",
-    what: "Moved to Arizona in September.",
-    short: "Moved to Arizona",
-    winBack: false,
-  },
-];
-
 export type Earlier = {
   id: string;
   name: string;
@@ -496,7 +433,7 @@ export type Earlier = {
   monday?: { section: "shopped" | "closing"; detail: string };
 };
 
-/** Earlier weeks, for the Everyone list and Monday's homepage. */
+/** Earlier weeks, for the homepage's board. */
 export const earlier: Earlier[] = [
   { id: "rao", name: "Neha Rao", lines: "Home + Auto · Erie", renews: "Oct 28", mon: "Shopping, back Tuesday", later: "Recommendation sent Tuesday" },
   { id: "yates", name: "Marcus Yates", lines: "Auto · Grange", renews: "Oct 30", mon: "Shopping, back Tuesday", later: "Recommendation sent Tuesday" },

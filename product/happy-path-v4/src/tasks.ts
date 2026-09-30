@@ -3,15 +3,15 @@ import { cards } from "@/household/data";
 import type { Snooze, SnoozeUntil, Walk } from "@/walk";
 
 /**
- * What needs Jenna, and what's pinned to a household: the homepage's Action
- * Needed list, snoozing a task, and the chips the homepage, the drawer and
- * the Policyholder List all show. Added after the 2026-09-29 review, where
+ * What needs Jenna, and what's pinned to a household: the tasks on the
+ * homepage's board, snoozing a task, and the chips the board and the drawer
+ * both show. Added after the 2026-09-29 review, where
  * Austin asked for a snooze as the first step toward task management and a
  * chip for a life quote or updated information, since neither has a flow of
  * its own yet.
  */
 
-/** One row of Action Needed: whose, what kind, and when they renew, for the sort. */
+/** One task: whose, what kind, and when they renew, for the sort. */
 export type Task = { id: string; kind: "shopped" | "closing"; renews: string; earlier?: Earlier };
 
 /**
@@ -36,7 +36,7 @@ export const actionNeeded = (day: Day, walk: Walk) => allTasks(day, walk).filter
 /** What Jenna has snoozed that would otherwise need her today. */
 export const snoozedTasks = (day: Day, walk: Walk) => allTasks(day, walk).filter((t) => isSnoozed(t.id, day, walk));
 
-/** Whether a household is on today's Action Needed list, snoozed or not. */
+/** Whether a household has a task today, snoozed or not. */
 export const needsAction = (id: string, day: Day, walk: Walk) => allTasks(day, walk).some((t) => t.id === id);
 
 /* ------------------------------------------------------------------

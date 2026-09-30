@@ -14,16 +14,16 @@ import type { WalkProps } from "@/walk";
 /**
  * A household's drawer, as v2.5 opens it from its board: the same sheet, the
  * same skip dialog and the same toast (Queue.tsx there). It opens under the
- * navigation (--sheet-top in index.css). v3 opens it from a Scheduled row,
- * from a row menu's View Profile, from the Pruitts' Closing row on Friday,
- * and from the Policyholder List. What happens in it lands in v3's walk
+ * navigation (--sheet-top in index.css). v4 opens it from a card or line on
+ * the homepage's board, from a menu's View Profile, and from an approved
+ * card's View profile and close. What happens in it lands in the walk
  * (HouseholdSheet.tsx), and whatever sends, skips or closes out closes the
  * drawer and says so in the toast.
  *
  * It also holds the Pruitts' shop results, for opening on their own (from
  * the homepage's card) as well as from their drawer's banner, and
- * any household's outreach review on its own (from a Scheduled row on
- * Monday), so sending from any of them closes what's open and says so in the
+ * any household's outreach review on its own (from a Scheduled line on
+ * Monday, or a mini line's View Email), so sending from any of them closes what's open and says so in the
  * same toast.
  */
 export function HouseholdDrawer({

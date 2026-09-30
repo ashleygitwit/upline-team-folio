@@ -7,8 +7,8 @@ import { CarrierMark } from "@/components/CarrierMark";
 import { Chips } from "@/components/Chips";
 import { RenewalMeta } from "@/components/RenewalMeta";
 import { Stage } from "@/components/Stage";
-import { agency, mondayNeeds, money, thisWeek, type Earlier } from "@/data";
-import { words } from "@/today";
+import { mondayScheduled } from "@/board";
+import { agency, mondayNeeds, money, type Earlier } from "@/data";
 import type { WalkProps } from "@/walk";
 
 /**
@@ -16,12 +16,14 @@ import type { WalkProps } from "@/walk";
  * Upline-to-agent mail, so it carries Upline's brand, and opens on the design
  * hub homepage's band) with everything that needs her this week, one card
  * each, soonest renewal first: approvals to bind and shops whose results are
- * back, in one card under Action Needed. The six renewal emails come last and
- * quietest, since they go out Tuesday whether she looks at them or not.
+ * back, in one card under Action Needed. The week's renewal emails come last
+ * and quietest, since they go out Tuesday whether she looks at them or not:
+ * all 48, as the homepage board's Scheduled column lists them, biggest
+ * increase first (they were the named six until 2026-09-30).
  */
 export function MondayEmail({ go }: WalkProps) {
   const needed = mondayNeeds();
-  const n = thisWeek.length;
+  const scheduled = mondayScheduled();
 
   return (
     <Stage caption="Jenna's inbox · Monday, October 12, 8:00 AM" size="email">
@@ -57,11 +59,11 @@ export function MondayEmail({ go }: WalkProps) {
           <Card size="sm">
             <CardContent className="gap-4">
               <p className="text-base">
-                {words[n]} renewals go out tomorrow at 9:00 AM, drafted in your voice and sent from your inbox. You
-                don't need to do anything.
+                Tomorrow at 9:00 AM, {scheduled.length} renewals go out, drafted in your voice and sent from your
+                inbox. You don't need to do anything.
               </p>
               <ul className="divide-y border-y text-sm">
-                {thisWeek.map((h) => (
+                {scheduled.map((h) => (
                   <li key={h.id} className="flex items-center justify-between gap-4 py-2">
                     <span className="flex items-center gap-2">
                       <CarrierMark carrier={h.carrier} />
@@ -69,7 +71,7 @@ export function MondayEmail({ go }: WalkProps) {
                       {h.name}
                     </span>
                     <span className="text-muted-foreground tabular-nums">
-                      {h.now > h.was ? `+${money(h.now - h.was)}` : "No change"}
+                      {h.increase > 0 ? `+${money(h.increase)}` : "No change"}
                     </span>
                   </li>
                 ))}

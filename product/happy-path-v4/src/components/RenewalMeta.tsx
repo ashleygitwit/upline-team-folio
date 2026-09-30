@@ -3,11 +3,16 @@ import { dayDate, type Day } from "@/data";
 
 const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-/** Inside a week, how long is left says more than the date does. `renews` is "Oct 16". */
+/**
+ * Inside a week, how long is left says more than the date does. `renews` is
+ * "Oct 16". A Completed card on the board can be on or past its renewal.
+ */
 function renewsIn(renews: string, day: Day) {
   const [mon, date] = renews.split(" ");
   const renewal = new Date(2026, months.indexOf(mon), Number(date));
   const days = Math.round((renewal.getTime() - dayDate[day].getTime()) / 86_400_000);
+  if (days < 0) return `Renewed ${renews}`;
+  if (days === 0) return "Renews today";
   if (days >= 7) return `Renews ${renews}`;
   return days === 1 ? "Renews tomorrow" : `Renews in ${days} days`;
 }

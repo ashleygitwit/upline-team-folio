@@ -4,8 +4,10 @@
 // downloaded. Each capture starts from a fresh load, walks the clicks that
 // reach its state, and is taken at 1440 wide, 2x, with the presenter bar
 // cropped off and every scrolling region (drawer tabs, phase modals, the
-// phone) opened out to its full height, so nothing on the
-// board hides behind a scroll. Run after any change: npm run capture
+// phone) opened out to its full height, so nothing on the feedback board
+// hides behind a scroll. The homepage's board is the exception: it's one
+// screen by design, with each column scrolling inside itself, so it's
+// captured as Jenna sees it. Run after any change: npm run capture
 //
 // Writes captures/NN-slug.png and captures/manifest.json, which says what
 // each file is, which stop it belongs to and how it was reached; the board
@@ -28,7 +30,7 @@ const MIN_HEIGHT = 900;
 // viewport, so the height is worked out per capture (see shot).
 const unclamp = `
   *, *::before, *::after { animation-duration: 0s !important; animation-delay: 0s !important; transition: none !important; }
-  .overflow-y-auto { overflow: visible !important; }
+  .overflow-y-auto:not([data-board] .overflow-y-auto) { overflow: visible !important; }
   [data-slot="dialog-content"] { max-height: none !important; height: auto !important; }
   [class*="max-w-[390px]"] { height: auto !important; min-height: 780px !important; max-height: none !important; overflow: visible !important; }
 `;
@@ -96,19 +98,7 @@ async function hover(name) {
   await button(name).hover();
 }
 
-async function openList() {
-  await click(/Jenna Ruiz/);
-  await menuItem("My Policyholder List").click();
-}
-
-/** Opens a household's drawer from the Policyholder board. */
-async function openFromBoard(name) {
-  await openList();
-  await page.getByRole("button", { name }).first().click();
-  await page.waitForTimeout(250);
-}
-
-/** Opens a household's drawer from a homepage row's menu. */
+/** Opens a household's drawer from its menu on the homepage's board. */
 async function openProfile(name) {
   await click(`More for ${name}`);
   await menuItem("View Profile").click();
@@ -195,9 +185,9 @@ const captures = [
     },
   },
   {
-    slug: "04b-action-needed-menu",
+    slug: "04b-card-menu",
     stop: 4,
-    title: "Action Needed card menu",
+    title: "A board card's menu",
     via: "The three dots on Rhea Iyer's card",
     run: async () => {
       await jump("Monday: Jenna opens Upline");
@@ -231,7 +221,7 @@ const captures = [
   {
     slug: "04e-scheduled-menu",
     stop: 4,
-    title: "Scheduled Emails line menu",
+    title: "A Scheduled line's menu",
     via: "The three dots on the Pruitts' Scheduled line",
     run: async () => {
       await jump("Monday: Jenna opens Upline");
@@ -308,7 +298,7 @@ const captures = [
   {
     slug: "04p-closed-out",
     stop: 4,
-    title: "After Close out: the row says Closed, with Undo",
+    title: "After Close out: the card moves to Completed, with Undo",
     via: "Close-out modal → What happened → Close out",
     run: async () => {
       await jump("Monday: Jenna opens Upline");
@@ -320,58 +310,24 @@ const captures = [
     },
   },
   {
-    slug: "04q-policyholder-board",
+    slug: "04q-completed-folded",
     stop: 4,
-    title: "Policyholder List: board",
-    via: "Jenna's menu → My Policyholder List",
+    title: "Completed folded to a strip",
+    via: "The arrows in Completed's header",
     run: async () => {
       await jump("Monday: Jenna opens Upline");
-      await openList();
+      await click("Hide Completed");
     },
   },
   {
-    slug: "04r-policyholder-list",
+    slug: "04r-not-in-prototype",
     stop: 4,
-    title: "Policyholder List: table",
-    via: "Policyholder List → List",
+    title: "An invented household: no file behind it",
+    via: "Point at any line or card that isn't one of the named twelve",
     run: async () => {
       await jump("Monday: Jenna opens Upline");
-      await openList();
-      await click("List");
     },
-  },
-  {
-    slug: "04s-policyholder-filter",
-    stop: 4,
-    title: "Policyholder List: filtered to Closing",
-    via: "Policyholder List → Closing",
-    run: async () => {
-      await jump("Monday: Jenna opens Upline");
-      await openList();
-      await click(/^Closing/);
-    },
-  },
-  {
-    slug: "04t-policyholder-search",
-    stop: 4,
-    title: "Policyholder List: searched by name",
-    via: "Policyholder List → List → Search by name",
-    run: async () => {
-      await jump("Monday: Jenna opens Upline");
-      await openList();
-      await click("List");
-      await page.getByRole("searchbox", { name: "Search policyholders by name" }).fill("mar");
-    },
-  },
-  {
-    slug: "04u-drawer-from-list",
-    stop: 4,
-    title: "Household drawer over the Policyholder List",
-    via: "Policyholder List → Sofia Marin's card",
-    run: async () => {
-      await jump("Monday: Jenna opens Upline");
-      await openFromBoard(/^Sofia Marin/);
-    },
+    after: () => page.locator('section[aria-labelledby="col-awaiting"] [tabindex="0"]').first().hover(),
   },
   // 5
   { slug: "05-review-the-pruitts-email", stop: 5, title: "Review the Pruitts' email", run: () => jump("Review the Pruitts' email") },
@@ -400,7 +356,7 @@ const captures = [
   {
     slug: "05c-skipped",
     stop: 5,
-    title: "After skipping: the Scheduled line says Skipped",
+    title: "After skipping: the Pruitts move to Completed, marked Skipped",
     via: "Skip outreach → Skip outreach",
     run: async () => {
       await jump("Review the Pruitts' email");
@@ -413,13 +369,15 @@ const captures = [
     slug: "05d-skipped-review-undo",
     stop: 5,
     title: "The skipped review, with Undo",
-    via: "After skipping → the Pruitts' Scheduled line",
+    via: "After skipping → the Pruitts' email again",
     run: async () => {
       await jump("Review the Pruitts' email");
       await click("Skip outreach");
       await page.getByRole("dialog").getByRole("button", { name: "Skip outreach" }).click();
       await page.waitForTimeout(3000); // let the toast go
-      await click("Open Leah & Tom Pruitt");
+      // Jumping to the stop it's already on doesn't reopen the email, so step off it first.
+      await jump("Monday: Jenna opens Upline");
+      await jump("Review the Pruitts' email");
       await page.waitForTimeout(250);
     },
   },
@@ -438,7 +396,7 @@ const captures = [
     slug: "05f-review-over-drawer",
     stop: 5,
     title: "The review opened over the drawer, once sent",
-    via: "Send now → the Pruitts' line menu → View Profile → banner → View",
+    via: "Send now → the Pruitts' Scheduled line menu → View Profile → banner → View",
     run: async () => {
       await jump("Review the Pruitts' email");
       await click("Send now");
@@ -489,11 +447,11 @@ const captures = [
     slug: "10a-pruitts-details-info-updated",
     stop: 10,
     title: "The Pruitts' drawer: Details, with the changed detail marked",
-    via: "Policyholder List → the Pruitts' card",
+    via: "The Pruitts' Shopping line menu → View Profile",
     run: async () => {
       await answerQuestionnaire();
       await jump("Wednesday");
-      await openFromBoard(/^Leah & Tom Pruitt/);
+      await openProfile("Leah & Tom Pruitt");
     },
   },
   {
@@ -504,7 +462,7 @@ const captures = [
     run: async () => {
       await answerQuestionnaire();
       await jump("Wednesday");
-      await openFromBoard(/^Leah & Tom Pruitt/);
+      await openProfile("Leah & Tom Pruitt");
       await tab("Recent activity").click();
     },
   },
@@ -516,7 +474,7 @@ const captures = [
     run: async () => {
       await answerQuestionnaire();
       await jump("Wednesday");
-      await openFromBoard(/^Leah & Tom Pruitt/);
+      await openProfile("Leah & Tom Pruitt");
       await clickBanner("View");
     },
   },
@@ -524,11 +482,11 @@ const captures = [
     slug: "10d-nudge-modal",
     stop: 10,
     title: "Nudge modal",
-    via: "Policyholder List → Tobi Adeyemi's card → banner → Review",
+    via: "Tobi Adeyemi's Awaiting Response line menu → View Profile → banner → Review",
     run: async () => {
       await answerQuestionnaire();
       await jump("Wednesday");
-      await openFromBoard(/^Tobi Adeyemi/);
+      await openProfile("Tobi Adeyemi");
       await clickBanner("Review");
     },
   },
@@ -540,40 +498,23 @@ const captures = [
     run: async () => {
       await answerQuestionnaire();
       await jump("Wednesday");
-      await openFromBoard(/^Tobi Adeyemi/);
+      await openProfile("Tobi Adeyemi");
       await clickBanner("Review");
       await click("Skip nudge");
       await page.waitForTimeout(3000);
-      await page.getByRole("button", { name: /^Tobi Adeyemi/ }).first().click();
-      await page.waitForTimeout(250);
+      await openProfile("Tobi Adeyemi");
       await clickBanner("Review");
-    },
-  },
-  {
-    slug: "10f-nudge-sent",
-    stop: 10,
-    title: "After Send now on a nudge: it leaves Scheduled Emails",
-    via: "Nudge modal → Send now → Home",
-    run: async () => {
-      await answerQuestionnaire();
-      await jump("Wednesday");
-      await openFromBoard(/^Tobi Adeyemi/);
-      await clickBanner("Review");
-      await click("Send now");
-      await page.waitForTimeout(3000);
-      await fit();
-      await page.getByRole("button", { name: "Home", exact: true }).click();
     },
   },
   {
     slug: "10g-drawer-no-banner",
     stop: 10,
     title: "Household drawer with nothing going on (no banner)",
-    via: "Policyholder List → Diane Mercer's card",
+    via: "Diane Mercer's Completed card menu → View Profile",
     run: async () => {
       await answerQuestionnaire();
       await jump("Wednesday");
-      await openFromBoard(/^Diane Mercer/);
+      await openProfile("Diane Mercer");
     },
   },
   // 11
@@ -657,7 +598,7 @@ const captures = [
     slug: "12f-results-read-only",
     stop: 12,
     title: "Shop results once sent: step 3, read-only",
-    via: "After sending → Policyholder List → the Pruitts' card → banner → View → step 3",
+    via: "After sending → the Pruitts' card menu → View Profile → banner → View → step 3",
     run: async () => {
       await answerQuestionnaire();
       await jump("Thursday: results are back");
@@ -666,7 +607,7 @@ const captures = [
       await click("Review recommendation email");
       await click("Send recommendation email");
       await page.waitForTimeout(3000);
-      await openFromBoard(/^Leah & Tom Pruitt/);
+      await openProfile("Leah & Tom Pruitt");
       await clickBanner("View");
       await click("Continue to select your recommendation");
       await click("Review recommendation email");
@@ -736,7 +677,7 @@ const captures = [
     slug: "16a-pruitts-drawer-bind",
     stop: 16,
     title: "The Pruitts' drawer: approved, waiting to be bound",
-    via: "The Pruitts' card → View profile",
+    via: "The Pruitts' card → View profile and close",
     run: async () => {
       await answerQuestionnaire();
       await jump("Friday: bind it");
@@ -769,21 +710,6 @@ const captures = [
       await page.getByRole("textbox", { name: "What happened" }).fill("Bound Auto-Owners in the portal this morning.");
       await click("Close out");
       await page.waitForTimeout(3000);
-    },
-  },
-  {
-    slug: "16e-policyholder-board-friday",
-    stop: 16,
-    title: "Policyholder List on Friday, the Pruitts closed",
-    via: "After Close out → Jenna's menu → My Policyholder List",
-    run: async () => {
-      await answerQuestionnaire();
-      await jump("Friday: bind it");
-      await click("View profile");
-      await clickBanner("Review");
-      await click("Close out");
-      await page.waitForTimeout(3000);
-      await openList();
     },
   },
 ];

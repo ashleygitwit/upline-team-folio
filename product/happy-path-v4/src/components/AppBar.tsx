@@ -12,12 +12,12 @@ import { agency } from "@/data";
 
 /**
  * The product's own bar. Deliberately bare: no tabs. The mark takes Jenna
- * back to the homepage, and her name opens her menu: her profile, the list of
- * everyone renewing, and her account settings. The profile and the settings
- * aren't built yet, so they close the menu and go nowhere, as the row menus'
- * unbuilt items do.
+ * back to the homepage, and her name opens her menu: her profile and her
+ * account settings. Neither is built yet, so they close the menu and go
+ * nowhere, as the row menus' unbuilt items do. My Policyholder List was
+ * between them until 2026-09-30, when the homepage's board replaced it.
  */
-export function AppBar({ onHome, onPolicyholders }: { onHome: () => void; onPolicyholders: () => void }) {
+export function AppBar({ onHome }: { onHome: () => void }) {
   return (
     <header className="border-b bg-card">
       <div className="shell flex h-16 items-center justify-between">
@@ -40,7 +40,6 @@ export function AppBar({ onHome, onPolicyholders }: { onHome: () => void; onPoli
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-52">
             <DropdownMenuItem>Profile</DropdownMenuItem>
-            <DropdownMenuItem onSelect={onPolicyholders}>My Policyholder List</DropdownMenuItem>
             <DropdownMenuItem>Account Settings</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

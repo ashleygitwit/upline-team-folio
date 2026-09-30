@@ -10,7 +10,7 @@ import type { WalkProps } from "@/walk";
  * the one Leah gets, Life decides the questionnaire's life question, Send now
  * marks it as looking good, and Skip asks first. It opens over the drawer
  * (from the banner or Recent activity) and, since the 2026-09-29 review, on
- * its own from a Scheduled row on the homepage, because reviewing the email
+ * its own from a Scheduled line on the homepage, because reviewing the email
  * is the row's whole point and shouldn't sit behind the drawer.
  */
 export function OutreachFor({
