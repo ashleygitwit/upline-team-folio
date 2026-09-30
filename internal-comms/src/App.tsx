@@ -35,6 +35,7 @@ type RouteKey =
   | 'prototype'
   | 'prototype-v2-5'
   | 'prototype-v3'
+  | 'prototype-v4'
   | 'pricing'
   | 'breadboard'
   | 'brand'
@@ -76,6 +77,7 @@ const NAV_SECTIONS: {
       { key: 'prototype', label: 'Ashley_v2_sept_22', href: '#/prototype' },
       { key: 'prototype-v2-5', label: 'Amanda_v2.5_sept_27', href: '#/prototype-v2-5' },
       { key: 'prototype-v3', label: 'Amanda_v3_sept_28', href: '#/prototype-v3' },
+      { key: 'prototype-v4', label: 'Amanda_v4_sept_30', href: '#/prototype-v4' },
     ],
   },
 ];
@@ -142,6 +144,7 @@ function routeFromHash(): RouteKey {
     hash === 'prototype' ||
     hash === 'prototype-v2-5' ||
     hash === 'prototype-v3' ||
+    hash === 'prototype-v4' ||
     hash === 'pricing' ||
     hash === 'breadboard' ||
     hash === 'brand' ||
@@ -250,7 +253,10 @@ function App() {
 
   const isGantt = route === 'gantt';
   const isPrototype =
-    route === 'prototype' || route === 'prototype-v2-5' || route === 'prototype-v3';
+    route === 'prototype' ||
+    route === 'prototype-v2-5' ||
+    route === 'prototype-v3' ||
+    route === 'prototype-v4';
   const isWide = route === 'mvp-journey' || route === 'private' || isGantt;
   const pageClass = `page${isWide ? ' is-wide' : ''}${route === 'home' ? ' is-home' : ''}${route === 'brand' ? ' is-brand' : ''}${isGantt ? ' is-gantt' : ''}${isPrototype ? ' is-prototype' : ''}`;
   const activeNav = navKeyForRoute(route);
@@ -360,6 +366,9 @@ function App() {
           ) : null}
           {route === 'prototype-v3' ? (
             <PrototypePage src="/prototype-v3.html" title="Upline happy-path prototype, Amanda's v3" />
+          ) : null}
+          {route === 'prototype-v4' ? (
+            <PrototypePage src="/prototype-v4.html" title="Upline happy-path prototype, Amanda's v4" />
           ) : null}
           {route === 'pricing' ? <PricingPage /> : null}
           {route === 'brand' ? <BrandPage /> : null}
