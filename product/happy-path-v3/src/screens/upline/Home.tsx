@@ -1,16 +1,13 @@
 import { BandGrain } from "@/components/BandGrain";
 import { Button } from "@/components/ui/button";
 import { agency, pruitt, dayName, mondayNeeds, money, optionById, options, type Day } from "@/data";
-import { matchPill, pillById, suggested, type PillId } from "@/pills";
-import { AskBox, Suggestions } from "@/screens/upline/Ask";
 import { Sections } from "@/screens/upline/Sections";
-import { going, todayFor, words } from "@/today";
+import { going, words } from "@/today";
 import type { Walk, WalkProps } from "@/walk";
 
 type HomeProps = WalkProps & {
   day: Day;
   household: string | null;
-  onAsk: (question: string, answer: PillId | null) => void;
   onHousehold: (id: string) => void;
   /** Opens a household's outreach review on its own, from a Scheduled row. */
   onOutreach: (id: string) => void;
@@ -22,14 +19,13 @@ type HomeProps = WalkProps & {
 /**
  * The homepage, the same every day: the band, then the sections. It has to be
  * readable before coffee, so the band only greets Jenna, says in one line
- * what's going on, and offers the box to ask anything and the way to her
- * whole book; everything she might act on sits below it, in the three
- * sections, most pressing first. Asking docks a chat along the bottom.
+ * what's going on, and offers the way to her whole book; everything she
+ * might act on sits below it, in the sections, most pressing first.
  */
-export function Home({ day, walk, onAsk, onPolicyholders, ...props }: HomeProps) {
+export function Home({ day, walk, onPolicyholders, ...props }: HomeProps) {
   return (
     <>
-      <Hero day={day} walk={walk} onAsk={onAsk} onPolicyholders={onPolicyholders} />
+      <Hero day={day} walk={walk} onPolicyholders={onPolicyholders} />
       <div className="shell pb-(--space-section)">
         <div className="mx-auto max-w-180">
           <Sections day={day} walk={walk} {...props} />
@@ -41,23 +37,13 @@ export function Home({ day, walk, onAsk, onPolicyholders, ...props }: HomeProps)
 
 /**
  * The band: the design hub homepage's blue under the mountain, as the Monday
- * email opens. A greeting for the day, the day's line, the box to ask anything
- * with three questions written out inside it, and a link to the Policyholder
- * List. It never holds a card or a button, so it reads the same every day. The
- * link is white and underlined, the band's link, since the kit's blue would
- * vanish on the blue.
+ * email opens. A greeting for the day, the day's line and a link to the
+ * Policyholder List. It never holds a card or a button, so it reads the same
+ * every day. The link is white and underlined, the band's link, since the
+ * kit's blue would vanish on the blue. The box to ask anything that sat here
+ * came out on 2026-09-30: the chat is below the line for the MVP.
  */
-function Hero({
-  day,
-  walk,
-  onAsk,
-  onPolicyholders,
-}: {
-  day: Day;
-  walk: Walk;
-  onAsk: HomeProps["onAsk"];
-  onPolicyholders: () => void;
-}) {
+function Hero({ day, walk, onPolicyholders }: { day: Day; walk: Walk; onPolicyholders: () => void }) {
   return (
     <div className="band-surface relative isolate overflow-clip">
       <BandGrain />
@@ -69,10 +55,7 @@ function Hero({
           <p aria-live="polite" className="mt-(--space-block) font-display text-xl font-medium text-balance">
             {lineFor(day, walk)}
           </p>
-          <AskBox label="Ask me anything" className="mt-10 text-left" onAsk={(q) => onAsk(q, matchPill(q))}>
-            <Suggestions ids={suggested} size="sm" onAsk={(id) => onAsk(pillById(id).question, id)} />
-          </AskBox>
-          <div className="mt-(--space-tight) flex justify-center">
+          <div className="mt-10 flex justify-center">
             <Button
               variant="link"
               className="h-auto p-0 font-sans text-sm text-primary-foreground underline"
@@ -91,9 +74,8 @@ const plural = (n: number, one: string, many: string) => `${words[n].toLowerCase
 
 /**
  * What's going on, in one line, by day and by what the presenter has done so
- * far. Monday counts what's below; Wednesday's is the day's brief, which the
- * chat's "What needs me today?" also reads; Thursday and Friday follow the
- * Pruitts.
+ * far. Monday counts what's below; Wednesday has nothing that needs Jenna;
+ * Thursday and Friday follow the Pruitts.
  */
 function lineFor(day: Day, walk: Walk): string {
   const skipped = walk.skipped.includes(pruitt.id);
@@ -104,7 +86,9 @@ function lineFor(day: Day, walk: Walk): string {
     return `You have ${plural(open, "renewal that needs", "renewals that need")} you this week. ${words[n]} renewal ${n === 1 ? "email goes" : "emails go"} out tomorrow at 9 AM.`;
   }
 
-  if (day === "wed") return todayFor(day, walk).lead;
+  if (day === "wed") {
+    return "No tasks need immediate action today. All scheduled renewal emails went out Tuesday and the Pruitts are being shopped.";
+  }
 
   if (skipped) return "Nothing needs you today.";
 

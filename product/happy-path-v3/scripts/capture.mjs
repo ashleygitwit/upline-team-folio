@@ -4,7 +4,7 @@
 // downloaded. Each capture starts from a fresh load, walks the clicks that
 // reach its state, and is taken at 1440 wide, 2x, with the presenter bar
 // cropped off and every scrolling region (drawer tabs, phase modals, the
-// chat panel, the phone) opened out to its full height, so nothing on the
+// phone) opened out to its full height, so nothing on the
 // board hides behind a scroll. Run after any change: npm run capture
 //
 // Writes captures/NN-slug.png and captures/manifest.json, which says what
@@ -30,7 +30,6 @@ const unclamp = `
   *, *::before, *::after { animation-duration: 0s !important; animation-delay: 0s !important; transition: none !important; }
   .overflow-y-auto { overflow: visible !important; }
   [data-slot="dialog-content"] { max-height: none !important; height: auto !important; }
-  section[aria-labelledby="chat-title"] { height: auto !important; max-height: none !important; }
   [class*="max-w-[390px]"] { height: auto !important; min-height: 780px !important; max-height: none !important; overflow: visible !important; }
 `;
 
@@ -136,11 +135,10 @@ async function neededHeight() {
       return top + el.scrollHeight + margin;
     };
     const sheet = document.querySelector('[data-slot="sheet-content"]');
-    const chat = document.querySelector('section[aria-labelledby="chat-title"]');
     // Dialogs are centered, so what matters is their own height plus room.
     const dialogs = [...document.querySelectorAll('[data-slot="dialog-content"]')];
     const dialogNeed = Math.max(0, ...dialogs.map((d) => d.scrollHeight + BAR + 96));
-    return Math.ceil(Math.max(pageNeed, overlayNeed(sheet, 0), overlayNeed(chat, 48 + 24), dialogNeed));
+    return Math.ceil(Math.max(pageNeed, overlayNeed(sheet, 0), dialogNeed));
   }, BAR);
 }
 
@@ -238,51 +236,6 @@ const captures = [
     run: async () => {
       await jump("Monday: Jenna opens Upline");
       await click("More for Leah & Tom Pruitt");
-    },
-  },
-  {
-    slug: "04f-chat-what-needs-me",
-    stop: 4,
-    title: "Chat: What needs me today?",
-    via: "The suggested question in the ask box",
-    run: async () => {
-      await jump("Monday: Jenna opens Upline");
-      await click("What needs me today?");
-      await page.waitForTimeout(300);
-    },
-  },
-  {
-    slug: "04g-chat-retention",
-    stop: 4,
-    title: "Chat: How's my retention this season?",
-    via: "The suggested question in the ask box",
-    run: async () => {
-      await jump("Monday: Jenna opens Upline");
-      await click("How's my retention this season?");
-      await page.waitForTimeout(300);
-    },
-  },
-  {
-    slug: "04h-chat-who-left",
-    stop: 4,
-    title: "Chat: Who left, and can I win them back?",
-    via: "The suggested question in the ask box",
-    run: async () => {
-      await jump("Monday: Jenna opens Upline");
-      await click("Who left, and can I win them back?");
-      await page.waitForTimeout(300);
-    },
-  },
-  {
-    slug: "04i-chat-docked",
-    stop: 4,
-    title: "Chat put down to its tab",
-    via: "Chat → Minimize",
-    run: async () => {
-      await jump("Monday: Jenna opens Upline");
-      await click("What needs me today?");
-      await page.waitForTimeout(300);
-      await click("Minimize");
     },
   },
   {
@@ -742,31 +695,6 @@ const captures = [
       await tab("Recent activity").click();
     },
   },
-  {
-    slug: "12i-chat-review-and-send",
-    stop: 12,
-    title: "Chat: What needs me today? (Review and send)",
-    via: "The suggested question in the ask box",
-    run: async () => {
-      await answerQuestionnaire();
-      await jump("Thursday: results are back");
-      await click("What needs me today?");
-      await page.waitForTimeout(300);
-    },
-  },
-  {
-    slug: "12j-chat-where-everyone-stands",
-    stop: 12,
-    title: "Chat: Where does everyone stand?",
-    via: "Typed into the ask box",
-    run: async () => {
-      await answerQuestionnaire();
-      await jump("Thursday: results are back");
-      await page.getByRole("textbox", { name: "Ask me anything" }).fill("Where does everyone stand?");
-      await page.keyboard.press("Enter");
-      await page.waitForTimeout(300);
-    },
-  },
   // 13
   { slug: "13-that-evening", stop: 13, title: "That evening", card: true, run: () => jump("That evening") },
   // 14
@@ -841,18 +769,6 @@ const captures = [
       await page.getByRole("textbox", { name: "What happened" }).fill("Bound Auto-Owners in the portal this morning.");
       await click("Close out");
       await page.waitForTimeout(3000);
-    },
-  },
-  {
-    slug: "16d-chat-mark-it-done",
-    stop: 16,
-    title: "Chat: What needs me today? (Mark it done)",
-    via: "The suggested question in the ask box",
-    run: async () => {
-      await answerQuestionnaire();
-      await jump("Friday: bind it");
-      await click("What needs me today?");
-      await page.waitForTimeout(300);
     },
   },
   {

@@ -119,10 +119,6 @@
   --card-pad: 28px;
   /* The prototype's own presenter bar, which is not part of the product. */
   --demo-bar-h: 48px;
-  /* The chat's footer along the bottom of Upline, and the panel that pops
-     up from it: 640 tall, or whatever fits under the presenter bar. */
-  --dock-h: 48px;
-  --panel-h: min(40rem, calc(100svh - var(--demo-bar-h) - var(--dock-h) - 5rem));
 }
 
 @theme inline {
@@ -224,11 +220,6 @@
     background: var(--brand-blue);
     color: #ffffff;
     --ring: #ffffff;
-  }
-  /* A card set on the band (the homepage's ask box) is a light surface again,
-     so it takes back the page's focus ring; the band's white one vanishes on it. */
-  .band-surface .bg-card {
-    --ring: var(--blue-300);
   }
 
   /* A band's texture, as the design hub draws it (globals.css there,

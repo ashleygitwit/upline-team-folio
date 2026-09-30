@@ -47,7 +47,7 @@ type Tab = "details" | "activity" | "notes";
  * stay for the rest of the walk.
  *
  * The Pruitts' results are `results`, the content of a dialog that the
- * homepage and the chat open on their own too. Their email links to Leah's
+ * homepage opens on its own too. Their email links to Leah's
  * questionnaire (`onOpenQuestionnaire`), as if it opened in another tab.
  *
  * Started as v2.5's drawer (screens/queue/HouseholdSheet.tsx there).

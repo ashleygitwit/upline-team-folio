@@ -436,45 +436,6 @@ export const nudges: Nudge[] = [
 
 export const nudgeByKey = (key: string) => nudges.find((n) => n.key === key)!;
 
-/** How the agency is doing since the season's first outreach. */
-export const retention = {
-  since: "August 24",
-  drafted: 81,
-  sent: 79,
-  stayed: 76,
-  pct: 96,
-  lastYearPct: 92,
-  lifeLeads: 11,
-};
-
-/**
- * The overview's cards: what Jenna has been up to since the first renewals
- * went out, each said as one number and one sentence.
- */
-export const activity = [
-  {
-    id: "outreach",
-    eyebrow: "Outreach",
-    figure: "79",
-    label: "emails from your inbox",
-    note: "We drafted 81, and you held two back to call yourself. That's what the skip is for.",
-  },
-  {
-    id: "savings",
-    eyebrow: "Shopping",
-    figure: "$5,328",
-    label: "back in your clients' pockets",
-    note: "Nine of the 23 households we shopped switched, and they're saving $592 a year each on average.",
-  },
-  {
-    id: "leads",
-    eyebrow: "Cross-sell",
-    figure: "11",
-    label: "asked about a life quote",
-    note: "They're with your sales team, and three already have a number.",
-  },
-];
-
 export type Left = {
   id: string;
   name: string;
