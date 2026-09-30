@@ -90,7 +90,7 @@ export const isSnoozed = (id: string, day: Day, walk: Walk) => {
  * Chips
  * ------------------------------------------------------------------ */
 
-export type Chip = { id: "snoozed" | "life" | "info"; label: string };
+export type Chip = { id: "snoozed" | "life" | "info" | "closing"; label: string };
 
 /**
  * What the questionnaire changed on file, by household: how many details,

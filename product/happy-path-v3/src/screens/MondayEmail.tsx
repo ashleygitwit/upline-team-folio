@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { BandGrain } from "@/components/BandGrain";
 import { CarrierMark } from "@/components/CarrierMark";
+import { Chips } from "@/components/Chips";
 import { RenewalMeta } from "@/components/RenewalMeta";
 import { Stage } from "@/components/Stage";
 import { agency, mondayNeeds, money, thisWeek, type Earlier } from "@/data";
@@ -117,13 +118,18 @@ function TodoCard({ items, cta, onCta }: { items: Earlier[]; cta: string; onCta:
   );
 }
 
-/** One thing Jenna has to do: who, their lines and carrier, when it renews, and what's needed. */
+/**
+ * One thing Jenna has to do: who, their lines and carrier, when it renews, and
+ * what's needed. An approval waiting to be bound carries a Ready to close
+ * chip, so the two kinds of to-do in the one card read apart at a glance.
+ */
 function Todo({ e }: { e: Earlier }) {
   const [lines, carrier] = e.lines.split(" · ");
   return (
     <li className="flex flex-col gap-2 py-4 first:pt-0">
       <p className="font-display text-lg">{e.name}</p>
       <RenewalMeta lines={lines} carrier={carrier} renews={e.renews} day="mon" />
+      {e.monday!.section === "closing" && <Chips chips={[{ id: "closing", label: "Ready to close" }]} />}
       <p className="text-base">{e.monday!.detail}</p>
     </li>
   );
