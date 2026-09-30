@@ -51,6 +51,19 @@ export function renewalDate(renews: string) {
   return new Date(2026, months.indexOf(mon), Number(date));
 }
 
+/**
+ * When a renewal like "Oct 16" is, as a card or line says it on the walk's
+ * day. Inside a week, how long is left says more than the date does, and a
+ * Completed card can be on or past its renewal.
+ */
+export function renewsIn(renews: string, day: Day) {
+  const days = daysBetween(dayDate[day], renewalDate(renews));
+  if (days < 0) return `Renewed ${renews}`;
+  if (days === 0) return "Renews today";
+  if (days >= 7) return `Renews ${renews}`;
+  return days === 1 ? "Renews tomorrow" : `Renews in ${days} days`;
+}
+
 /** A household's renewal, as "Nov 15", from whichever list has it. */
 export const renewsFor = (id: string) =>
   cards.find((c) => c.id === id)?.renewal ?? earlier.find((e) => e.id === id)?.renews ?? thisWeek.find((h) => h.id === id)!.renews;

@@ -1,29 +1,47 @@
 import type { ReactNode } from "react";
+import { cn } from "cn";
 import logo from "@/assets/upline-logo-white.svg";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { BandGrain } from "@/components/BandGrain";
 import { CarrierMark } from "@/components/CarrierMark";
-import { Chips } from "@/components/Chips";
-import { RenewalMeta } from "@/components/RenewalMeta";
 import { Stage } from "@/components/Stage";
-import { mondayScheduled } from "@/board";
-import { agency, mondayNeeds, money, type Earlier } from "@/data";
-import type { WalkProps } from "@/walk";
+import { accentFor, bigIncrease, boardFor, needsMe, pctLabel, setName, type Accent, type ColumnId, type Entry } from "@/board";
+import { agency } from "@/data";
+import { renewsIn } from "@/tasks";
+import { initialWalk, type WalkProps } from "@/walk";
 
 /**
  * How the week starts: an email, not a login. Upline writes to Jenna (this is
  * Upline-to-agent mail, so it carries Upline's brand, and opens on the design
- * hub homepage's band) with everything that needs her this week, one card
- * each, soonest renewal first: approvals to bind and shops whose results are
- * back, in one card under Action Needed. The week's renewal emails come last
- * and quietest, since they go out Tuesday whether she looks at them or not:
- * all 48, as the homepage board's Scheduled column lists them, biggest
- * increase first (they were the named six until 2026-09-30).
+ * hub homepage's band) with everything on the board that needs her this
+ * week. It's the board at 8:00 AM Monday, before she's touched it, so it
+ * reads the same whatever the presenter does later.
+ *
+ * Action Needed is what the board's Needs me keeps, in three groups: approvals
+ * to bind (Ready to close), recommendations to send, and renewals inside ten
+ * days that are still open. Each line is a mini line from the board, with its
+ * accent and when it renews instead of the change, since what matters here is
+ * how long is left. It was the earlier weeks' four until 2026-09-30.
+ *
+ * Scheduled Emails comes last and quietest, since they go out Tuesday whether
+ * she looks at them or not: the board's Scheduled column, all 48, biggest
+ * increase first, with the change in percent as the board shows it.
  */
 export function MondayEmail({ go }: WalkProps) {
-  const needed = mondayNeeds();
-  const scheduled = mondayScheduled();
+  const day = "mon";
+  const board = boardFor(day, initialWalk);
+  const needs = needsMe(board, day, initialWalk);
+  const toClose = needs.filter(({ e }) => e.approved);
+  const toSend = needs.filter(({ col }) => col === "ready");
+  const soon = needs.filter(({ e, col }) => !e.approved && col !== "ready");
+  const byRenewal = (a: { e: Entry }, b: { e: Entry }) =>
+    Date.parse(`${a.e.renews} 2026`) - Date.parse(`${b.e.renews} 2026`);
+
+  const summary = [
+    toSend.length && count(toSend.length, "recommendation ready to send", "recommendations ready to send"),
+    toClose.length && count(toClose.length, "policy to bind", "policies to bind"),
+  ].filter(Boolean);
 
   return (
     <Stage caption="Jenna's inbox · Monday, October 12, 8:00 AM" size="email">
@@ -52,26 +70,45 @@ export function MondayEmail({ go }: WalkProps) {
 
       <div className="px-8 pb-12">
         <Group title="Action Needed">
-          <TodoCard items={needed} cta="View in Upline" onCta={() => go("card-monday-upline")} />
+          <Card size="sm">
+            <CardContent className="gap-6">
+              <p className="text-base">
+                You have {summary.join(" and ")}.
+                {soon.length > 0 &&
+                  ` Another ${count(soon.length, "renewal is", "renewals are")} inside 10 days and still open.`}
+              </p>
+              <Todos title="Ready to close" items={[...toClose].sort(byRenewal)} />
+              <Todos title="Recommendations ready to send" items={[...toSend].sort(byRenewal)} />
+              <Todos title="Renewing soon" items={[...soon].sort(byRenewal)} />
+              <Button size="lg" className="w-full" onClick={() => go("card-monday-upline")}>
+                View in Upline
+              </Button>
+            </CardContent>
+          </Card>
         </Group>
 
         <Group title="Scheduled Emails">
           <Card size="sm">
             <CardContent className="gap-4">
               <p className="text-base">
-                Tomorrow at 9:00 AM, {scheduled.length} renewals go out, drafted in your voice and sent from your
-                inbox. You don't need to do anything.
+                Tomorrow at 9:00 AM, {board.scheduled.length} renewals go out, drafted in your voice and sent from
+                your inbox. You don't need to do anything.
               </p>
               <ul className="divide-y border-y text-sm">
-                {scheduled.map((h) => (
-                  <li key={h.id} className="flex items-center justify-between gap-4 py-2">
+                {board.scheduled.map((e) => (
+                  <li key={e.id} className="flex items-center justify-between gap-4 py-2">
                     <span className="flex items-center gap-2">
-                      <CarrierMark carrier={h.carrier} />
-                      <span className="sr-only">{h.carrier}, </span>
-                      {h.name}
+                      <CarrierMark carrier={e.carrier} />
+                      <span className="sr-only">{e.carrier}, </span>
+                      {e.name}
                     </span>
-                    <span className="text-muted-foreground tabular-nums">
-                      {h.increase > 0 ? `+${money(h.increase)}` : "No change"}
+                    <span
+                      className={cn(
+                        "font-mono",
+                        bigIncrease(e.pct) ? "text-destructive-strong" : "text-muted-foreground",
+                      )}
+                    >
+                      {pctLabel(e.pct)}
                     </span>
                   </li>
                 ))}
@@ -88,7 +125,9 @@ export function MondayEmail({ go }: WalkProps) {
   );
 }
 
-/** One stage of the week: the homepage section's name, then its cards. */
+const count = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`;
+
+/** One section of the email: the homepage's name for it, then its card. */
 function Group({ title, children }: { title: string; children: ReactNode }) {
   return (
     <section className="mt-10">
@@ -98,41 +137,47 @@ function Group({ title, children }: { title: string; children: ReactNode }) {
   );
 }
 
-/**
- * One stage's to-dos in one card, a rule between each, and the stage's one
- * button across the foot of the card. The Scheduled card has no button, since
- * nothing there needs Jenna.
- */
-function TodoCard({ items, cta, onCta }: { items: Earlier[]; cta: string; onCta: () => void }) {
-  return (
-    <Card size="sm">
-      <CardContent className="gap-4">
-        <ul className="divide-y">
-          {items.map((e) => (
-            <Todo key={e.id} e={e} />
-          ))}
-        </ul>
-        <Button size="lg" className="w-full" onClick={onCta}>
-          {cta}
-        </Button>
-      </CardContent>
-    </Card>
-  );
-}
+/** The accent down a line's left edge, as the board draws it. */
+const accentBar: Record<Accent, string> = {
+  urgent: "before:bg-destructive",
+  soon: "before:bg-warning",
+  needs: "before:bg-primary",
+};
 
 /**
- * One thing Jenna has to do: who, their lines and carrier, when it renews, and
- * what's needed. An approval waiting to be bound carries a Ready to close
- * chip, so the two kinds of to-do in the one card read apart at a glance.
+ * One group of Action Needed: its name as the eyebrow, with its count, then
+ * a line a household, soonest renewal first: the accent, the carrier's mark,
+ * the name, and when it renews.
  */
-function Todo({ e }: { e: Earlier }) {
-  const [lines, carrier] = e.lines.split(" · ");
+function Todos({ title, items }: { title: string; items: { e: Entry; col: ColumnId }[] }) {
+  if (items.length === 0) return null;
   return (
-    <li className="flex flex-col gap-2 py-4 first:pt-0">
-      <p className="font-display text-lg">{e.name}</p>
-      <RenewalMeta lines={lines} carrier={carrier} renews={e.renews} day="mon" />
-      {e.monday!.section === "closing" && <Chips chips={[{ id: "closing", label: "Ready to close" }]} />}
-      <p className="text-base">{e.monday!.detail}</p>
-    </li>
+    <section>
+      <h3 className="eyebrow text-muted-foreground">
+        {title} · {items.length}
+      </h3>
+      <ul className="mt-2 divide-y border-y text-sm">
+        {items.map(({ e, col }) => {
+          const accent = accentFor(e, col, "mon", initialWalk);
+          return (
+            <li
+              key={e.id}
+              className={cn(
+                "relative flex items-start justify-between gap-4 py-2 pl-3",
+                accent && "before:absolute before:inset-y-0 before:left-0 before:w-[3px]",
+                accent && accentBar[accent],
+              )}
+            >
+              <span className="flex min-w-0 items-start gap-2">
+                <CarrierMark carrier={e.carrier} />
+                <span className="sr-only">{e.carrier}, </span>
+                <span className="min-w-0">{setName(e.name)}</span>
+              </span>
+              <span className="shrink-0 text-muted-foreground">{renewsIn(e.renews, "mon")}</span>
+            </li>
+          );
+        })}
+      </ul>
+    </section>
   );
 }

@@ -2,6 +2,7 @@ import { dayDate, earlier, thisWeek, type Day } from "@/data";
 import { cards } from "@/household/data";
 import { pickLine, pools, shopLine, type Invented } from "@/pipeline";
 import { statusFor } from "@/status";
+import { isSnoozed, renewalDate } from "@/tasks";
 import type { Walk } from "@/walk";
 
 /**
@@ -36,11 +37,19 @@ export type Entry = {
   /** "Home + Auto" */
   lines: string;
   renews: string;
+  /** Last year's premium and this year's renewal. */
+  was: number;
+  now: number;
+  /** The change in dollars, and in percent, rounded. */
   increase: number;
-  /** Said yes and waiting to be bound: its card turns blue. */
+  pct: number;
+  /** Said yes and waiting to be bound: its card carries Ready to close. */
   approved?: boolean;
   invented?: { h: Invented; detail?: string };
 };
+
+/** The change as a whole percent: 18 for $4,820 → $5,690. */
+const pctOf = (was: number, now: number) => Math.round(((now - was) / was) * 100);
 
 /* ------------------------------------------------------------------ *
  * The named twelve
@@ -96,7 +105,10 @@ function named(id: string, day: Day, walk: Walk): Entry {
     carrier: c.carrier,
     lines: c.lines.split(" · ")[0],
     renews: c.renewal,
+    was: c.was,
+    now: c.premium,
     increase: c.premium - c.was,
+    pct: pctOf(c.was, c.premium),
     approved: namedApproved(id, day, walk),
   };
 }
@@ -121,7 +133,10 @@ function invented(h: Invented, detail?: string, approved?: boolean): Entry {
     carrier: h.carrier,
     lines: h.lines,
     renews: h.renews,
+    was: h.was,
+    now: h.now,
     increase: h.now - h.was,
+    pct: pctOf(h.was, h.now),
     approved,
     invented: { h, detail },
   };
@@ -201,22 +216,66 @@ const namedIds = [...thisWeek.map((h) => h.id), ...earlier.map((e) => e.id)];
 
 /**
  * Every column's households on the walk's day. Scheduled runs biggest
- * increase first, as the Monday email lists it, since that's who is likeliest
- * to shop on their own; every other column runs soonest renewal first.
+ * increase first, by percent as the board shows it, since the biggest jumps
+ * are who is likeliest to shop on their own (the M1 rule: rank the biggest
+ * increases first); every other column runs soonest renewal first.
  */
 export function boardFor(day: Day, walk: Walk): Record<ColumnId, Entry[]> {
   const board = inventedFor(day);
   for (const id of namedIds) board[namedColumn(id, day, walk)].push(named(id, day, walk));
   for (const col of columns) {
     board[col.id].sort(
-      col.id === "scheduled" ? (a, b) => b.increase - a.increase : (a, b) => when(a.renews) - when(b.renews),
+      col.id === "scheduled"
+        ? (a, b) => b.pct - a.pct || b.increase - a.increase
+        : (a, b) => when(a.renews) - when(b.renews),
     );
   }
   return board;
 }
 
-/** Monday's 48, for the Monday email: this week's six and the rest, biggest increase first. */
-export const mondayScheduled = () =>
-  [...thisWeek.map((h) => ({ id: h.id, name: h.name, carrier: h.carrier, increase: h.now - h.was })),
-    ...pools.thisWeek.map((h) => ({ id: h.id, name: h.name, carrier: h.carrier, increase: h.now - h.was }))]
-    .sort((a, b) => b.increase - a.increase);
+/* ------------------------------------------------------------------ *
+ * What needs Jenna
+ * ------------------------------------------------------------------ */
+
+/** Days from the walk's day to a renewal like "Oct 16"; negative once it's passed. */
+export const daysUntil = (renews: string, day: Day) =>
+  Math.round((renewalDate(renews).getTime() - dayDate[day].getTime()) / 86_400_000);
+
+/**
+ * The accent down a card's or line's left edge, the hub's card-accent: red
+ * when the renewal is five days out or less and it isn't done, orange when
+ * it's ten or less, and blue when it's waiting on Jenna (a recommendation to
+ * send, or an approval to bind). Red beats orange beats blue. Completed and
+ * snoozed carry none. The words on the card say the same thing, so nothing
+ * rests on the color.
+ */
+export type Accent = "urgent" | "soon" | "needs";
+
+export function accentFor(e: Entry, col: ColumnId, day: Day, walk: Walk): Accent | null {
+  if (col === "completed") return null;
+  if (!e.invented && isSnoozed(e.id, day, walk)) return null;
+  const days = daysUntil(e.renews, day);
+  if (days <= 5) return "urgent";
+  if (days <= 10) return "soon";
+  if (col === "ready" || e.approved) return "needs";
+  return null;
+}
+
+/** Everything the Needs me toggle keeps: anything with an accent. */
+export const needsMe = (board: Record<ColumnId, Entry[]>, day: Day, walk: Walk) =>
+  columns.flatMap((c) => board[c.id].filter((e) => accentFor(e, c.id, day, walk)).map((e) => ({ e, col: c.id })));
+
+/**
+ * A change in percent, as the board and the Monday email show it: "+18%", or
+ * "0%" when it's flat. Over 10% (the shop-framing threshold) it's drawn in
+ * red, a warning worth a look.
+ */
+export const pctLabel = (pct: number) => (pct > 0 ? `+${pct}%` : `${pct}%`);
+export const bigIncrease = (pct: number) => pct > 10;
+
+/**
+ * A household's name as a card or line sets it: a couple's first names are
+ * held together, so a name that wraps breaks before the surname ("Leah & Tom /
+ * Pruitt") rather than after the ampersand.
+ */
+export const setName = (name: string) => name.replace(/^(\S+) & (\S+) /, "$1\u00a0&\u00a0$2 ");

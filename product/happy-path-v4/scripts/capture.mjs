@@ -313,10 +313,40 @@ const captures = [
     slug: "04q-completed-folded",
     stop: 4,
     title: "Completed folded to a strip",
-    via: "The arrows in Completed's header",
+    via: "The fold control in Completed's header",
     run: async () => {
       await jump("Monday: Jenna opens Upline");
-      await click("Hide Completed");
+      await click("Fold Completed");
+    },
+  },
+  {
+    slug: "04s-mini-column-folded",
+    stop: 4,
+    title: "A mini column folded to a strip",
+    via: "The fold control in Awaiting Response's header",
+    run: async () => {
+      await jump("Monday: Jenna opens Upline");
+      await click("Fold Awaiting Response");
+    },
+  },
+  {
+    slug: "04t-needs-me",
+    stop: 4,
+    title: "Needs me: only what has an accent",
+    via: "Needs me in the toolbar",
+    run: async () => {
+      await jump("Monday: Jenna opens Upline");
+      await click(/^Needs me/);
+    },
+  },
+  {
+    slug: "04u-search",
+    stop: 4,
+    title: "Searched by name",
+    via: "Search by name → \"mar\"",
+    run: async () => {
+      await jump("Monday: Jenna opens Upline");
+      await page.getByRole("searchbox", { name: "Search by name" }).fill("mar");
     },
   },
   {

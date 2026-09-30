@@ -124,9 +124,12 @@ function household(n: number, from: Date, to: Date): Invented {
   const [lines, , lo, hi] = weighted(lineMix.map((l) => [l, l[1]] as const));
   const carrier = weighted(carriers);
   const was = between(lo, hi);
-  // One in ten comes in flat; the rest go up 2 to 16%, never more than the
-  // Pruitts' $870, so they stay at the top of Monday's list.
-  const now = rand() < 0.1 ? was : was + Math.min(820, Math.round((was * between(2, 16)) / 100));
+  // One in ten comes in flat. Of the rest, most go up in single digits and
+  // about a third by 10% or more, never more than 16% or the Pruitts' $870, so
+  // the named households stay at the top of Monday's list, and the board's
+  // red (over 10%) marks the jumps rather than half the book.
+  const pct = rand() < 0.1 ? 0 : rand() < 0.65 ? between(2, 9) : between(10, 16);
+  const now = was + Math.min(820, Math.round((was * pct) / 100));
 
   const date = new Date(from.getTime() + between(0, Math.round((to.getTime() - from.getTime()) / 86_400_000)) * 86_400_000);
 
@@ -188,13 +191,25 @@ export const pools = {
   completed: cohort(10, [10, 13], [10, 25]),
 };
 
-/** What the shop found, in a sentence, as a Recommendation Ready card says it. */
-export function shopLine(h: Invented) {
-  if (h.shop.staying) {
-    return `The pick is staying with ${h.carrier} at ${money(h.now)}. Nothing came in lower for the same coverage.`;
+/**
+ * What a shop found, in one short sentence, as a Recommendation Ready card
+ * says it: how much the pick saves, or that staying is the pick and why.
+ * `current` is the household's carrier today, `pick` the carrier picked.
+ */
+export function shopSentence(quotes: { carrier: string; price: number }[], current: string, pick: string) {
+  const now = quotes.find((q) => q.carrier === current)!;
+  if (pick === current) {
+    const cheaper = quotes.find((q) => q.carrier !== current && q.price < now.price);
+    return cheaper
+      ? `Staying with ${current} is the pick. ${cheaper.carrier} is cheaper but covers less.`
+      : `Staying with ${current} is the pick. Nothing came in lower.`;
   }
-  return `${h.shop.pick} came in at ${money(h.shop.price)} for the same coverage, ${money(h.now - h.shop.price)} less than ${h.carrier}'s renewal.`;
+  const picked = quotes.find((q) => q.carrier === pick)!;
+  return `${pick} came in ${money(now.price - picked.price)} less for the same coverage.`;
 }
+
+/** An invented household's shop, as a Recommendation Ready card says it. */
+export const shopLine = (h: Invented) => shopSentence(h.shop.quotes, h.carrier, h.shop.pick);
 
 /** What was recommended, in a few words. */
 export function pickLine(h: Invented) {

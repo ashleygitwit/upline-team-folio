@@ -15,12 +15,14 @@ import { agency } from "@/data";
  * back to the homepage, and her name opens her menu: her profile and her
  * account settings. Neither is built yet, so they close the menu and go
  * nowhere, as the row menus' unbuilt items do. My Policyholder List was
- * between them until 2026-09-30, when the homepage's board replaced it.
+ * between them until 2026-09-30, when the homepage's board replaced it. The
+ * bar runs the page's full width, as the board does, so the mark sits on the
+ * same edge as the greeting and the board's first column.
  */
 export function AppBar({ onHome }: { onHome: () => void }) {
   return (
     <header className="border-b bg-card">
-      <div className="shell flex h-16 items-center justify-between">
+      <div className="shell flex h-16 max-w-none items-center justify-between">
         <div className="flex items-center gap-4">
           <button type="button" onClick={onHome} aria-label="Upline, back to the homepage">
             <img src={logo} alt="" className="h-6 w-auto" />
