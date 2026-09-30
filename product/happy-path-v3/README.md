@@ -62,3 +62,15 @@ npm run export
 ```
 
 Builds one self-contained HTML file (fonts included, no network needed) into `internal-comms/public/prototype-v3.html`.
+
+## Capture it for the feedback board
+
+With the dev server running:
+
+```bash
+npm run capture
+```
+
+Writes every screen and state (the sixteen stops, and everything that opens from each: menus, the drawer's tabs and banners, the phase modals, the Policyholder board and table, the chat) into `captures/` as PNGs, 1440 wide at 2×, with the presenter bar cropped off and every scrolling region opened out to its full height, plus a `manifest.json` saying what each one is and how it was reached. It drives the Chrome already on the Mac through Playwright, so there's no browser download. `captures/` is ignored by git; the PNGs live on the FigJam board (Upline Design Feedback V3, the "Full Prototype Walk Through" page). `npm run capture 12` recaptures only the slugs starting with `12`.
+
+`node scripts/figjam-layout.mjs <folder>` turns the manifest into the Figma Plugin API code that lays the board out, one file per stop, for running through the Figma MCP's `use_figma`; each file returns its image frames' ids, which `upload_assets` fills with the PNGs. The list of states is `captures` in `scripts/capture.mjs`; add a state there when the prototype grows one.
