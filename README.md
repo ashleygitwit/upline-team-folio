@@ -37,7 +37,7 @@ Open **http://localhost:5299** — Through Line uses its own port (5299), separa
 3. Commit and push to **this repo only**.
 4. Vercel redeploys automatically (~1 min).
 
-## Four top-level folders
+## Top-level folders
 
 ```
 Team Folio/
@@ -45,6 +45,7 @@ Team Folio/
 ├── project-planning/             # Timeline, sprint week, execution plan
 ├── product/                      # Product strategy and build
 ├── go-to-market/                 # Sales + GTM
+├── internal-meetings/            # Company weeklies; product standups stay in product/
 │
 ├── data/                         # venture-plan.json + learnings.json (site source of truth)
 ├── scripts/                      # Generators (generate-plan, sync-data)
@@ -57,8 +58,9 @@ Team Folio/
 | [`project-planning/`](project-planning/) | When, in what order, which rooms | Product decisions |
 | [`product/`](product/) | Pricing, journey, VA/shopping, MVP line | Sales decks |
 | [`go-to-market/`](go-to-market/) | Demos, prospect notes, sales decks | Product strategy |
+| [`internal-meetings/`](internal-meetings/) | Company weekly transcripts | Product standups (those stay in [`product/standups/`](product/standups/)) |
 
-`data/` and `scripts/` stay at the root so Through Line can keep reading one JSON plan. Edit those when the live site needs new numbers; put the *thinking* in the four folders above.
+`data/` and `scripts/` stay at the root so Through Line can keep reading one JSON plan. Edit those when the live site needs new numbers; put the *thinking* in the folders above.
 
 ## POC isolation
 

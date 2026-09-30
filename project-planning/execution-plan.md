@@ -137,7 +137,7 @@ Post-shop handoff locked short: steer (switch/stay + $) in paragraph one, premiu
 ### Establish Q4 OKRs
 - **Workstream:** Ops
 - **Dates:** 2026-09-11 → 2026-09-17
-- **Notes:** First pass drafted across the four lanes — people, capital, customers, product — then revised by the team at the first weekly on Thursday Sep 17. Becomes the format for the monthly report-out. Monday How Should We is retired; this team runs the weekly from here.
+- **Notes:** First weekly Thu Sep 17 tore up the draft. Current set in project-planning/2026-q4-okrs.md. One-week grace before they are locked. Becomes the format for the monthly report-out. Monday How Should We is retired; this team runs the weekly from here.
 ### Build Upline Admin
 - **Workstream:** Product
 - **Dates:** 2026-09-21 → 2026-10-02
@@ -178,8 +178,8 @@ Post-shop handoff locked short: steer (switch/stay + $) in paragraph one, premiu
 - **Notes:** Candidate identified in the Sep 10 session and being approached. Free shopping and VA practice — a second agency's reality before we charge anyone. Starts the week dev begins shipping user-facing surfaces and runs to launch, doubling as the QA population for the last two weeks. Then hands off and the first paying customer onboards Nov 6.
 ### Hire the first VA — senior manager
 - **Workstream:** Ops
-- **Dates:** 2026-09-14 → 2026-09-25
-- **Notes:** Hired in the country where we intend to build the team, treated as a core team member with a title and an exclusivity agreement — not a US W-2 employee. They build the process and hire the next ten. Davie owns the relationship; Austin runs tooling and shopping protocols as a consultant. Offer targeted the week of Sep 21. Blocked on employment agreements.
+- **Dates:** 2026-09-14 → 2026-10-07
+- **Notes:** Hire direct, not through a VA agency. Davey sources and interviews; Austin owns payroll, logins, agreement, E&O. Oct 7 is the checkpoint if the seat is still empty. Dry runs on Stockton Hill / Members First before a paying customer. Internal shop bar is one business day, not 24 hours.
 ### Secure company insurance — cyber, data liability, workers' comp
 - **Workstream:** Ops
 - **Dates:** 2026-09-14 → 2026-09-30
@@ -241,7 +241,7 @@ Post-shop handoff locked short: steer (switch/stay + $) in paragraph one, premiu
 ### Launch the MVP
 - **Workstream:** Product
 - **Dates:** 2026-11-06 → 2026-11-06
-- **Notes:** Ship date — Friday Nov 6. One paying agency live, running their real renewal week on the software. Confirmed at the Sep 10 keep-kill. Definition of done is the seven above-the-line surfaces plus emails leaving the agent's own mailbox on the Tuesday 9:00 schedule, a VA kit that makes the 24-hour promise true, and an onboarding runbook someone outside the room can follow.
+- **Notes:** Ship date — Friday Nov 6. One paying agency live, running their real renewal week on the software. Confirmed at the Sep 10 keep-kill. Definition of done is the seven above-the-line surfaces plus emails leaving the agent's own mailbox on the Tuesday 9:00 schedule, a VA kit that makes the one-business-day shop true, and an onboarding runbook someone outside the room can follow.
 ### Iterate the MVP with first customers
 - **Workstream:** Product
 - **Dates:** 2026-11-09 → 2026-12-18
@@ -359,7 +359,7 @@ Post-shop handoff locked short: steer (switch/stay + $) in paragraph one, premiu
 | Replace the AMS for data visibility (R6) | Product | Future | 2027-04-26 | 2027-06-04 |
 | Conduct AMS research | Product | Done | 2026-07-13 | 2026-08-24 |
 | Establish Q4 OKRs | Ops | In Flight | 2026-09-11 | 2026-09-17 |
-| Hire the first VA — senior manager | Ops | Next | 2026-09-14 | 2026-09-25 |
+| Hire the first VA — senior manager | Ops | Next | 2026-09-14 | 2026-10-07 |
 | Secure company insurance — cyber, data liability, workers' comp | Ops | Next | 2026-09-14 | 2026-09-30 |
 | Build the investor pack | Capital | Next | 2026-09-11 | 2026-09-27 |
 | Frame the SPV | Capital | Next | 2026-09-11 | 2026-09-27 |

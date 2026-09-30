@@ -13,7 +13,7 @@ Twice-weekly (Tue and Thu mornings).
 2. It gets filed here as `YYYY-MM-DD-product-standup.md`.
 3. [`board.md`](board.md) gets updated: open to-dos, what shipped, blockers, parking lot.
 
-Do not put sales-demo transcripts here. Those live in [`../../go-to-market/sales-demos/`](../../go-to-market/sales-demos/). Pilot session notes stay in upline-poc.
+Do not put sales-demo transcripts here. Those live in [`../../go-to-market/sales-demos/`](../../go-to-market/sales-demos/). Pilot session notes stay in upline-poc. Company weeklies live in [`../../internal-meetings/weeklies/`](../../internal-meetings/weeklies/). GTM weeklies live in [`../../internal-meetings/go-to-market/`](../../internal-meetings/go-to-market/).
 
 ## If you are in Claude
 
@@ -27,4 +27,6 @@ Claude should read [`board.md`](board.md). To go back to a specific meeting, ope
 
 | Date | Attendees | File |
 |------|-----------|------|
+| Tue Sep 29, 2026 | Ashley, Amanda, Austin, Doug | [2026-09-29-product-standup.md](2026-09-29-product-standup.md) |
+| Tue Sep 22, 2026 | Ashley, Austin, Davy, Amanda, JV (Doug addressed) | [2026-09-22-product-standup.md](2026-09-22-product-standup.md) |
 | Thu Sep 17, 2026 | Ashley, Doug, Amanda, Davy (JV absent) | [2026-09-17-product-standup.md](2026-09-17-product-standup.md) |

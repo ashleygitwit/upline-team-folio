@@ -15,7 +15,7 @@ This is the team-facing record. The sales deck lives in [`../go-to-market/pitch-
 | Software | **$699 / month** | Reach every renewal, in the agent’s voice. Short questionnaire so they are not chasing updates. Cross-sell and referrals sit in the same outreach. Unlimited users. We set them up. |
 | Shopping | **$18 per shop** | We run the quote work and get it back. If their team or VAs already shop, they skip this and pay $699. |
 
-Working sales language on the shop: up to 3–4 carriers, ~24-hour turnaround (untested — watch the face). Charge when we shop, not when they switch or stay.
+Working sales language on the shop: up to 3–4 carriers, back within one business day (internal bar — do not promise 24 hours). Charge when we shop, not when they switch or stay.
 
 May credit or comp shopping for first customers. **Still show the $18 sticker.**
 

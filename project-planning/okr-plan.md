@@ -118,8 +118,9 @@ finding — the two lanes with the least written down are the two most likely to
 
 ## Step 2 — Draft, deliberately rough
 
-**Done, Sept 17.** Ashley’s pre-Thursday draft is cataloged in [`2026-q4-okrs.md`](2026-q4-okrs.md)
-and on Through Line `#/okrs`. That is the artifact the room edits. This file stays the process.
+**Done, Sept 17.** Ashley’s pre-Thursday draft went into the first weekly. The room revised it.
+Current set: [`2026-q4-okrs.md`](2026-q4-okrs.md) and Through Line `#/okrs`. This file stays the
+process.
 
 One objective per lane, written as a sentence a person would say out loud. Three key results under it,
 each with a number, a date, and a named owner.
@@ -148,7 +149,9 @@ watching. Drop anything already load-bearing in the timeline, because it does no
 
 ## Step 4 — The working session
 
-**First weekly, Thursday Sept 17. OKR revision is the whole agenda — do not also try to run status.**
+**Done — first weekly, Thursday Sept 17.** Transcript:
+[`../internal-meetings/weeklies/2026-09-17-weekly.md`](../internal-meetings/weeklies/2026-09-17-weekly.md).
+OKR revision was the whole agenda. One-week grace: next weekly can still edit before they are locked.
 
 | Time | What |
 |---|---|
@@ -171,6 +174,7 @@ turns into a twenty-minute debate gets a follow-up, not a compromise number.
 - The [action tracker](../action-tracker.md) stays the week-to-week detail. The OKRs sit above it —
   if something in the tracker does not ladder to a key result, that is worth noticing.
 - Reviewed monthly, not weekly. The weekly reviews movement; the month reviews the commitment.
+- **One-week grace after Sep 17.** Next weekly touches the set once more, then they are locked for the quarter.
 
 ---
 

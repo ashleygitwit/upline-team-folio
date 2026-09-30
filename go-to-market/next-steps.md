@@ -8,7 +8,32 @@ Sprint-week decisions that set the strategy are in
 
 **The one metric that matters: 120 demos booked by end of November.** Roughly 90 held at a 75% show
 rate. Target is ~30 contracts closed by end of December. Every lane below is judged against that
-number.
+number. In-person / off-form demos get a HubSpot deal card so we can count them.
+
+GTM weeklies: [`../internal-meetings/go-to-market/`](../internal-meetings/go-to-market/).
+
+---
+
+## This week — Tue Sep 22 (first GTM weekly)
+
+Transcript: [`../internal-meetings/go-to-market/2026-09-22-gtm-weekly.md`](../internal-meetings/go-to-market/2026-09-22-gtm-weekly.md).
+
+| Lane | Owner | This week |
+| --- | --- | --- |
+| Warm outbound | **Davie** | LinkedIn + $149 EIN press release **by Wed**. Inner circle first, not automation. Share deck rewrites back. |
+| Conference follow-up | **Leander** → **Davie** | ~15 personal follow-ups this week, CC Davy. Cold / Big I Oklahoma (~530) **next week**, after warm is going. |
+| Website | **Claire** + **Amanda** | New homepage by EOW, mobile-first. Claire stories today (ugly staging). Amanda designs later. Rest of sitemap next week. |
+| Paid social | **Austin** | Meta live since Friday. CTR 1.5%, 340 clicks / 4 days, **0 conversions**. Winning ad is the 5% / 94% retention hook. 74% mobile. Retargeting under review. Keep videos coming (quantity + diversity: car, gym, attire). CTR goal 2–3%. |
+| Search | **Austin** | Live, 0 impressions. Experiment. May switch some keywords to phrase match. |
+| Demo form | **Leander** (did it live) | Name + email. Company optional. No job title, no phone. Fathom not Calendly note-taker. Optional “make the demo better” questions **after** they book. |
+| Tracking | **Austin** | Website forms → HubSpot deals. Calendly → HubSpot set up, untested. Conversion events into Google + Facebook. |
+| Press release | **Davie** | $149 EIN, link to share. |
+| Founding offer | **Claire / Davie** | Lean in: founding member / locked-in price. This audience wants the newest thing. |
+| Ads creative | **Davie, JV, Leander** | More statistic-hook videos. Leander scripts to Davy **EOD Wed**. Austin Slacks what’s performing. |
+
+**Do not start cold outbound this week.**
+
+Campaign problem to swarm: traffic is landing, nobody is booking. Homepage above-the-fold + a short form are the win/lose. Claire tests two heroes; Austin wires switching.
 
 ---
 

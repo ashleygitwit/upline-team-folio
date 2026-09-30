@@ -18,11 +18,11 @@ This is **not** product strategy. If the question is "what do we believe / what 
 | [`timelines.md`](timelines.md) | Product and go-to-market, week by week, both landing on Nov 6 |
 | [`product-next-four-weeks.md`](product-next-four-weeks.md) | The product lane at day resolution, Sept 14 – Oct 9. Shareable — this is the one to send the wider team |
 | [`okr-plan.md`](okr-plan.md) | How we get from sprint week to a ratified set of 90-day OKRs |
-| [`2026-q4-okrs.md`](2026-q4-okrs.md) | Ashley’s Q4 / first 90-day OKR draft (catalog for now; will change after the team session) |
+| [`2026-q4-okrs.md`](2026-q4-okrs.md) | Q4 / first 90-day OKRs. Revised in the Sep 17 weekly; one-week grace before they are locked |
 | [`2026-11-06-mvp-build-plan.md`](2026-11-06-mvp-build-plan.md) | Milestones and ownership working back from the Nov 6 ship date (draft) |
 | [`execution-plan.md`](execution-plan.md) | Generated living plan from `data/venture-plan.json` |
 
-New How Should We notes go here as `YYYY-MM-DD-how-should-we.md`.
+New How Should We notes go here as `YYYY-MM-DD-how-should-we.md`. Company weeklies (the meeting that replaced How Should We) live in [`../internal-meetings/weeklies/`](../internal-meetings/weeklies/).
 
 ## What does *not* belong here
 

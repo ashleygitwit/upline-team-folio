@@ -173,7 +173,7 @@ Detail in [go-to-market/next-steps.md](go-to-market/next-steps.md).
 | Venture ops — cadence, tooling, conference page | Ashley | **Today 2:30** | | ◐ |
 | Stand up Linear | Ashley | Sep 18 | Chosen, not yet created | ○ |
 | Set recurring meeting cadence | Ashley + Jacob | Sep 11 | Jacob is connecting his calendars — grab time when it's free | ○ |
-| VA kit, shared shopping method, ticketing | Ashley | Oct 30 | What keeps the 24-hour promise from being a lie | ○ |
+| VA kit, shared shopping method, ticketing | Ashley | Oct 30 | Internal bar is one business day, not 24 hours | ○ |
 | Quoting guide for VAs — parity pass then upsell pass | Ashley | Oct 16 | Implied by the upsell decision, not yet written | ○ |
 | Onboarding runbook + shopping-rules interview script | Ashley | Oct 30 | Exit test: someone not in the room can run it | ○ |
 | Point `upline-poc/venture/strategy/mvp-scope.md` at decisions.md | Ashley | Sep 18 | Empty placeholder, now the stalest file in either repo | ○ |

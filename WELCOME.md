@@ -36,6 +36,7 @@ Team Folio/
 ├── project-planning/             Timeline, sprint week, How Should We
 ├── product/                      Pricing, journeys, VA/shopping, MVP
 ├── go-to-market/                 Sales demos, pitch decks, prospect notes
+├── internal-meetings/            Company weeklies (product standups stay in product/standups)
 ├── data/                         Numbers the site reads (leave unless you mean to)
 └── through-line-setup.md         How to run Through Line locally
 ```

@@ -65,7 +65,7 @@ That is run-cost, not price. We charge $699 + $18/shop. See [`pricing.md`](prici
 - Agency / their VAs shop → they pay $699 only
 - Upline shops → $18 each
 - Up to 3–4 carriers, the right ones for the household
-- Sales language: ~24-hour turnaround or you do not pay (untested)
+- Sales language: do not promise 24 hours. Internal bar is one business day. Agencies want it done right, closer to renewal — not same-day.
 
 Do not bundle shopping into the monthly fee. Do not put AMS Desk or shop-bundle SKUs back on the offer.
 

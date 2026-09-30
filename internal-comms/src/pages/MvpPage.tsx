@@ -120,13 +120,17 @@ export function MvpPage() {
         </p>
         <ul className="strat-list">
           <li>
-            <strong>Company weekly — Tuesday.</strong> First one is Thursday Sep 17, to tear up
-            the OKR draft. After that it is the Tuesday all-hands; product and go-to-market can
-            split into their own tracks from there.
+            <strong>Company weekly — Tuesday.</strong> First one was Thursday Sep 17, tearing up
+            the OKR draft. After that it is the Tuesday all-hands; product and go-to-market split
+            into their own tracks from there.
           </li>
           <li>
-            <strong>Product stand-ups — Tuesday and Thursday mornings.</strong> Monday and
-            Wednesday stay the meeting-heavy days. Linear carries the ticket detail.
+            <strong>Product stand-ups — Tuesday and Thursday, 9:30–10:00 CT.</strong> Optional
+            for Davy and JV. Linear carries the ticket detail.
+          </li>
+          <li>
+            <strong>Go-to-market weekly — Tuesday.</strong> Claire scheduled this on Sep 17.
+            Davy and JV can move the time if it does not work.
           </li>
           <li>
             <strong>Monthly report-out</strong> uses the OKR format. That is the board cadence,

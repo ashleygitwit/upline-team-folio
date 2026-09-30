@@ -234,7 +234,7 @@
       "start": "2026-11-06",
       "end": "2026-11-06",
       "milestone": true,
-      "notes": "Ship date — Friday Nov 6. One paying agency live, running their real renewal week on the software. Confirmed at the Sep 10 keep-kill. Definition of done is the seven above-the-line surfaces plus emails leaving the agent's own mailbox on the Tuesday 9:00 schedule, a VA kit that makes the 24-hour promise true, and an onboarding runbook someone outside the room can follow."
+      "notes": "Ship date — Friday Nov 6. One paying agency live, running their real renewal week on the software. Confirmed at the Sep 10 keep-kill. Definition of done is the seven above-the-line surfaces plus emails leaving the agent's own mailbox on the Tuesday 9:00 schedule, a VA kit that makes the one-business-day shop true, and an onboarding runbook someone outside the room can follow."
     },
     {
       "id": "prod-oct-beta",
@@ -324,7 +324,7 @@
       "owner": "Ashley",
       "start": "2026-09-11",
       "end": "2026-09-17",
-      "notes": "First pass drafted across the four lanes — people, capital, customers, product — then revised by the team at the first weekly on Thursday Sep 17. Becomes the format for the monthly report-out. Monday How Should We is retired; this team runs the weekly from here."
+      "notes": "First weekly Thu Sep 17 tore up the draft. Current set in project-planning/2026-q4-okrs.md. One-week grace before they are locked. Becomes the format for the monthly report-out. Monday How Should We is retired; this team runs the weekly from here."
     },
     {
       "id": "ops-va-hire",
@@ -333,8 +333,8 @@
       "status": "Next",
       "owner": "Davie",
       "start": "2026-09-14",
-      "end": "2026-09-25",
-      "notes": "Hired in the country where we intend to build the team, treated as a core team member with a title and an exclusivity agreement — not a US W-2 employee. They build the process and hire the next ten. Davie owns the relationship; Austin runs tooling and shopping protocols as a consultant. Offer targeted the week of Sep 21. Blocked on employment agreements."
+      "end": "2026-10-07",
+      "notes": "Hire direct, not through a VA agency. Davey sources and interviews; Austin owns payroll, logins, agreement, E&O. Oct 7 is the checkpoint if the seat is still empty. Dry runs on Stockton Hill / Members First before a paying customer. Internal shop bar is one business day, not 24 hours."
     },
     {
       "id": "ops-company-insurance",
