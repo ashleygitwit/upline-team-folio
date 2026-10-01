@@ -227,11 +227,10 @@ function Folded({ label, n, onUnfold }: { label: string; n: number; onUnfold: ()
 
 /**
  * The accent as a card's left border, replacing its hairline (the hub's
- * card-accent). Red is red 700, as the renewal chip that explains it is:
- * red 500 can't carry the chip's text, so the bar steps down with it.
+ * card-accent), in the same 500 as the renewal chip that explains it.
  */
 const accentBorder: Record<Accent, string> = {
-  urgent: "border-l-3 border-l-destructive-strong",
+  urgent: "border-l-3 border-l-destructive",
   soon: "border-l-3 border-l-warning",
   requested: "border-l-3 border-l-primary",
 };
@@ -242,7 +241,7 @@ const accentBorder: Record<Accent, string> = {
  * card's does.
  */
 const accentBar: Record<Accent, string> = {
-  urgent: "before:bg-destructive-strong",
+  urgent: "before:bg-destructive",
   soon: "before:bg-warning",
   requested: "before:bg-primary",
 };

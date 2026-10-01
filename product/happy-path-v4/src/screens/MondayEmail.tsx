@@ -154,9 +154,9 @@ function Group({ title, children }: { title: string; children: ReactNode }) {
   );
 }
 
-/** The accent down a line's left edge, as the board draws it (red at 700, as its chip is). */
+/** The accent down a line's left edge, as the board draws it. */
 const accentBar: Record<Accent, string> = {
-  urgent: "before:bg-destructive-strong",
+  urgent: "before:bg-destructive",
   soon: "before:bg-warning",
   requested: "before:bg-primary",
 };

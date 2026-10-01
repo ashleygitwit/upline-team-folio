@@ -4,14 +4,13 @@ import type { Chip } from "@/tasks";
 
 /**
  * A chip with a tone takes its accent's color, filled, so it says what the
- * bar down the card's edge means: red 700 with white (6.67:1), and yellow 500
- * with the foreground (10.1:1; white on it is 1.44:1). Red 500 carries text
- * at neither (3.77:1 and 3.87:1), so red steps down to 700, and the bar with
- * it.
+ * bar down the card's edge means: red 500 or yellow 500, both with slate 800
+ * type (4.69:1 and 12.26:1). White on red 500 is 3.77:1 and the foreground on
+ * it 3.87:1, under the 4.5:1 that 12px type needs, so neither carries it.
  */
 const tones: Record<NonNullable<Chip["tone"]>, string> = {
-  urgent: "bg-destructive-strong text-white",
-  soon: "bg-warning text-foreground",
+  urgent: "bg-destructive text-status-foreground",
+  soon: "bg-warning text-status-foreground",
 };
 
 /** The chips that say the household asked for something, in blue, as the blue bar is. */
