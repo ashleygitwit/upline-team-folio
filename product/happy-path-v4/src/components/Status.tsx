@@ -22,13 +22,13 @@ const tones = {
 
 /**
  * How long until a household renews: a clock and the count, "Renews in 8
- * days", or "8 days" (`short`) on a mini line, where the label over its group
- * says what it's counting to. It takes the color of the accent beside it: red
- * 700, the red that carries text on white, for red; the text color for
- * yellow, since no yellow carries text on white and the bar beside it says
- * yellow; gray with no accent. The date is on hover. A tooltip has no way in
- * by touch or keyboard, so the drawer's header says the date too, and the
- * Monday email, being an email, goes without (`tip={false}`).
+ * days", or "8 days" (`short`) on a mini line, where the room is short and
+ * the clock says what it's counting. It takes the color of the accent beside
+ * it: red 700, the red that carries text on white, for red; the text color
+ * for yellow, since no yellow carries text on white and the bar beside it
+ * says yellow; gray with no accent. The date is on hover. A tooltip has no
+ * way in by touch or keyboard, so the drawer's header says the date too, and
+ * the Monday email, being an email, goes without (`tip={false}`).
  *
  * A board line or card is one big button underneath (OpenOverlay in
  * Board.tsx), so the count sits over it to be hovered, and `onOpen` makes a

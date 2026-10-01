@@ -756,53 +756,25 @@ function waitingEmail(
 }
 
 const firstCardWeeks: Record<string, (day: Day, walk: Walk) => Activity> = {
-  /** Cole Doyle: waiting on an answer Monday, with a nudge for Wednesday; answers it, and is shopped from Wednesday. */
+  /**
+   * Cole Doyle: waiting on an answer all week, with a nudge for Wednesday that
+   * he doesn't answer either. Under two weeks out, he's too close to shop, so
+   * what to do is Jenna's call. Until 2026-10-01 he answered the nudge and was
+   * shopped from Wednesday, six days out.
+   */
   "inv-102": (day, walk) => {
-    const carriers = ["Auto-Owners", "Erie", "Grange"];
-    const outreachSent = "Sent October 6.";
     const n = nudge("doyle-wed", day, walk);
-    const before: Item[] = [
-      { when: "Oct 7", label: "Cole opened the renewal email", detail: "No questionnaire yet." },
-      { when: "Oct 6", label: "Renewal email sent", opens: outreachView },
-      { when: "Oct 2", label: "Auto-Owners' renewal came in 9% higher", detail: "The hail claim on the roof in April is most of it." },
-    ];
-    if (day === "mon") {
-      return { stage: stage.reached, banner: n.banner, upNext: [...n.upNext, renewal("Oct 20")], past: [...n.past, ...before], outreachSent };
-    }
-    const answered: Item[] = [
-      shopping("Wed 11:00 AM", carriers, true),
-      { when: "Wed 9:40 AM", label: "Cole finished the questionnaire", detail: "He confirmed the new roof went on in May." },
-      ...n.past,
-      ...before,
-    ];
-    if (day === "wed") {
-      return {
-        stage: columnTitle("shopping"),
-        banner: beingShopped("Friday"),
-        shop: shop(carriers, "Friday"),
-        upNext: [dueBack("Fri"), renewal("Oct 20")],
-        past: answered,
-        outreachSent,
-      };
-    }
-    const one: Item = { when: "Thu 3:20 PM", label: "One of three quotes is in", detail: "Erie and Grange are still out." };
-    if (day === "thu") {
-      return {
-        stage: columnTitle("shopping"),
-        banner: beingShopped("Friday"),
-        shop: shop(carriers, "Friday", ["Auto-Owners"]),
-        upNext: [dueBack("Fri"), renewal("Oct 20")],
-        past: [one, ...answered],
-        outreachSent,
-      };
-    }
     return {
-      stage: columnTitle("shopping"),
-      banner: { tone: "gray", text: "Being shopped. One carrier left, back this afternoon.", opens: shopView },
-      shop: shop(carriers, "this afternoon", ["Auto-Owners", "Erie"]),
-      upNext: [dueBack("Fri afternoon"), renewal("Oct 20")],
-      past: [{ when: "Fri 10:15 AM", label: "Two of three quotes are in", detail: "Grange is the one left to quote." }, one, ...answered],
-      outreachSent,
+      stage: stage.reached,
+      banner: n.banner,
+      upNext: [...n.upNext, renewal("Oct 20")],
+      past: [
+        ...n.past,
+        { when: "Oct 7", label: "Cole opened the renewal email", detail: "No questionnaire yet." },
+        { when: "Oct 6", label: "Renewal email sent", opens: outreachView },
+        { when: "Oct 2", label: "Auto-Owners' renewal came in 9% higher", detail: "The hail claim on the roof in April is most of it." },
+      ],
+      outreachSent: "Sent October 6.",
     };
   },
 

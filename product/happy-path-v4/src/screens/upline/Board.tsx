@@ -1,4 +1,4 @@
-import { Fragment, useLayoutEffect, useState } from "react";
+import { useLayoutEffect, useState } from "react";
 import { AlarmClock, ArrowRight, Check, FoldHorizontal, UnfoldHorizontal } from "lucide-react";
 import { cn } from "cn";
 import { RenewalMeta } from "@/components/RenewalMeta";
@@ -10,7 +10,6 @@ import {
   bigIncrease,
   boardFor,
   columns,
-  groupsFor,
   needsYou,
   pctLabel,
   setName,
@@ -51,10 +50,9 @@ const notInPrototype = "This household isn't built out for the prototype.";
  * walk. The headers share one row, so the first card in every column starts
  * on the same line however the names wrap. The three mini columns are a line a
  * household; the three full columns are short cards. A left accent marks what
- * needs a look, by each column's own deadlines (accentFor in board.ts), and in
- * a mini column a label over each flagged group says what its lines are
- * counting to (groupsFor). Statuses are words, not boxes, so the only filled
- * rectangles on the board are buttons. Every line and card opens the
+ * needs a look, by each column's own deadlines (accentFor in board.ts).
+ * Statuses are words, not boxes, so the only filled rectangles on the board
+ * are buttons. Every line and card opens the
  * household's profile drawer, the one way in; the invented households
  * (pipeline.ts) have no drawer and say so when pointed at. The toolbar's
  * search and Needs me narrow every column at once, and a column's count then
@@ -155,8 +153,7 @@ const empty: Record<ColumnId, string> = {
  * body sit on the board's two shared rows, so a name that wraps to two lines
  * pushes every column's first card down together. A mini column is one white
  * list of lines running the panel's width, so each name starts under the
- * heading's first letter, cut where its deadlines fall into groups, each
- * under a label (GroupLabel); a full column is a stack of cards inset as far as
+ * heading's first letter; a full column is a stack of cards inset as far as
  * the heading. A snoozed task sinks to the foot of its column. The body is
  * positioned, so the lines' screen-reader labels (absolutely positioned) stay
  * inside it rather than stretching the page. It scrolls only once the board
@@ -216,20 +213,11 @@ function Column({
         {entries.length === 0 ? (
           <p className="px-3 text-sm">{empty}</p>
         ) : mini ? (
-          <div className="border bg-card py-1">
-            {groupsFor(id, sorted, day, walk).map((g, i) => (
-              <Fragment key={g.key}>
-                {g.label && (
-                  <GroupLabel label={g.label} n={g.entries.length} accent={g.key === "rest" ? null : g.key} first={i === 0} />
-                )}
-                <ul className={cn("divide-y", g.label && "border-t")}>
-                  {g.entries.map((e) => (
-                    <MiniRow key={e.id} e={e} accent={accentFor(e, id, day, walk)} {...props} />
-                  ))}
-                </ul>
-              </Fragment>
+          <ul className="divide-y border bg-card py-1">
+            {sorted.map((e) => (
+              <MiniRow key={e.id} e={e} accent={accentFor(e, id, day, walk)} {...props} />
             ))}
-          </div>
+          </ul>
         ) : (
           <ul className="flex flex-col gap-2 *:shrink-0">
             {sorted.map((e) =>
@@ -388,40 +376,16 @@ function NotBuilt({ className, children }: { className: string; children: React.
  * ------------------------------------------------------------------ */
 
 /**
- * The label over a group of lines in a mini column (groupsFor in board.ts):
- * what its lines are counting to, then how many there are, in the mono face
- * of the column's count, so it reads as a label rather than a line. Its accent
- * runs on down the lines under it.
- */
-function GroupLabel({
-  label,
-  n,
-  accent,
-  first,
-}: {
-  label: string;
-  n: number;
-  accent: "urgent" | "soon" | null;
-  first: boolean;
-}) {
-  return (
-    <h3 className={cn("relative px-3 py-2 font-mono text-xs", !first && "border-t", accent && [bar, accentBar[accent]])}>
-      {label} <span className="text-muted-foreground">{n}</span>
-    </h3>
-  );
-}
-
-/**
  * One household in a mini column: the name and the change in percent, at
  * 14px, so a column of 55 reads as a list of names. A red or yellow line also
  * counts down between the two ("8 days", by a clock, in the accent's color,
- * with the date on hover), since the label over its group says what it's
- * counting to. Under the name, a named household's requests follow, and Life
- * quote requested or Info updated among them explains a blue bar; a snoozed
- * one says so. A long name wraps rather than being cut short, so nothing
- * depends on a tooltip. The whole line opens the household's drawer, where
- * the renewal email is a click away; an invented line doesn't open, and says
- * so.
+ * with the date on hover), short so it fits the line; the clock says it's
+ * the time left to the renewal. Under the name, a named household's requests
+ * follow, and Life quote requested or Info updated among them explains a
+ * blue bar; a snoozed one says so. A long name wraps rather than being cut
+ * short, so nothing depends on a tooltip. The whole line opens the
+ * household's drawer, where the renewal email is a click away; an invented
+ * line doesn't open, and says so.
  */
 function MiniRow({ e, accent, ...props }: BoardProps & { e: Entry; accent: Accent | null }) {
   const { day, walk, household, onHousehold } = props;

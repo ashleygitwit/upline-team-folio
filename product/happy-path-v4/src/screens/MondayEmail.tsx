@@ -14,7 +14,6 @@ import {
   needsMe,
   pctLabel,
   setName,
-  shortOnTime,
   timed,
   type Accent,
   type ColumnId,
@@ -30,17 +29,15 @@ import { initialWalk, type WalkProps } from "@/walk";
  * week. It's the board at 8:00 AM Monday, before she's touched it, so it
  * reads the same whatever the presenter does later.
  *
- * Action Needed is what the board's Needs me keeps, in groups: approvals to
- * bind (Ready to close), recommendations to send, and the open renewals inside
- * their column's deadlines, under the board's own labels (Too late to shop,
- * Last week to shop) or Renewing soon (shortOnTime in board.ts; it was one
- * Renewing soon group, inside ten days, until 2026-10-01). A household that's
- * only on Needs me for a blue accent (a life quote or a change requested)
- * isn't listed, since those have no flow of their own yet. Each line is a
- * mini line from the board, with its accent and its countdown, in the
- * accent's color, instead of the change, since what matters here is how long
- * is left. The countdown has no tooltip, since this is an email. It was the
- * earlier weeks' four until 2026-09-30.
+ * Action Needed is what the board's Needs me keeps, in three groups: approvals
+ * to bind (Ready to close), recommendations to send, and renewals inside their
+ * column's deadlines that are still open (Renewing soon; inside ten days
+ * until 2026-10-01). A household that's only on Needs me for a blue accent (a
+ * life quote or a change requested) isn't listed, since those have no flow of
+ * their own yet. Each line is a mini line from the board, with its accent and
+ * its countdown, in the accent's color, instead of the change, since what
+ * matters here is how long is left. The countdown has no tooltip, since this
+ * is an email. It was the earlier weeks' four until 2026-09-30.
  *
  * Scheduled Emails comes last and quietest, since they go out Tuesday whether
  * she looks at them or not: the board's Scheduled column, all 48, biggest
@@ -52,8 +49,9 @@ export function MondayEmail({ go }: WalkProps) {
   const needs = needsMe(board, day, initialWalk);
   const toClose = needs.filter(({ e }) => e.approved);
   const toSend = needs.filter(({ col }) => col === "ready");
-  const short = shortOnTime(needs, day, initialWalk);
-  const shortCount = short.reduce((n, g) => n + g.items.length, 0);
+  const soon = needs.filter(
+    ({ e, col }) => !e.approved && col !== "ready" && timed(accentFor(e, col, day, initialWalk)),
+  );
   const byRenewal = (a: { e: Entry }, b: { e: Entry }) =>
     Date.parse(`${a.e.renews} 2026`) - Date.parse(`${b.e.renews} 2026`);
 
@@ -93,13 +91,11 @@ export function MondayEmail({ go }: WalkProps) {
             <CardContent className="gap-6">
               <p className="text-base">
                 You have {summary.join(" and ")}.
-                {shortCount > 0 && ` Another ${count(shortCount, "renewal is", "renewals are")} short on time.`}
+                {soon.length > 0 && ` Another ${count(soon.length, "renewal is", "renewals are")} short on time.`}
               </p>
               <Todos title="Ready to close" items={[...toClose].sort(byRenewal)} />
               <Todos title="Recommendations ready to send" items={[...toSend].sort(byRenewal)} />
-              {short.map((g) => (
-                <Todos key={g.title} title={g.title} items={[...g.items].sort(byRenewal)} />
-              ))}
+              <Todos title="Renewing soon" items={[...soon].sort(byRenewal)} />
               <Button size="lg" className="w-full" onClick={() => go("card-monday-upline")}>
                 View in Upline
               </Button>

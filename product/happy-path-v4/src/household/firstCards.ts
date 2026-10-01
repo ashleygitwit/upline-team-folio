@@ -15,15 +15,19 @@ import { quoteDoc, type Card, type HouseholdFile } from "@/household/data";
  * or a surname: Troy Lowry was Cole Carver, Lena Park was Hank Kowalski and
  * Elena Varga was Iris Fischer.
  *
- * | Household    | Monday                         | Wednesday to Friday            |
- * | ------------ | ------------------------------ | ------------------------------ |
- * | Cole Doyle   | Awaiting Response, first       | Shopping, first                |
- * | Troy Lowry   | Shopping, first                | Recommendation Sent            |
- * | Hank Fischer | Recommendation Ready, first    | Recommendation Sent, first     |
- * | Lena Park    | Recommendation Sent, first     | Completed                      |
- * | Grace Tanaka | Completed, first               | Completed, first               |
- * | Elena Varga  | not on the board yet           | Scheduled, first               |
- * | Sara Ortiz   | Scheduled                      | Awaiting (Wed, first), Shopping |
+ * | Household    | Monday                         | Wednesday to Friday                    |
+ * | ------------ | ------------------------------ | -------------------------------------- |
+ * | Cole Doyle   | Awaiting Response, first       | Awaiting Response, first               |
+ * | Troy Lowry   | Shopping, first                | Recommendation Sent                    |
+ * | Hank Fischer | Recommendation Ready, first    | Recommendation Sent, first             |
+ * | Lena Park    | Recommendation Sent, first     | Completed                              |
+ * | Grace Tanaka | Completed, first               | Completed, first                       |
+ * | Elena Varga  | not on the board yet           | Scheduled, first                       |
+ * | Sara Ortiz   | Scheduled                      | Awaiting (Wed), Shopping (Thu–Fri, first) |
+ *
+ * On Wednesday the Pruitts are the first card in Shopping. Cole was shopped
+ * from Wednesday until 2026-10-01, when no one under two weeks from renewal
+ * was shopped any more, so he waits all week and Sara leads Shopping instead.
  */
 export type FirstCard = {
   card: Card;
@@ -48,7 +52,7 @@ const callMe = "This does not put coverage in place. Reply with a couple of time
 const nothingChanges = "This does not change anything on the policy. Reply if you want me to walk through the other quotes anyway.";
 
 /* ------------------------------------------------------------------ *
- * Cole Doyle: waiting on an answer Monday, shopped from Wednesday
+ * Cole Doyle: waiting on an answer all week, too close to shop
  * ------------------------------------------------------------------ */
 
 const doyle: FirstCard = {

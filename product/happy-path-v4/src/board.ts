@@ -187,24 +187,33 @@ function inventedFor(day: Day): Record<ColumnId, Entry[]> {
 
   // From Wednesday: Tuesday's emails are out and waiting, except two who
   // answered Tuesday night, as Leah did, and move with the Pruitts: shopped
-  // Wednesday, back Thursday, sent Thursday afternoon. The waiting pool's
-  // soonest seven answered and are being shopped, and the rest of its
-  // earliest renewals renewed as they were, off the board. Monday's ready
-  // went out Monday afternoon, half of Monday's shops went out Tuesday, and
+  // Wednesday, back Thursday, sent Thursday afternoon. No one is shopped
+  // under two weeks from renewal (the team's rule, from the strategy
+  // sprint), so the waiting pool's soonest seven, Cole Doyle first, still
+  // haven't answered and stay waiting, for Jenna to decide what to do. Seven
+  // of its later ones, three weeks out and more, answer Wednesday night and
+  // are shopped from Thursday, as Sara Ortiz is, so she and the Pruitts are
+  // the first card in Shopping. The rest of its earliest renewals renewed as
+  // they were, off the board. (Until 2026-10-01 the soonest seven answered
+  // and were shopped from Wednesday, 4 to 9 days out.) Monday's ready went
+  // out Monday afternoon, half of Monday's shops went out Tuesday, and
   // Monday's sent all answered. From Thursday a few more of Tuesday's answer
   // each day.
   const fast = w1.slice(-2);
   const tuesday = w1.slice(0, -2);
-  const answered = aw.slice(0, 7);
-  const stillWaiting = aw.slice(44);
+  const unanswered = aw.slice(0, 7);
+  const answered = aw.slice(39, 46);
+  const stillWaiting = aw.slice(46);
   const sent = [...rd.map((h) => waiting(h, "Oct 12", day)), ...sh.slice(0, 4).map((h) => waiting(h, "Oct 13", day))];
   const completed = [...sn.map(done), ...cp.slice(0, 3).map(done)];
   const back = day === "wed" ? 0 : day === "thu" ? 3 : 6;
 
   return {
     scheduled: nextWeek.map((h) => invented(h)),
-    awaiting: [...tuesday.slice(back), ...stillWaiting].map((h) => invented(h)),
-    shopping: [...answered, ...tuesday.slice(0, back), ...(day === "wed" ? fast : [])].map((h) => invented(h)),
+    awaiting: [...unanswered, ...(day === "wed" ? answered : []), ...tuesday.slice(back), ...stillWaiting].map((h) =>
+      invented(h),
+    ),
+    shopping: [...(day === "wed" ? fast : answered), ...tuesday.slice(0, back)].map((h) => invented(h)),
     ready: day === "thu" ? fast.map((h) => invented(h, shopLine(h))) : [],
     sent: day === "fri" ? [...sent, ...fast.map((h) => waiting(h, "Oct 15", day))] : sent,
     completed,
@@ -343,63 +352,6 @@ export function accentFor(e: Entry, col: ColumnId, day: Day, walk: Walk): Accent
 /** Whether an accent is about time (red or yellow), so the countdown beside it takes its color. */
 export const timed = (accent: Accent | null): accent is "urgent" | "soon" =>
   accent === "urgent" || accent === "soon";
-
-/**
- * What a mini column's red and yellow lines are counting to, said once over
- * each group instead of on every line, so a column of 55 with 34 flagged
- * still reads as a list (2026-10-01). Pipedrive paints every card; here the
- * column carries it. Only Awaiting Response flags among the mini columns.
- * The full columns go without, since each card's sentence says it.
- */
-const groupLabels: Partial<Record<ColumnId, Record<GroupKey, string>>> = {
-  awaiting: { urgent: "Too late to shop", soon: "Last week to shop", rest: "On track" },
-};
-
-export type GroupKey = "urgent" | "soon" | "rest";
-export type Group = { key: GroupKey; label?: string; entries: Entry[] };
-
-/**
- * A mini column's lines, cut where its deadlines fall: red, then yellow, then
- * the rest, each under its label. The column already runs soonest renewal
- * first, so each group is one block in the same order. A column with
- * nothing flagged is one group with no label, so an "On track" never stands
- * alone, and a group with no one in it (once Needs me or a search has
- * narrowed the column) isn't drawn.
- */
-export function groupsFor(col: ColumnId, entries: Entry[], day: Day, walk: Walk): Group[] {
-  const labels = groupLabels[col];
-  const keyOf = (e: Entry): GroupKey => {
-    const accent = accentFor(e, col, day, walk);
-    return timed(accent) ? accent : "rest";
-  };
-  if (!labels || entries.every((e) => keyOf(e) === "rest")) return [{ key: "rest", entries }];
-  return (["urgent", "soon", "rest"] as const)
-    .map((key) => ({ key, label: labels[key], entries: entries.filter((e) => keyOf(e) === key) }))
-    .filter((g) => g.entries.length > 0);
-}
-
-/**
- * The red and yellow renewals that aren't already a recommendation to send
- * or an approval to bind, grouped for the Monday email as the board groups
- * them: under a mini column's labels where it has them (Too late to shop,
- * then Last week to shop), and under Renewing soon otherwise.
- */
-export function shortOnTime(needs: { e: Entry; col: ColumnId }[], day: Day, walk: Walk) {
-  const groups = new Map<string, { e: Entry; col: ColumnId }[]>();
-  for (const key of ["urgent", "soon"] as const) {
-    for (const c of columns) {
-      const label = groupLabels[c.id]?.[key];
-      if (label) groups.set(label, []);
-    }
-  }
-  groups.set("Renewing soon", []);
-  for (const n of needs) {
-    const accent = accentFor(n.e, n.col, day, walk);
-    if (n.e.approved || n.col === "ready" || !timed(accent)) continue;
-    groups.get(groupLabels[n.col]?.[accent] ?? "Renewing soon")!.push(n);
-  }
-  return [...groups].map(([title, items]) => ({ title, items })).filter((g) => g.items.length > 0);
-}
 
 /**
  * Whether a household needs Jenna on the walk's day: a recommendation to

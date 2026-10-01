@@ -399,7 +399,9 @@ export const nudges: Nudge[] = [
   },
   {
     // Cole Doyle is one of the first cards (household/firstCards.ts): waiting
-    // on an answer on Monday, he answers Wednesday morning after this goes.
+    // on an answer on Monday, he doesn't answer this either. He answered
+    // Wednesday morning and was shopped until 2026-10-01, when no one under
+    // two weeks from renewal was shopped any more.
     key: "doyle-wed",
     id: "inv-102",
     what: "Nudge",
