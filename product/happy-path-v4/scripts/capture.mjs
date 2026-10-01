@@ -5,9 +5,10 @@
 // reach its state, and is taken at 1440 wide, 2x, with the presenter bar
 // cropped off and every scrolling region (drawer tabs, the pages over the
 // drawer, the phone) opened out to its full height, so nothing on the
-// feedback board hides behind a scroll. The homepage's board runs as long as
-// its longest column, so the homepage is captured whole, every card in view.
-// Run after any change: npm run capture
+// feedback board hides behind a scroll. The homepage's board is the
+// exception: its columns are 1000px tall and scroll inside themselves by
+// design, so it's captured as Jenna sees it. Run after any change: npm run
+// capture
 //
 // Writes captures/NN-slug.png and captures/manifest.json, which says what
 // each file is, which stop it belongs to and how it was reached; the board
@@ -230,6 +231,11 @@ const captures = [
       await menuItem("Until tomorrow").click();
       await page.keyboard.press("Escape");
       await page.waitForTimeout(400);
+      // The column scrolls inside itself, so bring its foot into view.
+      await page
+        .locator('section[aria-labelledby="col-closing"] > div')
+        .nth(1)
+        .evaluate((el) => el.scrollTo(0, el.scrollHeight));
     },
   },
   {

@@ -15,11 +15,12 @@ import type { Walk } from "@/walk";
  *
  * The header and the board take v3's Policyholder List width too, at most
  * 1280, centered, so a wide window leaves room either side (Upline's bar
- * follows, so the mark keeps their edge). The board has no height of its
- * own, as v3's had none: it's as long as its longest column, and the page
- * scrolls. Until 2026-10-01 it was one screen tall, at most 800px, with each
- * column scrolling inside itself once the page had scrolled it whole into
- * view.
+ * follows, so the mark keeps their edge). The board is 1000px tall, each
+ * column scrolling inside itself when it holds more than fits (Board.tsx).
+ * Until 2026-10-01 it was one screen tall, at most 800px, with each column
+ * scrolling inside itself once the page had scrolled it whole into view, and
+ * for part of that day it had no height of its own, running the page on for
+ * the length of its longest column.
  */
 export function Home({ day, walk, ...props }: BoardProps) {
   return (

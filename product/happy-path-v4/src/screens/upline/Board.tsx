@@ -54,10 +54,13 @@ const notInPrototype = "This household isn't built out for the prototype.";
  * column at once, came off on 2026-10-01, Needs me as not important and
  * search for now.
  *
- * The board is drawn as v3's Policyholder List board was: the columns side by
- * side, 12px apart, each as long as its cards, with the page scrolling. A
- * column is wide enough for a couple's name beside its countdown and change;
- * narrower than all four, the board scrolls sideways inside itself.
+ * The board is drawn as v3's Policyholder List board was, the columns side by
+ * side, 12px apart, but 1000px tall: a column with more than fits scrolls
+ * inside itself, so the page doesn't run on for the length of the longest
+ * (Initial Outreach's 103 rows on Monday ran the page past 4,000px for part
+ * of 2026-10-01). A column is wide enough for a couple's name beside its
+ * countdown and change; narrower than all four, the board scrolls sideways
+ * inside itself.
  */
 export function Board(props: BoardProps) {
   const { day, walk } = props;
@@ -68,10 +71,10 @@ export function Board(props: BoardProps) {
   return (
     <div data-board className="overflow-x-auto">
       <div
-        className="grid gap-x-3"
+        className="grid h-250 gap-x-3"
         style={{
           gridTemplateColumns: phases.map((c) => (c.mini ? "minmax(13rem, 1fr)" : "minmax(13.75rem, 1fr)")).join(" "),
-          gridTemplateRows: "auto auto",
+          gridTemplateRows: "auto minmax(0, 1fr)",
         }}
       >
         {phases.map((c) => {
@@ -104,12 +107,14 @@ export function Board(props: BoardProps) {
 
 /**
  * One column, a panel as v3's Policyholder List board drew its columns: gray
- * 100 at 45% with a hairline round it, as long as its cards. Its name is at
- * the column-heading size, 20px in the display face, rather than v3's 14px
- * semibold. The header and the list are the panel's two halves, laid on the
- * board's two rows (the section itself is `display: contents`), so every
- * header is as tall as the tallest and the first cards line up, while each
- * list stops at its last card. In Shopping Renewal and Closing every
+ * 100 at 45% with a hairline round it. Its name is at the column-heading
+ * size, 20px in the display face, rather than v3's 14px semibold. The header
+ * and the list are the panel's two halves, laid on the board's two rows (the
+ * section itself is `display: contents`), so every header is as tall as the
+ * tallest and the first cards line up, and every panel runs the board's
+ * 1000px, its list scrolling inside it when it holds more than fits (each
+ * list stopped at its last card, with the page scrolling, for part of
+ * 2026-10-01). In Shopping Renewal and Closing every
  * household is a card, 8px apart; a snoozed task sinks to the foot. Initial
  * Outreach and Completed are lists instead, so the cards keep the emphasis:
  * each household a row on the panel's own ground, ruled off from the next by
@@ -205,7 +210,7 @@ function Column({
         )}
       </div>
 
-      <div className="relative row-start-2 min-h-60 min-w-0 self-start border border-t-0 bg-muted/45 px-2.5 pb-3.5">
+      <div className="relative row-start-2 min-h-0 min-w-0 overflow-y-auto border border-t-0 bg-muted/45 px-2.5 pb-3.5">
         {items.length === 0 ? (
           <p className="text-sm">{empty}</p>
         ) : (
