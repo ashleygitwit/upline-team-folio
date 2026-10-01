@@ -103,30 +103,13 @@ async function hover(name) {
   await button(name).hover();
 }
 
-/**
- * Opens a household's drawer from its card or row on the homepage's board.
- * Each column opens on one status, which can hide it, so every column's menu
- * is set to All first.
- */
+/** Opens a household's drawer from its card or row on the homepage's board. */
 async function openProfile(name) {
-  await showAll();
   await fit();
   // By the name, at the card's top left: the middle can be a button of the
   // card's own (Review Shopping Results), which opens a page instead.
   await button(`Open ${name}`).click({ position: { x: 8, y: 8 } });
   await page.waitForTimeout(250);
-}
-
-/** Sets every column's menu to All, so the board shows every card. */
-async function showAll() {
-  const menus = page.locator('[data-board] button[aria-haspopup="menu"]');
-  for (let i = 0; i < (await menus.count()); i++) {
-    const menu = menus.nth(i);
-    if ((await menu.textContent())?.startsWith("All")) continue;
-    await menu.click();
-    await page.getByRole("menuitemradio", { name: /^All/ }).click();
-    await page.waitForTimeout(150);
-  }
 }
 
 /** The Pruitts' Review Shopping Results, which opens their drawer with their results over it. */

@@ -47,10 +47,10 @@ const notInPrototype = "This household isn't built out for the prototype.";
  * households (pipeline.ts) have no drawer and say so when pointed at.
  *
  * Under each column's name, a menu picks which of its statuses to show, or
- * all of them; it narrows that column alone. A column opens on its `opensOn`
- * status (phases.ts), what Jenna most likely came for, as long as anyone has
- * it that day; once she picks, her pick holds. They're the page's own, so every stop opens on
- * the defaults again. The toolbar's Needs me and search, which narrowed every
+ * all of them; it narrows that column alone. Every column opens on All, and
+ * once Jenna picks, her pick holds. The picks are the page's own, so every
+ * stop opens on All again. (For part of 2026-10-01 the columns each opened
+ * on one status instead.) The toolbar's Needs me and search, which narrowed every
  * column at once, came off on 2026-10-01, Needs me as not important and
  * search for now.
  *
@@ -62,14 +62,8 @@ const notInPrototype = "This household isn't built out for the prototype.";
 export function Board(props: BoardProps) {
   const { day, walk } = props;
   const placed = phasesFor(day, walk);
-  // The status Jenna picked in each column, or null for all of them; a column
-  // she hasn't touched has none here, and opens on its default.
-  const [picked, setPicked] = useState<Partial<Record<PhaseId, PhaseStatus | null>>>({});
-  const onlyIn = (id: PhaseId, opensOn?: PhaseStatus) => {
-    const pick = picked[id];
-    if (pick !== undefined) return pick ?? undefined;
-    return placed[id].some((i) => i.status === opensOn) ? opensOn : undefined;
-  };
+  // The status Jenna picked in each column; none is All.
+  const [picked, setPicked] = useState<Partial<Record<PhaseId, PhaseStatus>>>({});
 
   return (
     <div data-board className="overflow-x-auto">
@@ -82,7 +76,7 @@ export function Board(props: BoardProps) {
       >
         {phases.map((c) => {
           const items = placed[c.id];
-          const only = onlyIn(c.id, c.opensOn);
+          const only = picked[c.id];
           const shown = only ? items.filter((i) => i.status === only) : items;
           return (
             <Column
@@ -96,7 +90,7 @@ export function Board(props: BoardProps) {
                 n: items.filter((i) => i.status === status).length,
               }))}
               only={only}
-              onOnly={(status) => setPicked((o) => ({ ...o, [c.id]: status ?? null }))}
+              onOnly={(status) => setPicked((o) => ({ ...o, [c.id]: status }))}
               count={`${shown.length}`}
               empty={only ? `Nothing here is ${statusLabel[only]}.` : c.empty}
               {...props}

@@ -28,16 +28,16 @@ export type PhaseStatus = "scheduled" | "inProgress" | "readyForReview" | "await
 /**
  * The four columns, all as wide as each other. (Completed was half as wide
  * for part of 2026-10-01, when its cards were names alone; they say when
- * each was completed now.) Each of the others opens filtered to `opensOn`,
- * what Jenna most likely came to it for (Board.tsx): the emails going out,
- * the recommendations to send, and the approvals to bind.
+ * each was completed now.) Every column opens on all its statuses
+ * (Board.tsx). For part of 2026-10-01 the others each opened on one, what
+ * Jenna most likely came to it for: Scheduled, and Ready for Review in
+ * Shopping Renewal and Closing.
  */
 export const phases: {
   id: PhaseId;
   label: string;
   mini?: boolean;
   statuses: PhaseStatus[];
-  opensOn?: PhaseStatus;
   empty: string;
 }[] = [
   {
@@ -45,21 +45,18 @@ export const phases: {
     label: "Initial Outreach",
     mini: true,
     statuses: ["scheduled", "awaitingResponse"],
-    opensOn: "scheduled",
     empty: "Nothing scheduled or waiting.",
   },
   {
     id: "shopping-renewal",
     label: "Shopping Renewal",
     statuses: ["inProgress", "readyForReview", "awaitingResponse"],
-    opensOn: "readyForReview",
     empty: "Nothing being shopped.",
   },
   {
     id: "closing",
     label: "Closing",
     statuses: ["readyForReview", "awaitingResponse"],
-    opensOn: "readyForReview",
     empty: "Nothing to close.",
   },
   { id: "completed", label: "Completed", mini: true, statuses: [], empty: "Nothing finished yet." },
