@@ -23,7 +23,18 @@ import type { Walk } from "@/walk";
 export type PhaseId = "initial-outreach" | "shopping-renewal" | "closing" | "completed";
 export type PhaseStatus = "scheduled" | "inProgress" | "readyForReview" | "awaitingResponse";
 
-export const phases: { id: PhaseId; label: string; mini?: boolean; statuses: PhaseStatus[]; empty: string }[] = [
+/**
+ * The four columns. Completed is `narrow`, half as wide as the others, since
+ * its lines are names alone.
+ */
+export const phases: {
+  id: PhaseId;
+  label: string;
+  mini?: boolean;
+  narrow?: boolean;
+  statuses: PhaseStatus[];
+  empty: string;
+}[] = [
   {
     id: "initial-outreach",
     label: "Initial Outreach",
@@ -38,7 +49,7 @@ export const phases: { id: PhaseId; label: string; mini?: boolean; statuses: Pha
     empty: "Nothing being shopped.",
   },
   { id: "closing", label: "Closing", statuses: ["readyForReview", "awaitingResponse"], empty: "Nothing to close." },
-  { id: "completed", label: "Completed", mini: true, statuses: [], empty: "Nothing finished yet." },
+  { id: "completed", label: "Completed", mini: true, narrow: true, statuses: [], empty: "Nothing finished yet." },
 ];
 
 export const statusLabel: Record<PhaseStatus, string> = {

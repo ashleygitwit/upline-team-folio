@@ -88,13 +88,24 @@ export function Board({ query, needsOnly, ...props }: BoardProps & BoardFilters)
   const setFolded = (col: string, fold: boolean) =>
     update((w) => ({ folded: fold ? [...w.folded, col] : w.folded.filter((c) => c !== col) }));
   const template = board
-    .map((c) => (isFolded(c.id) ? "3rem" : c.mini ? "minmax(13rem, 1fr)" : "minmax(13.75rem, 1fr)"))
+    .map((c) =>
+      isFolded(c.id)
+        ? "3rem"
+        : c.narrow
+          ? "minmax(6.5rem, 0.5fr)"
+          : c.mini
+            ? "minmax(13rem, 1fr)"
+            : "minmax(13.75rem, 1fr)",
+    )
     .join(" ");
+  // The four-column board's columns are ruled apart by hairlines rather than
+  // set on gray panels.
+  const ruled = walk.fourColumns;
 
   return (
     <div data-board className="h-full overflow-x-auto">
       <div
-        className="grid h-full min-h-0 gap-x-2"
+        className={cn("grid h-full min-h-0", !ruled && "gap-x-2")}
         style={{ gridTemplateColumns: template, gridTemplateRows: "auto minmax(0, 1fr)" }}
       >
         {board.map((c) => {
@@ -105,13 +116,20 @@ export function Board({ query, needsOnly, ...props }: BoardProps & BoardFilters)
           const shown = only ? matching.filter((i) => i.status === only) : matching;
           const filtering = !!q || needsOnly || !!only;
           return isFolded(c.id) ? (
-            <Folded key={c.id} label={c.label} n={shown.length} onUnfold={() => setFolded(c.id, false)} />
+            <Folded
+              key={c.id}
+              label={c.label}
+              n={shown.length}
+              ruled={ruled}
+              onUnfold={() => setFolded(c.id, false)}
+            />
           ) : (
             <Column
               key={c.id}
               id={c.id}
               label={c.label}
               mini={c.mini}
+              ruled={ruled}
               items={shown}
               statuses={c.statuses?.map((status) => ({
                 status,
@@ -149,6 +167,8 @@ type BoardColumn = {
   id: string;
   label: string;
   mini?: boolean;
+  /** Half as wide as the others: the four-column board's Completed, which is names alone. */
+  narrow?: boolean;
   items: Placed[];
   statuses?: PhaseStatus[];
   empty: string;
@@ -224,11 +244,19 @@ const empty: Record<ColumnId, string> = {
  * all. One is on at a time. They count what search and Needs me leave, and
  * a status with no one in it drops out, unless it's the one on, as v3's
  * stages did.
+ *
+ * The four-column board's columns are `ruled`, drawn closer to the brand's
+ * own surfaces: no gray panel, a gray 200 hairline between columns, as the
+ * cards carry, and a 16px gutter either side of it, with the first column's
+ * edge on the page's, under Needs me. Every column insets its households the
+ * same, so a mini column's list sits where the cards do, and a line is as
+ * roomy as a card (12px all round, a card's padding).
  */
 function Column({
   id,
   label,
   mini,
+  ruled,
   items,
   statuses,
   only,
@@ -242,6 +270,7 @@ function Column({
   id: string;
   label: string;
   mini?: boolean;
+  ruled: boolean;
   items: Placed[];
   statuses?: { status: PhaseStatus; n: number }[];
   /** The status the column is narrowed to, if one is picked. */
@@ -259,8 +288,14 @@ function Column({
     : [...items].sort((a, b) => Number(snoozedEntry(a.e, day, walk)) - Number(snoozedEntry(b.e, day, walk)));
 
   return (
-    <section aria-labelledby={`col-${id}`} className="row-span-2 grid min-h-0 min-w-0 grid-rows-subgrid bg-muted">
-      <div className="px-3 pt-3 pb-2">
+    <section
+      aria-labelledby={`col-${id}`}
+      className={cn(
+        "row-span-2 grid min-h-0 min-w-0 grid-rows-subgrid",
+        ruled ? "border-l px-4 first:border-l-0 first:pl-0 last:pr-0" : "bg-muted",
+      )}
+    >
+      <div className={ruled ? "pb-3" : "px-3 pt-3 pb-2"}>
         <div className="flex items-start gap-2">
           <h2 id={`col-${id}`} className="min-w-0 flex-1 text-xl">
             {label} <Count>{count}</Count>
@@ -298,18 +333,19 @@ function Column({
         className={cn(
           "relative min-h-0 pb-3 [scrollbar-gutter:stable]",
           docked ? "overflow-y-auto" : "overflow-y-hidden",
-          !mini && "px-3",
+          !mini && !ruled && "px-3",
         )}
       >
         {items.length === 0 ? (
-          <p className="px-3 text-sm">{empty}</p>
+          <p className={cn("text-sm", !ruled && "px-3")}>{empty}</p>
         ) : mini ? (
-          <ul className="divide-y border bg-card py-1">
+          <ul className={cn("divide-y border bg-card", !ruled && "py-1")}>
             {sorted.map(({ e, step, status }) => (
               <MiniRow
                 key={e.id}
                 e={e}
                 col={step}
+                roomy={ruled}
                 status={status}
                 accent={accentFor(e, step, day, walk)}
                 {...props}
@@ -350,15 +386,22 @@ function Count({ children }: { children: React.ReactNode }) {
   );
 }
 
-/** A folded column: a strip with its count and its name on end. The whole strip unfolds it. */
-function Folded({ label, n, onUnfold }: { label: string; n: number; onUnfold: () => void }) {
+/**
+ * A folded column: a strip with its count and its name on end. The whole strip
+ * unfolds it. On the four-column board it's ruled off as the columns are,
+ * with no panel.
+ */
+function Folded({ label, n, ruled, onUnfold }: { label: string; n: number; ruled: boolean; onUnfold: () => void }) {
   return (
-    <section aria-label={label} className="row-span-2 min-h-0 bg-muted">
+    <section
+      aria-label={label}
+      className={cn("row-span-2 min-h-0", ruled ? "border-l first:border-l-0" : "bg-muted")}
+    >
       <button
         type="button"
         onClick={onUnfold}
         aria-label={`Unfold ${label}, ${n}`}
-        className="group flex h-full w-full flex-col items-center gap-3 pt-3"
+        className={cn("group flex h-full w-full flex-col items-center gap-3", ruled ? "pt-1" : "pt-3")}
       >
         <UnfoldHorizontal aria-hidden className="size-4 text-muted-foreground group-hover:text-primary" />
         <Count>{n}</Count>
@@ -495,14 +538,16 @@ function NotBuilt({ className, children }: { className: string; children: React.
 function MiniRow({
   e,
   col,
+  roomy,
   status,
   accent,
   ...props
-}: BoardProps & { e: Entry; col: ColumnId; status?: PhaseStatus; accent: Accent | null }) {
+}: BoardProps & { e: Entry; col: ColumnId; roomy: boolean; status?: PhaseStatus; accent: Accent | null }) {
   const { day, walk, household, onHousehold } = props;
   const selected = household === e.id;
   const open = () => onHousehold(e.id);
-  const frame = cn("relative px-3 py-2 text-sm", accent && [bar, accentBar[accent]]);
+  // A card's padding on the four-column board (`roomy`), and a tighter line on the six.
+  const frame = cn("relative text-sm", roomy ? "p-3" : "px-3 py-2", accent && [bar, accentBar[accent]]);
   const snoozed = !e.invented && isSnoozed(e.id, day, walk);
 
   const line = (

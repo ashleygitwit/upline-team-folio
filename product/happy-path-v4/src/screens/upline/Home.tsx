@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { cn } from "cn";
 import { boardFor, needsMe } from "@/board";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -40,7 +41,15 @@ export function Home({ day, walk, ...props }: BoardProps) {
           {lineFor(day, walk)}
         </p>
 
-        <div className="mt-8 flex flex-wrap items-center justify-between gap-4">
+        {/* On the four-column board (phases.ts), a hairline runs under the
+            toolbar, as the columns are ruled apart, with the board's own
+            16px gap below it matched above. */}
+        <div
+          className={cn(
+            "mt-8 flex flex-wrap items-center justify-between gap-4",
+            walk.fourColumns && "border-b pb-4",
+          )}
+        >
           {/* Drawn as the Policyholder List's stage buttons were: on is the
               blue outline, so it doesn't compete with a primary action. */}
           <Button
