@@ -361,7 +361,14 @@ function Column({
           <ul className="flex flex-col gap-2 *:shrink-0">
             {sorted.map(({ e, step, status }) =>
               e.invented ? (
-                <InventedCard key={e.id} e={e} status={status} accent={accentFor(e, step, day, walk)} day={day} />
+                <InventedCard
+                  key={e.id}
+                  e={e}
+                  col={step}
+                  status={status}
+                  accent={accentFor(e, step, day, walk)}
+                  day={day}
+                />
               ) : (
                 <NamedCard
                   key={e.id}
@@ -662,15 +669,21 @@ const cardFrame = (accent: Accent | null, selected = false) =>
  */
 function InventedCard({
   e,
+  col,
   status,
   accent,
   day,
 }: {
   e: Entry;
+  col: ColumnId;
   status?: PhaseStatus;
   accent: Accent | null;
   day: Day;
 }) {
+  // On the four-column board (a card with a status), it carries the button a
+  // named household's card would, which goes nowhere, and the card's tooltip
+  // says why.
+  const foot = status && (col === "ready" ? <ReviewResults /> : col === "sent" && e.approved && <CloseOut />);
   const when = timed(accent) && <Countdown renews={e.renews} day={day} tone={accent} short />;
   return (
     <NotBuilt className={cardFrame(status ? null : accent)}>
@@ -680,6 +693,7 @@ function InventedCard({
         when={status && when}
         status={!status && when}
         detail={e.invented!.detail}
+        foot={foot}
         phase={status && <PhaseStatusLine status={status} day={day} />}
       />
     </NotBuilt>
@@ -779,6 +793,11 @@ function NamedCard({
     }
   }
 
+  // On the four-column board (a card with a status), a recommendation to send
+  // has Review Shopping Results, which opens the drawer with the results over
+  // it, in place of the Pruitts' View the full report.
+  if (phase && col === "ready") foot = <ReviewResults onOpen={() => onHousehold(e.id, "results")} />;
+
   if (snoozed) foot = null;
 
   const snoozeLine = snoozed && (
@@ -828,12 +847,36 @@ function NamedCard({
  * The foot of an approved card: View profile and close opens the drawer,
  * whose banner leads to Close out. The card doesn't ask for a memo, because
  * closing is a morning's work in the carrier's portal and on the phone, not
- * a field on the homepage (the 2026-09-29 review).
+ * a field on the homepage (the 2026-09-29 review). Without `onProfile` it's
+ * an invented household's, which has no drawer (CardButton).
  */
-function CloseOut({ onProfile }: { onProfile: () => void }) {
-  return (
-    <Button className="mt-3" onClick={onProfile}>
-      View profile and close
+function CloseOut({ onProfile }: { onProfile?: () => void }) {
+  return <CardButton onClick={onProfile}>View profile and close</CardButton>;
+}
+
+/**
+ * The foot of a recommendation to send on the four-column board: Review
+ * Shopping Results opens the drawer with the shop's results over it. Without
+ * `onOpen` it's an invented household's (CardButton).
+ */
+function ReviewResults({ onOpen }: { onOpen?: () => void }) {
+  return <CardButton onClick={onOpen}>Review Shopping Results</CardButton>;
+}
+
+/**
+ * A card's button. Without `onClick` it's on an invented household's card,
+ * which has no drawer: drawn the same, so every card in a column reads alike,
+ * but it does nothing, stays out of the tab order (the card itself takes the
+ * focus) and leaves the card's tooltip to say the household isn't built out.
+ */
+function CardButton({ onClick, children }: { onClick?: () => void; children: React.ReactNode }) {
+  return onClick ? (
+    <Button className="mt-3" onClick={onClick}>
+      {children}
+    </Button>
+  ) : (
+    <Button className="mt-3" tabIndex={-1} aria-disabled>
+      {children}
     </Button>
   );
 }
