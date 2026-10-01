@@ -1,3 +1,4 @@
+import { useLayoutEffect, useState } from "react";
 import { ArrowRight, Check, FoldHorizontal, UnfoldHorizontal } from "lucide-react";
 import { cn } from "cn";
 import { Chips } from "@/components/Chips";
@@ -43,10 +44,11 @@ const readyToClose: Chip = { id: "closing", label: "Ready to close" };
 /**
  * The homepage's board, which replaced Action Needed and Scheduled Emails on
  * 2026-09-30 (Amanda's sketch): every renewal in the pipeline, in six
- * columns, filling the screen under the header. Each column scrolls inside
- * itself, and any column folds to a strip and stays folded for the walk. The
- * headers share one row, so the first card in every column starts on the
- * same line however the names wrap. The three mini columns are a line a
+ * columns, one screen tall under the header (Home.tsx). Each column scrolls
+ * inside itself once the page has scrolled the board fully into view
+ * (useDocked), and any column folds to a strip and stays folded for the
+ * walk. The headers share one row, so the first card in every column starts
+ * on the same line however the names wrap. The three mini columns are a line a
  * household; the three full columns are short cards. A left accent marks what
  * needs a look (accentFor in board.ts). Every line and card opens the
  * household's profile drawer, the one way in; the invented households
@@ -63,6 +65,7 @@ const readyToClose: Chip = { id: "closing", label: "Ready to close" };
 export function Board({ query, needsOnly, ...props }: BoardProps & BoardFilters) {
   const { day, walk, update } = props;
   const board = boardFor(day, walk);
+  const docked = useDocked();
   const q = query.trim().toLowerCase();
   const filtering = !!q || needsOnly;
   const shownIn = (col: ColumnId) =>
@@ -95,6 +98,7 @@ export function Board({ query, needsOnly, ...props }: BoardProps & BoardFilters)
               entries={shown}
               count={filtering ? `${shown.length} of ${board[c.id].length}` : `${shown.length}`}
               empty={q ? "No one here matches." : needsOnly ? "Nothing needs you here." : empty[c.id]}
+              docked={docked}
               onFold={() => setFolded(c.id, true)}
               {...props}
             />
@@ -103,6 +107,33 @@ export function Board({ query, needsOnly, ...props }: BoardProps & BoardFilters)
       </div>
     </div>
   );
+}
+
+/**
+ * Whether the page has scrolled as far as it goes, which is where the board
+ * sits whole on screen. Until then the columns don't scroll, so a scroll over
+ * one moves the page instead: the page goes first, then the columns. Without
+ * it, a scroll with the pointer over a column, which is most of the screen,
+ * moved only that column, and the page seemed stuck. A page that fits the
+ * window is docked from the start.
+ */
+function useDocked() {
+  const [docked, setDocked] = useState(true);
+  useLayoutEffect(() => {
+    const page = document.scrollingElement ?? document.documentElement;
+    const check = () => setDocked(page.scrollTop >= page.scrollHeight - page.clientHeight - 1);
+    check();
+    const resized = new ResizeObserver(check);
+    resized.observe(document.body);
+    window.addEventListener("scroll", check, { passive: true });
+    window.addEventListener("resize", check);
+    return () => {
+      resized.disconnect();
+      window.removeEventListener("scroll", check);
+      window.removeEventListener("resize", check);
+    };
+  }, []);
+  return docked;
 }
 
 const empty: Record<ColumnId, string> = {
@@ -123,7 +154,10 @@ const empty: Record<ColumnId, string> = {
  * heading's first letter; a full column is a stack of cards inset as far as
  * the heading. A snoozed task sinks to the foot of its column. The body is
  * positioned, so the lines' screen-reader labels (absolutely positioned) stay
- * inside it rather than stretching the page.
+ * inside it rather than stretching the page. It scrolls only once the board
+ * is docked, and keeps its scrollbar's room either way, so a scrollbar that
+ * takes room (Windows, or a Mac set to always show them) doesn't shift the
+ * cards when it docks.
  */
 function Column({
   id,
@@ -132,6 +166,7 @@ function Column({
   entries,
   count,
   empty,
+  docked,
   onFold,
   ...props
 }: BoardProps & {
@@ -141,6 +176,7 @@ function Column({
   entries: Entry[];
   count: string;
   empty: string;
+  docked: boolean;
   onFold: () => void;
 }) {
   const { day, walk } = props;
@@ -165,7 +201,13 @@ function Column({
         </Button>
       </div>
 
-      <div className={cn("relative min-h-0 overflow-y-auto pb-3", !mini && "px-3")}>
+      <div
+        className={cn(
+          "relative min-h-0 pb-3 [scrollbar-gutter:stable]",
+          docked ? "overflow-y-auto" : "overflow-y-hidden",
+          !mini && "px-3",
+        )}
+      >
         {entries.length === 0 ? (
           <p className="px-3 text-sm">{empty}</p>
         ) : mini ? (

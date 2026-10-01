@@ -8,14 +8,22 @@ import type { Walk } from "@/walk";
 
 /**
  * The homepage, the same every day: a greeting, the day's line, the toolbar,
- * then the board, which fills the rest of the screen. The header is set as
- * the v3 Policyholder List's was, left-aligned on the page's edge with the
- * room above it that page had (its 40px, the Home link and 40px more), and
- * the toolbar and board follow at that page's gaps. The blue band that sat
- * here came off on 2026-09-30, after the board replaced the Action Needed and
- * Scheduled Emails sections (the Policyholder List went with them, since the
- * board is the whole book now). The toolbar's search and Needs me are the
- * page's own, so they start clear at every stop.
+ * then the board. The header is set as the v3 Policyholder List's was,
+ * left-aligned on the page's edge with the room above it that page had (its
+ * 40px, the Home link and 40px more), and the toolbar and board follow at
+ * that page's gaps. The blue band that sat here came off on 2026-09-30, after
+ * the board replaced the Action Needed and Scheduled Emails sections (the
+ * Policyholder List went with them, since the board is the whole book now).
+ * The toolbar's search and Needs me are the page's own, so they start clear
+ * at every stop.
+ *
+ * The page scrolls. The board is one screen tall under the presenter bar,
+ * less the gaps above and below it, and at most 800px, so once the header
+ * has scrolled away (with Upline's own bar) the board sits whole on screen,
+ * every column's top and bottom in view; the columns only take the scroll
+ * from there (Board.tsx). Until 2026-10-01 the header and the board shared
+ * one screen and only the columns scrolled, which left the board about 430px
+ * on a laptop and Ashley stuck above the fold.
  */
 export function Home({ day, walk, ...props }: BoardProps) {
   const [query, setQuery] = useState("");
@@ -23,8 +31,8 @@ export function Home({ day, walk, ...props }: BoardProps) {
   const needs = needsMe(boardFor(day, walk), day, walk).length;
 
   return (
-    <div className="flex h-[calc(100svh-var(--demo-bar-h)-4rem-1px)] min-h-[36rem] flex-col">
-      <div className="shell max-w-none shrink-0 pt-25">
+    <>
+      <div className="shell max-w-none pt-25">
         <h1 id="home-title" className="text-4xl">
           {day === "fri" ? `Happy ${dayName[day]}` : "Good morning"}, {agency.agent.first}
         </h1>
@@ -55,10 +63,13 @@ export function Home({ day, walk, ...props }: BoardProps) {
         </div>
       </div>
 
-      <div className="shell max-w-none min-h-0 flex-1 pt-4 pb-6">
-        <Board day={day} walk={walk} query={query} needsOnly={needsOnly} {...props} />
+      {/* 2.5rem is the gaps above and below the board, pt-4 and pb-6. */}
+      <div className="shell max-w-none pt-4 pb-6">
+        <div className="h-[calc(100svh-var(--demo-bar-h)-2.5rem)] max-h-200">
+          <Board day={day} walk={walk} query={query} needsOnly={needsOnly} {...props} />
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 

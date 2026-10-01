@@ -5,9 +5,10 @@
 // reach its state, and is taken at 1440 wide, 2x, with the presenter bar
 // cropped off and every scrolling region (drawer tabs, phase modals, the
 // phone) opened out to its full height, so nothing on the feedback board
-// hides behind a scroll. The homepage's board is the exception: it's one
-// screen by design, with each column scrolling inside itself, so it's
-// captured as Jenna sees it. Run after any change: npm run capture
+// hides behind a scroll. The homepage's board is the exception: its columns
+// scroll inside themselves by design, so it's captured as Jenna sees it on a
+// screen tall enough for the whole page, with the board at its 800px. Run
+// after any change: npm run capture
 //
 // Writes captures/NN-slug.png and captures/manifest.json, which says what
 // each file is, which stop it belongs to and how it was reached; the board
