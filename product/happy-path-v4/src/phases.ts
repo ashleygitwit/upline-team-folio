@@ -1,5 +1,6 @@
 import { boardFor, columns as steps, daysUntil, type ColumnId, type Entry } from "@/board";
-import type { Day } from "@/data";
+import { dayDate, earlier, pruitt, thisWeek, type Day } from "@/data";
+import { pools } from "@/pipeline";
 import { renewalDate } from "@/tasks";
 import type { Walk } from "@/walk";
 
@@ -24,8 +25,9 @@ export type PhaseId = "initial-outreach" | "shopping-renewal" | "closing" | "com
 export type PhaseStatus = "scheduled" | "inProgress" | "readyForReview" | "awaitingResponse";
 
 /**
- * The four columns. Completed is `narrow`, half as wide as the others, since
- * its lines are names alone. Each of the others opens filtered to `opensOn`,
+ * The four columns, all as wide as each other. (Completed was half as wide
+ * for part of 2026-10-01, when its cards were names alone; they say when
+ * each was completed now.) Each of the others opens filtered to `opensOn`,
  * what Jenna most likely came to it for (Board.tsx): the emails going out,
  * the recommendations to send, and the approvals to bind.
  */
@@ -33,7 +35,6 @@ export const phases: {
   id: PhaseId;
   label: string;
   mini?: boolean;
-  narrow?: boolean;
   statuses: PhaseStatus[];
   opensOn?: PhaseStatus;
   empty: string;
@@ -60,7 +61,7 @@ export const phases: {
     opensOn: "readyForReview",
     empty: "Nothing to close.",
   },
-  { id: "completed", label: "Completed", mini: true, narrow: true, statuses: [], empty: "Nothing finished yet." },
+  { id: "completed", label: "Completed", mini: true, statuses: [], empty: "Nothing finished yet." },
 ];
 
 export const statusLabel: Record<PhaseStatus, string> = {
@@ -77,6 +78,37 @@ export const statusLabel: Record<PhaseStatus, string> = {
  * says ("Renewal email scheduled for Tues 9AM.").
  */
 export const sendsAt = (day: Day) => (day === "mon" ? "Tomorrow, 9 AM" : "Tuesday, 9 AM");
+
+const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const short = (d: Date) => `${months[d.getMonth()]} ${d.getDate()}`;
+const daysBefore = (d: Date, n: number) => new Date(d.getFullYear(), d.getMonth(), d.getDate() - n);
+
+/** The Friday before the walk's week. */
+const lastFriday = daysBefore(dayDate.mon, 3);
+
+/**
+ * The day a completed renewal was closed out, "Oct 9", as its Completed card
+ * says it on the far right. Nothing in the walk keeps it, so it's worked out
+ * to agree with the drawers: a household skipped on the day it was skipped;
+ * the Pruitts on Friday; this week's other named households that finished
+ * (Andy Pham, staying with Erie) on Tuesday, when they answered the renewal
+ * email; the earlier weeks' named households on Monday, when Jenna clears
+ * them; of Monday's sent recommendations, the two already approved on Monday
+ * too (Lena Park's drawer says Monday at 4:00 PM) and the rest on Tuesday,
+ * once they answered; and anyone finished before the week 13 days before the
+ * renewal, as Grace Tanaka was (Oct 2, for Oct 15), and no later than the
+ * Friday before it.
+ */
+export function completedOn(e: Entry, walk: Walk): string {
+  if (walk.skipped.includes(e.id)) return short(dayDate[walk.outreachOn[e.id] ?? "mon"]);
+  if (e.id === pruitt.id) return short(dayDate.fri);
+  if (thisWeek.some((x) => x.id === e.id)) return short(daysBefore(dayDate.wed, 1));
+  if (earlier.some((x) => x.id === e.id)) return short(dayDate.mon);
+  const sent = pools.sent.findIndex((h) => h.id === e.id);
+  if (sent >= 0) return short(sent < 2 ? dayDate.mon : daysBefore(dayDate.wed, 1));
+  const before = daysBefore(renewalDate(e.renews), 13);
+  return short(before < lastFriday ? before : lastFriday);
+}
 
 /** A household on the four-column board: its entry, its step on the six-column board, and its status. */
 export type Placed = { e: Entry; step: ColumnId; status?: PhaseStatus };

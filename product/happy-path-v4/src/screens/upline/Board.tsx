@@ -21,7 +21,7 @@ import type { Phase } from "@/household/activity";
 import { cards, fileFor } from "@/household/data";
 import { firstCards } from "@/household/firstCards";
 import { RowTip } from "@/lib/rowTip";
-import { phases, phasesFor, statusLabel, type Placed, type PhaseStatus } from "@/phases";
+import { completedOn, phases, phasesFor, statusLabel, type Placed, type PhaseStatus } from "@/phases";
 import { shopSentence } from "@/pipeline";
 import { statusFor } from "@/status";
 import { isSnoozed, requestsFor, snoozeLabel } from "@/tasks";
@@ -93,13 +93,7 @@ export function Board(props: BoardProps) {
     update((w) => ({ folded: fold ? [...w.folded, col] : w.folded.filter((c) => c !== col) }));
   const template = board
     .map((c) =>
-      isFolded(c.id)
-        ? "3rem"
-        : c.narrow
-          ? "minmax(6.5rem, 0.5fr)"
-          : c.mini
-            ? "minmax(13rem, 1fr)"
-            : "minmax(13.75rem, 1fr)",
+      isFolded(c.id) ? "3rem" : c.mini ? "minmax(13rem, 1fr)" : "minmax(13.75rem, 1fr)",
     )
     .join(" ");
 
@@ -156,8 +150,6 @@ type BoardColumn = {
   id: string;
   label: string;
   mini?: boolean;
-  /** Half as wide as the others: the four-column board's Completed, which is names alone. */
-  narrow?: boolean;
   items: Placed[];
   statuses?: PhaseStatus[];
   /** The status the column opens on, if anyone has it. */
@@ -467,6 +459,21 @@ function Pct({ pct }: { pct: number }) {
 }
 
 /**
+ * When a renewal was completed, "Oct 9", where a card has its change, on the
+ * four-column board's Completed cards (completedOn in phases.ts): set as the
+ * change is, in the mono face in gray, since the change and the countdown
+ * are done with once a renewal is closed.
+ */
+function Completed({ on }: { on: string }) {
+  return (
+    <span className="shrink-0 font-mono text-sm text-muted-foreground">
+      <span className="sr-only">Completed </span>
+      {on}
+    </span>
+  );
+}
+
+/**
  * A household's name, as a card's heading and a mini line set it alike: the
  * headings' display face at 500, at the line's 14px. Until 2026-10-01 a mini
  * line's name was the body face at 400, so the same household read two ways.
@@ -573,7 +580,7 @@ function MiniRow({
         {timed(accent) && (
           <Countdown renews={e.renews} day={day} tone={accent} short onOpen={e.invented ? undefined : open} />
         )}
-        {col !== "completed" && <Pct pct={e.pct} />}
+        {col !== "completed" ? <Pct pct={e.pct} /> : roomy && <Completed on={completedOn(e, walk)} />}
       </div>
       {status && <PhaseStatusLine status={status} day={day} className="mt-1" />}
       {!e.invented && <Requests requests={requestsFor(e.id, day, walk)} className="mt-1" />}
