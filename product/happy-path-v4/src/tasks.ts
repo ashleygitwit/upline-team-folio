@@ -1,5 +1,6 @@
 import { dayDate, days, earlier, mondayNeeds, pruitt, thisWeek, type Day, type Earlier } from "@/data";
 import { cards } from "@/household/data";
+import { firstCards } from "@/household/firstCards";
 import type { Snooze, SnoozeUntil, Walk } from "@/walk";
 
 /**
@@ -16,8 +17,9 @@ export type Task = { id: string; kind: "shopped" | "closing"; renews: string; ea
 
 /**
  * Everything that would need Jenna on the walk's day, soonest renewal first,
- * snoozed or not. On Monday that's the earlier weeks' four; on Thursday and
- * Friday it's the Pruitts.
+ * snoozed or not. On Monday that's the earlier weeks' four and two of the
+ * first cards (firstCards.ts), Hank Fischer's results and Lena Park's
+ * approval; on Thursday and Friday it's the Pruitts.
  */
 export function allTasks(day: Day, walk: Walk): Task[] {
   const tasks: Task[] = [];
@@ -26,6 +28,9 @@ export function allTasks(day: Day, walk: Walk): Task[] {
   if (day === "fri" && !skipped) tasks.push({ id: pruitt.id, kind: "closing", renews: pruitt.renews });
   if (day === "mon") {
     for (const e of mondayNeeds()) tasks.push({ id: e.id, kind: e.monday!.section, renews: e.renews, earlier: e });
+    for (const f of Object.values(firstCards)) {
+      if (f.monday) tasks.push({ id: f.card.id, kind: f.monday, renews: f.card.renewal });
+    }
   }
   return tasks.sort((a, b) => renewalDate(a.renews).getTime() - renewalDate(b.renews).getTime());
 }
@@ -66,7 +71,10 @@ export function renewsIn(renews: string, day: Day) {
 
 /** A household's renewal, as "Nov 15", from whichever list has it. */
 export const renewsFor = (id: string) =>
-  cards.find((c) => c.id === id)?.renewal ?? earlier.find((e) => e.id === id)?.renews ?? thisWeek.find((h) => h.id === id)!.renews;
+  cards.find((c) => c.id === id)?.renewal ??
+  firstCards[id]?.card.renewal ??
+  earlier.find((e) => e.id === id)?.renews ??
+  thisWeek.find((h) => h.id === id)!.renews;
 
 const daysBetween = (from: Date, to: Date) => Math.round((to.getTime() - from.getTime()) / 86_400_000);
 

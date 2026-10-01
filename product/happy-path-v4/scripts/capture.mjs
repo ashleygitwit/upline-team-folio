@@ -30,14 +30,14 @@ const MIN_HEIGHT = 900;
 // tall enough viewport shows it whole. The drawer and the dialog size to the
 // viewport, so the height is worked out per capture (see shot). A page over
 // the drawer hides what it covers, so the drawer grows to the page rather
-// than to the profile under it, and its body takes the height of what's in
-// it, so its footer comes after it rather than over it.
+// than to the profile under it, and its body takes at least the height of
+// what's in it, so its footer comes after it rather than over it.
 const unclamp = `
   *, *::before, *::after { animation-duration: 0s !important; animation-delay: 0s !important; transition: none !important; }
   .overflow-y-auto:not([data-board] .overflow-y-auto) { overflow: visible !important; }
   [data-slot="dialog-content"] { max-height: none !important; height: auto !important; }
   [data-slot="sheet-content"]:has(> [data-state="open"]) > [inert] { display: none !important; }
-  [data-phase-body] { flex: none !important; }
+  [data-phase-body] { flex: 1 0 auto !important; }
   [class*="max-w-[390px]"] { height: auto !important; min-height: 780px !important; max-height: none !important; overflow: visible !important; }
 `;
 
@@ -107,6 +107,12 @@ async function hover(name) {
 /** Opens a household's drawer from its line or card on the homepage's board. */
 async function openProfile(name) {
   await click(`Open ${name}`);
+  await page.waitForTimeout(250);
+}
+
+/** A line in the drawer's Recent activity that opens a page, by what its button says ("View: Renewal email sent"). */
+async function clickLine(name) {
+  await page.locator('[data-slot="sheet-content"] [role="tabpanel"]').getByRole("button", { name }).click();
   await page.waitForTimeout(250);
 }
 
@@ -367,6 +373,36 @@ const captures = [
     },
     after: () => page.locator('section[aria-labelledby="col-awaiting"] [tabindex="0"]').first().hover(),
   },
+  // The first cards (household/firstCards.ts): a profile and a page each.
+  ...[
+    ["04v", "cole-doyle", "Cole Doyle", "waiting on an answer, with a nudge for Wednesday", "nudge", () => clickBanner("Review")],
+    ["04w", "troy-lowry", "Troy Lowry", "being shopped", "shop in progress", () => clickBanner("View")],
+    ["04x", "hank-fischer", "Hank Fischer", "results to review", "results", () => clickBanner("Review")],
+    ["04y", "lena-park", "Lena Park", "approved, waiting to be bound", "close-out", () => clickBanner("Review")],
+    ["04z", "grace-tanaka", "Grace Tanaka", "bound before the week", "results, read-only", () => clickLine("View: You sent the recommendation")],
+  ].flatMap(([slug, file, name, what, pageName, open]) => [
+    {
+      slug: `${slug}-first-card-${file}`,
+      stop: 4,
+      title: `A first card: ${name}, ${what}`,
+      via: `${name}'s card (the drawer opens on Recent activity)`,
+      run: async () => {
+        await jump("Monday: Jenna opens Upline");
+        await openProfile(name);
+      },
+    },
+    {
+      slug: `${slug}a-first-card-${file}-page`,
+      stop: 4,
+      title: `${name}'s ${pageName}`,
+      via: `${name}'s drawer → ${pageName === "results, read-only" ? "Recent activity → You sent the recommendation" : "banner"}`,
+      run: async () => {
+        await jump("Monday: Jenna opens Upline");
+        await openProfile(name);
+        await open();
+      },
+    },
+  ]),
   // 5
   { slug: "05-review-the-pruitts-email", stop: 5, title: "Review the Pruitts' email", run: () => jump("Review the Pruitts' email") },
   {
@@ -561,6 +597,34 @@ const captures = [
       await openProfile("Diane Mercer");
     },
   },
+  ...[
+    ["10h", "elena-varga", "Elena Varga", "next week's email, scheduled", "renewal email, with Send now and Skip", () => clickBanner("Review")],
+    ["10i", "sara-ortiz", "Sara Ortiz", "waiting on an answer", "renewal email, sent Tuesday", () => clickLine("View: Renewal email sent")],
+  ].flatMap(([slug, file, name, what, pageName, open]) => [
+    {
+      slug: `${slug}-first-card-${file}`,
+      stop: 10,
+      title: `A first card: ${name}, ${what}`,
+      via: `${name}'s line (the drawer opens on Recent activity)`,
+      run: async () => {
+        await answerQuestionnaire();
+        await jump("Wednesday");
+        await openProfile(name);
+      },
+    },
+    {
+      slug: `${slug}a-first-card-${file}-page`,
+      stop: 10,
+      title: `${name}'s ${pageName}`,
+      via: `${name}'s drawer → ${slug === "10h" ? "banner" : "Recent activity → Renewal email sent"}`,
+      run: async () => {
+        await answerQuestionnaire();
+        await jump("Wednesday");
+        await openProfile(name);
+        await open();
+      },
+    },
+  ]),
   // 11
   { slug: "11-the-quotes-are-in", stop: 11, title: "The quotes are in", card: true, run: () => jump("The quotes are in") },
   // 12

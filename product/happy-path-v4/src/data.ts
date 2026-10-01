@@ -398,6 +398,24 @@ export const nudges: Nudge[] = [
     ].join("\n\n"),
   },
   {
+    // Cole Doyle is one of the first cards (household/firstCards.ts): waiting
+    // on an answer on Monday, he answers Wednesday morning after this goes.
+    key: "doyle-wed",
+    id: "inv-102",
+    what: "Nudge",
+    goes: "wed",
+    short: "Wed",
+    why: "Cole opened the email last week but hasn't answered the questions.",
+    subject: "Re: A heads up on your October 20 renewal",
+    email: [
+      "Hi Cole,",
+      "Just bumping this up. Your home and auto renew on October 20, which is coming up fast, and I'd like to shop it before then. Most of the increase is the hail claim, so it's worth seeing who rates it better.",
+      "The questions take about five minutes:",
+      `Answer a few quick questions → ${link("doyle")}`,
+      "Jenna",
+    ].join("\n\n"),
+  },
+  {
     key: "lindqvist-fri",
     id: "lindqvist",
     what: "Follow-up",

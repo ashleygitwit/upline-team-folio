@@ -22,6 +22,7 @@ import {
 import { earlier, money, options, pruitt, thisWeek, type Day } from "@/data";
 import type { Phase } from "@/household/activity";
 import { cards, fileFor } from "@/household/data";
+import { firstCards } from "@/household/firstCards";
 import { shopSentence } from "@/pipeline";
 import { statusFor } from "@/status";
 import { chipsFor, isSnoozed, snoozeLabel, type Chip } from "@/tasks";
@@ -487,6 +488,10 @@ const firstOf = (name: string) => name.split(" ")[0];
  * - Completed: how it ended, and, for anything Jenna closed out in the walk,
  *   her note and Undo.
  *
+ * A first card (firstCards.ts) says what the board gives it (board.ts), with
+ * the same View profile and close once it's approved, and the same note and
+ * Undo once it's closed out in the walk.
+ *
  * A task snoozed from the drawer's banner sinks to the foot of its column,
  * loses its accent, and says so, with Undo.
  */
@@ -500,8 +505,15 @@ function NamedCard({ e, col, accent, ...props }: BoardProps & { e: Entry; col: C
 
   let detail: React.ReactNode = null;
   let foot: React.ReactNode = null;
+  const note = walk.closed[e.id];
 
-  if (col === "ready") {
+  if (firstCards[e.id]) {
+    detail = e.detail;
+    if (e.approved) foot = <CloseOut onProfile={profile} />;
+    else if (col === "completed" && note !== undefined) {
+      foot = <Closed note={note} onUndo={() => update((w) => ({ closed: without(w.closed, e.id) }))} />;
+    }
+  } else if (col === "ready") {
     if (e.id === pruitt.id) {
       // What the shop found, whatever Jenna picks in the results.
       detail = shopSentence(
@@ -522,9 +534,7 @@ function NamedCard({ e, col, accent, ...props }: BoardProps & { e: Entry; col: C
     } else if (ew?.monday) {
       detail = earlierShop(e.id);
     }
-  }
-
-  if (col === "sent") {
+  } else if (col === "sent") {
     if (e.approved) {
       detail = h ? statusFor(h, "fri", { ...walk, bound: false }).detail : ew?.monday?.detail;
       foot = <CloseOut onProfile={profile} />;
@@ -535,10 +545,7 @@ function NamedCard({ e, col, accent, ...props }: BoardProps & { e: Entry; col: C
     } else {
       detail = `Recommendation sent ${e.id === "marin" ? "Monday" : "Tuesday"}. Waiting on ${firstOf(e.name)}.`;
     }
-  }
-
-  if (col === "completed") {
-    const note = walk.closed[e.id];
+  } else if (col === "completed") {
     if (h?.id === pruitt.id && walk.bound && note !== undefined) {
       detail = statusFor(h, "fri", walk).detail;
       foot = <Closed note={note} onUndo={() => update((w) => ({ bound: false, closed: without(w.closed, e.id) }))} />;

@@ -5,7 +5,8 @@ import { Sheet } from "@/components/ui/sheet";
 import type { Day } from "@/data";
 import type { Page } from "@/household/activity";
 import { spoken } from "@/household/columns";
-import { cards, type Card } from "@/household/data";
+import type { Card } from "@/household/data";
+import { cardFor } from "@/household/households";
 import { HouseholdSheet } from "@/household/HouseholdSheet";
 import { ShopResults } from "@/household/ShopResults";
 import { focusPanel } from "@/lib/focus";
@@ -47,7 +48,7 @@ export function HouseholdDrawer({
 }) {
   // Keep the last household on screen while the sheet slides away.
   const [shown, setShown] = useState<Card | null>(null);
-  const card = cards.find((c) => c.id === id) ?? null;
+  const card = (id && cardFor(id)) || null;
   if (card && card !== shown) setShown(card);
 
   const [skipping, setSkipping] = useState<Card | null>(null);
@@ -69,7 +70,7 @@ export function HouseholdDrawer({
   const skip = () => {
     if (!skipping) return;
     const skipId = skipping.id;
-    update((w) => ({ skipped: [...new Set([...w.skipped, skipId])] }));
+    update((w) => ({ skipped: [...new Set([...w.skipped, skipId])], outreachOn: { ...w.outreachOn, [skipId]: day } }));
     setSkipping(null);
     done("Skipped · moved to closed for this cycle");
   };

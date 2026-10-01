@@ -71,6 +71,8 @@ export function Layer<T>({
  * button, which stays put over every page and closes the drawer. Then the
  * page's title, its body scrolling under them so neither scrolls away, and
  * its buttons in a footer under the scroll rather than at the body's foot.
+ * The header and the footer are white and the body between them gray 50, as
+ * the profile is under its tabs.
  *
  * Until 2026-10-01 these were modals centered over the page, wider and
  * shorter than the drawer, so they'd read as a dialog over the page rather
@@ -109,7 +111,7 @@ export function PhasePage({
         </h2>
         {description && <p className="mt-2 text-sm text-muted-foreground">{description}</p>}
       </div>
-      <div data-phase-body className="mt-3.5 min-h-0 flex-1 overflow-y-auto border-t px-5 pt-4.5 pb-7">
+      <div data-phase-body className="mt-3.5 min-h-0 flex-1 overflow-y-auto border-t bg-background px-5 pt-4.5 pb-7">
         {children}
       </div>
       {footer}

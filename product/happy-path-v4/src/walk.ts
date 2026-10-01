@@ -118,6 +118,12 @@ export type Walk = {
   nudges: Record<string, NudgeChoice>;
   /** Earlier weeks' recommendations Jenna sent from a drawer on Monday. */
   recsSent: string[];
+  /**
+   * The day Jenna sent a renewal email early or skipped it, by household. This
+   * week's six can only be on Monday; Elena Varga's waits until next week, so
+   * hers can be any day of the walk (firstCards.ts).
+   */
+  outreachOn: Record<string, Day>;
   /** Each household's notes, oldest first. */
   notes: Record<string, Note[]>;
   /** Tasks Jenna snoozed off the homepage, by household. */
@@ -143,6 +149,7 @@ export const initialWalk: Walk = {
   notesDrafted: false,
   nudges: {},
   recsSent: [],
+  outreachOn: {},
   notes: {},
   snoozed: {},
   danaLife: true,

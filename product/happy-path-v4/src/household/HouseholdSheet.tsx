@@ -14,7 +14,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/household/tabs";
 import { pruitt, nudgeByKey, type Day } from "@/data";
 import { activityFor, nudgeState, type Activity, type Banner, type Opens, type Page } from "@/household/activity";
 import { columnTitle, spoken } from "@/household/columns";
-import { fileFor, money, type Card, type QuoteDoc } from "@/household/data";
+import { money, type Card, type QuoteDoc } from "@/household/data";
+import { fileOf } from "@/household/households";
 import { focusPanel } from "@/lib/focus";
 import { Details } from "@/household/Details";
 import { Notes } from "@/household/Notes";
@@ -31,9 +32,10 @@ type Tab = "details" | "activity" | "notes";
 
 /**
  * A household, opened from its card or line on the homepage's board. Every
- * household has the same drawer, on white: the stage it's in, as the board's
+ * household has the same drawer: on white, the stage it's in, as the board's
  * column names it, over its name, a banner when something is going on, and
- * three tabs, Recent activity, Details and Notes, which always open on Recent
+ * three tabs, and under the tabs, on gray 50, what each one holds. The tabs
+ * are Recent activity, Details and Notes, which always open on Recent
  * activity, since what's coming up and what has happened is what Jenna opens
  * a household to see. Notes is Jenna's own. Closing the drawer gives the
  * focus back to whatever opened it (`returnFocus`): Radix gives it back only
@@ -94,7 +96,7 @@ export function HouseholdSheet({
   /** Gives the focus back to what opened the drawer, once it has closed. */
   returnFocus: (id: string) => void;
 }) {
-  const file = fileFor(card);
+  const file = fileOf(card);
   const activity: Activity = activityFor(card.id, day, walk) ?? {
     stage: columnTitle(card.col),
     banner: null,
@@ -299,15 +301,15 @@ export function HouseholdSheet({
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="activity" className="min-h-0 overflow-y-auto px-5 pt-4.5 pb-7">
+          <TabsContent value="activity" className="min-h-0 overflow-y-auto bg-background px-5 pt-4.5 pb-7">
             <RecentActivity activity={activity} onOpen={openPhase} />
           </TabsContent>
 
-          <TabsContent value="details" className="min-h-0 overflow-y-auto px-5 pt-4.5 pb-7">
+          <TabsContent value="details" className="min-h-0 overflow-y-auto bg-background px-5 pt-4.5 pb-7">
             <Details card={card} file={file} changed={changedFields(card.id, day, walk)} />
           </TabsContent>
 
-          <TabsContent value="notes" className="flex min-h-0 flex-col">
+          <TabsContent value="notes" className="flex min-h-0 flex-col bg-background">
             <Notes
               first={who}
               notes={walk.notes[card.id] ?? []}

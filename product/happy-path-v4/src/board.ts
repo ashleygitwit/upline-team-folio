@@ -1,5 +1,6 @@
 import { dayDate, earlier, thisWeek, type Day } from "@/data";
 import { cards } from "@/household/data";
+import { firstCards } from "@/household/firstCards";
 import { pickLine, pools, shopLine, type Invented } from "@/pipeline";
 import { statusFor } from "@/status";
 import { changeRequested, isSnoozed, renewalDate, renewsIn, type Chip } from "@/tasks";
@@ -46,6 +47,8 @@ export type Entry = {
   /** Said yes and waiting to be bound: its card carries Ready to close. */
   approved?: boolean;
   invented?: { h: Invented; detail?: string };
+  /** What a first card's card says (firstCards.ts), since it has no `invented` once it has a drawer. */
+  detail?: string;
 };
 
 /** The change as a whole percent: 18 for $4,820 → $5,690. */
@@ -217,6 +220,58 @@ const when = (renews: string) => Date.parse(`${renews} 2026`);
 const namedIds = [...thisWeek.map((h) => h.id), ...earlier.map((e) => e.id)];
 
 /**
+ * Where a first card (firstCards.ts) sits once Jenna has acted on it in the
+ * walk, and what its card says: a recommendation sent from its drawer on
+ * Monday goes out today, an approval closed out moves to Completed, an email
+ * sent early is waiting on an answer, and a skipped one is done. Anything
+ * else stays where the pipeline put it, saying what it said.
+ */
+function placeFirstCard(e: Entry, col: ColumnId, day: Day, walk: Walk): { col: ColumnId; detail?: string; approved?: boolean } {
+  const { h, detail } = e.invented!;
+  const first = firstCards[e.id].card.first;
+  if (walk.skipped.includes(e.id)) return { col: "completed", detail: "Skipped. You're handling this one yourself this time." };
+  if (col === "scheduled" && walk.approved.includes(e.id)) return { col: "awaiting" };
+  if (day === "mon" && col === "ready" && walk.recsSent.includes(e.id)) {
+    return { col: "sent", detail: `Recommended ${pickLine(h)}. Sent today, no answer yet.` };
+  }
+  if (e.approved) {
+    if (walk.closed[e.id] !== undefined) return { col: "completed", detail: `Bound with ${pickLine(h)}.` };
+    return {
+      col,
+      detail: `${first} approved ${h.shop.pick}. Bind it in the portal before ${h.renewsLong}.`,
+      approved: true,
+    };
+  }
+  return { col, detail };
+}
+
+/**
+ * The first cards, drawn as the named households are, with a drawer, in the
+ * places the pipeline gives them, and moved as the walk says. One that stays
+ * in its column keeps its place there, so it's still the first card.
+ */
+function placeFirstCards(board: Record<ColumnId, Entry[]>, day: Day, walk: Walk) {
+  const moved: [ColumnId, Entry][] = [];
+  for (const { id: col } of columns) {
+    board[col] = board[col].flatMap((e) => {
+      if (!firstCards[e.id]) return [e];
+      const to = placeFirstCard(e, col, day, walk);
+      const entry: Entry = {
+        ...e,
+        name: firstCards[e.id].card.name,
+        invented: undefined,
+        detail: to.detail,
+        approved: to.approved,
+      };
+      if (to.col === col) return [entry];
+      moved.push([to.col, entry]);
+      return [];
+    });
+  }
+  for (const [col, e] of moved) board[col].push(e);
+}
+
+/**
  * Every column's households on the walk's day. Scheduled runs biggest
  * increase first, by percent as the board shows it, since the biggest jumps
  * are who is likeliest to shop on their own (the M1 rule: rank the biggest
@@ -224,6 +279,7 @@ const namedIds = [...thisWeek.map((h) => h.id), ...earlier.map((e) => e.id)];
  */
 export function boardFor(day: Day, walk: Walk): Record<ColumnId, Entry[]> {
   const board = inventedFor(day);
+  placeFirstCards(board, day, walk);
   for (const id of namedIds) board[namedColumn(id, day, walk)].push(named(id, day, walk));
   for (const col of columns) {
     board[col.id].sort(

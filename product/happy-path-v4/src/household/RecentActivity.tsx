@@ -87,7 +87,7 @@ function Line({
         <span
           className={cn(
             "relative mt-3 size-2.5",
-            big ? "bg-primary ring-4 ring-blue-100 @md:mt-7.5" : next ? "border-2 border-primary bg-popover" : "bg-muted-foreground",
+            big ? "bg-primary ring-4 ring-blue-100 @md:mt-7.5" : next ? "border-2 border-primary bg-background" : "bg-muted-foreground",
           )}
         />
       </span>
