@@ -102,9 +102,9 @@ const phaseIcons: Record<PhaseStatus, LucideIcon> = {
 };
 
 /**
- * Where a card is in its column on the four-column board (phases.ts, an
- * experiment), in words after an icon: Scheduled by the envelope with a
- * clock at its corner, which already means an email set to go out; Awaiting
+ * Where a card is in its column on the board (phases.ts), in words after an
+ * icon: Scheduled by the envelope with a clock at its corner, which already
+ * means an email set to go out; Awaiting
  * Response by an hourglass, for a wait on someone else, since the clock
  * means the countdown and nothing else; In Progress by a magnifying glass,
  * for Upline out shopping; and Ready for Review by an eye. Ready for Review

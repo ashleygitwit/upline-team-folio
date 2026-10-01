@@ -5,21 +5,19 @@ import { renewalDate } from "@/tasks";
 import type { Walk } from "@/walk";
 
 /**
- * An experiment, from 2026-10-01: the homepage's board in four columns, one
- * for each phase of a renewal, with a status on every card saying where in
- * the phase it is, in place of a column for every step (board.ts). The
- * presenter bar's 4 columns switch turns it on (`fourColumns` in walk.ts);
- * off, the default, the board is the six columns.
+ * The homepage's board in four columns, one for each phase of a renewal, with
+ * a status on every card saying where in the phase it is (Board.tsx). It was
+ * an experiment beside the six-column board, one column for each step, from
+ * 2026-10-01, behind a switch in the presenter bar, and replaced it the same
+ * day.
  *
- * Every household goes where its step on the six-column board says, and keeps
- * that step (`step`), so the walk and the deadlines work as they do there,
- * and its card says what that step's card says. The one thing new is a wait
- * the six columns don't have, Closing's Awaiting Response: bound, and
- * waiting on the carrier to confirm. Nothing in the walk gets there, since
- * closing out still goes straight to Completed, so it's three of the
- * invented households bound before the walk's day.
- *
- * To take the experiment out, delete this file and what imports it.
+ * Every household goes where its step says (board.ts, which still works the
+ * week out step by step) and keeps that step (`step`), so the walk and the
+ * deadlines work as they did, and its card says what that step's card said.
+ * The one thing new is a wait the six steps don't have, Closing's Awaiting
+ * Response: bound, and waiting on the carrier to confirm. Nothing in the
+ * walk gets there, since closing out still goes straight to Completed, so
+ * it's three of the invented households bound before the walk's day.
  */
 export type PhaseId = "initial-outreach" | "shopping-renewal" | "closing" | "completed";
 export type PhaseStatus = "scheduled" | "inProgress" | "readyForReview" | "awaitingResponse";
@@ -110,7 +108,7 @@ export function completedOn(e: Entry, walk: Walk): string {
   return short(before < lastFriday ? before : lastFriday);
 }
 
-/** A household on the four-column board: its entry, its step on the six-column board, and its status. */
+/** A household on the board: its entry, its step (board.ts), and its status. */
 export type Placed = { e: Entry; step: ColumnId; status?: PhaseStatus };
 
 /**

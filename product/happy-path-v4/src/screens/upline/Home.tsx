@@ -1,4 +1,3 @@
-import { cn } from "cn";
 import { boardFor } from "@/board";
 import { agency, pruitt, dayName, money, optionById, options, type Day } from "@/data";
 import { Board, type BoardProps } from "@/screens/upline/Board";
@@ -6,35 +5,29 @@ import type { Walk } from "@/walk";
 
 /**
  * The homepage, the same every day: a greeting, the day's line, then the
- * board. The header is set as the v3 Policyholder List's was,
- * left-aligned on the page's edge with the room above it that page had (its
- * 40px, the Home link and 40px more), and the board follows at that page's
- * gaps. The blue band that sat here came off on 2026-09-30, after
- * the board replaced the Action Needed and Scheduled Emails sections (the
+ * board. The header is set as the v3 Policyholder List's was, left-aligned
+ * with the room above it that page had (its 40px, the Home link and 40px
+ * more), and the board follows at that page's gaps. The blue band that sat
+ * here came off on 2026-09-30, after the board replaced the Action Needed and Scheduled Emails sections (the
  * Policyholder List went with them, since the board is the whole book now).
  * The toolbar between them, Needs me and a name search, came off on
  * 2026-10-01.
  *
- * The page scrolls. The board is one screen tall under the presenter bar,
- * less the gaps above and below it, and at most 800px, so once the header
- * has scrolled away (with Upline's own bar) the board sits whole on screen,
- * every column's top and bottom in view; the columns only take the scroll
- * from there (Board.tsx). Until 2026-10-01 the header and the board shared
- * one screen and only the columns scrolled, which left the board about 430px
- * on a laptop and Ashley stuck above the fold.
+ * The header and the board take v3's Policyholder List width too, at most
+ * 1280, centered, so a wide window leaves room either side (Upline's bar
+ * follows, so the mark keeps their edge). The board has no height of its
+ * own, as v3's had none: it's as long as its longest column, and the page
+ * scrolls. Until 2026-10-01 it was one screen tall, at most 800px, with each
+ * column scrolling inside itself once the page had scrolled it whole into
+ * view.
  */
 export function Home({ day, walk, ...props }: BoardProps) {
-  // The four-column board (phases.ts) takes v3's Policyholder List width:
-  // the header and the board at most 1280 wide, centered, so a wide window
-  // leaves room either side (Upline's bar follows, so the mark keeps their
-  // edge).
-  const width = walk.fourColumns ? "max-w-7xl" : "max-w-none";
   return (
     <>
       {/* The toolbar under the line (Needs me and search) came off on
           2026-10-01, so the board follows the line at the 32px the toolbar
           did. */}
-      <div className={cn("shell pt-25 pb-4", width)}>
+      <div className="shell max-w-7xl pt-25 pb-4">
         <h1 id="home-title" className="text-4xl">
           {day === "fri" ? `Happy ${dayName[day]}` : "Good morning"}, {agency.agent.first}
         </h1>
@@ -43,15 +36,8 @@ export function Home({ day, walk, ...props }: BoardProps) {
         </p>
       </div>
 
-      {/* 2.5rem is the gaps above and below the board, pt-4 and pb-6. The
-          four-column board has no height of its own, as v3's Policyholder
-          List board had none: it's as long as its longest column, and the
-          page scrolls. (For part of 2026-10-01 it was a screen tall, its
-          columns ruled apart by hairlines and each scrolling inside itself.) */}
-      <div className={cn("shell pt-4 pb-6", width)}>
-        <div className={walk.fourColumns ? undefined : "h-[calc(100svh-var(--demo-bar-h)-2.5rem)] max-h-200"}>
-          <Board day={day} walk={walk} {...props} />
-        </div>
+      <div className="shell max-w-7xl pt-4 pb-6">
+        <Board day={day} walk={walk} {...props} />
       </div>
     </>
   );

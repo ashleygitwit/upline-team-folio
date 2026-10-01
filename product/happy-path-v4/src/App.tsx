@@ -49,12 +49,7 @@ export function App() {
   return (
     <TooltipProvider>
       <div className="flex min-h-svh flex-col">
-        <DemoBar
-          index={index}
-          onGo={setIndex}
-          fourColumns={walk.fourColumns}
-          onFourColumns={(on) => update({ fourColumns: on })}
-        />
+        <DemoBar index={index} onGo={setIndex} />
         <main className="flex-1">
           {screen.text && <Interlude key={screen.id} title={screen.label} when={screen.where} text={screen.text} />}
           {screen.id === "monday-email" && <MondayEmail {...props} />}

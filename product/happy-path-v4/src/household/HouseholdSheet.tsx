@@ -272,11 +272,8 @@ export function HouseholdSheet({
       {/* The profile, which nothing in can take the focus while a page covers it. */}
       <div inert={page !== null} className="flex min-h-0 flex-1 flex-col">
         <SheetHeader className="gap-0 px-5 pt-4.5 pb-0 pr-14">
-          {/* The board's column, or on the four-column experiment (phases.ts)
-              its column and the card's status. */}
-          <p className="eyebrow text-muted-foreground">
-            {(walk.fourColumns && phaseLabel(card.id, day, walk)) || activity.stage}
-          </p>
+          {/* The board's column and the card's status (phases.ts). */}
+          <p className="eyebrow text-muted-foreground">{phaseLabel(card.id, day, walk) ?? activity.stage}</p>
           <SheetTitle className="mt-1.5 font-display text-2xl">{card.name}</SheetTitle>
           <SheetDescription className="mt-2">
             {card.jumpPct === 0

@@ -130,10 +130,6 @@ export type Walk = {
   snoozed: Record<string, Snooze>;
   /** Whether Leah said yes to a life quote in her questionnaire. */
   danaLife: boolean;
-  /** The board's columns Jenna folded to a strip, by id (board.ts); they stay folded for the walk. */
-  folded: string[];
-  /** Whether the board is the four-column experiment (phases.ts), from the presenter bar's switch. */
-  fourColumns: boolean;
 };
 
 export const initialWalk: Walk = {
@@ -155,8 +151,6 @@ export const initialWalk: Walk = {
   notes: {},
   snoozed: {},
   danaLife: true,
-  folded: [],
-  fourColumns: false,
 };
 
 export type WalkProps = {

@@ -58,7 +58,7 @@ export function Upline({
   return (
     <div className="min-h-[calc(100svh-var(--demo-bar-h))] bg-background">
       <div ref={appBar}>
-        <AppBar onHome={() => setHousehold(null)} narrow={props.walk.fourColumns} />
+        <AppBar onHome={() => setHousehold(null)} />
       </div>
 
       <Home day={day} household={household} onHousehold={open} {...props} />
