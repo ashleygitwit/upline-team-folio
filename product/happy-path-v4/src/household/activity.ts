@@ -15,20 +15,28 @@ import { cards } from "@/household/data";
 import { changedFields, isSnoozed, snoozeLabel } from "@/tasks";
 import type { Walk } from "@/walk";
 
-/** A phase's modal, opened from the drawer's banner or from a line in Recent activity. */
+/** A phase's page, which slides over the drawer from its banner or from a line in Recent activity. */
 export type Phase = "outreach" | "nudge" | "shopping" | "results" | "closing";
 
-/** What a banner or a line opens, the word it says it with, and for a nudge, which one. */
-export type Opens = { phase: Phase; action: string; nudge?: string };
+/** A page over the drawer: its phase, and for a nudge, which one. */
+export type Page = { phase: Phase; nudge?: string };
+
+/** What a banner or a line opens, and the word it says it with. */
+export type Opens = Page & { action: string };
 
 /**
- * One line in Recent activity. A big one needs Jenna, so it's drawn as a
- * card with `opens` as its button; any other line with `opens` has a link.
+ * One line in Recent activity. A big one needs Jenna, or is an email she can
+ * review before it goes out on its own, so it's drawn as a card with `opens`
+ * as its button; any other line with `opens` has a link.
  */
 export type Item = { when: string; label: string; detail?: string; opens?: Opens; big?: boolean };
 
-/** The drawer's banner: blue when it needs Jenna, gray when it only says what's going on. */
-export type Banner = { text: string; tone: "blue" | "gray"; opens?: Opens };
+/**
+ * The drawer's banner: blue when it needs Jenna, gray when it only says
+ * what's going on. One for an email that's scheduled to go leads with a
+ * clock.
+ */
+export type Banner = { text: string; tone: "blue" | "gray"; opens?: Opens; scheduled?: boolean };
 
 /** A shop in progress: each carrier, whether its quote is back, and when the results are due. */
 export type Shop = { carriers: { name: string; back?: boolean }[]; due: string };
@@ -36,7 +44,7 @@ export type Shop = { carriers: { name: string; back?: boolean }[]; due: string }
 /**
  * Where a household stands on the walk's day, for its drawer: the stage over
  * its name, the banner, and Recent activity, which is what's coming up and
- * what has happened, newest first. The rest is what the phase modals say
+ * what has happened, newest first. The rest is what the phase pages say
  * once there's nothing left to do in them.
  */
 export type Activity = {
@@ -140,6 +148,7 @@ function monday(h: Household, walk: Walk): Activity {
       tone: "gray",
       text: early ? "Renewal email sent." : "Renewal email scheduled for Tues 9AM.",
       opens: review,
+      scheduled: !early,
     },
     upNext: [
       ...(early
@@ -150,6 +159,7 @@ function monday(h: Household, walk: Walk): Activity {
               label: "Renewal email goes out",
               detail: "Drafted in your voice and sent from your inbox.",
               opens: review,
+              big: true,
             },
           ]),
       renewal(h.renews),
@@ -220,8 +230,16 @@ function nudge(key: string, day: Day, walk: Walk): { banner: Banner | null; upNe
     return { banner: null, upNext: [], past: [{ when: `${dayShort[n.goes!]} 9:00 AM`, label: `${n.what} sent`, opens: view }] };
   }
   return {
-    banner: { tone: "gray", text: `${n.what} scheduled for ${n.short} 9AM.`, opens: review },
-    upNext: [{ when: `${n.goes ? dayShort[n.goes] : "Mon"} 9:00 AM`, label: `${n.what} goes out`, detail: n.why, opens: review }],
+    banner: { tone: "gray", text: `${n.what} scheduled for ${n.short} 9AM.`, opens: review, scheduled: true },
+    upNext: [
+      {
+        when: `${n.goes ? dayShort[n.goes] : "Mon"} 9:00 AM`,
+        label: `${n.what} goes out`,
+        detail: n.why,
+        opens: review,
+        big: true,
+      },
+    ],
     past: [],
   };
 }
@@ -683,11 +701,327 @@ const earlierWeeks: Record<string, (day: Day, walk: Walk) => Activity> = {
   }),
 };
 
+/* ------------------------------------------------------------------ *
+ * The first cards (firstCards.ts): the invented households that are the
+ * first card in a column on some day of the walk, each told the way a named
+ * household on the same path is.
+ * ------------------------------------------------------------------ */
+
+/** A first card's renewal email, still waiting to go: scheduled, sent early, or skipped. */
+function waitingEmail(
+  id: string,
+  first: string,
+  day: Day,
+  walk: Walk,
+  { renews, past }: { renews: string; past: Item[] },
+): Activity {
+  const on = walk.outreachOn[id] ?? day;
+  const review: Opens = { phase: "outreach", action: "Review" };
+  const view: Opens = { phase: "outreach", action: "View" };
+  if (walk.skipped.includes(id)) {
+    return {
+      stage: stage.closed,
+      banner: { tone: "gray", text: `Skipped. ${first} won't be emailed this time.`, opens: review },
+      upNext: [],
+      past: [
+        { when: dayShort[on], label: "You skipped outreach", detail: "You're handling this one yourself this time.", opens: review },
+        ...past,
+      ],
+    };
+  }
+  if (walk.approved.includes(id)) {
+    return {
+      stage: stage.reached,
+      banner: { tone: "gray", text: "Renewal email sent.", opens: view },
+      upNext: [renewal(renews)],
+      past: [{ when: dayShort[on], label: "You sent the renewal email", opens: view }, ...past],
+      outreachSent: `Sent ${dayName[on]}.`,
+    };
+  }
+  return {
+    stage: columnTitle("outreach"),
+    banner: { tone: "gray", text: "Renewal email scheduled for Tues 9AM.", opens: review, scheduled: true },
+    upNext: [
+      {
+        when: "Tue 9:00 AM",
+        label: "Renewal email goes out",
+        detail: "Drafted in your voice and sent from your inbox.",
+        opens: review,
+        big: true,
+      },
+      renewal(renews),
+    ],
+    past,
+  };
+}
+
+const firstCardWeeks: Record<string, (day: Day, walk: Walk) => Activity> = {
+  /**
+   * Cole Doyle: waiting on an answer all week, with a nudge for Wednesday that
+   * he doesn't answer either. Under two weeks out, he's too close to shop, so
+   * what to do is Jenna's call. Until 2026-10-01 he answered the nudge and was
+   * shopped from Wednesday, six days out.
+   */
+  "inv-102": (day, walk) => {
+    const n = nudge("doyle-wed", day, walk);
+    return {
+      stage: stage.reached,
+      banner: n.banner,
+      upNext: [...n.upNext, renewal("Oct 20")],
+      past: [
+        ...n.past,
+        { when: "Oct 7", label: "Cole opened the renewal email", detail: "No questionnaire yet." },
+        { when: "Oct 6", label: "Renewal email sent", opens: outreachView },
+        { when: "Oct 2", label: "Auto-Owners' renewal came in 9% higher", detail: "The hail claim on the roof in April is most of it." },
+      ],
+      outreachSent: "Sent October 6.",
+    };
+  },
+
+  /** Troy Lowry: shopped Monday and sent Tuesday, as Neha Rao is. */
+  "inv-145": (day) => {
+    const carriers = ["Nationwide", "Travelers", "Westfield"];
+    const outreachSent = "Sent October 6.";
+    const start: Item[] = [
+      { when: "Oct 9", label: "Troy finished the questionnaire", detail: "He confirmed the new commute, 25 miles each way." },
+      { when: "Oct 6", label: "Renewal email sent", opens: outreachView },
+      { when: "Oct 1", label: "Nationwide's renewal came in 11% higher", detail: "Most of it is the longer commute since August." },
+    ];
+    if (day === "mon") {
+      return {
+        stage: columnTitle("shopping"),
+        banner: beingShopped("Tuesday"),
+        shop: shop(carriers, "Tuesday"),
+        upNext: [dueBack("Tue"), renewal("Oct 26")],
+        past: [shopping("Mon 8:30 AM", carriers, true), ...start],
+        outreachSent,
+      };
+    }
+    const sent: Item[] = [
+      { when: "Tue 2:00 PM", label: "You sent the recommendation", detail: "Switch from Nationwide to Travelers.", opens: resultsView },
+      {
+        when: "Tue 10:30 AM",
+        label: "Shopping results came back",
+        detail: "Travelers came in at $1,795 for the same coverage, $75 less than Nationwide's renewal.",
+      },
+      shopping("Mon 8:30 AM", carriers, false),
+      ...start,
+    ];
+    return {
+      stage: stage.sent,
+      banner: { tone: "gray", text: "Recommendation sent Tuesday. Waiting on Troy.", opens: resultsView },
+      upNext: [renewal("Oct 26")],
+      past: day === "wed" ? sent : [{ when: "Wed 8:05 PM", label: "Troy opened your recommendation", detail: "No answer yet." }, ...sent],
+      outreachSent,
+      recSent: "Sent to Troy Tuesday.",
+    };
+  },
+
+  /** Hank Fischer: results to send Monday, from the drawer or off-camera that afternoon, as Sofia Marin's are. */
+  "inv-160": (day, walk) => {
+    const inWalk = walk.recsSent.includes("inv-160");
+    const outreachSent = "Sent October 1.";
+    const start: Item[] = [
+      shopping("Oct 6", ["Grange", "Ohio Mutual", "Nationwide"], false),
+      { when: "Oct 5", label: "Hank finished the questionnaire", detail: "He sent Nolan's license number." },
+      { when: "Oct 1", label: "Renewal email sent", opens: outreachView },
+      { when: "Sep 28", label: "Grange's renewal came in 13% higher", detail: "Hank added his son Nolan as a driver in July." },
+    ];
+    const back: Item = {
+      when: "Oct 9",
+      label: "Shopping results came back",
+      detail: "Ohio Mutual came in at $1,573 for the same coverage, $235 less than Grange's renewal.",
+    };
+    if (day === "mon" && !inWalk) {
+      return {
+        stage: columnTitle("recommend"),
+        banner: {
+          tone: "blue",
+          text: "Hank's Renewal Shopping Results have been updated.",
+          opens: { phase: "results", action: "Review" },
+        },
+        upNext: [renewal("Oct 22")],
+        past: [{ ...back, big: true, opens: { phase: "results", action: "View results" } }, ...start],
+        outreachSent,
+      };
+    }
+    const sent: Item[] = [
+      { when: inWalk ? "Mon" : "Mon 3:00 PM", label: "You sent the recommendation", opens: resultsView },
+      back,
+      ...start,
+    ];
+    const recSent = "Sent to Hank Monday.";
+    if (day === "mon") {
+      return {
+        stage: stage.sent,
+        banner: { tone: "gray", text: "Recommendation sent to Hank.", opens: resultsView },
+        upNext: [renewal("Oct 22")],
+        past: sent,
+        outreachSent,
+        recSent,
+      };
+    }
+    return {
+      stage: stage.sent,
+      banner: { tone: "gray", text: "Recommendation sent Monday. Waiting on Hank.", opens: resultsView },
+      upNext: [renewal("Oct 22")],
+      past: day === "wed" ? sent : [{ when: "Wed 6:40 PM", label: "Hank opened your recommendation", detail: "No answer yet." }, ...sent],
+      outreachSent,
+      recSent,
+    };
+  },
+
+  /** Lena Park: approved, to bind Monday, closed out from the drawer or off-camera that afternoon, as Diane Mercer is. */
+  "inv-168": (day, walk) => {
+    const note = walk.closed["inv-168"];
+    const base = { outreachSent: "Sent September 25.", recSent: "Sent to Lena October 5." };
+    const start: Item[] = [
+      { when: "Oct 5", label: "You sent the recommendation", detail: "Switch from Erie to Grange.", opens: resultsView },
+      {
+        when: "Oct 2",
+        label: "Shopping results came back",
+        detail: "Grange came in at $2,082 for the same coverage, $257 less than Erie's renewal.",
+      },
+      shopping("Sep 29", ["Erie", "Grange", "Nationwide"], false),
+      { when: "Sep 28", label: "Lena finished the questionnaire" },
+      { when: "Sep 25", label: "Renewal email sent", opens: outreachView },
+      { when: "Sep 21", label: "Erie's renewal came in at the same price", detail: "Lena asked to shop it anyway." },
+    ];
+    const approved: Item = { when: "Oct 8", label: "Lena approved Grange" };
+    if (day === "mon" && note === undefined) {
+      return {
+        ...base,
+        stage: columnTitle("binding"),
+        banner: { tone: "blue", text: "Lena approved Grange. Bind it before Oct 16.", opens: { phase: "closing", action: "Review" } },
+        upNext: [renewal("Oct 16")],
+        past: [
+          {
+            ...approved,
+            detail: "Bind it in the Grange portal before October 16, then close it out.",
+            big: true,
+            opens: { phase: "closing", action: "Close out" },
+          },
+          ...start,
+        ],
+        closing: {
+          sub: "Lena approved Grange on October 8. Bind it in the Grange portal before October 16, then send Erie the cancellation.",
+          owes: ["Bind Grange in the portal", "Send Erie the cancellation"],
+        },
+      };
+    }
+    const inWalk = note !== undefined;
+    const done = "Bound with Grange. Erie cancellation sent.";
+    return {
+      ...base,
+      stage: stage.closed,
+      banner: null,
+      upNext: day === "fri" ? [] : [{ when: "Oct 16", label: "Grange policy starts", detail: "Erie's ends the same day." }],
+      past: [
+        ...(day === "fri" ? [{ when: "Oct 16", label: "Grange policy started" }] : []),
+        { when: inWalk ? "Mon" : "Mon 4:00 PM", label: "You closed it out", detail: note || done, opens: closingView },
+        approved,
+        ...start,
+      ],
+      closed: { when: "Monday", note: inWalk ? note : done },
+    };
+  },
+
+  /** Grace Tanaka: bound before the walk, with Erie starting Thursday. */
+  "inv-173": (day) => {
+    const done = "Bound Erie in the portal. Ohio Mutual cancellation sent.";
+    const history: Item[] = [
+      { when: "Oct 2", label: "You closed it out", detail: done, opens: closingView },
+      { when: "Oct 1", label: "Grace and Ken approved Erie" },
+      { when: "Sep 29", label: "You sent the recommendation", detail: "Switch from Ohio Mutual to Erie.", opens: resultsView },
+      {
+        when: "Sep 28",
+        label: "Shopping results came back",
+        detail: "Erie came in at $4,002 for the same coverage, $652 less than Ohio Mutual's renewal.",
+      },
+      shopping("Sep 24", ["Ohio Mutual", "Erie", "Westfield"], false),
+      { when: "Sep 23", label: "Grace finished the questionnaire", detail: "She'd like to see what else is out there." },
+      { when: "Sep 21", label: "Renewal email sent", opens: outreachView },
+      { when: "Sep 18", label: "Ohio Mutual's renewal came in 4% higher", detail: "Under 10%, so the email offered a shop." },
+    ];
+    const started = at(day) >= at("thu");
+    return {
+      stage: stage.closed,
+      banner: null,
+      upNext: started ? [] : [{ when: "Oct 15", label: "Erie policy starts", detail: "Ohio Mutual's ends the same day." }],
+      past: started ? [{ when: "Oct 15", label: "Erie policy started" }, ...history] : history,
+      outreachSent: "Sent September 21.",
+      recSent: "Sent to Grace and Ken September 29.",
+      closed: { when: "October 2", note: done },
+    };
+  },
+
+  /** Elena Varga: next week's email, drafted Wednesday, waiting until Tuesday. */
+  "inv-10": (day, walk) =>
+    waitingEmail("inv-10", "Elena", day, walk, {
+      renews: "Nov 26",
+      past: [
+        { when: "Wed 7:00 AM", label: "Renewal email drafted in your voice" },
+        {
+          when: "Tue",
+          label: "Auto-Owners' renewal came in 16% higher",
+          detail: "The roof is from 2008, and Auto-Owners now pays it actual cash value.",
+        },
+      ],
+    }),
+
+  /** Sara Ortiz: this week's email Tuesday, as the Pruitts' is; answers Wednesday night and is shopped from Thursday. */
+  "inv-82": (day, walk) => {
+    const drafted: Item = { when: "Mon 7:00 AM", label: "Renewal email drafted in your voice" };
+    const came: Item = {
+      when: "Last week",
+      label: "Erie's renewal came in 4% higher",
+      detail: "Under 10%, so the email offers a shop rather than pushing one.",
+    };
+    if (day === "mon" || walk.skipped.includes("inv-82")) {
+      return waitingEmail("inv-82", "Sara", day, walk, { renews: "Nov 4", past: [drafted, came] });
+    }
+    const early = walk.approved.includes("inv-82");
+    const outreachSent = early ? "Sent Monday." : "Sent Tuesday at 9:00 AM.";
+    const sent: Item[] = [
+      { when: "Tue 4:10 PM", label: "Sara opened the renewal email" },
+      { when: early ? "Mon" : "Tue 9:00 AM", label: early ? "You sent the renewal email" : "Renewal email sent", opens: outreachView },
+      drafted,
+      came,
+    ];
+    if (day === "wed") return { stage: stage.reached, banner: null, upNext: [renewal("Nov 4")], past: sent, outreachSent };
+    const carriers = ["Erie", "Nationwide", "Ohio Mutual"];
+    const shopped: Item[] = [
+      shopping("Thu 8:30 AM", carriers, true),
+      { when: "Wed 8:45 PM", label: "Sara finished the questionnaire", detail: "She'd like to see what else is out there." },
+      ...sent,
+    ];
+    if (day === "thu") {
+      return {
+        stage: columnTitle("shopping"),
+        banner: beingShopped("Monday"),
+        shop: shop(carriers, "Monday"),
+        upNext: [dueBack("Mon"), renewal("Nov 4")],
+        past: shopped,
+        outreachSent,
+      };
+    }
+    return {
+      stage: columnTitle("shopping"),
+      banner: { tone: "gray", text: "Being shopped. One carrier left, back Monday.", opens: shopView },
+      shop: shop(carriers, "Monday", ["Erie", "Nationwide"]),
+      upNext: [dueBack("Mon"), renewal("Nov 4")],
+      past: [{ when: "Fri 11:20 AM", label: "Two of three quotes are in", detail: "Ohio Mutual is the one left to quote." }, ...shopped],
+      outreachSent,
+    };
+  },
+};
+
 /**
  * A household's drawer on the walk's day, following what the presenter has
  * done: this week's six from Monday's email through the week's statuses and
- * nudges, and earlier weeks' six from Ashley's board on Monday to where the
- * homepage's board has them after. `null` for anyone without a file.
+ * nudges, earlier weeks' six from Ashley's board on Monday to where the
+ * homepage's board has them after, and the seven first cards through the
+ * week. `null` for anyone without a file.
  */
 export function activityFor(id: string, day: Day, walk: Walk): Activity | null {
   const base = baseActivity(id, day, walk);
@@ -729,5 +1063,5 @@ function baseActivity(id: string, day: Day, walk: Walk): Activity | null {
       outreachSent: sentEarly(h, walk) ? "Sent Monday." : "Sent Tuesday at 9:00 AM.",
     };
   }
-  return earlierWeeks[id]?.(day, walk) ?? null;
+  return earlierWeeks[id]?.(day, walk) ?? firstCardWeeks[id]?.(day, walk) ?? null;
 }

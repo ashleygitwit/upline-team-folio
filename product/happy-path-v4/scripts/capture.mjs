@@ -3,11 +3,12 @@
 // with Playwright in the Chrome already installed on the Mac, so nothing is
 // downloaded. Each capture starts from a fresh load, walks the clicks that
 // reach its state, and is taken at 1440 wide, 2x, with the presenter bar
-// cropped off and every scrolling region (drawer tabs, phase modals, the
-// phone) opened out to its full height, so nothing on the feedback board
-// hides behind a scroll. The homepage's board is the exception: it's one
-// screen by design, with each column scrolling inside itself, so it's
-// captured as Jenna sees it. Run after any change: npm run capture
+// cropped off and every scrolling region (drawer tabs, the pages over the
+// drawer, the phone) opened out to its full height, so nothing on the
+// feedback board hides behind a scroll. The homepage's board is the
+// exception: its columns scroll inside themselves by design, so it's
+// captured as Jenna sees it on a screen tall enough for the whole page, with
+// the board at its 800px. Run after any change: npm run capture
 //
 // Writes captures/NN-slug.png and captures/manifest.json, which says what
 // each file is, which stop it belongs to and how it was reached; the board
@@ -26,12 +27,17 @@ const BAR = 48; // --demo-bar-h
 const MIN_HEIGHT = 900;
 
 // Freezes motion and opens out anything that scrolls inside itself, so a
-// tall enough viewport shows it whole. The drawer and the modal size to the
-// viewport, so the height is worked out per capture (see shot).
+// tall enough viewport shows it whole. The drawer and the dialog size to the
+// viewport, so the height is worked out per capture (see shot). A page over
+// the drawer hides what it covers, so the drawer grows to the page rather
+// than to the profile under it, and its body takes at least the height of
+// what's in it, so its footer comes after it rather than over it.
 const unclamp = `
   *, *::before, *::after { animation-duration: 0s !important; animation-delay: 0s !important; transition: none !important; }
   .overflow-y-auto:not([data-board] .overflow-y-auto) { overflow: visible !important; }
   [data-slot="dialog-content"] { max-height: none !important; height: auto !important; }
+  [data-slot="sheet-content"]:has(> [data-state="open"]) > [inert] { display: none !important; }
+  [data-phase-body] { flex: 1 0 auto !important; }
   [class*="max-w-[390px]"] { height: auto !important; min-height: 780px !important; max-height: none !important; overflow: visible !important; }
 `;
 
@@ -76,7 +82,7 @@ const menuItem = (name) => page.getByRole("menuitem", { name });
 const tab = (name) => page.getByRole("tab", { name });
 
 /**
- * Grows the viewport to fit whatever is on screen. A drawer or modal opened
+ * Grows the viewport to fit whatever is on screen. A drawer or dialog opened
  * out to its full height can run past the viewport, and Playwright can't
  * scroll a fixed panel's button into view, so every click fits first.
  */
@@ -104,9 +110,30 @@ async function openProfile(name) {
   await page.waitForTimeout(250);
 }
 
-/** The drawer's banner, which opens the phase behind it. */
+/** A line in the drawer's Recent activity that opens a page, by what its button says ("View: Renewal email sent"). */
+async function clickLine(name) {
+  await page.locator('[data-slot="sheet-content"] [role="tabpanel"]').getByRole("button", { name }).click();
+  await page.waitForTimeout(250);
+}
+
+/**
+ * Closes the drawer, which stays open on the profile after Send now, Skip or
+ * Close out, so the board behind it shows. Its toast goes with it.
+ */
+async function closeDrawer() {
+  await page.waitForTimeout(400);
+  await page.keyboard.press("Escape");
+  await page.waitForTimeout(400);
+}
+
+/** The drawer's banner, which opens the page behind it. */
 async function clickBanner(action) {
-  await page.locator('[data-slot="sheet-content"]').getByRole("button", { name: new RegExp(`${action}$`) }).click();
+  // The banner is what follows the header; Recent activity, which the drawer
+  // opens on, can have a button that says the same thing.
+  await page
+    .locator('[data-slot="sheet-content"] [data-slot="sheet-header"] + div')
+    .getByRole("button", { name: new RegExp(`${action}$`) })
+    .click();
   await page.waitForTimeout(250);
 }
 
@@ -205,21 +232,21 @@ const captures = [
     slug: "04j-drawer-details",
     stop: 4,
     title: "Household drawer: Details (blue banner)",
-    via: "Rhea Iyer's card",
+    via: "Rhea Iyer's card → Details tab",
     run: async () => {
       await jump("Monday: Jenna opens Upline");
       await openProfile("Rhea Iyer");
+      await tab("Details").click();
     },
   },
   {
     slug: "04k-drawer-activity",
     stop: 4,
     title: "Household drawer: Recent activity",
-    via: "Rhea Iyer's drawer → Recent activity tab",
+    via: "Rhea Iyer's card (the drawer opens on Recent activity)",
     run: async () => {
       await jump("Monday: Jenna opens Upline");
       await openProfile("Rhea Iyer");
-      await tab("Recent activity").click();
     },
   },
   {
@@ -258,9 +285,9 @@ const captures = [
     },
   },
   {
-    slug: "04o-close-out-modal",
+    slug: "04o-close-out-page",
     stop: 4,
-    title: "Close-out modal",
+    title: "Close-out page, over Rhea Iyer's drawer",
     via: "Rhea Iyer's drawer → banner → Review",
     run: async () => {
       await jump("Monday: Jenna opens Upline");
@@ -269,17 +296,31 @@ const captures = [
     },
   },
   {
-    slug: "04p-closed-out",
+    slug: "04oa-closed-out-profile",
     stop: 4,
-    title: "After Close out: the card moves to Completed, with Undo",
-    via: "Close-out modal → What happened → Close out",
+    title: "After Close out: back on Rhea Iyer's profile, with the toast",
+    via: "Close-out page → What happened → Close out",
     run: async () => {
       await jump("Monday: Jenna opens Upline");
       await openProfile("Rhea Iyer");
       await clickBanner("Review");
       await page.getByRole("textbox", { name: "What happened" }).fill("Bound Westfield in the portal this morning. Mortgagee clause confirmed.");
       await click("Close out");
-      await page.waitForTimeout(3000);
+      await page.waitForTimeout(400);
+    },
+  },
+  {
+    slug: "04p-closed-out",
+    stop: 4,
+    title: "After Close out: the card moves to Completed, with Undo",
+    via: "Close-out page → What happened → Close out → close the drawer",
+    run: async () => {
+      await jump("Monday: Jenna opens Upline");
+      await openProfile("Rhea Iyer");
+      await clickBanner("Review");
+      await page.getByRole("textbox", { name: "What happened" }).fill("Bound Westfield in the portal this morning. Mortgagee clause confirmed.");
+      await click("Close out");
+      await closeDrawer();
     },
   },
   {
@@ -332,6 +373,36 @@ const captures = [
     },
     after: () => page.locator('section[aria-labelledby="col-awaiting"] [tabindex="0"]').first().hover(),
   },
+  // The first cards (household/firstCards.ts): a profile and a page each.
+  ...[
+    ["04v", "cole-doyle", "Cole Doyle", "waiting on an answer, with a nudge for Wednesday", "nudge", () => clickBanner("Review")],
+    ["04w", "troy-lowry", "Troy Lowry", "being shopped", "shop in progress", () => clickBanner("View")],
+    ["04x", "hank-fischer", "Hank Fischer", "results to review", "results", () => clickBanner("Review")],
+    ["04y", "lena-park", "Lena Park", "approved, waiting to be bound", "close-out", () => clickBanner("Review")],
+    ["04z", "grace-tanaka", "Grace Tanaka", "bound before the week", "results, read-only", () => clickLine("View: You sent the recommendation")],
+  ].flatMap(([slug, file, name, what, pageName, open]) => [
+    {
+      slug: `${slug}-first-card-${file}`,
+      stop: 4,
+      title: `A first card: ${name}, ${what}`,
+      via: `${name}'s card (the drawer opens on Recent activity)`,
+      run: async () => {
+        await jump("Monday: Jenna opens Upline");
+        await openProfile(name);
+      },
+    },
+    {
+      slug: `${slug}a-first-card-${file}-page`,
+      stop: 4,
+      title: `${name}'s ${pageName}`,
+      via: `${name}'s drawer → ${pageName === "results, read-only" ? "Recent activity → You sent the recommendation" : "banner"}`,
+      run: async () => {
+        await jump("Monday: Jenna opens Upline");
+        await openProfile(name);
+        await open();
+      },
+    },
+  ]),
   // 5
   { slug: "05-review-the-pruitts-email", stop: 5, title: "Review the Pruitts' email", run: () => jump("Review the Pruitts' email") },
   {
@@ -360,51 +431,58 @@ const captures = [
     slug: "05c-skipped",
     stop: 5,
     title: "After skipping: the Pruitts move to Completed, marked Skipped",
-    via: "Skip outreach → Skip outreach",
+    via: "Skip outreach → Skip outreach → close the drawer",
     run: async () => {
       await jump("Review the Pruitts' email");
       await click("Skip outreach");
       await page.getByRole("dialog").getByRole("button", { name: "Skip outreach" }).click();
-      await page.waitForTimeout(3000);
+      await closeDrawer();
     },
   },
   {
     slug: "05d-skipped-review-undo",
     stop: 5,
     title: "The skipped review, with Undo",
-    via: "After skipping → the Pruitts' email again",
+    via: "After skipping → back on the profile → banner → Review",
     run: async () => {
       await jump("Review the Pruitts' email");
       await click("Skip outreach");
       await page.getByRole("dialog").getByRole("button", { name: "Skip outreach" }).click();
       await page.waitForTimeout(3000); // let the toast go
-      // Jumping to the stop it's already on doesn't reopen the email, so step off it first.
-      await jump("Monday: Jenna opens Upline");
-      await jump("Review the Pruitts' email");
-      await page.waitForTimeout(250);
+      await clickBanner("Review");
     },
   },
   {
     slug: "05e-sent-now",
     stop: 5,
     title: "After Send now: the Pruitts move to Awaiting Response",
+    via: "Send now → close the drawer",
+    run: async () => {
+      await jump("Review the Pruitts' email");
+      await click("Send now");
+      await closeDrawer();
+    },
+  },
+  {
+    slug: "05ea-sent-now-profile",
+    stop: 5,
+    title: "After Send now: back on the Pruitts' profile, with the toast",
     via: "Send now",
     run: async () => {
       await jump("Review the Pruitts' email");
       await click("Send now");
-      await page.waitForTimeout(3000);
+      await page.waitForTimeout(400);
     },
   },
   {
     slug: "05f-review-over-drawer",
     stop: 5,
-    title: "The review opened over the drawer, once sent",
-    via: "Send now → the Pruitts' Awaiting Response line → banner → View",
+    title: "The review, read-only once sent",
+    via: "Send now → back on the profile → banner → View",
     run: async () => {
       await jump("Review the Pruitts' email");
       await click("Send now");
       await page.waitForTimeout(3000);
-      await openProfile("Leah & Tom Pruitt");
       await clickBanner("View");
     },
   },
@@ -450,29 +528,29 @@ const captures = [
     slug: "10a-pruitts-details-info-updated",
     stop: 10,
     title: "The Pruitts' drawer: Details, with the changed detail marked",
-    via: "The Pruitts' Shopping line",
+    via: "The Pruitts' Shopping line → Details tab",
     run: async () => {
       await answerQuestionnaire();
       await jump("Wednesday");
       await openProfile("Leah & Tom Pruitt");
+      await tab("Details").click();
     },
   },
   {
     slug: "10b-pruitts-activity",
     stop: 10,
     title: "The Pruitts' drawer: Recent activity while shopping",
-    via: "The Pruitts' drawer → Recent activity tab",
+    via: "The Pruitts' Shopping line (the drawer opens on Recent activity)",
     run: async () => {
       await answerQuestionnaire();
       await jump("Wednesday");
       await openProfile("Leah & Tom Pruitt");
-      await tab("Recent activity").click();
     },
   },
   {
     slug: "10c-shop-in-progress",
     stop: 10,
-    title: "Shop in progress modal",
+    title: "Shop in progress page",
     via: "The Pruitts' drawer → banner → View",
     run: async () => {
       await answerQuestionnaire();
@@ -482,9 +560,9 @@ const captures = [
     },
   },
   {
-    slug: "10d-nudge-modal",
+    slug: "10d-nudge-page",
     stop: 10,
-    title: "Nudge modal",
+    title: "Nudge page",
     via: "Tobi Adeyemi's Awaiting Response line → banner → Review",
     run: async () => {
       await answerQuestionnaire();
@@ -496,8 +574,8 @@ const captures = [
   {
     slug: "10e-nudge-skipped",
     stop: 10,
-    title: "A skipped nudge: the banner, and the modal's Undo",
-    via: "Nudge modal → Skip nudge → reopen Tobi Adeyemi → banner → Review",
+    title: "A skipped nudge: the banner, and the page's Undo",
+    via: "Nudge page → Skip nudge → back on the profile → banner → Review",
     run: async () => {
       await answerQuestionnaire();
       await jump("Wednesday");
@@ -505,7 +583,6 @@ const captures = [
       await clickBanner("Review");
       await click("Skip nudge");
       await page.waitForTimeout(3000);
-      await openProfile("Tobi Adeyemi");
       await clickBanner("Review");
     },
   },
@@ -520,6 +597,34 @@ const captures = [
       await openProfile("Diane Mercer");
     },
   },
+  ...[
+    ["10h", "elena-varga", "Elena Varga", "next week's email, scheduled", "renewal email, with Send now and Skip", () => clickBanner("Review")],
+    ["10i", "sara-ortiz", "Sara Ortiz", "waiting on an answer", "renewal email, sent Tuesday", () => clickLine("View: Renewal email sent")],
+  ].flatMap(([slug, file, name, what, pageName, open]) => [
+    {
+      slug: `${slug}-first-card-${file}`,
+      stop: 10,
+      title: `A first card: ${name}, ${what}`,
+      via: `${name}'s line (the drawer opens on Recent activity)`,
+      run: async () => {
+        await answerQuestionnaire();
+        await jump("Wednesday");
+        await openProfile(name);
+      },
+    },
+    {
+      slug: `${slug}a-first-card-${file}-page`,
+      stop: 10,
+      title: `${name}'s ${pageName}`,
+      via: `${name}'s drawer → ${slug === "10h" ? "banner" : "Recent activity → Renewal email sent"}`,
+      run: async () => {
+        await answerQuestionnaire();
+        await jump("Wednesday");
+        await openProfile(name);
+        await open();
+      },
+    },
+  ]),
   // 11
   { slug: "11-the-quotes-are-in", stop: 11, title: "The quotes are in", card: true, run: () => jump("The quotes are in") },
   // 12
@@ -536,7 +641,7 @@ const captures = [
     slug: "12a-results-step-1",
     stop: 12,
     title: "Shop results: step 1, Shopping Results",
-    via: "The Pruitts' card → View the full report",
+    via: "The Pruitts' card → View the full report (their drawer, with the results over it)",
     run: async () => {
       await answerQuestionnaire();
       await jump("Thursday: results are back");
@@ -585,7 +690,7 @@ const captures = [
   {
     slug: "12e-recommendation-sent",
     stop: 12,
-    title: "After Send recommendation email",
+    title: "After Send recommendation email: back on the Pruitts' profile",
     via: "Step 3 → Send recommendation email",
     run: async () => {
       await answerQuestionnaire();
@@ -594,14 +699,14 @@ const captures = [
       await click("Continue to select your recommendation");
       await click("Review recommendation email");
       await click("Send recommendation email");
-      await page.waitForTimeout(3000);
+      await page.waitForTimeout(400);
     },
   },
   {
     slug: "12f-results-read-only",
     stop: 12,
     title: "Shop results once sent: step 3, read-only",
-    via: "After sending → the Pruitts' card → banner → View → step 3",
+    via: "After sending → back on the profile → banner → View → step 3",
     run: async () => {
       await answerQuestionnaire();
       await jump("Thursday: results are back");
@@ -610,7 +715,6 @@ const captures = [
       await click("Review recommendation email");
       await click("Send recommendation email");
       await page.waitForTimeout(3000);
-      await openProfile("Leah & Tom Pruitt");
       await clickBanner("View");
       await click("Continue to select your recommendation");
       await click("Review recommendation email");
@@ -620,23 +724,23 @@ const captures = [
     slug: "12g-pruitts-details-blue",
     stop: 12,
     title: "The Pruitts' drawer: Details, results to review",
-    via: "The Pruitts' card",
+    via: "The Pruitts' card → Details tab",
     run: async () => {
       await answerQuestionnaire();
       await jump("Thursday: results are back");
       await openProfile("Leah & Tom Pruitt");
+      await tab("Details").click();
     },
   },
   {
     slug: "12h-pruitts-activity-results",
     stop: 12,
     title: "The Pruitts' drawer: Recent activity, with the results card",
-    via: "The Pruitts' drawer → Recent activity tab",
+    via: "The Pruitts' card (the drawer opens on Recent activity)",
     run: async () => {
       await answerQuestionnaire();
       await jump("Thursday: results are back");
       await openProfile("Leah & Tom Pruitt");
-      await tab("Recent activity").click();
     },
   },
   // 13
@@ -689,9 +793,9 @@ const captures = [
     },
   },
   {
-    slug: "16b-close-out-modal",
+    slug: "16b-close-out-page",
     stop: 16,
-    title: "Close-out modal for the Pruitts",
+    title: "Close-out page for the Pruitts",
     via: "The Pruitts' drawer → banner → Review",
     run: async () => {
       await answerQuestionnaire();
@@ -704,7 +808,7 @@ const captures = [
     slug: "16c-done",
     stop: 16,
     title: "After Close out: Done. The Pruitts are set.",
-    via: "Close-out modal → What happened → Close out",
+    via: "Close-out page → What happened → Close out → close the drawer",
     run: async () => {
       await answerQuestionnaire();
       await jump("Friday: bind it");
@@ -712,7 +816,7 @@ const captures = [
       await clickBanner("Review");
       await page.getByRole("textbox", { name: "What happened" }).fill("Bound Auto-Owners in the portal this morning.");
       await click("Close out");
-      await page.waitForTimeout(3000);
+      await closeDrawer();
     },
   },
 ];

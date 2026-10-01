@@ -1,18 +1,20 @@
 import { dayDate, earlier, thisWeek, type Day } from "@/data";
 import { cards } from "@/household/data";
+import { firstCards } from "@/household/firstCards";
 import { pickLine, pools, shopLine, type Invented } from "@/pipeline";
 import { statusFor } from "@/status";
-import { isSnoozed, renewalDate, renewsIn, type Chip } from "@/tasks";
+import { changeRequested, isSnoozed, renewalDate } from "@/tasks";
 import type { Walk } from "@/walk";
 
 /**
  * The homepage's board: where every renewal stands on the walk's day, in six
- * columns (Amanda's sketch, 2026-09-30). The first three are mini, one line a
- * household, since nothing in them needs Jenna: the emails go on their own,
- * the answers come in on their own, and Upline shops on its own. The last
- * three are full cards: Recommendation Ready needs her as soon as it can
- * (ideally it's empty), Recommendation Sent is where renewals stall while the
- * clock runs down to the renewal, and Completed can be hidden.
+ * columns (Amanda's sketch, 2026-09-30). Four are mini, one line a household:
+ * nothing in the first three needs Jenna (the emails go on their own, the
+ * answers come in on their own, and Upline shops on its own), and Completed
+ * is done (it was cards until 2026-10-01, and can be hidden). The middle two
+ * are cards: Recommendation Ready needs her as soon as it can (ideally it's
+ * empty), and Recommendation Sent is where renewals stall while the clock
+ * runs down to the renewal.
  */
 export type ColumnId = "scheduled" | "awaiting" | "shopping" | "ready" | "sent" | "completed";
 
@@ -22,7 +24,7 @@ export const columns: { id: ColumnId; label: string; mini?: boolean }[] = [
   { id: "shopping", label: "Shopping", mini: true },
   { id: "ready", label: "Recommendation Ready" },
   { id: "sent", label: "Recommendation Sent" },
-  { id: "completed", label: "Completed" },
+  { id: "completed", label: "Completed", mini: true },
 ];
 
 /**
@@ -46,6 +48,8 @@ export type Entry = {
   /** Said yes and waiting to be bound: its card carries Ready to close. */
   approved?: boolean;
   invented?: { h: Invented; detail?: string };
+  /** What a first card's card says (firstCards.ts), since it has no `invented` once it has a drawer. */
+  detail?: string;
 };
 
 /** The change as a whole percent: 18 for $4,820 → $5,690. */
@@ -184,24 +188,33 @@ function inventedFor(day: Day): Record<ColumnId, Entry[]> {
 
   // From Wednesday: Tuesday's emails are out and waiting, except two who
   // answered Tuesday night, as Leah did, and move with the Pruitts: shopped
-  // Wednesday, back Thursday, sent Thursday afternoon. The waiting pool's
-  // soonest seven answered and are being shopped, and the rest of its
-  // earliest renewals renewed as they were, off the board. Monday's ready
-  // went out Monday afternoon, half of Monday's shops went out Tuesday, and
+  // Wednesday, back Thursday, sent Thursday afternoon. No one is shopped
+  // under two weeks from renewal (the team's rule, from the strategy
+  // sprint), so the waiting pool's soonest seven, Cole Doyle first, still
+  // haven't answered and stay waiting, for Jenna to decide what to do. Seven
+  // of its later ones, three weeks out and more, answer Wednesday night and
+  // are shopped from Thursday, as Sara Ortiz is, so she and the Pruitts are
+  // the first card in Shopping. The rest of its earliest renewals renewed as
+  // they were, off the board. (Until 2026-10-01 the soonest seven answered
+  // and were shopped from Wednesday, 4 to 9 days out.) Monday's ready went
+  // out Monday afternoon, half of Monday's shops went out Tuesday, and
   // Monday's sent all answered. From Thursday a few more of Tuesday's answer
   // each day.
   const fast = w1.slice(-2);
   const tuesday = w1.slice(0, -2);
-  const answered = aw.slice(0, 7);
-  const stillWaiting = aw.slice(44);
+  const unanswered = aw.slice(0, 7);
+  const answered = aw.slice(39, 46);
+  const stillWaiting = aw.slice(46);
   const sent = [...rd.map((h) => waiting(h, "Oct 12", day)), ...sh.slice(0, 4).map((h) => waiting(h, "Oct 13", day))];
   const completed = [...sn.map(done), ...cp.slice(0, 3).map(done)];
   const back = day === "wed" ? 0 : day === "thu" ? 3 : 6;
 
   return {
     scheduled: nextWeek.map((h) => invented(h)),
-    awaiting: [...tuesday.slice(back), ...stillWaiting].map((h) => invented(h)),
-    shopping: [...answered, ...tuesday.slice(0, back), ...(day === "wed" ? fast : [])].map((h) => invented(h)),
+    awaiting: [...unanswered, ...(day === "wed" ? answered : []), ...tuesday.slice(back), ...stillWaiting].map((h) =>
+      invented(h),
+    ),
+    shopping: [...(day === "wed" ? fast : answered), ...tuesday.slice(0, back)].map((h) => invented(h)),
     ready: day === "thu" ? fast.map((h) => invented(h, shopLine(h))) : [],
     sent: day === "fri" ? [...sent, ...fast.map((h) => waiting(h, "Oct 15", day))] : sent,
     completed,
@@ -217,6 +230,58 @@ const when = (renews: string) => Date.parse(`${renews} 2026`);
 const namedIds = [...thisWeek.map((h) => h.id), ...earlier.map((e) => e.id)];
 
 /**
+ * Where a first card (firstCards.ts) sits once Jenna has acted on it in the
+ * walk, and what its card says: a recommendation sent from its drawer on
+ * Monday goes out today, an approval closed out moves to Completed, an email
+ * sent early is waiting on an answer, and a skipped one is done. Anything
+ * else stays where the pipeline put it, saying what it said.
+ */
+function placeFirstCard(e: Entry, col: ColumnId, day: Day, walk: Walk): { col: ColumnId; detail?: string; approved?: boolean } {
+  const { h, detail } = e.invented!;
+  const first = firstCards[e.id].card.first;
+  if (walk.skipped.includes(e.id)) return { col: "completed", detail: "Skipped. You're handling this one yourself this time." };
+  if (col === "scheduled" && walk.approved.includes(e.id)) return { col: "awaiting" };
+  if (day === "mon" && col === "ready" && walk.recsSent.includes(e.id)) {
+    return { col: "sent", detail: `Recommended ${pickLine(h)}. Sent today, no answer yet.` };
+  }
+  if (e.approved) {
+    if (walk.closed[e.id] !== undefined) return { col: "completed", detail: `Bound with ${pickLine(h)}.` };
+    return {
+      col,
+      detail: `${first} approved ${h.shop.pick}. Bind it in the portal before ${h.renewsLong}.`,
+      approved: true,
+    };
+  }
+  return { col, detail };
+}
+
+/**
+ * The first cards, drawn as the named households are, with a drawer, in the
+ * places the pipeline gives them, and moved as the walk says. One that stays
+ * in its column keeps its place there, so it's still the first card.
+ */
+function placeFirstCards(board: Record<ColumnId, Entry[]>, day: Day, walk: Walk) {
+  const moved: [ColumnId, Entry][] = [];
+  for (const { id: col } of columns) {
+    board[col] = board[col].flatMap((e) => {
+      if (!firstCards[e.id]) return [e];
+      const to = placeFirstCard(e, col, day, walk);
+      const entry: Entry = {
+        ...e,
+        name: firstCards[e.id].card.name,
+        invented: undefined,
+        detail: to.detail,
+        approved: to.approved,
+      };
+      if (to.col === col) return [entry];
+      moved.push([to.col, entry]);
+      return [];
+    });
+  }
+  for (const [col, e] of moved) board[col].push(e);
+}
+
+/**
  * Every column's households on the walk's day. Scheduled runs biggest
  * increase first, by percent as the board shows it, since the biggest jumps
  * are who is likeliest to shop on their own (the M1 rule: rank the biggest
@@ -224,6 +289,7 @@ const namedIds = [...thisWeek.map((h) => h.id), ...earlier.map((e) => e.id)];
  */
 export function boardFor(day: Day, walk: Walk): Record<ColumnId, Entry[]> {
   const board = inventedFor(day);
+  placeFirstCards(board, day, walk);
   for (const id of namedIds) board[namedColumn(id, day, walk)].push(named(id, day, walk));
   for (const col of columns) {
     board[col.id].sort(
@@ -244,47 +310,71 @@ export const daysUntil = (renews: string, day: Day) =>
   Math.round((renewalDate(renews).getTime() - dayDate[day].getTime()) / 86_400_000);
 
 /**
- * The accent down a card's or line's left edge, the hub's card-accent: red
- * when the renewal is five days out or less and it isn't done, orange when
- * it's ten or less, and blue when it's waiting on Jenna (a recommendation to
- * send, or an approval to bind). Red beats orange beats blue. Completed and
- * snoozed carry none. The words on the card say the same thing, so nothing
- * rests on the color.
+ * When a renewal starts to need a look, by column, counted back from the
+ * renewal by what still has to happen after that column: yellow `soon` days
+ * out, red `urgent`. Awaiting Response goes earliest, since an answer still
+ * has to come in and be shopped, and the team can't shop a renewal under two
+ * weeks out (strategy sprint, Thursday afternoon); a sent recommendation only
+ * needs a yes and a bind. Scheduled sends itself, Upline shops in a day or
+ * two, and Completed is done, so those three never flag. Working numbers,
+ * from 2026-10-01, to check with Austin and Stockton Hill. Until then one
+ * rule ran across every column, yellow at ten days and red at five, which
+ * left most of Awaiting Response's too-late-to-shop renewals unmarked.
  */
-export type Accent = "urgent" | "soon" | "needs";
+export const deadlines: Partial<Record<ColumnId, { soon: number; urgent: number }>> = {
+  awaiting: { soon: 21, urgent: 14 },
+  ready: { soon: 14, urgent: 10 },
+  sent: { soon: 10, urgent: 5 },
+};
+
+/**
+ * The accent down a card's or line's left edge, the hub's card-accent: red
+ * or yellow when the renewal is inside its column's deadlines (above) and it
+ * isn't done, and blue when the household has asked for something on top of
+ * the renewal (a life quote, or a change on file). Blue means that and
+ * nothing else, so a recommendation to send or an approval to bind carries no
+ * bar of its own: its column, or the card's sentence and button, already
+ * say so. Red beats yellow beats blue. Completed and snoozed carry none. The
+ * words beside the bar say the same thing, so nothing rests on the color.
+ */
+export type Accent = "urgent" | "soon" | "requested";
 
 export function accentFor(e: Entry, col: ColumnId, day: Day, walk: Walk): Accent | null {
   if (col === "completed") return null;
   if (!e.invented && isSnoozed(e.id, day, walk)) return null;
+  const deadline = deadlines[col];
   const days = daysUntil(e.renews, day);
-  if (days <= 5) return "urgent";
-  if (days <= 10) return "soon";
-  if (col === "ready" || e.approved) return "needs";
+  if (deadline && days <= deadline.urgent) return "urgent";
+  if (deadline && days <= deadline.soon) return "soon";
+  if (!e.invented && changeRequested(e.id, day, walk)) return "requested";
   return null;
 }
 
+/** Whether an accent is about time (red or yellow), so the countdown beside it takes its color. */
+export const timed = (accent: Accent | null): accent is "urgent" | "soon" =>
+  accent === "urgent" || accent === "soon";
+
 /**
- * When it renews, as a chip in the accent's color, so the chip says what the
- * bar means. Red and orange are about time, so they count down ("Renews in 8
- * days"); blue and no accent say it as a card always has (the date, counted
- * down inside a week), blue or gray.
+ * Whether a household needs Jenna on the walk's day: a recommendation to
+ * send, an approval to bind, or anything with an accent. Completed and
+ * snoozed don't.
  */
-export function renewalChip(e: Entry, day: Day, accent: Accent | null): Chip {
-  const days = daysUntil(e.renews, day);
-  const counted =
-    days < 0 ? `Renewed ${e.renews}` : days === 0 ? "Renews today" : days === 1 ? "Renews tomorrow" : `Renews in ${days} days`;
-  const label = accent === "urgent" || accent === "soon" ? counted : renewsIn(e.renews, day);
-  return { id: "renewal", label, tone: accent ?? undefined };
+export function needsYou(e: Entry, col: ColumnId, day: Day, walk: Walk) {
+  if (col === "completed") return false;
+  if (!e.invented && isSnoozed(e.id, day, walk)) return false;
+  return col === "ready" || !!e.approved || accentFor(e, col, day, walk) !== null;
 }
 
-/** Everything the Needs me toggle keeps: anything with an accent. */
+/** Everything the Needs me toggle keeps. */
 export const needsMe = (board: Record<ColumnId, Entry[]>, day: Day, walk: Walk) =>
-  columns.flatMap((c) => board[c.id].filter((e) => accentFor(e, c.id, day, walk)).map((e) => ({ e, col: c.id })));
+  columns.flatMap((c) => board[c.id].filter((e) => needsYou(e, c.id, day, walk)).map((e) => ({ e, col: c.id })));
 
 /**
  * A change in percent, as the board and the Monday email show it: "+18%", or
  * "0%" when it's flat. Over 10% (the shop-framing threshold) it's drawn in
- * red, a warning worth a look.
+ * the text color rather than gray, so a big jump is a glance away. It was
+ * red until 2026-10-01, when 49 of Monday's 143 showed red for their change
+ * against 3 for time, so red came off it and now only means time is short.
  */
 export const pctLabel = (pct: number) => (pct > 0 ? `+${pct}%` : `${pct}%`);
 export const bigIncrease = (pct: number) => pct > 10;

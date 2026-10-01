@@ -1,14 +1,15 @@
 import { dayDate, days, earlier, mondayNeeds, pruitt, thisWeek, type Day, type Earlier } from "@/data";
 import { cards } from "@/household/data";
+import { firstCards } from "@/household/firstCards";
 import type { Snooze, SnoozeUntil, Walk } from "@/walk";
 
 /**
  * What needs Jenna, and what's pinned to a household: the tasks on the
- * homepage's board, snoozing a task, and the chips the board and the drawer
- * both show. Added after the 2026-09-29 review, where
- * Austin asked for a snooze as the first step toward task management and a
- * chip for a life quote or updated information, since neither has a flow of
- * its own yet.
+ * homepage's board, snoozing a task, the countdown to a renewal, and what a
+ * household asked for, which the board and the drawer both show. Added
+ * after the 2026-09-29 review, where Austin asked for a snooze as the first
+ * step toward task management and a marker for a life quote or updated
+ * information, since neither has a flow of its own yet.
  */
 
 /** One task: whose, what kind, and when they renew, for the sort. */
@@ -16,8 +17,9 @@ export type Task = { id: string; kind: "shopped" | "closing"; renews: string; ea
 
 /**
  * Everything that would need Jenna on the walk's day, soonest renewal first,
- * snoozed or not. On Monday that's the earlier weeks' four; on Thursday and
- * Friday it's the Pruitts.
+ * snoozed or not. On Monday that's the earlier weeks' four and two of the
+ * first cards (firstCards.ts), Hank Fischer's results and Lena Park's
+ * approval; on Thursday and Friday it's the Pruitts.
  */
 export function allTasks(day: Day, walk: Walk): Task[] {
   const tasks: Task[] = [];
@@ -26,6 +28,9 @@ export function allTasks(day: Day, walk: Walk): Task[] {
   if (day === "fri" && !skipped) tasks.push({ id: pruitt.id, kind: "closing", renews: pruitt.renews });
   if (day === "mon") {
     for (const e of mondayNeeds()) tasks.push({ id: e.id, kind: e.monday!.section, renews: e.renews, earlier: e });
+    for (const f of Object.values(firstCards)) {
+      if (f.monday) tasks.push({ id: f.card.id, kind: f.monday, renews: f.card.renewal });
+    }
   }
   return tasks.sort((a, b) => renewalDate(a.renews).getTime() - renewalDate(b.renews).getTime());
 }
@@ -52,21 +57,33 @@ export function renewalDate(renews: string) {
 }
 
 /**
- * When a renewal like "Oct 16" is, as a card or line says it on the walk's
- * day. Inside a week, how long is left says more than the date does, and a
- * Completed card can be on or past its renewal.
+ * How long until a renewal like "Oct 20" on the walk's day, as the board and
+ * the Monday email count it down: "8 days" on the board's cards and lines,
+ * where the clock beside it says what it's counting, and "Renews in 8 days"
+ * in the email. The date is on hover (renewalDay); until 2026-10-01 a card
+ * said the date until it was flagged and "Renews in 8 days" after.
  */
-export function renewsIn(renews: string, day: Day) {
+export function countdown(renews: string, day: Day, short = false) {
   const days = daysBetween(dayDate[day], renewalDate(renews));
   if (days < 0) return `Renewed ${renews}`;
-  if (days === 0) return "Renews today";
-  if (days >= 7) return `Renews ${renews}`;
-  return days === 1 ? "Renews tomorrow" : `Renews in ${days} days`;
+  if (days === 0) return short ? "Today" : "Renews today";
+  if (days === 1) return short ? "Tomorrow" : "Renews tomorrow";
+  return short ? `${days} days` : `Renews in ${days} days`;
+}
+
+/** The countdown's date in full, for its tooltip: "Renews Tuesday, October 20". */
+export function renewalDay(renews: string, day: Day) {
+  const date = renewalDate(renews);
+  const when = date.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
+  return daysBetween(dayDate[day], date) < 0 ? `Renewed ${when}` : `Renews ${when}`;
 }
 
 /** A household's renewal, as "Nov 15", from whichever list has it. */
 export const renewsFor = (id: string) =>
-  cards.find((c) => c.id === id)?.renewal ?? earlier.find((e) => e.id === id)?.renews ?? thisWeek.find((h) => h.id === id)!.renews;
+  cards.find((c) => c.id === id)?.renewal ??
+  firstCards[id]?.card.renewal ??
+  earlier.find((e) => e.id === id)?.renews ??
+  thisWeek.find((h) => h.id === id)!.renews;
 
 const daysBetween = (from: Date, to: Date) => Math.round((to.getTime() - from.getTime()) / 86_400_000);
 
@@ -100,19 +117,17 @@ export const isSnoozed = (id: string, day: Day, walk: Walk) => {
 };
 
 /* ------------------------------------------------------------------
- * Chips
+ * Requests
  * ------------------------------------------------------------------ */
 
 /**
- * A chip: what it says, and, for the renewal chip on the board and in the
- * Monday email, the tone of the accent it explains (board.ts), so the chip
- * and the bar beside it are the same color.
+ * Something a household asked for on top of the renewal, as a gray line
+ * under its name on the board and in its drawer's header (Requests in
+ * components/Status.tsx). Either one is what a blue accent means (board.ts).
+ * They were gray chips until 2026-10-01, with Snoozed, Ready to close and
+ * the renewal beside them, all the size and fill of a button.
  */
-export type Chip = {
-  id: "snoozed" | "life" | "info" | "closing" | "renewal";
-  label: string;
-  tone?: "urgent" | "soon" | "needs";
-};
+export type Request = { id: "life" | "info"; label: string };
 
 /**
  * What the questionnaire changed on file, by household: how many details,
@@ -143,11 +158,17 @@ export function lifeRequested(id: string, day: Day, walk: Walk) {
   return walk.danaAnswered && walk.danaLife && (walk.lifeQuote[pruitt.id] ?? true) && !walk.skipped.includes(id);
 }
 
-/** The chips a household wears on the walk's day, in the order they're drawn. */
-export function chipsFor(id: string, day: Day, walk: Walk): Chip[] {
-  const chips: Chip[] = [];
-  if (isSnoozed(id, day, walk)) chips.push({ id: "snoozed", label: "Snoozed" });
-  if (lifeRequested(id, day, walk)) chips.push({ id: "life", label: "Life quote requested" });
-  if (changedFields(id, day, walk).length > 0) chips.push({ id: "info", label: "Info updated" });
-  return chips;
+/**
+ * Whether the household has asked for something on top of the renewal: a
+ * life quote, or a change on file. It's what a blue accent means (board.ts).
+ */
+export const changeRequested = (id: string, day: Day, walk: Walk) =>
+  lifeRequested(id, day, walk) || changedFields(id, day, walk).length > 0;
+
+/** What a household has asked for on the walk's day, in the order the lines are drawn. */
+export function requestsFor(id: string, day: Day, walk: Walk): Request[] {
+  const requests: Request[] = [];
+  if (lifeRequested(id, day, walk)) requests.push({ id: "life", label: "Life quote requested" });
+  if (changedFields(id, day, walk).length > 0) requests.push({ id: "info", label: "Info updated" });
+  return requests;
 }

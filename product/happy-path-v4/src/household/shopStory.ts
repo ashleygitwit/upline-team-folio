@@ -1,3 +1,5 @@
+import { firstCards } from "@/household/firstCards";
+
 /**
  * What the results say in words, for each household with a shop: `story` is
  * step 1's account of the shop, the biggest changes and the things to note,
@@ -5,7 +7,8 @@
  * paragraph harder to read than the table it was meant to explain), and
  * `about` is step 2's line on each plan, by option id, to help Jenna pick.
  * The numbers are the ones in each household's results (data.ts for the
- * Pruitts, household/data.ts for Sofia and Walter).
+ * Pruitts, household/data.ts for Sofia and Walter, firstCards.ts for the
+ * first cards, which bring their own words).
  */
 export const shopStory: Record<string, { story: string[]; about: Record<string, string> }> = {
   pruitt: {
@@ -50,4 +53,7 @@ export const shopStory: Record<string, { story: string[]; about: Record<string, 
       cin: "$70 more than Nationwide, with matching coverage.",
     },
   },
+  ...Object.fromEntries(
+    Object.values(firstCards).flatMap((f) => (f.story ? [[f.card.id, f.story]] : [])),
+  ),
 };

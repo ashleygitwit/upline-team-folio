@@ -1,7 +1,7 @@
 import { money, type Card, type Column } from "@/household/data";
 
 /**
- * The stages a household's drawer and phase modals name, in Ashley's order.
+ * The stages a household's drawer names, in Ashley's order.
  * They were her v2 column names (Ready to reach out, Shopping, Ready to send
  * rec, Closing) until 2026-09-30, when they took the homepage board's names
  * (board.ts), so the drawer says the column its card is in. An approval

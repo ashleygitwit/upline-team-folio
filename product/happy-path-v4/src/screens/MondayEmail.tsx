@@ -5,16 +5,16 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { BandGrain } from "@/components/BandGrain";
 import { CarrierMark } from "@/components/CarrierMark";
-import { Chips } from "@/components/Chips";
 import { Stage } from "@/components/Stage";
+import { Countdown } from "@/components/Status";
 import {
   accentFor,
   bigIncrease,
   boardFor,
   needsMe,
   pctLabel,
-  renewalChip,
   setName,
+  timed,
   type Accent,
   type ColumnId,
   type Entry,
@@ -30,11 +30,14 @@ import { initialWalk, type WalkProps } from "@/walk";
  * reads the same whatever the presenter does later.
  *
  * Action Needed is what the board's Needs me keeps, in three groups: approvals
- * to bind (Ready to close), recommendations to send, and renewals inside ten
- * days that are still open. Each line is a mini line from the board, with its
- * accent and its renewal chip in the accent's color instead of the change,
- * since what matters here is how long is left. It was the earlier weeks' four
- * until 2026-09-30.
+ * to bind (Ready to close), recommendations to send, and renewals inside their
+ * column's deadlines that are still open (Renewing soon; inside ten days
+ * until 2026-10-01). A household that's only on Needs me for a blue accent (a
+ * life quote or a change requested) isn't listed, since those have no flow of
+ * their own yet. Each line is a mini line from the board, with its accent and
+ * its countdown, in the accent's color, instead of the change, since what
+ * matters here is how long is left. The countdown has no tooltip, since this
+ * is an email. It was the earlier weeks' four until 2026-09-30.
  *
  * Scheduled Emails comes last and quietest, since they go out Tuesday whether
  * she looks at them or not: the board's Scheduled column, all 48, biggest
@@ -46,7 +49,9 @@ export function MondayEmail({ go }: WalkProps) {
   const needs = needsMe(board, day, initialWalk);
   const toClose = needs.filter(({ e }) => e.approved);
   const toSend = needs.filter(({ col }) => col === "ready");
-  const soon = needs.filter(({ e, col }) => !e.approved && col !== "ready");
+  const soon = needs.filter(
+    ({ e, col }) => !e.approved && col !== "ready" && timed(accentFor(e, col, day, initialWalk)),
+  );
   const byRenewal = (a: { e: Entry }, b: { e: Entry }) =>
     Date.parse(`${a.e.renews} 2026`) - Date.parse(`${b.e.renews} 2026`);
 
@@ -86,8 +91,7 @@ export function MondayEmail({ go }: WalkProps) {
             <CardContent className="gap-6">
               <p className="text-base">
                 You have {summary.join(" and ")}.
-                {soon.length > 0 &&
-                  ` Another ${count(soon.length, "renewal is", "renewals are")} inside 10 days and still open.`}
+                {soon.length > 0 && ` Another ${count(soon.length, "renewal is", "renewals are")} short on time.`}
               </p>
               <Todos title="Ready to close" items={[...toClose].sort(byRenewal)} />
               <Todos title="Recommendations ready to send" items={[...toSend].sort(byRenewal)} />
@@ -114,12 +118,7 @@ export function MondayEmail({ go }: WalkProps) {
                       <span className="sr-only">{e.carrier}, </span>
                       {e.name}
                     </span>
-                    <span
-                      className={cn(
-                        "font-mono",
-                        bigIncrease(e.pct) ? "text-destructive-strong" : "text-muted-foreground",
-                      )}
-                    >
+                    <span className={cn("font-mono", bigIncrease(e.pct) ? "text-foreground" : "text-muted-foreground")}>
                       {pctLabel(e.pct)}
                     </span>
                   </li>
@@ -149,17 +148,17 @@ function Group({ title, children }: { title: string; children: ReactNode }) {
   );
 }
 
-/** The accent down a line's left edge, as the board draws it (red at 700, as its chip is). */
+/** The accent down a line's left edge, as the board draws it. */
 const accentBar: Record<Accent, string> = {
-  urgent: "before:bg-destructive-strong",
+  urgent: "before:bg-destructive",
   soon: "before:bg-warning",
-  needs: "before:bg-primary",
+  requested: "before:bg-primary",
 };
 
 /**
  * One group of Action Needed: its name as the eyebrow, with its count, then
  * a line a household, soonest renewal first: the accent, the carrier's mark,
- * the name, and its renewal chip, in the accent's color.
+ * the name, and its countdown, in the accent's color.
  */
 function Todos({ title, items }: { title: string; items: { e: Entry; col: ColumnId }[] }) {
   if (items.length === 0) return null;
@@ -185,7 +184,7 @@ function Todos({ title, items }: { title: string; items: { e: Entry; col: Column
                 <span className="sr-only">{e.carrier}, </span>
                 <span className="min-w-0">{setName(e.name)}</span>
               </span>
-              <Chips chips={[renewalChip(e, "mon", accent)]} className="shrink-0" />
+              <Countdown renews={e.renews} day="mon" tone={timed(accent) ? accent : undefined} tip={false} />
             </li>
           );
         })}

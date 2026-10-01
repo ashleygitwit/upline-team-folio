@@ -6,7 +6,8 @@ import { money } from "@/data";
  * about 2,500 policies over 52 weeks is about 48 renewal emails a week, with
  * about 55 waiting on an answer and about 41 somewhere between shopping and
  * done (Amanda's sketch, 2026-09-30). The twelve named households keep their
- * files and their walk; these have no file, so their cards don't open.
+ * files and their walk; these have no file, so their cards don't open, but
+ * for the seven first cards (household/firstCards.ts), which do.
  *
  * They're generated from a fixed seed, so the same names land in the same
  * places every time the prototype loads. Every name is invented.

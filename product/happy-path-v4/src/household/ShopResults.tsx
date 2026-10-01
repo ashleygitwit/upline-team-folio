@@ -73,9 +73,8 @@ const rec: Rec = {
  * picks and writes here is what Leah gets. Once it has gone, the steps read
  * the same with the pick and the email locked, and step 3 says it went.
  *
- * It's the content of a dialog, so whoever opens it owns the Dialog: the
- * homepage's card opens it on its own, and the Pruitts' drawer
- * opens it from its banner, over the drawer.
+ * It's a page over the Pruitts' drawer, from its banner or Recent activity,
+ * and View the full report on their card opens the drawer with it on top.
  */
 export function ShopResults({
   day,
