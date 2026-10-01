@@ -314,11 +314,11 @@ function NotBuilt({ className, children }: { className: string; children: React.
  * One household in a mini column: the name and the change in percent, at
  * 14px, so a column of 55 reads as a list of names. A line with a red or
  * yellow accent adds its renewal chip under the name, in the accent's color,
- * so the bar says what it means; a named household's own chips follow, and a
- * blue one explains a blue bar. A long name wraps
- * rather than being cut short, so nothing depends on a tooltip. The whole
- * line opens the household's drawer, where the renewal email is a click
- * away; an invented line doesn't open, and says so.
+ * so the bar says what it means; a named household's own chips follow, and
+ * Life quote requested or Info updated among them explains a blue bar. A long
+ * name wraps rather than being cut short, so nothing depends on a tooltip.
+ * The whole line opens the household's drawer, where the renewal email is a
+ * click away; an invented line doesn't open, and says so.
  */
 function MiniRow({ e, accent, ...props }: BoardProps & { e: Entry; accent: Accent | null }) {
   const { day, walk, household, onHousehold } = props;
@@ -354,7 +354,7 @@ function MiniRow({ e, accent, ...props }: BoardProps & { e: Entry; accent: Accen
  * A card in a full column: the name with the change in percent beside it (as
  * a mini line has it), then its chips, led by the renewal chip (in the color
  * of a red or yellow accent, so the bar down the edge says what it means; a
- * blue bar is explained by the household's blue chip that follows); then
+ * blue bar is explained by the household's chip that follows); then
  * what's renewing, last year's price to this year's, one sentence, and the
  * action if there is one. Everything is 14px, the kit's row size, with the
  * name set apart by the display face and weight (chips are the kit's 12px

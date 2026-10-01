@@ -274,7 +274,7 @@ export const timed = (accent: Accent | null): accent is "urgent" | "soon" =>
  * their color and counts down ("Renews in 8 days"), and says what the bar
  * means. Otherwise it's gray and says it as a card always has (the date,
  * counted down inside a week); a blue bar is explained by the household's own
- * blue chip (Life quote requested or Info updated) instead.
+ * chip (Life quote requested or Info updated) instead.
  */
 export function renewalChip(e: Entry, day: Day, accent: Accent | null): Chip {
   const days = daysUntil(e.renews, day);

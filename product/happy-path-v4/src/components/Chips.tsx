@@ -13,17 +13,13 @@ const tones: Record<NonNullable<Chip["tone"]>, string> = {
   soon: "bg-warning text-status-foreground",
 };
 
-/** The chips that say the household asked for something, in blue, as the blue bar is. */
-const requested = new Set<Chip["id"]>(["life", "info"]);
-
 /**
  * A household's chips (`chipsFor` in tasks.ts), drawn the same wherever they
  * sit: a board card or line, the drawer's header, or a line in the Monday
- * email. Blue means the household asked for something, so Life quote
- * requested and Info updated are blue, and nothing else is; Snoozed and Ready
- * to close only say what's so, in gray; the renewal chip takes its red or
- * yellow accent's color, or gray without one. Nothing when there are none, so
- * the line above keeps its place. A chip never runs wider than what it sits
+ * email. Only the renewal chip takes a color, its red or yellow accent's, so
+ * it says what the bar means; the rest (Snoozed, Life quote requested, Info
+ * updated, Ready to close) are the secondary gray, and only say what's so.
+ * Nothing when there are none, so the line above keeps its place. A chip never runs wider than what it sits
  * in: on a narrow card its label is cut short with an ellipsis, and the whole
  * label shows on hover.
  */
@@ -34,7 +30,7 @@ export function Chips({ chips, className }: { chips: Chip[]; className?: string 
       {chips.map((c) => (
         <Badge
           key={c.id}
-          variant={requested.has(c.id) || c.tone ? "default" : "secondary"}
+          variant={c.tone ? "default" : "secondary"}
           title={c.label}
           className={cn("max-w-full", c.tone && tones[c.tone])}
         >
