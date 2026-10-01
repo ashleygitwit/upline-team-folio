@@ -8,12 +8,13 @@ import type { Walk } from "@/walk";
 
 /**
  * The homepage's board: where every renewal stands on the walk's day, in six
- * columns (Amanda's sketch, 2026-09-30). The first three are mini, one line a
- * household, since nothing in them needs Jenna: the emails go on their own,
- * the answers come in on their own, and Upline shops on its own. The last
- * three are full cards: Recommendation Ready needs her as soon as it can
- * (ideally it's empty), Recommendation Sent is where renewals stall while the
- * clock runs down to the renewal, and Completed can be hidden.
+ * columns (Amanda's sketch, 2026-09-30). Four are mini, one line a household:
+ * nothing in the first three needs Jenna (the emails go on their own, the
+ * answers come in on their own, and Upline shops on its own), and Completed
+ * is done (it was cards until 2026-10-01, and can be hidden). The middle two
+ * are cards: Recommendation Ready needs her as soon as it can (ideally it's
+ * empty), and Recommendation Sent is where renewals stall while the clock
+ * runs down to the renewal.
  */
 export type ColumnId = "scheduled" | "awaiting" | "shopping" | "ready" | "sent" | "completed";
 
@@ -23,7 +24,7 @@ export const columns: { id: ColumnId; label: string; mini?: boolean }[] = [
   { id: "shopping", label: "Shopping", mini: true },
   { id: "ready", label: "Recommendation Ready" },
   { id: "sent", label: "Recommendation Sent" },
-  { id: "completed", label: "Completed" },
+  { id: "completed", label: "Completed", mini: true },
 ];
 
 /**

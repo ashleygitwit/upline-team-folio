@@ -58,10 +58,10 @@ export function renewalDate(renews: string) {
 
 /**
  * How long until a renewal like "Oct 20" on the walk's day, as the board and
- * the Monday email count it down: "Renews in 8 days", or "8 days" on a mini
- * line, where the room is short and the clock beside it says what it's
- * counting. One format everywhere, with the date on hover (renewalDay); until
- * 2026-10-01 a card said the date until it was flagged and counted down after.
+ * the Monday email count it down: "8 days" on the board's cards and lines,
+ * where the clock beside it says what it's counting, and "Renews in 8 days"
+ * in the email. The date is on hover (renewalDay); until 2026-10-01 a card
+ * said the date until it was flagged and "Renews in 8 days" after.
  */
 export function countdown(renews: string, day: Day, short = false) {
   const days = daysBetween(dayDate[day], renewalDate(renews));

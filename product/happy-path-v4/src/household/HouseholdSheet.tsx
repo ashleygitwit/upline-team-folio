@@ -231,6 +231,17 @@ export function HouseholdSheet({
               }));
               onDone("Closed out");
             }}
+            // Undo only on the day it was closed out: Monday's are closed
+            // off-camera by Wednesday anyway, and the Pruitts close Friday.
+            onUndo={
+              walk.closed[card.id] !== undefined && (day === "mon" || card.id === pruitt.id)
+                ? () =>
+                    update((w) => {
+                      const { [card.id]: _, ...closed } = w.closed;
+                      return { closed, ...(card.id === pruitt.id ? { bound: false } : {}) };
+                    })
+                : undefined
+            }
           />
         );
     }

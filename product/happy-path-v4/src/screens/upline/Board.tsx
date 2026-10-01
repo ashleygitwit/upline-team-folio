@@ -1,7 +1,6 @@
 import { useLayoutEffect, useState } from "react";
-import { AlarmClock, ArrowRight, Check, FoldHorizontal, UnfoldHorizontal } from "lucide-react";
+import { AlarmClock, ArrowRight, FoldHorizontal, UnfoldHorizontal } from "lucide-react";
 import { cn } from "cn";
-import { RenewalMeta } from "@/components/RenewalMeta";
 import { Countdown, Requests, StatusLine } from "@/components/Status";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
@@ -18,7 +17,7 @@ import {
   type ColumnId,
   type Entry,
 } from "@/board";
-import { earlier, money, options, pruitt, thisWeek, type Day } from "@/data";
+import { earlier, options, pruitt, thisWeek, type Day } from "@/data";
 import type { Phase } from "@/household/activity";
 import { cards, fileFor } from "@/household/data";
 import { firstCards } from "@/household/firstCards";
@@ -48,19 +47,20 @@ const notInPrototype = "This household isn't built out for the prototype.";
  * inside itself once the page has scrolled the board fully into view
  * (useDocked), and any column folds to a strip and stays folded for the
  * walk. The headers share one row, so the first card in every column starts
- * on the same line however the names wrap. The three mini columns are a line a
- * household; the three full columns are short cards. A left accent marks what
- * needs a look, by each column's own deadlines (accentFor in board.ts).
- * Statuses are words, not boxes, so the only filled rectangles on the board
- * are buttons. Every line and card opens the
- * household's profile drawer, the one way in; the invented households
+ * on the same line however the names wrap. The four mini columns are a line a
+ * household; Recommendation Ready and Sent are short cards. Every name is set
+ * the same way, a line's as a card's. A left accent marks what needs a look,
+ * by each column's own deadlines (accentFor in board.ts). Statuses are words,
+ * not boxes, so the only filled rectangles on the board are buttons. Every
+ * line and card opens the household's profile drawer, the one way in; the
+ * invented households
  * (pipeline.ts) have no drawer and say so when pointed at. The toolbar's
  * search and Needs me narrow every column at once, and a column's count then
  * says how many of its whole it's showing.
  *
  * Each column has a floor: a mini column is wide enough for a couple's name
  * beside its change, and a full column for "Recommendation" at the
- * column-heading size beside the fold control. All six fit from about 1420
+ * column-heading size beside the fold control. All six fit from about 1410
  * wide; narrower, the board scrolls sideways inside itself, with Completed
  * the column past the edge, and folding any one column brings it back.
  */
@@ -215,14 +215,14 @@ function Column({
         ) : mini ? (
           <ul className="divide-y border bg-card py-1">
             {sorted.map((e) => (
-              <MiniRow key={e.id} e={e} accent={accentFor(e, id, day, walk)} {...props} />
+              <MiniRow key={e.id} e={e} col={id} accent={accentFor(e, id, day, walk)} {...props} />
             ))}
           </ul>
         ) : (
           <ul className="flex flex-col gap-2 *:shrink-0">
             {sorted.map((e) =>
               e.invented ? (
-                <InventedCard key={e.id} e={e} col={id} accent={accentFor(e, id, day, walk)} day={day} />
+                <InventedCard key={e.id} e={e} accent={accentFor(e, id, day, walk)} day={day} />
               ) : (
                 <NamedCard key={e.id} e={e} col={id} accent={accentFor(e, id, day, walk)} {...props} />
               ),
@@ -306,14 +306,12 @@ function Pct({ pct }: { pct: number }) {
   );
 }
 
-/** Last year's premium to this year's, in the mono face. */
-function Price({ e }: { e: Entry }) {
-  return (
-    <span className="mt-1 block font-mono text-sm">
-      {e.was === e.now ? money(e.now) : `${money(e.was)} → ${money(e.now)}`}
-    </span>
-  );
-}
+/**
+ * A household's name, as a card's heading and a mini line set it alike: the
+ * headings' display face at 500, at the line's 14px. Until 2026-10-01 a mini
+ * line's name was the body face at 400, so the same household read two ways.
+ */
+const nameStyle = "min-w-0 flex-1 font-display text-sm font-medium [overflow-wrap:break-word]";
 
 /**
  * The way into a household's drawer from its line or card: a button laid
@@ -376,18 +374,20 @@ function NotBuilt({ className, children }: { className: string; children: React.
  * ------------------------------------------------------------------ */
 
 /**
- * One household in a mini column: the name and the change in percent, at
- * 14px, so a column of 55 reads as a list of names. A red or yellow line also
- * counts down between the two ("8 days", by a clock, in the accent's color,
- * with the date on hover), short so it fits the line; the clock says it's
- * the time left to the renewal. Under the name, a named household's requests
- * follow, and Life quote requested or Info updated among them explains a
- * blue bar; a snoozed one says so. A long name wraps rather than being cut
- * short, so nothing depends on a tooltip. The whole line opens the
- * household's drawer, where the renewal email is a click away; an invented
- * line doesn't open, and says so.
+ * One household in a mini column: the name, set as a card's is, and the
+ * change in percent, at 14px, so a column of 55 reads as a list of names. A
+ * red or yellow line also counts down between the two ("8 days", by a clock,
+ * in the accent's color, with the date on hover), short so it fits the line;
+ * the clock says it's the time left to the renewal. A Completed line is only
+ * the name, since the change and the countdown are done with once a renewal
+ * is closed. Under the name, a named household's requests follow, and Life
+ * quote requested or Info updated among them explains a blue bar; a snoozed
+ * one says so. A long name wraps rather than being cut short, so nothing
+ * depends on a tooltip. The whole line opens the household's drawer, where
+ * the renewal email is a click away; an invented line doesn't open, and says
+ * so.
  */
-function MiniRow({ e, accent, ...props }: BoardProps & { e: Entry; accent: Accent | null }) {
+function MiniRow({ e, col, accent, ...props }: BoardProps & { e: Entry; col: ColumnId; accent: Accent | null }) {
   const { day, walk, household, onHousehold } = props;
   const selected = household === e.id;
   const open = () => onHousehold(e.id);
@@ -397,11 +397,11 @@ function MiniRow({ e, accent, ...props }: BoardProps & { e: Entry; accent: Accen
   const line = (
     <>
       <div className="flex items-start gap-2">
-        <span className="min-w-0 flex-1 [overflow-wrap:break-word]">{setName(e.name)}</span>
+        <span className={nameStyle}>{setName(e.name)}</span>
         {timed(accent) && (
           <Countdown renews={e.renews} day={day} tone={accent} short onOpen={e.invented ? undefined : open} />
         )}
-        <Pct pct={e.pct} />
+        {col !== "completed" && <Pct pct={e.pct} />}
       </div>
       {!e.invented && <Requests requests={requestsFor(e.id, day, walk)} className="mt-1" />}
       {snoozed && (
@@ -427,38 +427,42 @@ function MiniRow({ e, accent, ...props }: BoardProps & { e: Entry; accent: Accen
  * ------------------------------------------------------------------ */
 
 /**
- * A card in a full column: the name with the change in percent beside it (as
- * a mini line has it), then its status, a line each, close under the name:
- * the countdown to its renewal (in the color of a red or yellow accent, so
- * the bar down the edge says what it means) or that it's snoozed, then what
- * the household asked for, which explains a blue bar. Then what's renewing,
- * last year's price to this year's, one sentence, and the action if there is
- * one. Everything is 14px, the kit's row size, with the name set apart by the
- * display face and weight. `foot` sits above the card's drawer button, for
- * anything that's a button of its own. The accent replaces the card's left
- * hairline; while its drawer is open, the rest of the edge turns blue.
+ * A card in Recommendation Ready or Sent, the two the same: the name with the
+ * change in percent beside it (as a mini line has it), then its status, a
+ * line each, close under the name: the countdown once it's red or yellow ("8
+ * days", by a clock, in the accent's color, so the bar down the edge says
+ * what it means) or that it's snoozed, then what the household asked for,
+ * which explains a blue bar. Then one sentence, what the shop found or who
+ * it's waiting on, and the action if there is one. The countdown sits under
+ * the name rather than beside it, as a line's does, since a card is too
+ * narrow for both without wrapping the name. Everything is 14px, the kit's
+ * row size. What's renewing, the carrier and last year's price to this
+ * year's came off on 2026-10-01; the drawer's header has all three. `foot`
+ * sits above the card's drawer button, for anything that's a button of its
+ * own. The accent replaces the card's left hairline; while its drawer is
+ * open, the rest of the edge turns blue.
  */
 function Card({
   name,
   pct,
   status,
+  detail,
   foot,
-  children,
 }: {
   name: string;
   pct: number;
   status?: React.ReactNode;
+  detail?: React.ReactNode;
   foot?: React.ReactNode;
-  children: React.ReactNode;
 }) {
   return (
     <div className="p-3 text-sm">
       <div className="flex items-start gap-2">
-        <h3 className="min-w-0 flex-1 text-sm [overflow-wrap:break-word]">{setName(name)}</h3>
+        <h3 className={nameStyle}>{setName(name)}</h3>
         <Pct pct={pct} />
       </div>
       {status && <div className="mt-1 flex flex-col items-start gap-1">{status}</div>}
-      <div className="mt-2">{children}</div>
+      {detail && <p className="mt-2">{detail}</p>}
       {foot && <div className="relative z-10">{foot}</div>}
     </div>
   );
@@ -472,23 +476,18 @@ const cardFrame = (accent: Accent | null, selected = false) =>
   );
 
 /**
- * A card for an invented household: its countdown, unless it's done, what its
- * column says about it, and no drawer behind it.
+ * A card for an invented household: its countdown once it's red or yellow,
+ * what its column says about it, and no drawer behind it.
  */
-function InventedCard({ e, col, accent, day }: { e: Entry; col: ColumnId; accent: Accent | null; day: Day }) {
+function InventedCard({ e, accent, day }: { e: Entry; accent: Accent | null; day: Day }) {
   return (
     <NotBuilt className={cardFrame(accent)}>
       <Card
         name={e.name}
         pct={e.pct}
-        status={
-          col !== "completed" && <Countdown renews={e.renews} day={day} tone={timed(accent) ? accent : undefined} />
-        }
-      >
-        <RenewalMeta lines={e.lines} carrier={e.carrier} />
-        <Price e={e} />
-        {e.invented!.detail && <span className="mt-2 block">{e.invented!.detail}</span>}
-      </Card>
+        status={timed(accent) && <Countdown renews={e.renews} day={day} tone={accent} short />}
+        detail={e.invented!.detail}
+      />
     </NotBuilt>
   );
 }
@@ -516,12 +515,13 @@ const firstOf = (name: string) => name.split(" ")[0];
  * - Recommendation Sent: who it's waiting on, or, once they've said yes,
  *   what they approved and View profile and close. (A Ready to close chip
  *   said it a third time until 2026-10-01.)
- * - Completed: how it ended, and, for anything Jenna closed out in the walk,
- *   her note and Undo. No countdown, since nothing's due.
+ *
+ * Completed is a mini column (MiniRow), so a household closed out in the walk
+ * leaves its note and Undo on the drawer's Close out page (phases.tsx); they
+ * were on its Completed card until 2026-10-01.
  *
  * A first card (firstCards.ts) says what the board gives it (board.ts), with
- * the same View profile and close once it's approved, and the same note and
- * Undo once it's closed out in the walk.
+ * the same View profile and close once it's approved.
  *
  * A task snoozed from the drawer's banner sinks to the foot of its column,
  * loses its accent and its action, and says so under its name, in the
@@ -537,14 +537,10 @@ function NamedCard({ e, col, accent, ...props }: BoardProps & { e: Entry; col: C
 
   let detail: React.ReactNode = null;
   let foot: React.ReactNode = null;
-  const note = walk.closed[e.id];
 
   if (firstCards[e.id]) {
     detail = e.detail;
     if (e.approved) foot = <CloseOut onProfile={profile} />;
-    else if (col === "completed" && note !== undefined) {
-      foot = <Closed note={note} onUndo={() => update((w) => ({ closed: without(w.closed, e.id) }))} />;
-    }
   } else if (col === "ready") {
     if (e.id === pruitt.id) {
       // What the shop found, whatever Jenna picks in the results.
@@ -577,20 +573,6 @@ function NamedCard({ e, col, accent, ...props }: BoardProps & { e: Entry; col: C
     } else {
       detail = `Recommendation sent ${e.id === "marin" ? "Monday" : "Tuesday"}. Waiting on ${firstOf(e.name)}.`;
     }
-  } else if (col === "completed") {
-    if (h?.id === pruitt.id && walk.bound && note !== undefined) {
-      detail = statusFor(h, "fri", walk).detail;
-      foot = <Closed note={note} onUndo={() => update((w) => ({ bound: false, closed: without(w.closed, e.id) }))} />;
-    } else if (h && walk.skipped.includes(h.id)) {
-      detail = "Skipped. You're handling this one yourself this time.";
-    } else if (h) {
-      detail = statusFor(h, day === "mon" ? "wed" : day, walk).detail;
-    } else if (day === "mon" && note !== undefined) {
-      detail = ew?.monday?.detail;
-      foot = <Closed note={note} onUndo={() => update((w) => ({ closed: without(w.closed, e.id) }))} />;
-    } else if (ew) {
-      detail = `${ew.later}.`;
-    }
   }
 
   if (snoozed) foot = null;
@@ -607,9 +589,7 @@ function NamedCard({ e, col, accent, ...props }: BoardProps & { e: Entry; col: C
       </Button>
     </p>
   ) : (
-    col !== "completed" && (
-      <Countdown renews={e.renews} day={day} tone={timed(accent) ? accent : undefined} onOpen={profile} />
-    )
+    timed(accent) && <Countdown renews={e.renews} day={day} tone={accent} short onOpen={profile} />
   );
   const requests = requestsFor(e.id, day, walk);
   const status = (when || requests.length > 0) && (
@@ -622,11 +602,7 @@ function NamedCard({ e, col, accent, ...props }: BoardProps & { e: Entry; col: C
   return (
     <li className={cn(cardFrame(accent, selected), "hover:bg-background")}>
       <OpenOverlay id={e.id} name={e.name} selected={selected} onOpen={profile} />
-      <Card name={e.name} pct={e.pct} status={status} foot={foot}>
-        <RenewalMeta lines={e.lines} carrier={e.carrier} />
-        <Price e={e} />
-        {detail && <span className="mt-2 block">{detail}</span>}
-      </Card>
+      <Card name={e.name} pct={e.pct} status={status} detail={detail} foot={foot} />
     </li>
   );
 }
@@ -642,20 +618,6 @@ function CloseOut({ onProfile }: { onProfile: () => void }) {
     <Button className="mt-3" onClick={onProfile}>
       View profile and close
     </Button>
-  );
-}
-
-/** Once it's closed out: that it's closed, the note Jenna wrote, and Undo, which reopens it. */
-function Closed({ note, onUndo }: { note: string; onUndo: () => void }) {
-  return (
-    <p className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1">
-      <Check aria-hidden className="size-4 text-primary" />
-      <span className="font-medium">Closed</span>
-      {note && <span className="text-muted-foreground">· {note}</span>}
-      <Button variant="link" className="h-auto p-0 font-sans text-sm" onClick={onUndo}>
-        Undo
-      </Button>
-    </p>
   );
 }
 

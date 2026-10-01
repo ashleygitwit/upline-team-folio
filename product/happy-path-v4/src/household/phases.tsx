@@ -231,16 +231,21 @@ export function EarlierResults({
 /**
  * Approved and waiting on Jenna: what's left to do, and what happened, which
  * Close out keeps as the household's memo. Once closed, it reads back the
- * memo and says when.
+ * memo and says when, with Undo in the footer, as a skipped nudge has it, on
+ * the day Jenna closed it out in the walk (`onUndo`), which reopens it. Undo
+ * was on the household's Completed card until 2026-10-01, when Completed
+ * became a list of names.
  */
 export function CloseOut({
   card,
   activity,
   onCloseOut,
+  onUndo,
 }: {
   card: Card;
   activity: Activity;
   onCloseOut: (note: string) => void;
+  onUndo?: () => void;
 }) {
   const [note, setNote] = useState("");
   const { closing, closed } = activity;
@@ -252,6 +257,11 @@ export function CloseOut({
         closed ? (
           <PhaseFooter done>
             <p className="text-sm">Closed out {closed.when}.</p>
+            {onUndo && (
+              <Button variant="secondary" size="lg" onClick={onUndo}>
+                Undo
+              </Button>
+            )}
           </PhaseFooter>
         ) : (
           <PhaseFooter>
