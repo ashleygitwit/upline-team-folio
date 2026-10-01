@@ -3,7 +3,7 @@ import { cards } from "@/household/data";
 import { firstCards } from "@/household/firstCards";
 import { pickLine, pools, shopLine, type Invented } from "@/pipeline";
 import { statusFor } from "@/status";
-import { changeRequested, isSnoozed, renewalDate, renewsIn, type Chip } from "@/tasks";
+import { changeRequested, isSnoozed, renewalDate } from "@/tasks";
 import type { Walk } from "@/walk";
 
 /**
@@ -300,43 +300,105 @@ export const daysUntil = (renews: string, day: Day) =>
   Math.round((renewalDate(renews).getTime() - dayDate[day].getTime()) / 86_400_000);
 
 /**
+ * When a renewal starts to need a look, by column, counted back from the
+ * renewal by what still has to happen after that column: yellow `soon` days
+ * out, red `urgent`. Awaiting Response goes earliest, since an answer still
+ * has to come in and be shopped, and the team can't shop a renewal under two
+ * weeks out (strategy sprint, Thursday afternoon); a sent recommendation only
+ * needs a yes and a bind. Scheduled sends itself, Upline shops in a day or
+ * two, and Completed is done, so those three never flag. Working numbers,
+ * from 2026-10-01, to check with Austin and Stockton Hill. Until then one
+ * rule ran across every column, yellow at ten days and red at five, which
+ * left most of Awaiting Response's too-late-to-shop renewals unmarked.
+ */
+export const deadlines: Partial<Record<ColumnId, { soon: number; urgent: number }>> = {
+  awaiting: { soon: 21, urgent: 14 },
+  ready: { soon: 14, urgent: 10 },
+  sent: { soon: 10, urgent: 5 },
+};
+
+/**
  * The accent down a card's or line's left edge, the hub's card-accent: red
- * when the renewal is five days out or less and it isn't done, yellow when
- * it's ten or less, and blue when the household has asked for something on
- * top of the renewal (a life quote, or a change on file). Blue means that and
+ * or yellow when the renewal is inside its column's deadlines (above) and it
+ * isn't done, and blue when the household has asked for something on top of
+ * the renewal (a life quote, or a change on file). Blue means that and
  * nothing else, so a recommendation to send or an approval to bind carries no
- * bar of its own: its column, or its Ready to close chip, already says so.
- * Red beats yellow beats blue. Completed and snoozed carry none. The words on
- * the card say the same thing, so nothing rests on the color.
+ * bar of its own: its column, or the card's sentence and button, already
+ * say so. Red beats yellow beats blue. Completed and snoozed carry none. The
+ * words beside the bar say the same thing, so nothing rests on the color.
  */
 export type Accent = "urgent" | "soon" | "requested";
 
 export function accentFor(e: Entry, col: ColumnId, day: Day, walk: Walk): Accent | null {
   if (col === "completed") return null;
   if (!e.invented && isSnoozed(e.id, day, walk)) return null;
+  const deadline = deadlines[col];
   const days = daysUntil(e.renews, day);
-  if (days <= 5) return "urgent";
-  if (days <= 10) return "soon";
+  if (deadline && days <= deadline.urgent) return "urgent";
+  if (deadline && days <= deadline.soon) return "soon";
   if (!e.invented && changeRequested(e.id, day, walk)) return "requested";
   return null;
 }
 
-/** Whether an accent is about time (red or yellow), so the renewal chip explains it. */
+/** Whether an accent is about time (red or yellow), so the countdown beside it takes its color. */
 export const timed = (accent: Accent | null): accent is "urgent" | "soon" =>
   accent === "urgent" || accent === "soon";
 
 /**
- * When it renews, as a chip. Red and yellow are about time, so the chip takes
- * their color and counts down ("Renews in 8 days"), and says what the bar
- * means. Otherwise it's gray and says it as a card always has (the date,
- * counted down inside a week); a blue bar is explained by the household's own
- * chip (Life quote requested or Info updated) instead.
+ * What a mini column's red and yellow lines are counting to, said once over
+ * each group instead of on every line, so a column of 55 with 34 flagged
+ * still reads as a list (2026-10-01). Pipedrive paints every card; here the
+ * column carries it. Only Awaiting Response flags among the mini columns.
+ * The full columns go without, since each card's sentence says it.
  */
-export function renewalChip(e: Entry, day: Day, accent: Accent | null): Chip {
-  const days = daysUntil(e.renews, day);
-  const counted =
-    days < 0 ? `Renewed ${e.renews}` : days === 0 ? "Renews today" : days === 1 ? "Renews tomorrow" : `Renews in ${days} days`;
-  return timed(accent) ? { id: "renewal", label: counted, tone: accent } : { id: "renewal", label: renewsIn(e.renews, day) };
+const groupLabels: Partial<Record<ColumnId, Record<GroupKey, string>>> = {
+  awaiting: { urgent: "Too late to shop", soon: "Last week to shop", rest: "On track" },
+};
+
+export type GroupKey = "urgent" | "soon" | "rest";
+export type Group = { key: GroupKey; label?: string; entries: Entry[] };
+
+/**
+ * A mini column's lines, cut where its deadlines fall: red, then yellow, then
+ * the rest, each under its label. The column already runs soonest renewal
+ * first, so each group is one block in the same order. A column with
+ * nothing flagged is one group with no label, so an "On track" never stands
+ * alone, and a group with no one in it (once Needs me or a search has
+ * narrowed the column) isn't drawn.
+ */
+export function groupsFor(col: ColumnId, entries: Entry[], day: Day, walk: Walk): Group[] {
+  const labels = groupLabels[col];
+  const keyOf = (e: Entry): GroupKey => {
+    const accent = accentFor(e, col, day, walk);
+    return timed(accent) ? accent : "rest";
+  };
+  if (!labels || entries.every((e) => keyOf(e) === "rest")) return [{ key: "rest", entries }];
+  return (["urgent", "soon", "rest"] as const)
+    .map((key) => ({ key, label: labels[key], entries: entries.filter((e) => keyOf(e) === key) }))
+    .filter((g) => g.entries.length > 0);
+}
+
+/**
+ * The red and yellow renewals that aren't already a recommendation to send
+ * or an approval to bind, grouped for the Monday email as the board groups
+ * them: under a mini column's labels where it has them (Too late to shop,
+ * then Last week to shop), and under Renewing soon otherwise.
+ */
+export function shortOnTime(needs: { e: Entry; col: ColumnId }[], day: Day, walk: Walk) {
+  const groups = new Map<string, { e: Entry; col: ColumnId }[]>();
+  for (const key of ["urgent", "soon"] as const) {
+    for (const c of columns) {
+      const label = groupLabels[c.id]?.[key];
+      if (label) groups.set(label, []);
+    }
+  }
+  groups.set("Renewing soon", []);
+  for (const n of needs) {
+    const accent = accentFor(n.e, n.col, day, walk);
+    if (n.e.approved || n.col === "ready" || !timed(accent)) continue;
+    groups.get(groupLabels[n.col]?.[accent] ?? "Renewing soon")!.push(n);
+  }
+  return [...groups].map(([title, items]) => ({ title, items })).filter((g) => g.items.length > 0);
 }
 
 /**
@@ -357,7 +419,9 @@ export const needsMe = (board: Record<ColumnId, Entry[]>, day: Day, walk: Walk) 
 /**
  * A change in percent, as the board and the Monday email show it: "+18%", or
  * "0%" when it's flat. Over 10% (the shop-framing threshold) it's drawn in
- * red, a warning worth a look.
+ * the text color rather than gray, so a big jump is a glance away. It was
+ * red until 2026-10-01, when 49 of Monday's 143 showed red for their change
+ * against 3 for time, so red came off it and now only means time is short.
  */
 export const pctLabel = (pct: number) => (pct > 0 ? `+${pct}%` : `${pct}%`);
 export const bigIncrease = (pct: number) => pct > 10;

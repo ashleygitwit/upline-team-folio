@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { AlarmClock, ArrowRight, Clock } from "lucide-react";
+import { AlarmClock, ArrowRight, MailClock } from "lucide-react";
 import { cn } from "cn";
-import { Chips } from "@/components/Chips";
+import { Requests } from "@/components/Status";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -25,7 +25,7 @@ import { OpenQuotes, PageBack } from "@/household/pageNav";
 import { Layer } from "@/household/PhasePage";
 import { QuotesPage } from "@/household/Recommendation";
 import { RecentActivity } from "@/household/RecentActivity";
-import { changedFields, chipsFor, daysOut, isSnoozed, needsAction, snoozeLabel, snoozes } from "@/tasks";
+import { changedFields, daysOut, isSnoozed, needsAction, requestsFor, snoozeLabel, snoozes } from "@/tasks";
 import type { SnoozeUntil, WalkProps } from "@/walk";
 
 type Tab = "details" | "activity" | "notes";
@@ -268,7 +268,9 @@ export function HouseholdSheet({
               : `+${card.jumpPct}% (${money(card.was)} → ${money(card.premium)})`}{" "}
             · {card.lines} · renews {card.renewal}
           </SheetDescription>
-          <Chips chips={chipsFor(card.id, day, walk)} className="mt-2.5" />
+          {/* What they asked for, in gray as the board says it. Snoozed was a
+              chip here too until 2026-10-01; the gray banner says it, with Undo. */}
+          <Requests requests={requestsFor(card.id, day, walk)} className="mt-2.5 text-sm" />
         </SheetHeader>
 
         {snoozed ? (
@@ -364,8 +366,10 @@ export function HouseholdSheet({
  * gray, with the link in blue, when it doesn't. The whole strip is the one
  * target, as there, and its focus ring is inside it, since a ring outside it
  * would be cut off at the drawer's edges. A banner with nowhere to go is only
- * its message. One for an email scheduled to go out leads with a clock, so
- * it reads as waiting rather than done. A blue banner for a task on today's
+ * its message. One for an email scheduled to go out leads with an envelope
+ * with a clock at its corner, so it reads as waiting rather than done; it was
+ * a plain clock until 2026-10-01, when the clock came to mean the countdown
+ * to a renewal. A blue banner for a task on today's
  * list ends in an alarm clock, which snoozes it; a snoozed banner is gray
  * and ends in Undo.
  */
@@ -389,7 +393,7 @@ function StatusBanner({
   );
   const message = (
     <span className="flex items-center gap-2">
-      {scheduled && <Clock aria-hidden className="size-4 shrink-0" />}
+      {scheduled && <MailClock aria-hidden className="size-4 shrink-0" />}
       {text}
     </span>
   );

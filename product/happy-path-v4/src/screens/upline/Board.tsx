@@ -1,8 +1,8 @@
-import { useLayoutEffect, useState } from "react";
-import { ArrowRight, Check, FoldHorizontal, UnfoldHorizontal } from "lucide-react";
+import { Fragment, useLayoutEffect, useState } from "react";
+import { AlarmClock, ArrowRight, Check, FoldHorizontal, UnfoldHorizontal } from "lucide-react";
 import { cn } from "cn";
-import { Chips } from "@/components/Chips";
 import { RenewalMeta } from "@/components/RenewalMeta";
+import { Countdown, Requests, StatusLine } from "@/components/Status";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import {
@@ -10,9 +10,9 @@ import {
   bigIncrease,
   boardFor,
   columns,
+  groupsFor,
   needsYou,
   pctLabel,
-  renewalChip,
   setName,
   timed,
   type Accent,
@@ -23,9 +23,10 @@ import { earlier, money, options, pruitt, thisWeek, type Day } from "@/data";
 import type { Phase } from "@/household/activity";
 import { cards, fileFor } from "@/household/data";
 import { firstCards } from "@/household/firstCards";
+import { RowTip } from "@/lib/rowTip";
 import { shopSentence } from "@/pipeline";
 import { statusFor } from "@/status";
-import { chipsFor, isSnoozed, snoozeLabel, type Chip } from "@/tasks";
+import { isSnoozed, requestsFor, snoozeLabel } from "@/tasks";
 import type { WalkProps } from "@/walk";
 
 export type BoardProps = WalkProps & {
@@ -40,7 +41,6 @@ export type BoardProps = WalkProps & {
 export type BoardFilters = { query: string; needsOnly: boolean };
 
 const notInPrototype = "This household isn't built out for the prototype.";
-const readyToClose: Chip = { id: "closing", label: "Ready to close" };
 
 /**
  * The homepage's board, which replaced Action Needed and Scheduled Emails on
@@ -51,7 +51,10 @@ const readyToClose: Chip = { id: "closing", label: "Ready to close" };
  * walk. The headers share one row, so the first card in every column starts
  * on the same line however the names wrap. The three mini columns are a line a
  * household; the three full columns are short cards. A left accent marks what
- * needs a look (accentFor in board.ts). Every line and card opens the
+ * needs a look, by each column's own deadlines (accentFor in board.ts), and in
+ * a mini column a label over each flagged group says what its lines are
+ * counting to (groupsFor). Statuses are words, not boxes, so the only filled
+ * rectangles on the board are buttons. Every line and card opens the
  * household's profile drawer, the one way in; the invented households
  * (pipeline.ts) have no drawer and say so when pointed at. The toolbar's
  * search and Needs me narrow every column at once, and a column's count then
@@ -152,7 +155,8 @@ const empty: Record<ColumnId, string> = {
  * body sit on the board's two shared rows, so a name that wraps to two lines
  * pushes every column's first card down together. A mini column is one white
  * list of lines running the panel's width, so each name starts under the
- * heading's first letter; a full column is a stack of cards inset as far as
+ * heading's first letter, cut where its deadlines fall into groups, each
+ * under a label (GroupLabel); a full column is a stack of cards inset as far as
  * the heading. A snoozed task sinks to the foot of its column. The body is
  * positioned, so the lines' screen-reader labels (absolutely positioned) stay
  * inside it rather than stretching the page. It scrolls only once the board
@@ -212,16 +216,25 @@ function Column({
         {entries.length === 0 ? (
           <p className="px-3 text-sm">{empty}</p>
         ) : mini ? (
-          <ul className="divide-y border bg-card py-1">
-            {sorted.map((e) => (
-              <MiniRow key={e.id} e={e} accent={accentFor(e, id, day, walk)} {...props} />
+          <div className="border bg-card py-1">
+            {groupsFor(id, sorted, day, walk).map((g, i) => (
+              <Fragment key={g.key}>
+                {g.label && (
+                  <GroupLabel label={g.label} n={g.entries.length} accent={g.key === "rest" ? null : g.key} first={i === 0} />
+                )}
+                <ul className={cn("divide-y", g.label && "border-t")}>
+                  {g.entries.map((e) => (
+                    <MiniRow key={e.id} e={e} accent={accentFor(e, id, day, walk)} {...props} />
+                  ))}
+                </ul>
+              </Fragment>
             ))}
-          </ul>
+          </div>
         ) : (
           <ul className="flex flex-col gap-2 *:shrink-0">
             {sorted.map((e) =>
               e.invented ? (
-                <InventedCard key={e.id} e={e} accent={accentFor(e, id, day, walk)} day={day} />
+                <InventedCard key={e.id} e={e} col={id} accent={accentFor(e, id, day, walk)} day={day} />
               ) : (
                 <NamedCard key={e.id} e={e} col={id} accent={accentFor(e, id, day, walk)} {...props} />
               ),
@@ -270,7 +283,7 @@ function Folded({ label, n, onUnfold }: { label: string; n: number; onUnfold: ()
 
 /**
  * The accent as a card's left border, replacing its hairline (the hub's
- * card-accent), in the same 500 as the renewal chip that explains it.
+ * card-accent). The countdown or request beside it says what it means.
  */
 const accentBorder: Record<Accent, string> = {
   urgent: "border-l-3 border-l-destructive",
@@ -290,14 +303,15 @@ const accentBar: Record<Accent, string> = {
 };
 const bar = "before:absolute before:-top-px before:bottom-0 before:-left-px before:w-[3px]";
 
-/** The renewal's change in percent, in the mono face; red over 10%, so a big jump is a glance away. */
+/**
+ * The renewal's change in percent, in the mono face; over 10% in the text
+ * color rather than gray, so a big jump is a glance away while red stays for
+ * time (bigIncrease in board.ts).
+ */
 function Pct({ pct }: { pct: number }) {
   return (
     <span
-      className={cn(
-        "shrink-0 font-mono text-sm",
-        bigIncrease(pct) ? "text-destructive-strong" : "text-muted-foreground",
-      )}
+      className={cn("shrink-0 font-mono text-sm", bigIncrease(pct) ? "text-foreground" : "text-muted-foreground")}
     >
       {pctLabel(pct)}
     </span>
@@ -345,18 +359,26 @@ function OpenOverlay({
   );
 }
 
-/** Something drawn that has no drawer behind it, and says so when pointed at or focused. */
+/**
+ * Something drawn that has no drawer behind it, and says so when pointed at
+ * or focused, except while the pointer is on its countdown, which shows its
+ * date instead (RowTip in lib/rowTip.ts).
+ */
 function NotBuilt({ className, children }: { className: string; children: React.ReactNode }) {
+  const [open, setOpen] = useState(false);
+  const [onCountdown, setOnCountdown] = useState(false);
   return (
     <li>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <div tabIndex={0} className={cn(className, "focus-visible:-outline-offset-2")}>
-            {children}
-          </div>
-        </TooltipTrigger>
-        <TooltipContent>{notInPrototype}</TooltipContent>
-      </Tooltip>
+      <RowTip.Provider value={setOnCountdown}>
+        <Tooltip open={open && !onCountdown} onOpenChange={setOpen}>
+          <TooltipTrigger asChild>
+            <div tabIndex={0} className={cn(className, "focus-visible:-outline-offset-2")}>
+              {children}
+            </div>
+          </TooltipTrigger>
+          <TooltipContent>{notInPrototype}</TooltipContent>
+        </Tooltip>
+      </RowTip.Provider>
     </li>
   );
 }
@@ -366,28 +388,63 @@ function NotBuilt({ className, children }: { className: string; children: React.
  * ------------------------------------------------------------------ */
 
 /**
+ * The label over a group of lines in a mini column (groupsFor in board.ts):
+ * what its lines are counting to, then how many there are, in the mono face
+ * of the column's count, so it reads as a label rather than a line. Its accent
+ * runs on down the lines under it.
+ */
+function GroupLabel({
+  label,
+  n,
+  accent,
+  first,
+}: {
+  label: string;
+  n: number;
+  accent: "urgent" | "soon" | null;
+  first: boolean;
+}) {
+  return (
+    <h3 className={cn("relative px-3 py-2 font-mono text-xs", !first && "border-t", accent && [bar, accentBar[accent]])}>
+      {label} <span className="text-muted-foreground">{n}</span>
+    </h3>
+  );
+}
+
+/**
  * One household in a mini column: the name and the change in percent, at
- * 14px, so a column of 55 reads as a list of names. A line with a red or
- * yellow accent adds its renewal chip under the name, in the accent's color,
- * so the bar says what it means; a named household's own chips follow, and
- * Life quote requested or Info updated among them explains a blue bar. A long
- * name wraps rather than being cut short, so nothing depends on a tooltip.
- * The whole line opens the household's drawer, where the renewal email is a
- * click away; an invented line doesn't open, and says so.
+ * 14px, so a column of 55 reads as a list of names. A red or yellow line also
+ * counts down between the two ("8 days", by a clock, in the accent's color,
+ * with the date on hover), since the label over its group says what it's
+ * counting to. Under the name, a named household's requests follow, and Life
+ * quote requested or Info updated among them explains a blue bar; a snoozed
+ * one says so. A long name wraps rather than being cut short, so nothing
+ * depends on a tooltip. The whole line opens the household's drawer, where
+ * the renewal email is a click away; an invented line doesn't open, and says
+ * so.
  */
 function MiniRow({ e, accent, ...props }: BoardProps & { e: Entry; accent: Accent | null }) {
   const { day, walk, household, onHousehold } = props;
   const selected = household === e.id;
+  const open = () => onHousehold(e.id);
   const frame = cn("relative px-3 py-2 text-sm", accent && [bar, accentBar[accent]]);
-  const chips = [...(timed(accent) ? [renewalChip(e, day, accent)] : []), ...(e.invented ? [] : chipsFor(e.id, day, walk))];
+  const snoozed = !e.invented && isSnoozed(e.id, day, walk);
 
   const line = (
     <>
       <div className="flex items-start gap-2">
         <span className="min-w-0 flex-1 [overflow-wrap:break-word]">{setName(e.name)}</span>
+        {timed(accent) && (
+          <Countdown renews={e.renews} day={day} tone={accent} short onOpen={e.invented ? undefined : open} />
+        )}
         <Pct pct={e.pct} />
       </div>
-      <Chips chips={chips} className="mt-1.5" />
+      {!e.invented && <Requests requests={requestsFor(e.id, day, walk)} className="mt-1" />}
+      {snoozed && (
+        <StatusLine icon={AlarmClock} className="mt-1">
+          Snoozed {snoozeLabel(walk.snoozed[e.id].until)}.
+        </StatusLine>
+      )}
     </>
   );
 
@@ -396,7 +453,7 @@ function MiniRow({ e, accent, ...props }: BoardProps & { e: Entry; accent: Accen
   return (
     <li className={cn(frame, "hover:bg-background", selected && "bg-muted hover:bg-muted")}>
       {line}
-      <OpenOverlay id={e.id} name={e.name} selected={selected} onOpen={() => onHousehold(e.id)} />
+      <OpenOverlay id={e.id} name={e.name} selected={selected} onOpen={open} />
     </li>
   );
 }
@@ -407,26 +464,26 @@ function MiniRow({ e, accent, ...props }: BoardProps & { e: Entry; accent: Accen
 
 /**
  * A card in a full column: the name with the change in percent beside it (as
- * a mini line has it), then its chips, led by the renewal chip (in the color
- * of a red or yellow accent, so the bar down the edge says what it means; a
- * blue bar is explained by the household's chip that follows); then
- * what's renewing, last year's price to this year's, one sentence, and the
- * action if there is one. Everything is 14px, the kit's row size, with the
- * name set apart by the display face and weight (chips are the kit's 12px
- * mono). `foot` sits above the card's drawer button, for anything that's a
- * button of its own. The accent replaces the card's left hairline; while its
- * drawer is open, the rest of the edge turns blue.
+ * a mini line has it), then its status, a line each, close under the name:
+ * the countdown to its renewal (in the color of a red or yellow accent, so
+ * the bar down the edge says what it means) or that it's snoozed, then what
+ * the household asked for, which explains a blue bar. Then what's renewing,
+ * last year's price to this year's, one sentence, and the action if there is
+ * one. Everything is 14px, the kit's row size, with the name set apart by the
+ * display face and weight. `foot` sits above the card's drawer button, for
+ * anything that's a button of its own. The accent replaces the card's left
+ * hairline; while its drawer is open, the rest of the edge turns blue.
  */
 function Card({
   name,
   pct,
-  chips,
+  status,
   foot,
   children,
 }: {
   name: string;
   pct: number;
-  chips: Chip[];
+  status?: React.ReactNode;
   foot?: React.ReactNode;
   children: React.ReactNode;
 }) {
@@ -436,7 +493,7 @@ function Card({
         <h3 className="min-w-0 flex-1 text-sm [overflow-wrap:break-word]">{setName(name)}</h3>
         <Pct pct={pct} />
       </div>
-      <Chips chips={chips} className="mt-2" />
+      {status && <div className="mt-1 flex flex-col items-start gap-1">{status}</div>}
       <div className="mt-2">{children}</div>
       {foot && <div className="relative z-10">{foot}</div>}
     </div>
@@ -450,11 +507,20 @@ const cardFrame = (accent: Accent | null, selected = false) =>
     selected && "border-y-primary border-r-primary",
   );
 
-/** A card for an invented household: what its column says about it, and no drawer behind it. */
-function InventedCard({ e, accent, day }: { e: Entry; accent: Accent | null; day: Day }) {
+/**
+ * A card for an invented household: its countdown, unless it's done, what its
+ * column says about it, and no drawer behind it.
+ */
+function InventedCard({ e, col, accent, day }: { e: Entry; col: ColumnId; accent: Accent | null; day: Day }) {
   return (
     <NotBuilt className={cardFrame(accent)}>
-      <Card name={e.name} pct={e.pct} chips={[renewalChip(e, day, accent), ...(e.approved ? [readyToClose] : [])]}>
+      <Card
+        name={e.name}
+        pct={e.pct}
+        status={
+          col !== "completed" && <Countdown renews={e.renews} day={day} tone={timed(accent) ? accent : undefined} />
+        }
+      >
         <RenewalMeta lines={e.lines} carrier={e.carrier} />
         <Price e={e} />
         {e.invented!.detail && <span className="mt-2 block">{e.invented!.detail}</span>}
@@ -484,16 +550,18 @@ const firstOf = (name: string) => name.split(" ")[0];
  *   also has View the full report, which opens their drawer with their shop
  *   results over it.
  * - Recommendation Sent: who it's waiting on, or, once they've said yes,
- *   Ready to close, what they approved, and View profile and close.
+ *   what they approved and View profile and close. (A Ready to close chip
+ *   said it a third time until 2026-10-01.)
  * - Completed: how it ended, and, for anything Jenna closed out in the walk,
- *   her note and Undo.
+ *   her note and Undo. No countdown, since nothing's due.
  *
  * A first card (firstCards.ts) says what the board gives it (board.ts), with
  * the same View profile and close once it's approved, and the same note and
  * Undo once it's closed out in the walk.
  *
  * A task snoozed from the drawer's banner sinks to the foot of its column,
- * loses its accent, and says so, with Undo.
+ * loses its accent and its action, and says so under its name, in the
+ * countdown's place, with Undo.
  */
 function NamedCard({ e, col, accent, ...props }: BoardProps & { e: Entry; col: ColumnId; accent: Accent | null }) {
   const { day, walk, update, household, onHousehold } = props;
@@ -561,31 +629,36 @@ function NamedCard({ e, col, accent, ...props }: BoardProps & { e: Entry; col: C
     }
   }
 
-  if (snoozed) {
-    foot = (
-      <p className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1">
-        Snoozed {snoozeLabel(walk.snoozed[e.id].until)}.
-        <Button
-          variant="link"
-          className="h-auto p-0 font-sans text-sm"
-          onClick={() => update((w) => ({ snoozed: without(w.snoozed, e.id) }))}
-        >
-          Undo
-        </Button>
-      </p>
-    );
-  }
+  if (snoozed) foot = null;
 
-  const chips = [
-    renewalChip(e, day, accent),
-    ...(e.approved && !snoozed ? [readyToClose] : []),
-    ...chipsFor(e.id, day, walk),
-  ];
+  const when = snoozed ? (
+    <p className="flex flex-wrap items-center gap-x-2 gap-y-1">
+      <StatusLine icon={AlarmClock}>Snoozed {snoozeLabel(walk.snoozed[e.id].until)}.</StatusLine>
+      <Button
+        variant="link"
+        className="relative z-10 h-auto p-0 font-sans text-sm"
+        onClick={() => update((w) => ({ snoozed: without(w.snoozed, e.id) }))}
+      >
+        Undo
+      </Button>
+    </p>
+  ) : (
+    col !== "completed" && (
+      <Countdown renews={e.renews} day={day} tone={timed(accent) ? accent : undefined} onOpen={profile} />
+    )
+  );
+  const requests = requestsFor(e.id, day, walk);
+  const status = (when || requests.length > 0) && (
+    <>
+      {when}
+      <Requests requests={requests} />
+    </>
+  );
 
   return (
     <li className={cn(cardFrame(accent, selected), "hover:bg-background")}>
       <OpenOverlay id={e.id} name={e.name} selected={selected} onOpen={profile} />
-      <Card name={e.name} pct={e.pct} chips={chips} foot={foot}>
+      <Card name={e.name} pct={e.pct} status={status} foot={foot}>
         <RenewalMeta lines={e.lines} carrier={e.carrier} />
         <Price e={e} />
         {detail && <span className="mt-2 block">{detail}</span>}
