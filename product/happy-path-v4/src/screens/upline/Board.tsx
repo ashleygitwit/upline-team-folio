@@ -20,6 +20,7 @@ import {
   type Entry,
 } from "@/board";
 import { earlier, money, options, pruitt, thisWeek, type Day } from "@/data";
+import type { Phase } from "@/household/activity";
 import { cards, fileFor } from "@/household/data";
 import { shopSentence } from "@/pipeline";
 import { statusFor } from "@/status";
@@ -30,9 +31,8 @@ export type BoardProps = WalkProps & {
   day: Day;
   /** The household open in the drawer. */
   household: string | null;
-  onHousehold: (id: string) => void;
-  /** Opens the Pruitts' shop results. */
-  onResults: () => void;
+  /** Opens a household's drawer, with one of its pages over it if `phase` says which. */
+  onHousehold: (id: string, phase?: Phase) => void;
 };
 
 /** The toolbar's two filters: a name to search for, and whether to keep only what needs Jenna. */
@@ -468,8 +468,8 @@ const firstOf = (name: string) => name.split(" ")[0];
  * household's drawer. What's on it:
  *
  * - Recommendation Ready: what the shop found, in one sentence. The Pruitts'
- *   also has View the full report, which opens their shop results on their
- *   own, as their Action Needed card did.
+ *   also has View the full report, which opens their drawer with their shop
+ *   results over it.
  * - Recommendation Sent: who it's waiting on, or, once they've said yes,
  *   Ready to close, what they approved, and View profile and close.
  * - Completed: how it ended, and, for anything Jenna closed out in the walk,
@@ -479,7 +479,7 @@ const firstOf = (name: string) => name.split(" ")[0];
  * loses its accent, and says so, with Undo.
  */
 function NamedCard({ e, col, accent, ...props }: BoardProps & { e: Entry; col: ColumnId; accent: Accent | null }) {
-  const { day, walk, update, household, onHousehold, onResults } = props;
+  const { day, walk, update, household, onHousehold } = props;
   const h = thisWeek.find((x) => x.id === e.id);
   const ew = earlier.find((x) => x.id === e.id);
   const snoozed = isSnoozed(e.id, day, walk);
@@ -498,7 +498,11 @@ function NamedCard({ e, col, accent, ...props }: BoardProps & { e: Entry; col: C
         options.find((o) => o.id === "ao")!.carrier,
       );
       foot = (
-        <Button variant="link" className="mt-2 h-auto p-0 font-sans text-sm" onClick={onResults}>
+        <Button
+          variant="link"
+          className="mt-2 h-auto p-0 font-sans text-sm"
+          onClick={() => onHousehold(e.id, "results")}
+        >
           View the full report
           <ArrowRight data-icon="inline-end" />
         </Button>

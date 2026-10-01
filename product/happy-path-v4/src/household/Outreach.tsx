@@ -9,10 +9,10 @@ import type { WalkProps } from "@/walk";
  * A household's outreach review wired to the walk: the email Jenna edits is
  * the one Leah gets, Life decides the questionnaire's life question, Send now
  * sends it then (so the household moves to Awaiting Response), and Skip asks
- * first. It opens over the drawer (from the banner or Recent activity) and
- * on its own at the walk's review stop. From the 2026-09-29 review until
- * 2026-09-30 a Scheduled line on the homepage opened it on its own too; now
- * every line opens the drawer.
+ * first. It's a page over the drawer, from the banner or Recent activity,
+ * and the walk's review stop opens the Pruitts' drawer with it on top. From
+ * the 2026-09-29 review until 2026-09-30 a Scheduled line on the homepage
+ * opened it on its own; now every line opens the drawer.
  */
 export function OutreachFor({
   card,
@@ -25,7 +25,7 @@ export function OutreachFor({
 }: Pick<WalkProps, "walk" | "update"> & {
   card: Card;
   day: Day;
-  /** Closes whatever it's in and says what happened in the toast. */
+  /** Goes back to the profile and says what happened in the toast. */
   onDone: (said: string) => void;
   /** Asks before skipping the household's outreach. */
   onSkipOutreach: () => void;

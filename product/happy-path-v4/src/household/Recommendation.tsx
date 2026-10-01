@@ -1,28 +1,27 @@
-import { useEffect, useId, useRef, useState } from "react";
+import { useContext, useEffect, useId, useRef, useState } from "react";
 import { ArrowRight, Info, Send } from "lucide-react";
 import { cn } from "cn";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Field, FieldContent, FieldDescription, FieldLabel, FieldTitle } from "@/components/ui/field";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { columnTitle } from "@/household/columns";
 import { money, recEmail, type Card, type HouseholdFile, type QuoteDoc } from "@/household/data";
 import { CovMark, EmailFrame, SectionHead } from "@/household/parts";
-import { PhaseFooter, PhaseModal } from "@/household/PhaseModal";
+import { OpenQuotes } from "@/household/pageNav";
+import { PhaseFooter, PhasePage } from "@/household/PhasePage";
 import { shopStory } from "@/household/shopStory";
-import { focusPanel } from "@/lib/focus";
 
 type Step = 1 | 2 | 3;
 
 /**
- * A shop that has come back, as a phase modal in three steps, each with its
- * buttons in the footer. Step 1 is the results: what the shop found, said in
+ * A shop that has come back, as a page over the drawer in three steps, each
+ * with its buttons in the footer. Step 1 is the results: what the shop found, said in
  * a few sentences (shopStory.ts), our recommendation, the coverage table
- * against what the household has today, and a link to the carriers' quotes.
+ * against what the household has today, and a link to the carriers' quotes,
+ * which slide over the results as a page of their own.
  * Step 2 is the pick, each plan with a line on what it means. Step 3 is the
  * email that carries it, which Send recommendation email sends. The email
  * never sends on its own.
@@ -63,8 +62,8 @@ export function Recommendation({
   const headline = useId();
 
   // A new step starts at its top, with the focus on its headline, so a
-  // screen reader says where it is. Opening the modal leaves the focus on
-  // the panel, as every phase modal does.
+  // screen reader says where it is. Opening the page puts the focus on its
+  // title, as every page does (PhasePage.tsx).
   const heading = useRef<HTMLHeadingElement>(null);
   const moved = useRef(false);
   useEffect(() => {
@@ -78,7 +77,7 @@ export function Recommendation({
   };
 
   // The footer's buttons can be long, so they wrap on a phone rather than
-  // run off the modal.
+  // run off the page.
   const long = "h-auto min-h-13 py-3 whitespace-normal";
   const footer =
     step === 1 ? (
@@ -124,7 +123,7 @@ export function Recommendation({
   );
 
   return (
-    <PhaseModal eyebrow={columnTitle("recommend")} title={card.name} footer={footer} steady>
+    <PhasePage title="Recommendation" footer={footer}>
       {step === 1 && (
         <div>
           {head("Shopping Results")}
@@ -257,36 +256,39 @@ export function Recommendation({
           </div>
         </div>
       )}
-    </PhaseModal>
+    </PhasePage>
+  );
+}
+
+/** The link under the results table, which slides the carriers' quotes over the results. */
+function CarrierQuotes({ docs }: { docs: QuoteDoc[] }) {
+  const open = useContext(OpenQuotes);
+  return (
+    <button type="button" className={cn("mt-3", linkStyle)} onClick={(e) => open?.(docs, e.currentTarget)}>
+      View quotes from the carriers
+    </button>
   );
 }
 
 /**
- * The link under the results table, and the modal it opens: the current
- * policy documents, then each quote as the carrier sent it, each a link to
- * its PDF. The PDFs aren't in this prototype yet, so the links say so when
- * pointed at.
+ * The carriers' quotes, as a page over the results: the current policy
+ * documents, then each quote as the carrier sent it, each a link to its PDF.
+ * The PDFs aren't in this prototype yet, so the links say so when pointed
+ * at. It was a modal over the results modal until 2026-10-01.
  */
-function CarrierQuotes({ docs }: { docs: QuoteDoc[] }) {
+export function QuotesPage({ docs }: { docs: QuoteDoc[] }) {
   const current = docs.filter((d) => d.current);
   const shopped = docs.filter((d) => !d.current);
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <button type="button" className={cn("mt-3", linkStyle)}>
-          View quotes from the carriers
-        </button>
-      </DialogTrigger>
-      <DialogContent onOpenAutoFocus={focusPanel} className="outline-none">
-        <DialogHeader>
-          <p className="eyebrow text-muted-foreground">Shopping results</p>
-          <DialogTitle className="font-display text-2xl">Quotes from the carriers</DialogTitle>
-          <DialogDescription>Current policy documents, then each quote pulled directly from the carrier.</DialogDescription>
-        </DialogHeader>
+    <PhasePage
+      title="Quotes from the carriers"
+      description="Current policy documents, then each quote pulled directly from the carrier."
+    >
+      <div className="flex flex-col gap-4">
         {current.length > 0 && <QuoteLinks label="Current carrier" docs={current} />}
         {shopped.length > 0 && <QuoteLinks label="Shopped" docs={shopped} />}
-      </DialogContent>
-    </Dialog>
+      </div>
+    </PhasePage>
   );
 }
 

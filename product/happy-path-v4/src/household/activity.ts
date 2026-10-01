@@ -15,11 +15,14 @@ import { cards } from "@/household/data";
 import { changedFields, isSnoozed, snoozeLabel } from "@/tasks";
 import type { Walk } from "@/walk";
 
-/** A phase's modal, opened from the drawer's banner or from a line in Recent activity. */
+/** A phase's page, which slides over the drawer from its banner or from a line in Recent activity. */
 export type Phase = "outreach" | "nudge" | "shopping" | "results" | "closing";
 
-/** What a banner or a line opens, the word it says it with, and for a nudge, which one. */
-export type Opens = { phase: Phase; action: string; nudge?: string };
+/** A page over the drawer: its phase, and for a nudge, which one. */
+export type Page = { phase: Phase; nudge?: string };
+
+/** What a banner or a line opens, and the word it says it with. */
+export type Opens = Page & { action: string };
 
 /**
  * One line in Recent activity. A big one needs Jenna, so it's drawn as a
@@ -36,7 +39,7 @@ export type Shop = { carriers: { name: string; back?: boolean }[]; due: string }
 /**
  * Where a household stands on the walk's day, for its drawer: the stage over
  * its name, the banner, and Recent activity, which is what's coming up and
- * what has happened, newest first. The rest is what the phase modals say
+ * what has happened, newest first. The rest is what the phase pages say
  * once there's nothing left to do in them.
  */
 export type Activity = {

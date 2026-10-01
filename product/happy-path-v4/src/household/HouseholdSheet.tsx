@@ -1,9 +1,8 @@
-import { useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { AlarmClock, ArrowRight } from "lucide-react";
 import { cn } from "cn";
 import { Chips } from "@/components/Chips";
 import { Button } from "@/components/ui/button";
-import { Dialog } from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,16 +12,18 @@ import {
 import { SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/household/tabs";
 import { pruitt, nudgeByKey, type Day } from "@/data";
-import { activityFor, nudgeState, type Activity, type Banner, type Opens } from "@/household/activity";
+import { activityFor, nudgeState, type Activity, type Banner, type Opens, type Page } from "@/household/activity";
 import { columnTitle, spoken } from "@/household/columns";
-import { fileFor, money, type Card } from "@/household/data";
+import { fileFor, money, type Card, type QuoteDoc } from "@/household/data";
 import { focusPanel } from "@/lib/focus";
 import { Details } from "@/household/Details";
 import { Notes } from "@/household/Notes";
 import { OutreachFor } from "@/household/Outreach";
 import { CloseOut, EarlierResults, NudgeReview, ShopInProgress } from "@/household/phases";
+import { OpenQuotes, PageBack } from "@/household/pageNav";
+import { Layer } from "@/household/PhasePage";
+import { QuotesPage } from "@/household/Recommendation";
 import { RecentActivity } from "@/household/RecentActivity";
-import { ReturnFocus } from "@/household/returnFocus";
 import { changedFields, chipsFor, daysOut, isSnoozed, needsAction, snoozeLabel, snoozes } from "@/tasks";
 import type { SnoozeUntil, WalkProps } from "@/walk";
 
@@ -38,17 +39,23 @@ type Tab = "details" | "activity" | "notes";
  * The banner is blue when it needs Jenna (results to review, an approval to
  * bind) and gray when it only says what's going on (an email or nudge
  * scheduled, a shop running, a recommendation out). It opens that phase's
- * modal, and so do the lines in Recent activity that have more behind them:
+ * page, and so do the lines in Recent activity that have more behind them:
  * the outreach review, a nudge, the shop, the results or the close-out,
- * each with its buttons in its footer. What's shown follows the walk's day
- * (activity.ts), and what Jenna does in a modal lands in the walk: the email
- * she edits is the one Leah gets, Send now and Skip mark the email or nudge,
- * sending a recommendation or closing out moves the household on, and notes
- * stay for the rest of the walk.
+ * each with its buttons in its footer. A page slides over the profile
+ * (PhasePage.tsx), its back button named for the household, and the
+ * carriers' quotes slide over the results the same way; Escape goes back
+ * one at a time, and the close button or a click outside closes the drawer.
+ * What's shown follows the walk's day (activity.ts), and what Jenna does on
+ * a page lands in the walk: the email she edits is the one Leah gets, Send
+ * now and Skip mark the email or nudge, sending a recommendation or closing
+ * out moves the household on, and notes stay for the rest of the walk. Once
+ * she has done it, the page goes back to the profile, which shows where
+ * things stand now, and the toast at the drawer's foot says what happened.
  *
- * The Pruitts' results are `results`, the content of a dialog that the
- * homepage opens on its own too. Their email links to Leah's
- * questionnaire (`onOpenQuestionnaire`), as if it opened in another tab.
+ * The Pruitts' results are `results`, which their card on the homepage
+ * opens too, as the drawer with the results over it. Their email links to
+ * Leah's questionnaire (`onOpenQuestionnaire`), as if it opened in another
+ * tab.
  *
  * Started as v2.5's drawer (screens/queue/HouseholdSheet.tsx there).
  */
@@ -57,6 +64,9 @@ export function HouseholdSheet({
   day,
   walk,
   update,
+  page,
+  onPage,
+  toast,
   onDone,
   onSkipOutreach,
   onOpenQuestionnaire,
@@ -64,13 +74,18 @@ export function HouseholdSheet({
 }: Pick<WalkProps, "walk" | "update"> & {
   card: Card;
   day: Day;
-  /** Closes the drawer and says what happened in the toast. */
+  /** The page over the profile, if one is open. */
+  page: Page | null;
+  onPage: (page: Page | null) => void;
+  /** What the toast says, while it's up. */
+  toast: string | null;
+  /** Goes back to the profile and says what happened in the toast. */
   onDone: (said: string) => void;
   /** Asks before skipping the household's outreach. */
   onSkipOutreach: () => void;
   /** Goes to Leah's questionnaire in the walk, from the Pruitts' email. */
   onOpenQuestionnaire: () => void;
-  /** The Pruitts' shop results: the content of a dialog. */
+  /** The Pruitts' shop results, as a page. */
   results: ReactNode;
 }) {
   const file = fileFor(card);
@@ -84,7 +99,8 @@ export function HouseholdSheet({
   const who = card.name.includes("&") ? spoken(card.name.replace(/\s+\S+$/, "")) : card.first;
 
   const [tab, setTab] = useState<Tab>("details");
-  const [open, setOpen] = useState<Opens | null>(null);
+  // The carriers' quotes, over the results.
+  const [quotes, setQuotes] = useState<{ docs: QuoteDoc[] } | null>(null);
 
   // A task on today's board can be snoozed from the banner, and
   // while it's snoozed the banner says so instead, with Undo.
@@ -103,20 +119,38 @@ export function HouseholdSheet({
     });
   const [rec, setRec] = useState(file.rec?.email ?? "");
 
-  // A phase modal gives the focus back to the banner or line that opened it.
+  // Going back gives the focus to what opened the page: the banner or a line
+  // in Recent activity, or for the quotes, the link under the results. A page
+  // the walk opened with the drawer gives it to the drawer.
+  const panel = useRef<HTMLDivElement>(null);
   const opener = useRef<HTMLElement | null>(null);
+  const quotesOpener = useRef<HTMLElement | null>(null);
   const openPhase = (opens: Opens, from: HTMLElement) => {
     opener.current = from;
-    setOpen(opens);
+    onPage({ phase: opens.phase, nudge: opens.nudge });
   };
-  const returnFocus = (e: Event) => {
-    if (!opener.current?.isConnected) return;
-    e.preventDefault();
-    opener.current.focus();
+  const back = () => onPage(null);
+  const openQuotes = (docs: QuoteDoc[], from: HTMLElement) => {
+    quotesOpener.current = from;
+    setQuotes({ docs });
   };
+  const closeQuotes = () => setQuotes(null);
+  const hadPage = useRef(page !== null);
+  useEffect(() => {
+    if (hadPage.current && page === null) {
+      (opener.current?.isConnected ? opener.current : panel.current)?.focus();
+      opener.current = null;
+    }
+    hadPage.current = page !== null;
+  }, [page]);
+  const hadQuotes = useRef(false);
+  useEffect(() => {
+    if (hadQuotes.current && quotes === null) quotesOpener.current?.focus();
+    hadQuotes.current = quotes !== null;
+  }, [quotes]);
 
-  const modal = (() => {
-    switch (open?.phase) {
+  const pageFor = (open: Page) => {
+    switch (open.phase) {
       case "outreach":
         return (
           <OutreachFor
@@ -160,7 +194,7 @@ export function HouseholdSheet({
         );
       }
       case "shopping":
-        return activity.shop ? <ShopInProgress card={card} shop={activity.shop} /> : null;
+        return activity.shop ? <ShopInProgress shop={activity.shop} /> : null;
       case "results":
         return card.id === pruitt.id ? (
           results
@@ -191,99 +225,123 @@ export function HouseholdSheet({
             }}
           />
         );
-      default:
-        return null;
     }
-  })();
+  };
 
   return (
     <SheetContent
+      ref={panel}
       onOpenAutoFocus={focusPanel}
-      // The drawer's state outlives it, so a drawer closed from inside a modal
-      // (by sending or skipping) opens next time on Details, with no modal.
+      // The drawer's state outlives it, so a drawer closed with the quotes
+      // open opens next time on Details, with nothing over it. Upline clears
+      // the page when it opens a household.
       onCloseAutoFocus={() => {
-        setOpen(null);
         setTab("details");
+        setQuotes(null);
       }}
-      className="w-full gap-0 bg-background p-0 outline-none data-[side=right]:sm:max-w-[640px]"
+      onEscapeKeyDown={(e) => {
+        if (!page) return;
+        e.preventDefault();
+        if (quotes) closeQuotes();
+        else back();
+      }}
+      className="w-full gap-0 overflow-hidden bg-background p-0 outline-none data-[side=right]:sm:max-w-[640px]"
     >
-      <SheetHeader className="gap-0 px-5 pt-4.5 pb-0 pr-14">
-        <p className="eyebrow text-muted-foreground">{activity.stage}</p>
-        <SheetTitle className="mt-1.5 font-display text-2xl">{card.name}</SheetTitle>
-        <SheetDescription className="mt-2">
-          {card.jumpPct === 0
-            ? `No change (${money(card.premium)})`
-            : `+${card.jumpPct}% (${money(card.was)} → ${money(card.premium)})`}{" "}
-          · {card.lines} · renews {card.renewal}
-        </SheetDescription>
-        <Chips chips={chipsFor(card.id, day, walk)} className="mt-2.5" />
-      </SheetHeader>
+      {/* The profile, which nothing in can take the focus while a page covers it. */}
+      <div inert={page !== null} className="flex min-h-0 flex-1 flex-col">
+        <SheetHeader className="gap-0 px-5 pt-4.5 pb-0 pr-14">
+          <p className="eyebrow text-muted-foreground">{activity.stage}</p>
+          <SheetTitle className="mt-1.5 font-display text-2xl">{card.name}</SheetTitle>
+          <SheetDescription className="mt-2">
+            {card.jumpPct === 0
+              ? `No change (${money(card.premium)})`
+              : `+${card.jumpPct}% (${money(card.was)} → ${money(card.premium)})`}{" "}
+            · {card.lines} · renews {card.renewal}
+          </SheetDescription>
+          <Chips chips={chipsFor(card.id, day, walk)} className="mt-2.5" />
+        </SheetHeader>
 
-      {snoozed ? (
-        <StatusBanner
-          tone="gray"
-          text={`Snoozed ${snoozeLabel(walk.snoozed[card.id].until)}.`}
-          onOpen={openPhase}
-          undo={unsnooze}
-        />
-      ) : (
-        activity.banner && <StatusBanner {...activity.banner} onOpen={openPhase} snooze={snooze} />
-      )}
-
-      <Tabs
-        value={tab}
-        onValueChange={(v) => setTab(v as Tab)}
-        className={cn("min-h-0 flex-1 gap-0", !activity.banner && "mt-3.5")}
-      >
-        {/* The list's side padding gives way on a phone, where the drawer is
-            three quarters of the screen, so the three tabs still fit. */}
-        <TabsList variant="line" className="w-full justify-start border-b px-2 sm:px-4">
-          <TabsTrigger value="details" className="flex-none">
-            Details
-          </TabsTrigger>
-          <TabsTrigger value="activity" className="flex-none">
-            Recent activity
-          </TabsTrigger>
-          <TabsTrigger value="notes" className="flex-none">
-            Notes
-          </TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="details" className="min-h-0 overflow-y-auto px-5 pt-4.5 pb-7">
-          <Details card={card} file={file} changed={changedFields(card.id, day, walk)} />
-        </TabsContent>
-
-        <TabsContent value="activity" className="min-h-0 overflow-y-auto px-5 pt-4.5 pb-7">
-          <RecentActivity activity={activity} onOpen={openPhase} />
-        </TabsContent>
-
-        <TabsContent value="notes" className="flex min-h-0 flex-col">
-          <Notes
-            first={who}
-            notes={walk.notes[card.id] ?? []}
-            onAdd={(text) =>
-              update((w) => ({
-                notes: {
-                  ...w.notes,
-                  [card.id]: [
-                    ...(w.notes[card.id] ?? []),
-                    {
-                      id: Date.now(),
-                      day,
-                      time: new Date().toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }),
-                      text,
-                    },
-                  ],
-                },
-              }))
-            }
+        {snoozed ? (
+          <StatusBanner
+            tone="gray"
+            text={`Snoozed ${snoozeLabel(walk.snoozed[card.id].until)}.`}
+            onOpen={openPhase}
+            undo={unsnooze}
           />
-        </TabsContent>
-      </Tabs>
+        ) : (
+          activity.banner && <StatusBanner {...activity.banner} onOpen={openPhase} snooze={snooze} />
+        )}
 
-      <Dialog open={modal !== null} onOpenChange={(o) => !o && setOpen(null)}>
-        <ReturnFocus.Provider value={returnFocus}>{modal}</ReturnFocus.Provider>
-      </Dialog>
+        <Tabs
+          value={tab}
+          onValueChange={(v) => setTab(v as Tab)}
+          className={cn("min-h-0 flex-1 gap-0", !activity.banner && "mt-3.5")}
+        >
+          {/* The list's side padding gives way on a phone, where the drawer is
+              three quarters of the screen, so the three tabs still fit. */}
+          <TabsList variant="line" className="w-full justify-start border-b px-2 sm:px-4">
+            <TabsTrigger value="details" className="flex-none">
+              Details
+            </TabsTrigger>
+            <TabsTrigger value="activity" className="flex-none">
+              Recent activity
+            </TabsTrigger>
+            <TabsTrigger value="notes" className="flex-none">
+              Notes
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="details" className="min-h-0 overflow-y-auto px-5 pt-4.5 pb-7">
+            <Details card={card} file={file} changed={changedFields(card.id, day, walk)} />
+          </TabsContent>
+
+          <TabsContent value="activity" className="min-h-0 overflow-y-auto px-5 pt-4.5 pb-7">
+            <RecentActivity activity={activity} onOpen={openPhase} />
+          </TabsContent>
+
+          <TabsContent value="notes" className="flex min-h-0 flex-col">
+            <Notes
+              first={who}
+              notes={walk.notes[card.id] ?? []}
+              onAdd={(text) =>
+                update((w) => ({
+                  notes: {
+                    ...w.notes,
+                    [card.id]: [
+                      ...(w.notes[card.id] ?? []),
+                      {
+                        id: Date.now(),
+                        day,
+                        time: new Date().toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }),
+                        text,
+                      },
+                    ],
+                  },
+                }))
+              }
+            />
+          </TabsContent>
+        </Tabs>
+      </div>
+
+      <OpenQuotes.Provider value={openQuotes}>
+        <PageBack.Provider value={{ label: card.name, onBack: back }}>
+          <Layer item={page} covered={quotes !== null}>
+            {pageFor}
+          </Layer>
+        </PageBack.Provider>
+      </OpenQuotes.Provider>
+      <PageBack.Provider value={{ label: "Recommendation", onBack: closeQuotes }}>
+        <Layer item={page && quotes}>{(q) => <QuotesPage docs={q.docs} />}</Layer>
+      </PageBack.Provider>
+
+      <div aria-live="polite" role="status">
+        {toast && (
+          <div className="absolute bottom-6 left-1/2 z-30 w-max max-w-[calc(100%-2.5rem)] -translate-x-1/2 bg-dark-bg px-4.5 py-3 text-sm font-medium text-dark-fg animate-in duration-200 fade-in-0">
+            {toast}
+          </div>
+        )}
+      </div>
     </SheetContent>
   );
 }

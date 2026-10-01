@@ -9,7 +9,7 @@ type OnOpen = (opens: Opens, from: HTMLElement) => void;
 /**
  * A household's Recent activity: what's coming up, then what has happened,
  * newest first, on one rail with the time on the left. Most lines are a line
- * of text, with a link where there's a modal behind them. What needs Jenna
+ * of text, with a link where there's a page behind them. What needs Jenna
  * is a card with a button, and its dot is the blue one, so it's the first
  * thing the eye finds.
  */

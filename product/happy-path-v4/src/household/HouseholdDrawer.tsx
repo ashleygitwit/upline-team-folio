@@ -3,10 +3,10 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Sheet } from "@/components/ui/sheet";
 import type { Day } from "@/data";
+import type { Page } from "@/household/activity";
 import { spoken } from "@/household/columns";
 import { cards, type Card } from "@/household/data";
 import { HouseholdSheet } from "@/household/HouseholdSheet";
-import { OutreachFor } from "@/household/Outreach";
 import { ShopResults } from "@/household/ShopResults";
 import { focusPanel } from "@/lib/focus";
 import type { WalkProps } from "@/walk";
@@ -16,38 +16,31 @@ import type { WalkProps } from "@/walk";
  * same skip dialog and the same toast (Queue.tsx there). It opens under the
  * navigation (--sheet-top in index.css). v4 opens it from any card or line
  * on the homepage's board, and from an approved card's View profile and
- * close. What happens in it lands in the walk
- * (HouseholdSheet.tsx), and whatever sends, skips or closes out closes the
- * drawer and says so in the toast.
- *
- * It also holds the Pruitts' shop results, for opening on their own (from
- * View the full report on their card) as well as from their drawer's
- * banner, and a household's outreach review on its own (the walk's review
- * stop), so sending from any of them closes what's open and says so in the
- * same toast.
+ * close; the walk's review stop and View the full report on the Pruitts'
+ * card open it with a page already over it (`page`). What happens in it
+ * lands in the walk (HouseholdSheet.tsx), and whatever sends, skips or
+ * closes out goes back to the profile and says so in the toast. Until
+ * 2026-10-01 it closed the drawer instead, and the Pruitts' results and a
+ * household's outreach review also opened on their own, as modals over the
+ * board.
  */
 export function HouseholdDrawer({
   id,
   day,
+  page,
+  onPage,
   onClose,
   onOpenQuestionnaire,
-  resultsOpen,
-  onResultsOpen,
-  outreachOpen,
-  onOutreachOpen,
   walk,
   update,
 }: Pick<WalkProps, "walk" | "update"> & {
   id: string | null;
   day: Day;
+  /** The page over the drawer, if one is open. */
+  page: Page | null;
+  onPage: (page: Page | null) => void;
   onClose: () => void;
   onOpenQuestionnaire: () => void;
-  /** Whether the Pruitts' shop results are open on their own, outside the drawer. */
-  resultsOpen: boolean;
-  onResultsOpen: (open: boolean) => void;
-  /** The household whose outreach review is open on its own, outside the drawer. */
-  outreachOpen: string | null;
-  onOutreachOpen: (id: string | null) => void;
 }) {
   // Keep the last household on screen while the sheet slides away.
   const [shown, setShown] = useState<Card | null>(null);
@@ -66,15 +59,9 @@ export function HouseholdDrawer({
   };
 
   const done = (said: string) => {
-    onClose();
-    onOutreachOpen(null);
+    onPage(null);
     say(said);
   };
-
-  // Keep the last household's review on screen while its dialog fades.
-  const [reviewed, setReviewed] = useState<Card | null>(null);
-  const reviewing = cards.find((c) => c.id === outreachOpen) ?? null;
-  if (reviewing && reviewing !== reviewed) setReviewed(reviewing);
 
   const skip = () => {
     if (!skipping) return;
@@ -84,12 +71,9 @@ export function HouseholdDrawer({
     done("Skipped · moved to closed for this cycle");
   };
 
-  // The recommendation goes, from the results on their own or over the drawer.
   const sendRec = () => {
     update({ recSent: true });
-    onResultsOpen(false);
-    onClose();
-    say("Sent to Leah and Tom");
+    done("Sent to Leah and Tom");
   };
   const results = <ShopResults day={day} walk={walk} update={update} onSend={sendRec} />;
 
@@ -103,6 +87,9 @@ export function HouseholdDrawer({
             day={day}
             walk={walk}
             update={update}
+            page={page}
+            onPage={onPage}
+            toast={toast}
             onDone={done}
             onSkipOutreach={() => setSkipping(shown)}
             onOpenQuestionnaire={onOpenQuestionnaire}
@@ -110,25 +97,6 @@ export function HouseholdDrawer({
           />
         )}
       </Sheet>
-
-      <Dialog open={resultsOpen} onOpenChange={onResultsOpen}>
-        {results}
-      </Dialog>
-
-      <Dialog open={reviewing !== null} onOpenChange={(o) => !o && onOutreachOpen(null)}>
-        {reviewed && (
-          <OutreachFor
-            key={reviewed.id}
-            card={reviewed}
-            day={day}
-            walk={walk}
-            update={update}
-            onDone={done}
-            onSkipOutreach={() => setSkipping(reviewed)}
-            onOpenQuestionnaire={onOpenQuestionnaire}
-          />
-        )}
-      </Dialog>
 
       <Dialog open={!!skipping} onOpenChange={(o) => !o && setSkipping(null)}>
         <DialogContent onOpenAutoFocus={focusPanel} className="outline-none">
@@ -150,14 +118,6 @@ export function HouseholdDrawer({
           </div>
         </DialogContent>
       </Dialog>
-
-      <div aria-live="polite" role="status">
-        {toast && (
-          <div className="fixed bottom-25 left-1/2 z-[55] -translate-x-1/2 bg-dark-bg px-4.5 py-3 text-sm font-medium text-dark-fg animate-in duration-200 fade-in-0">
-            {toast}
-          </div>
-        )}
-      </div>
     </>
   );
 }

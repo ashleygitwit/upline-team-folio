@@ -6,19 +6,19 @@ import { Textarea } from "@/components/ui/textarea";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { dayName, type Nudge } from "@/data";
 import type { Activity, NudgeState, Shop } from "@/household/activity";
-import { columnTitle } from "@/household/columns";
 import { agency, money, outreachEmail, type Card, type HouseholdFile } from "@/household/data";
 import { CarrierLogo, EmailFrame, LinkedEmail, SectionHead } from "@/household/parts";
-import { PhaseFooter, PhaseModal } from "@/household/PhaseModal";
+import { PhaseFooter, PhasePage } from "@/household/PhasePage";
 import { Recommendation } from "@/household/Recommendation";
 
 /**
- * The phase modals a drawer opens from its banner and from Recent activity,
- * one per phase that has more to it than a line: the outreach review, a
- * nudge or follow-up, a shop in progress, an earlier week's results and the
- * close-out. The Pruitts' results are ShopResults.tsx, since the homepage
- * opens them too. Each takes its action in its footer, and once
- * it's done, opens read-only with the footer saying what happened.
+ * The pages that slide over a drawer from its banner and from Recent
+ * activity, one per phase that has more to it than a line: the outreach
+ * review, a nudge or follow-up, a shop in progress, an earlier week's
+ * results and the close-out. The Pruitts' results are ShopResults.tsx, since
+ * their card on the homepage opens them too. Each takes its action in its
+ * footer, and once it's done, opens read-only with the footer saying what
+ * happened.
  */
 
 /**
@@ -51,9 +51,8 @@ export function OutreachReview({
   onOpenQuestionnaire?: () => void;
 }) {
   return (
-    <PhaseModal
-      eyebrow="Outreach"
-      title={card.name}
+    <PhasePage
+      title="Renewal email"
       footer={
         skipped ? (
           <PhaseFooter done>
@@ -99,7 +98,7 @@ export function OutreachReview({
         </EmailFrame>
         <ShapeTheShop card={card} file={file} life={life} locked={!!sent} />
       </div>
-    </PhaseModal>
+    </PhasePage>
   );
 }
 
@@ -128,9 +127,8 @@ export function NudgeReview({
   const what = nudge.what.toLowerCase();
   const goes = nudge.goes ? dayName[nudge.goes] : "Monday";
   return (
-    <PhaseModal
-      eyebrow={nudge.what}
-      title={card.name}
+    <PhasePage
+      title={nudge.what}
       footer={
         state.state === "skipped" ? (
           <PhaseFooter done>
@@ -174,14 +172,14 @@ export function NudgeReview({
           <LinkedEmail body={body} onChange={onChange} readOnly={state.state === "sent"} />
         </EmailFrame>
       </div>
-    </PhaseModal>
+    </PhasePage>
   );
 }
 
 /** A shop in progress: who VA is quoting, which quotes are back, and when the results are due. Nothing needs Jenna. */
-export function ShopInProgress({ card, shop }: { card: Card; shop: Shop }) {
+export function ShopInProgress({ shop }: { shop: Shop }) {
   return (
-    <PhaseModal eyebrow={columnTitle("shopping")} title={card.name}>
+    <PhasePage title="Shopping">
       <div className="bg-muted px-5 pt-4.5 pb-4">
         <Badge variant="outline" className="bg-card">
           <LoaderCircle className="animate-spin motion-reduce:animate-none" data-icon="inline-start" />
@@ -204,7 +202,7 @@ export function ShopInProgress({ card, shop }: { card: Card; shop: Shop }) {
           ))}
         </div>
       </div>
-    </PhaseModal>
+    </PhasePage>
   );
 }
 
@@ -248,9 +246,8 @@ export function CloseOut({
   const { closing, closed } = activity;
 
   return (
-    <PhaseModal
-      eyebrow={columnTitle("binding")}
-      title={card.name}
+    <PhasePage
+      title="Close out"
       footer={
         closed ? (
           <PhaseFooter done>
@@ -304,7 +301,7 @@ export function CloseOut({
           </div>
         </div>
       )}
-    </PhaseModal>
+    </PhasePage>
   );
 }
 
