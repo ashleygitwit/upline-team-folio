@@ -552,9 +552,10 @@ function MiniRow({
   const selected = household === e.id;
   const open = () => onHousehold(e.id);
   // On the four-column board (`roomy`) each household is a card of its own,
-  // framed as the other columns' are; on the six, a tighter line in a list.
+  // framed as the other columns' are, with no accent down its edge; on the
+  // six, a tighter line in a list.
   const frame = roomy
-    ? cn(cardFrame(accent, !e.invented && selected), "p-3 text-sm")
+    ? cn(cardFrame(null, !e.invented && selected), "p-3 text-sm")
     : cn("relative px-3 py-2 text-sm", accent && [bar, accentBar[accent]]);
   const snoozed = !e.invented && isSnoozed(e.id, day, walk);
 
@@ -641,6 +642,12 @@ function Card({
   );
 }
 
+/**
+ * A card's frame: its hairline, and its accent down the left edge on the
+ * six-column board. The four-column board's cards go without the accent
+ * (since 2026-10-01) and pass none; the countdown's color and the request
+ * lines still say what it said.
+ */
 const cardFrame = (accent: Accent | null, selected = false) =>
   cn(
     "relative block border bg-card text-card-foreground",
@@ -666,7 +673,7 @@ function InventedCard({
 }) {
   const when = timed(accent) && <Countdown renews={e.renews} day={day} tone={accent} short />;
   return (
-    <NotBuilt className={cardFrame(accent)}>
+    <NotBuilt className={cardFrame(status ? null : accent)}>
       <Card
         name={e.name}
         pct={e.pct}
@@ -802,7 +809,7 @@ function NamedCard({
   );
 
   return (
-    <li className={cn(cardFrame(accent, selected), "hover:bg-background")}>
+    <li className={cn(cardFrame(phase ? null : accent, selected), "hover:bg-background")}>
       <OpenOverlay id={e.id} name={e.name} selected={selected} onOpen={profile} />
       <Card
         name={e.name}
