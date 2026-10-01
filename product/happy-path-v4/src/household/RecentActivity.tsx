@@ -9,9 +9,10 @@ type OnOpen = (opens: Opens, from: HTMLElement) => void;
 /**
  * A household's Recent activity: what's coming up, then what has happened,
  * newest first, on one rail with the time on the left. Most lines are a line
- * of text, with a link where there's a page behind them. What needs Jenna
- * is a card with a button, and its dot is the blue one, so it's the first
- * thing the eye finds.
+ * of text, with a link where there's a page behind them. What needs Jenna,
+ * or an email she can review before it goes out on its own, is a card with a
+ * button, and its dot is the blue one, so it's the first thing the eye finds.
+ * It opens first in the drawer (HouseholdSheet.tsx).
  */
 export function RecentActivity({ activity, onOpen }: { activity: Activity; onOpen: OnOpen }) {
   const { upNext, past } = activity;
@@ -42,8 +43,8 @@ function Group({ title, items, next, onOpen }: { title: string; items: Item[]; n
 /**
  * One line: its time, its dot on the rail, and what happened. The rail runs
  * between the first dot and the last. A line to come has an open dot; one
- * that's happened has a gray one; one that needs Jenna has the blue one and
- * is a card, so it sits lower on the rail, level with the card's heading.
+ * that's happened has a gray one; a card has the blue one, so it sits lower
+ * on the rail, level with the card's heading.
  * The time has a column of its own once the drawer is 28rem wide; narrower
  * (a phone), it sits over what happened, level with the dot, so the card
  * keeps the width.
@@ -86,7 +87,7 @@ function Line({
         <span
           className={cn(
             "relative mt-3 size-2.5",
-            big ? "bg-primary ring-4 ring-blue-100 @md:mt-7.5" : next ? "border-2 border-primary bg-background" : "bg-muted-foreground",
+            big ? "bg-primary ring-4 ring-blue-100 @md:mt-7.5" : next ? "border-2 border-primary bg-popover" : "bg-muted-foreground",
           )}
         />
       </span>

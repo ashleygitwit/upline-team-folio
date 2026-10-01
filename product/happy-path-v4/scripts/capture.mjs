@@ -122,7 +122,12 @@ async function closeDrawer() {
 
 /** The drawer's banner, which opens the page behind it. */
 async function clickBanner(action) {
-  await page.locator('[data-slot="sheet-content"]').getByRole("button", { name: new RegExp(`${action}$`) }).click();
+  // The banner is what follows the header; Recent activity, which the drawer
+  // opens on, can have a button that says the same thing.
+  await page
+    .locator('[data-slot="sheet-content"] [data-slot="sheet-header"] + div')
+    .getByRole("button", { name: new RegExp(`${action}$`) })
+    .click();
   await page.waitForTimeout(250);
 }
 
@@ -221,21 +226,21 @@ const captures = [
     slug: "04j-drawer-details",
     stop: 4,
     title: "Household drawer: Details (blue banner)",
-    via: "Rhea Iyer's card",
+    via: "Rhea Iyer's card → Details tab",
     run: async () => {
       await jump("Monday: Jenna opens Upline");
       await openProfile("Rhea Iyer");
+      await tab("Details").click();
     },
   },
   {
     slug: "04k-drawer-activity",
     stop: 4,
     title: "Household drawer: Recent activity",
-    via: "Rhea Iyer's drawer → Recent activity tab",
+    via: "Rhea Iyer's card (the drawer opens on Recent activity)",
     run: async () => {
       await jump("Monday: Jenna opens Upline");
       await openProfile("Rhea Iyer");
-      await tab("Recent activity").click();
     },
   },
   {
@@ -487,23 +492,23 @@ const captures = [
     slug: "10a-pruitts-details-info-updated",
     stop: 10,
     title: "The Pruitts' drawer: Details, with the changed detail marked",
-    via: "The Pruitts' Shopping line",
+    via: "The Pruitts' Shopping line → Details tab",
     run: async () => {
       await answerQuestionnaire();
       await jump("Wednesday");
       await openProfile("Leah & Tom Pruitt");
+      await tab("Details").click();
     },
   },
   {
     slug: "10b-pruitts-activity",
     stop: 10,
     title: "The Pruitts' drawer: Recent activity while shopping",
-    via: "The Pruitts' drawer → Recent activity tab",
+    via: "The Pruitts' Shopping line (the drawer opens on Recent activity)",
     run: async () => {
       await answerQuestionnaire();
       await jump("Wednesday");
       await openProfile("Leah & Tom Pruitt");
-      await tab("Recent activity").click();
     },
   },
   {
@@ -655,23 +660,23 @@ const captures = [
     slug: "12g-pruitts-details-blue",
     stop: 12,
     title: "The Pruitts' drawer: Details, results to review",
-    via: "The Pruitts' card",
+    via: "The Pruitts' card → Details tab",
     run: async () => {
       await answerQuestionnaire();
       await jump("Thursday: results are back");
       await openProfile("Leah & Tom Pruitt");
+      await tab("Details").click();
     },
   },
   {
     slug: "12h-pruitts-activity-results",
     stop: 12,
     title: "The Pruitts' drawer: Recent activity, with the results card",
-    via: "The Pruitts' drawer → Recent activity tab",
+    via: "The Pruitts' card (the drawer opens on Recent activity)",
     run: async () => {
       await answerQuestionnaire();
       await jump("Thursday: results are back");
       await openProfile("Leah & Tom Pruitt");
-      await tab("Recent activity").click();
     },
   },
   // 13

@@ -31,6 +31,7 @@ export function HouseholdDrawer({
   onPage,
   onClose,
   onOpenQuestionnaire,
+  returnFocus,
   walk,
   update,
 }: Pick<WalkProps, "walk" | "update"> & {
@@ -41,6 +42,8 @@ export function HouseholdDrawer({
   onPage: (page: Page | null) => void;
   onClose: () => void;
   onOpenQuestionnaire: () => void;
+  /** Gives the focus back to what opened the drawer, once it has closed. */
+  returnFocus: (id: string) => void;
 }) {
   // Keep the last household on screen while the sheet slides away.
   const [shown, setShown] = useState<Card | null>(null);
@@ -94,6 +97,7 @@ export function HouseholdDrawer({
             onSkipOutreach={() => setSkipping(shown)}
             onOpenQuestionnaire={onOpenQuestionnaire}
             results={results}
+            returnFocus={returnFocus}
           />
         )}
       </Sheet>

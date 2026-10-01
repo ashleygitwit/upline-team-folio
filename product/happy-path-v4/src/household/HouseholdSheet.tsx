@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { AlarmClock, ArrowRight } from "lucide-react";
+import { AlarmClock, ArrowRight, Clock } from "lucide-react";
 import { cn } from "cn";
 import { Chips } from "@/components/Chips";
 import { Button } from "@/components/ui/button";
@@ -31,10 +31,13 @@ type Tab = "details" | "activity" | "notes";
 
 /**
  * A household, opened from its card or line on the homepage's board. Every
- * household has the same drawer: the stage it's in, as the board's column
- * names it, over its name, a banner when something is going on, and three tabs, which
- * always open on Details. Recent activity is what's coming up and what has
- * happened; Notes is Jenna's own.
+ * household has the same drawer, on white: the stage it's in, as the board's
+ * column names it, over its name, a banner when something is going on, and
+ * three tabs, Recent activity, Details and Notes, which always open on Recent
+ * activity, since what's coming up and what has happened is what Jenna opens
+ * a household to see. Notes is Jenna's own. Closing the drawer gives the
+ * focus back to whatever opened it (`returnFocus`): Radix gives it back only
+ * to a trigger of its own, and the board opens the drawer without one.
  *
  * The banner is blue when it needs Jenna (results to review, an approval to
  * bind) and gray when it only says what's going on (an email or nudge
@@ -71,6 +74,7 @@ export function HouseholdSheet({
   onSkipOutreach,
   onOpenQuestionnaire,
   results,
+  returnFocus,
 }: Pick<WalkProps, "walk" | "update"> & {
   card: Card;
   day: Day;
@@ -87,6 +91,8 @@ export function HouseholdSheet({
   onOpenQuestionnaire: () => void;
   /** The Pruitts' shop results, as a page. */
   results: ReactNode;
+  /** Gives the focus back to what opened the drawer, once it has closed. */
+  returnFocus: (id: string) => void;
 }) {
   const file = fileFor(card);
   const activity: Activity = activityFor(card.id, day, walk) ?? {
@@ -98,7 +104,7 @@ export function HouseholdSheet({
   // "Leah and Tom", "Tobi": who the household is, in a sentence.
   const who = card.name.includes("&") ? spoken(card.name.replace(/\s+\S+$/, "")) : card.first;
 
-  const [tab, setTab] = useState<Tab>("details");
+  const [tab, setTab] = useState<Tab>("activity");
   // The carriers' quotes, over the results.
   const [quotes, setQuotes] = useState<{ docs: QuoteDoc[] } | null>(null);
 
@@ -233,11 +239,13 @@ export function HouseholdSheet({
       ref={panel}
       onOpenAutoFocus={focusPanel}
       // The drawer's state outlives it, so a drawer closed with the quotes
-      // open opens next time on Details, with nothing over it. Upline clears
-      // the page when it opens a household.
-      onCloseAutoFocus={() => {
-        setTab("details");
+      // open opens next time on Recent activity, with nothing over it. Upline
+      // clears the page when it opens a household.
+      onCloseAutoFocus={(e) => {
+        setTab("activity");
         setQuotes(null);
+        e.preventDefault();
+        returnFocus(card.id);
       }}
       onEscapeKeyDown={(e) => {
         if (!page) return;
@@ -245,7 +253,7 @@ export function HouseholdSheet({
         if (quotes) closeQuotes();
         else back();
       }}
-      className="w-full gap-0 overflow-hidden bg-background p-0 outline-none data-[side=right]:sm:max-w-[640px]"
+      className="w-full gap-0 overflow-hidden bg-popover p-0 outline-none data-[side=right]:sm:max-w-[640px]"
     >
       {/* The profile, which nothing in can take the focus while a page covers it. */}
       <div inert={page !== null} className="flex min-h-0 flex-1 flex-col">
@@ -280,23 +288,23 @@ export function HouseholdSheet({
           {/* The list's side padding gives way on a phone, where the drawer is
               three quarters of the screen, so the three tabs still fit. */}
           <TabsList variant="line" className="w-full justify-start border-b px-2 sm:px-4">
-            <TabsTrigger value="details" className="flex-none">
-              Details
-            </TabsTrigger>
             <TabsTrigger value="activity" className="flex-none">
               Recent activity
+            </TabsTrigger>
+            <TabsTrigger value="details" className="flex-none">
+              Details
             </TabsTrigger>
             <TabsTrigger value="notes" className="flex-none">
               Notes
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="details" className="min-h-0 overflow-y-auto px-5 pt-4.5 pb-7">
-            <Details card={card} file={file} changed={changedFields(card.id, day, walk)} />
-          </TabsContent>
-
           <TabsContent value="activity" className="min-h-0 overflow-y-auto px-5 pt-4.5 pb-7">
             <RecentActivity activity={activity} onOpen={openPhase} />
+          </TabsContent>
+
+          <TabsContent value="details" className="min-h-0 overflow-y-auto px-5 pt-4.5 pb-7">
+            <Details card={card} file={file} changed={changedFields(card.id, day, walk)} />
           </TabsContent>
 
           <TabsContent value="notes" className="flex min-h-0 flex-col">
@@ -354,13 +362,16 @@ export function HouseholdSheet({
  * gray, with the link in blue, when it doesn't. The whole strip is the one
  * target, as there, and its focus ring is inside it, since a ring outside it
  * would be cut off at the drawer's edges. A banner with nowhere to go is only
- * its message. A blue banner for a task on today's list ends in a clock,
- * which snoozes it; a snoozed banner is gray and ends in Undo.
+ * its message. One for an email scheduled to go out leads with a clock, so
+ * it reads as waiting rather than done. A blue banner for a task on today's
+ * list ends in an alarm clock, which snoozes it; a snoozed banner is gray
+ * and ends in Undo.
  */
 function StatusBanner({
   text,
   tone,
   opens,
+  scheduled,
   onOpen,
   snooze,
   undo,
@@ -374,6 +385,12 @@ function StatusBanner({
     "flex w-full items-center justify-between gap-4 px-5 py-2 text-left text-sm",
     blue ? "bg-primary text-primary-foreground" : "bg-muted text-foreground",
   );
+  const message = (
+    <span className="flex items-center gap-2">
+      {scheduled && <Clock aria-hidden className="size-4 shrink-0" />}
+      {text}
+    </span>
+  );
   if (undo) {
     return (
       <div className={cn("mt-3.5", strip)}>
@@ -384,7 +401,7 @@ function StatusBanner({
       </div>
     );
   }
-  if (!opens) return <p className={cn("mt-3.5", strip)}>{text}</p>;
+  if (!opens) return <p className={cn("mt-3.5", strip)}>{message}</p>;
   return (
     <div className={cn("mt-3.5 flex items-stretch", blue ? "bg-primary" : "bg-muted")}>
       <button
@@ -396,7 +413,7 @@ function StatusBanner({
           blue && "focus-visible:outline-primary-foreground",
         )}
       >
-        <span>{text}</span>
+        {message}
         <span
           className={cn(
             "flex shrink-0 items-center gap-1 font-medium underline-offset-4 group-hover:underline",

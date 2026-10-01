@@ -317,12 +317,24 @@ function Price({ e }: { e: Entry }) {
  * over the whole of it, named for the household, so what's on the line or
  * card reads as text and the click lands anywhere on it. Anything with a
  * button of its own sits above it. Its focus ring is drawn inside the edge,
- * so the column's scroll area doesn't clip it.
+ * so the column's scroll area doesn't clip it. It carries the household's
+ * id, so closing the drawer can give the focus back to it (Upline.tsx).
  */
-function OpenOverlay({ name, selected, onOpen }: { name: string; selected: boolean; onOpen: () => void }) {
+function OpenOverlay({
+  id,
+  name,
+  selected,
+  onOpen,
+}: {
+  id: string;
+  name: string;
+  selected: boolean;
+  onOpen: () => void;
+}) {
   return (
     <button
       type="button"
+      data-household={id}
       aria-pressed={selected}
       onClick={onOpen}
       className="absolute inset-0 focus-visible:-outline-offset-2"
@@ -383,7 +395,7 @@ function MiniRow({ e, accent, ...props }: BoardProps & { e: Entry; accent: Accen
   return (
     <li className={cn(frame, "hover:bg-background", selected && "bg-muted hover:bg-muted")}>
       {line}
-      <OpenOverlay name={e.name} selected={selected} onOpen={() => onHousehold(e.id)} />
+      <OpenOverlay id={e.id} name={e.name} selected={selected} onOpen={() => onHousehold(e.id)} />
     </li>
   );
 }
@@ -565,7 +577,7 @@ function NamedCard({ e, col, accent, ...props }: BoardProps & { e: Entry; col: C
 
   return (
     <li className={cn(cardFrame(accent, selected), "hover:bg-background")}>
-      <OpenOverlay name={e.name} selected={selected} onOpen={profile} />
+      <OpenOverlay id={e.id} name={e.name} selected={selected} onOpen={profile} />
       <Card name={e.name} pct={e.pct} chips={chips} foot={foot}>
         <RenewalMeta lines={e.lines} carrier={e.carrier} />
         <Price e={e} />

@@ -25,13 +25,18 @@ export type Page = { phase: Phase; nudge?: string };
 export type Opens = Page & { action: string };
 
 /**
- * One line in Recent activity. A big one needs Jenna, so it's drawn as a
- * card with `opens` as its button; any other line with `opens` has a link.
+ * One line in Recent activity. A big one needs Jenna, or is an email she can
+ * review before it goes out on its own, so it's drawn as a card with `opens`
+ * as its button; any other line with `opens` has a link.
  */
 export type Item = { when: string; label: string; detail?: string; opens?: Opens; big?: boolean };
 
-/** The drawer's banner: blue when it needs Jenna, gray when it only says what's going on. */
-export type Banner = { text: string; tone: "blue" | "gray"; opens?: Opens };
+/**
+ * The drawer's banner: blue when it needs Jenna, gray when it only says
+ * what's going on. One for an email that's scheduled to go leads with a
+ * clock.
+ */
+export type Banner = { text: string; tone: "blue" | "gray"; opens?: Opens; scheduled?: boolean };
 
 /** A shop in progress: each carrier, whether its quote is back, and when the results are due. */
 export type Shop = { carriers: { name: string; back?: boolean }[]; due: string };
@@ -143,6 +148,7 @@ function monday(h: Household, walk: Walk): Activity {
       tone: "gray",
       text: early ? "Renewal email sent." : "Renewal email scheduled for Tues 9AM.",
       opens: review,
+      scheduled: !early,
     },
     upNext: [
       ...(early
@@ -153,6 +159,7 @@ function monday(h: Household, walk: Walk): Activity {
               label: "Renewal email goes out",
               detail: "Drafted in your voice and sent from your inbox.",
               opens: review,
+              big: true,
             },
           ]),
       renewal(h.renews),
@@ -223,8 +230,16 @@ function nudge(key: string, day: Day, walk: Walk): { banner: Banner | null; upNe
     return { banner: null, upNext: [], past: [{ when: `${dayShort[n.goes!]} 9:00 AM`, label: `${n.what} sent`, opens: view }] };
   }
   return {
-    banner: { tone: "gray", text: `${n.what} scheduled for ${n.short} 9AM.`, opens: review },
-    upNext: [{ when: `${n.goes ? dayShort[n.goes] : "Mon"} 9:00 AM`, label: `${n.what} goes out`, detail: n.why, opens: review }],
+    banner: { tone: "gray", text: `${n.what} scheduled for ${n.short} 9AM.`, opens: review, scheduled: true },
+    upNext: [
+      {
+        when: `${n.goes ? dayShort[n.goes] : "Mon"} 9:00 AM`,
+        label: `${n.what} goes out`,
+        detail: n.why,
+        opens: review,
+        big: true,
+      },
+    ],
     past: [],
   };
 }

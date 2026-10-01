@@ -53,7 +53,7 @@ export function Layer<T>({
       data-state={open ? "open" : "closed"}
       inert={!open || covered}
       className={cn(
-        "absolute inset-y-0 right-0 -left-px z-10 flex flex-col border-l bg-background duration-250 ease-out",
+        "absolute inset-y-0 right-0 -left-px z-10 flex flex-col border-l bg-popover duration-250 ease-out",
         shown !== arrived && "motion-safe:data-[state=open]:animate-in motion-safe:data-[state=open]:slide-in-from-right",
         "motion-safe:data-[state=closed]:animate-out motion-safe:data-[state=closed]:fill-mode-forwards motion-safe:data-[state=closed]:slide-out-to-right",
         "motion-reduce:data-[state=closed]:hidden",

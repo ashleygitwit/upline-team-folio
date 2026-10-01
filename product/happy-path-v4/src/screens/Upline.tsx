@@ -25,9 +25,22 @@ export function Upline({
   // the drawer leaves the page be, so it slides away with the drawer.
   const [household, setHousehold] = useState<string | null>(initialHousehold);
   const [page, setPage] = useState<Page | null>(initialPage && { phase: initialPage });
+
+  // What opened the drawer, so closing it gives the focus back there: the
+  // card or line, or a button on it (View the full report, View profile and
+  // close). A click doesn't focus a button in Safari, and the walk's review
+  // stop opens the drawer with nothing clicked, so failing that it goes to
+  // the household's card or line, wherever it is on the board now.
+  const opener = useRef<HTMLElement | null>(null);
   const open = (id: string, phase?: Phase) => {
+    const at = document.activeElement;
+    opener.current = at instanceof HTMLElement && at !== document.body ? at : null;
     setHousehold(id);
     setPage(phase ? { phase } : null);
+  };
+  const returnFocus = (id: string) => {
+    const card = document.querySelector<HTMLElement>(`[data-board] [data-household="${id}"]`);
+    (opener.current?.isConnected ? opener.current : card)?.focus();
   };
 
   // A drawer opens under whichever bars are on screen: the presenter's bar,
@@ -57,6 +70,7 @@ export function Upline({
         onPage={setPage}
         onClose={() => setHousehold(null)}
         onOpenQuestionnaire={() => props.go("questionnaire")}
+        returnFocus={returnFocus}
         walk={props.walk}
         update={props.update}
       />
