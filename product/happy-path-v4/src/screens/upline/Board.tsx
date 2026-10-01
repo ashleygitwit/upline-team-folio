@@ -248,9 +248,11 @@ const empty: Record<ColumnId, string> = {
  * The four-column board's columns are `ruled`, drawn closer to the brand's
  * own surfaces: no gray panel, a gray 200 hairline between columns, as the
  * cards carry, and a 16px gutter either side of it, with the first column's
- * edge on the page's, under Needs me. Every column insets its households the
- * same, so a mini column's list sits where the cards do, and a line is as
- * roomy as a card (12px all round, a card's padding).
+ * edge on the page's, under Needs me. The rules hang from the hairline under
+ * the toolbar and run to the foot of the page (Home.tsx), so the header
+ * keeps 16px off it and the list 16px off the foot. Every column insets its
+ * households the same, so a mini column's list sits where the cards do, and
+ * a line is as roomy as a card (12px all round, a card's padding).
  */
 function Column({
   id,
@@ -295,7 +297,7 @@ function Column({
         ruled ? "border-l px-4 first:border-l-0 first:pl-0 last:pr-0" : "bg-muted",
       )}
     >
-      <div className={ruled ? "pb-3" : "px-3 pt-3 pb-2"}>
+      <div className={ruled ? "pt-4 pb-3" : "px-3 pt-3 pb-2"}>
         <div className="flex items-start gap-2">
           <h2 id={`col-${id}`} className="min-w-0 flex-1 text-xl">
             {label} <Count>{count}</Count>
@@ -331,7 +333,8 @@ function Column({
 
       <div
         className={cn(
-          "relative min-h-0 pb-3 [scrollbar-gutter:stable]",
+          "relative min-h-0 [scrollbar-gutter:stable]",
+          ruled ? "pb-4" : "pb-3",
           docked ? "overflow-y-auto" : "overflow-y-hidden",
           !mini && !ruled && "px-3",
         )}
@@ -401,7 +404,7 @@ function Folded({ label, n, ruled, onUnfold }: { label: string; n: number; ruled
         type="button"
         onClick={onUnfold}
         aria-label={`Unfold ${label}, ${n}`}
-        className={cn("group flex h-full w-full flex-col items-center gap-3", ruled ? "pt-1" : "pt-3")}
+        className={cn("group flex h-full w-full flex-col items-center gap-3", ruled ? "pt-4" : "pt-3")}
       >
         <UnfoldHorizontal aria-hidden className="size-4 text-muted-foreground group-hover:text-primary" />
         <Count>{n}</Count>

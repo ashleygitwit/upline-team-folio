@@ -1,4 +1,5 @@
 import { useLayoutEffect, useRef, useState } from "react";
+import { cn } from "cn";
 import { AppBar } from "@/components/AppBar";
 import type { Page, Phase } from "@/household/activity";
 import { HouseholdDrawer } from "@/household/HouseholdDrawer";
@@ -56,7 +57,14 @@ export function Upline({
   }, [household]);
 
   return (
-    <div className="min-h-[calc(100svh-var(--demo-bar-h))] bg-background">
+    <div
+      className={cn(
+        "min-h-[calc(100svh-var(--demo-bar-h))] bg-background",
+        // The four-column board (phases.ts) fills what's left of a tall
+        // window, so its column rules reach the foot of the page.
+        props.walk.fourColumns && "grid grid-cols-[minmax(0,1fr)] grid-rows-[auto_auto_1fr]",
+      )}
+    >
       <div ref={appBar}>
         <AppBar onHome={() => setHousehold(null)} />
       </div>

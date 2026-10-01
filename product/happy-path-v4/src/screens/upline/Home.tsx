@@ -33,7 +33,10 @@ export function Home({ day, walk, ...props }: BoardProps) {
 
   return (
     <>
-      <div className="shell max-w-none pt-25">
+      {/* On the four-column board (phases.ts), a hairline runs under the
+          toolbar from edge to edge of the window, and the board's column
+          rules hang from it (below). */}
+      <div className={cn("shell max-w-none pt-25", walk.fourColumns && "border-b pb-4")}>
         <h1 id="home-title" className="text-4xl">
           {day === "fri" ? `Happy ${dayName[day]}` : "Good morning"}, {agency.agent.first}
         </h1>
@@ -41,15 +44,7 @@ export function Home({ day, walk, ...props }: BoardProps) {
           {lineFor(day, walk)}
         </p>
 
-        {/* On the four-column board (phases.ts), a hairline runs under the
-            toolbar, as the columns are ruled apart, with the board's own
-            16px gap below it matched above. */}
-        <div
-          className={cn(
-            "mt-8 flex flex-wrap items-center justify-between gap-4",
-            walk.fourColumns && "border-b pb-4",
-          )}
-        >
+        <div className="mt-8 flex flex-wrap items-center justify-between gap-4">
           {/* Drawn as the Policyholder List's stage buttons were: on is the
               blue outline, so it doesn't compete with a primary action. */}
           <Button
@@ -72,9 +67,19 @@ export function Home({ day, walk, ...props }: BoardProps) {
         </div>
       </div>
 
-      {/* 2.5rem is the gaps above and below the board, pt-4 and pb-6. */}
-      <div className="shell max-w-none pt-4 pb-6">
-        <div className="h-[calc(100svh-var(--demo-bar-h)-2.5rem)] max-h-200">
+      {/* 2.5rem is the gaps above and below the board, pt-4 and pb-6. The
+          four-column board has neither, so its column rules run from the
+          toolbar's hairline to the foot of the page: it's a screen tall, or
+          800px, and takes the rest of a taller window (Upline.tsx makes it
+          the page's last row). Size containment keeps its households from
+          stretching it to the length of its longest column. */}
+      <div
+        className={cn(
+          "shell max-w-none",
+          walk.fourColumns ? "min-h-[min(100svh-var(--demo-bar-h),50rem)] [contain:size]" : "pt-4 pb-6",
+        )}
+      >
+        <div className={walk.fourColumns ? "h-full" : "h-[calc(100svh-var(--demo-bar-h)-2.5rem)] max-h-200"}>
           <Board day={day} walk={walk} query={query} needsOnly={needsOnly} {...props} />
         </div>
       </div>
