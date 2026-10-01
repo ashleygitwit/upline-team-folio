@@ -16,13 +16,15 @@ import { agency } from "@/data";
  * account settings. Neither is built yet, so they close the menu and go
  * nowhere. My Policyholder List was
  * between them until 2026-09-30, when the homepage's board replaced it. The
- * bar runs the page's full width, as the board does, so the mark sits on the
- * same edge as the greeting and the board's first column.
+ * bar's contents take the homepage's width, at most 1280, centered, as v3's
+ * Policyholder List did, so the mark sits on the same edge as the greeting
+ * and the board's first column; the bar's own ground and hairline run the
+ * window's width. (They ran the window's width too until 2026-10-01.)
  */
 export function AppBar({ onHome }: { onHome: () => void }) {
   return (
     <header className="border-b bg-card">
-      <div className="shell flex h-16 max-w-none items-center justify-between">
+      <div className="shell flex h-16 max-w-7xl items-center justify-between">
         <div className="flex items-center gap-4">
           <button type="button" onClick={onHome} aria-label="Upline, back to the homepage">
             <img src={logo} alt="" className="h-6 w-auto" />

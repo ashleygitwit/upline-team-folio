@@ -7,14 +7,14 @@ import { changeRequested, isSnoozed, renewalDate } from "@/tasks";
 import type { Walk } from "@/walk";
 
 /**
- * The homepage's board: where every renewal stands on the walk's day, in six
- * columns (Amanda's sketch, 2026-09-30). Four are mini, one line a household:
- * nothing in the first three needs Jenna (the emails go on their own, the
- * answers come in on their own, and Upline shops on its own), and Completed
- * is done (it was cards until 2026-10-01, and can be hidden). The middle two
- * are cards: Recommendation Ready needs her as soon as it can (ideally it's
- * empty), and Recommendation Sent is where renewals stall while the clock
- * runs down to the renewal.
+ * Where every renewal stands on the walk's day, step by step: the six steps
+ * the homepage's board had as columns (Amanda's sketch, 2026-09-30) until
+ * 2026-10-01, when it went to four, one for each phase of a renewal, with a
+ * status on every card (phases.ts groups the steps into them). Nothing in the
+ * first three steps needs Jenna (the emails go on their own, the answers
+ * come in on their own, and Upline shops on its own); Recommendation Ready
+ * needs her as soon as it can, and Recommendation Sent is where renewals
+ * stall while the clock runs down to the renewal.
  */
 export type ColumnId = "scheduled" | "awaiting" | "shopping" | "ready" | "sent" | "completed";
 
@@ -365,7 +365,10 @@ export function needsYou(e: Entry, col: ColumnId, day: Day, walk: Walk) {
   return col === "ready" || !!e.approved || accentFor(e, col, day, walk) !== null;
 }
 
-/** Everything the Needs me toggle keeps. */
+/**
+ * Everything that needs Jenna, the Monday email's Action Needed. The board's
+ * Needs me toggle kept it too, until it came off on 2026-10-01.
+ */
 export const needsMe = (board: Record<ColumnId, Entry[]>, day: Day, walk: Walk) =>
   columns.flatMap((c) => board[c.id].filter((e) => needsYou(e, c.id, day, walk)).map((e) => ({ e, col: c.id })));
 

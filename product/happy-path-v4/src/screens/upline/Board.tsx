@@ -1,27 +1,23 @@
-import { useLayoutEffect, useState } from "react";
-import { AlarmClock, ArrowRight, FoldHorizontal, UnfoldHorizontal } from "lucide-react";
+import { useState } from "react";
+import { AlarmClock, ChevronDown } from "lucide-react";
 import { cn } from "cn";
-import { Countdown, Requests, StatusLine } from "@/components/Status";
+import { Countdown, PhaseStatusLine, Requests, StatusLine } from "@/components/Status";
 import { Button } from "@/components/ui/button";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import {
-  accentFor,
-  bigIncrease,
-  boardFor,
-  columns,
-  needsYou,
-  pctLabel,
-  setName,
-  timed,
-  type Accent,
-  type ColumnId,
-  type Entry,
-} from "@/board";
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { accentFor, bigIncrease, pctLabel, setName, timed, type Accent, type ColumnId, type Entry } from "@/board";
 import { earlier, options, pruitt, thisWeek, type Day } from "@/data";
 import type { Phase } from "@/household/activity";
 import { cards, fileFor } from "@/household/data";
 import { firstCards } from "@/household/firstCards";
 import { RowTip } from "@/lib/rowTip";
+import { completedOn, phases, phasesFor, statusLabel, type PhaseId, type PhaseStatus, type Placed } from "@/phases";
 import { shopSentence } from "@/pipeline";
 import { statusFor } from "@/status";
 import { isSnoozed, requestsFor, snoozeLabel } from "@/tasks";
@@ -35,73 +31,71 @@ export type BoardProps = WalkProps & {
   onHousehold: (id: string, phase?: Phase) => void;
 };
 
-/** The toolbar's two filters: a name to search for, and whether to keep only what needs Jenna. */
-export type BoardFilters = { query: string; needsOnly: boolean };
-
 const notInPrototype = "This household isn't built out for the prototype.";
 
 /**
  * The homepage's board, which replaced Action Needed and Scheduled Emails on
- * 2026-09-30 (Amanda's sketch): every renewal in the pipeline, in six
- * columns, one screen tall under the header (Home.tsx). Each column scrolls
- * inside itself once the page has scrolled the board fully into view
- * (useDocked), and any column folds to a strip and stays folded for the
- * walk. The headers share one row, so the first card in every column starts
- * on the same line however the names wrap. The four mini columns are a line a
- * household; Recommendation Ready and Sent are short cards. Every name is set
- * the same way, a line's as a card's. A left accent marks what needs a look,
- * by each column's own deadlines (accentFor in board.ts). Statuses are words,
- * not boxes, so the only filled rectangles on the board are buttons. Every
- * line and card opens the household's profile drawer, the one way in; the
- * invented households
- * (pipeline.ts) have no drawer and say so when pointed at. The toolbar's
- * search and Needs me narrow every column at once, and a column's count then
- * says how many of its whole it's showing.
+ * 2026-09-30: every renewal in the pipeline, in four columns, one for each
+ * phase of a renewal (phases.ts): Initial Outreach, Shopping Renewal, Closing
+ * and Completed, with a status on every card saying where in the phase it is.
+ * Until 2026-10-01 it was six columns, one for each step (Amanda's sketch,
+ * 2026-09-30), and the four were an experiment beside them; each household
+ * still keeps its step (board.ts), which is what its countdown and its card's
+ * sentence go by. Every name is set the same way. Statuses are words, not
+ * boxes, so the only filled rectangles on the board are buttons. Every card
+ * opens the household's profile drawer, the one way in; the invented
+ * households (pipeline.ts) have no drawer and say so when pointed at.
  *
- * Each column has a floor: a mini column is wide enough for a couple's name
- * beside its change, and a full column for "Recommendation" at the
- * column-heading size beside the fold control. All six fit from about 1410
- * wide; narrower, the board scrolls sideways inside itself, with Completed
- * the column past the edge, and folding any one column brings it back.
+ * Under each column's name, a menu picks which of its statuses to show, or
+ * all of them; it narrows that column alone. Every column opens on All, and
+ * once Jenna picks, her pick holds. The picks are the page's own, so every
+ * stop opens on All again. (For part of 2026-10-01 the columns each opened
+ * on one status instead.) The toolbar's Needs me and search, which narrowed every
+ * column at once, came off on 2026-10-01, Needs me as not important and
+ * search for now.
+ *
+ * The board is drawn as v3's Policyholder List board was, the columns side by
+ * side, 12px apart, but 1000px tall: a column with more than fits scrolls
+ * inside itself, so the page doesn't run on for the length of the longest
+ * (Initial Outreach's 103 rows on Monday ran the page past 4,000px for part
+ * of 2026-10-01). A column is wide enough for a couple's name beside its
+ * countdown and change; narrower than all four, the board scrolls sideways
+ * inside itself.
  */
-export function Board({ query, needsOnly, ...props }: BoardProps & BoardFilters) {
-  const { day, walk, update } = props;
-  const board = boardFor(day, walk);
-  const docked = useDocked();
-  const q = query.trim().toLowerCase();
-  const filtering = !!q || needsOnly;
-  const shownIn = (col: ColumnId) =>
-    board[col].filter(
-      (e) => (!q || e.name.toLowerCase().includes(q)) && (!needsOnly || needsYou(e, col, day, walk)),
-    );
-  const isFolded = (col: ColumnId) => walk.folded.includes(col);
-  const setFolded = (col: ColumnId, fold: boolean) =>
-    update((w) => ({ folded: fold ? [...w.folded, col] : w.folded.filter((c) => c !== col) }));
-  const template = columns
-    .map((c) => (isFolded(c.id) ? "3rem" : c.mini ? "minmax(13rem, 1fr)" : "minmax(13.75rem, 1fr)"))
-    .join(" ");
+export function Board(props: BoardProps) {
+  const { day, walk } = props;
+  const placed = phasesFor(day, walk);
+  // The status Jenna picked in each column; none is All.
+  const [picked, setPicked] = useState<Partial<Record<PhaseId, PhaseStatus>>>({});
 
   return (
-    <div data-board className="h-full overflow-x-auto">
+    <div data-board className="overflow-x-auto">
       <div
-        className="grid h-full min-h-0 gap-x-2"
-        style={{ gridTemplateColumns: template, gridTemplateRows: "auto minmax(0, 1fr)" }}
+        className="grid h-250 gap-x-3"
+        style={{
+          gridTemplateColumns: phases.map((c) => (c.mini ? "minmax(13rem, 1fr)" : "minmax(13.75rem, 1fr)")).join(" "),
+          gridTemplateRows: "auto minmax(0, 1fr)",
+        }}
       >
-        {columns.map((c) => {
-          const shown = shownIn(c.id);
-          return isFolded(c.id) ? (
-            <Folded key={c.id} label={c.label} n={shown.length} onUnfold={() => setFolded(c.id, false)} />
-          ) : (
+        {phases.map((c) => {
+          const items = placed[c.id];
+          const only = picked[c.id];
+          const shown = only ? items.filter((i) => i.status === only) : items;
+          return (
             <Column
               key={c.id}
               id={c.id}
               label={c.label}
               mini={c.mini}
-              entries={shown}
-              count={filtering ? `${shown.length} of ${board[c.id].length}` : `${shown.length}`}
-              empty={q ? "No one here matches." : needsOnly ? "Nothing needs you here." : empty[c.id]}
-              docked={docked}
-              onFold={() => setFolded(c.id, true)}
+              items={shown}
+              statuses={c.statuses.map((status) => ({
+                status,
+                n: items.filter((i) => i.status === status).length,
+              }))}
+              only={only}
+              onOnly={(status) => setPicked((o) => ({ ...o, [c.id]: status }))}
+              count={`${shown.length}`}
+              empty={only ? `Nothing here is ${statusLabel[only]}.` : c.empty}
               {...props}
             />
           );
@@ -112,119 +106,143 @@ export function Board({ query, needsOnly, ...props }: BoardProps & BoardFilters)
 }
 
 /**
- * Whether the page has scrolled as far as it goes, which is where the board
- * sits whole on screen. Until then the columns don't scroll, so a scroll over
- * one moves the page instead: the page goes first, then the columns. Without
- * it, a scroll with the pointer over a column, which is most of the screen,
- * moved only that column, and the page seemed stuck. A page that fits the
- * window is docked from the start.
- */
-function useDocked() {
-  const [docked, setDocked] = useState(true);
-  useLayoutEffect(() => {
-    const page = document.scrollingElement ?? document.documentElement;
-    const check = () => setDocked(page.scrollTop >= page.scrollHeight - page.clientHeight - 1);
-    check();
-    const resized = new ResizeObserver(check);
-    resized.observe(document.body);
-    window.addEventListener("scroll", check, { passive: true });
-    window.addEventListener("resize", check);
-    return () => {
-      resized.disconnect();
-      window.removeEventListener("scroll", check);
-      window.removeEventListener("resize", check);
-    };
-  }, []);
-  return docked;
-}
-
-const empty: Record<ColumnId, string> = {
-  scheduled: "Nothing scheduled.",
-  awaiting: "No one to hear back from.",
-  shopping: "Nothing being shopped.",
-  ready: "All caught up. Nothing to send.",
-  sent: "Nothing out.",
-  completed: "Nothing finished yet.",
-};
-
-/**
- * One column: the hub's quiet panel (gray 100, no border), its name at the
- * column-heading size with its count, and its households. The header and the
- * body sit on the board's two shared rows, so a name that wraps to two lines
- * pushes every column's first card down together. A mini column is one white
- * list of lines running the panel's width, so each name starts under the
- * heading's first letter; a full column is a stack of cards inset as far as
- * the heading. A snoozed task sinks to the foot of its column. The body is
- * positioned, so the lines' screen-reader labels (absolutely positioned) stay
- * inside it rather than stretching the page. It scrolls only once the board
- * is docked, and keeps its scrollbar's room either way, so a scrollbar that
- * takes room (Windows, or a Mac set to always show them) doesn't shift the
- * cards when it docks.
+ * One column, a panel as v3's Policyholder List board drew its columns: gray
+ * 100 at 45% with a hairline round it. Its name is at the column-heading
+ * size, 20px in the display face, rather than v3's 14px semibold. The header
+ * and the list are the panel's two halves, laid on the board's two rows (the
+ * section itself is `display: contents`), so every header is as tall as the
+ * tallest and the first cards line up, and every panel runs the board's
+ * 1000px, its list scrolling inside it when it holds more than fits (each
+ * list stopped at its last card, with the page scrolling, for part of
+ * 2026-10-01). In Shopping Renewal and Closing every
+ * household is a card, 8px apart; a snoozed task sinks to the foot. Initial
+ * Outreach and Completed are lists instead, so the cards keep the emphasis:
+ * each household a row on the panel's own ground, ruled off from the next by
+ * a hairline that runs the panel's width, and turning white under the
+ * pointer, as it is while its drawer is open (they were cards for part of
+ * 2026-10-01). The list is positioned, so the screen-reader labels
+ * (absolutely positioned) stay inside it rather than stretching the page.
+ * (For part of 2026-10-01 the columns were ruled apart by hairlines instead,
+ * a screen tall, each scrolling inside itself.)
+ *
+ * Under the column's name, one menu picks what it shows: All, or one of its
+ * statuses, each with its count. Its button says what's showing and how many,
+ * as the kit's quiet outline button, a size down to sit in a column. A status
+ * with no one in it is in the menu but can't be picked. The counts are the
+ * column's, so a column with the menu has no count of its own beside its
+ * name; Completed, which has none, keeps its count. (Until 2026-10-01 the
+ * statuses were a row of outline buttons, one each, as v3's stage filters
+ * were.)
  */
 function Column({
   id,
   label,
   mini,
-  entries,
+  items,
+  statuses,
+  only,
+  onOnly,
   count,
   empty,
-  docked,
-  onFold,
   ...props
 }: BoardProps & {
-  id: ColumnId;
+  id: PhaseId;
   label: string;
   mini?: boolean;
-  entries: Entry[];
+  items: Placed[];
+  statuses: { status: PhaseStatus; n: number }[];
+  /** The status the column is narrowed to, if one is picked. */
+  only?: PhaseStatus;
+  onOnly: (status: PhaseStatus | undefined) => void;
   count: string;
   empty: string;
-  docked: boolean;
-  onFold: () => void;
 }) {
   const { day, walk } = props;
+  const total = statuses.reduce((sum, { n }) => sum + n, 0);
   const sorted = mini
-    ? entries
-    : [...entries].sort((a, b) => Number(snoozedEntry(a, day, walk)) - Number(snoozedEntry(b, day, walk)));
+    ? items
+    : [...items].sort((a, b) => Number(snoozedEntry(a.e, day, walk)) - Number(snoozedEntry(b.e, day, walk)));
 
   return (
-    <section aria-labelledby={`col-${id}`} className="row-span-2 grid min-h-0 min-w-0 grid-rows-subgrid bg-muted">
-      <div className="flex items-start gap-2 px-3 pt-3 pb-2">
-        <h2 id={`col-${id}`} className="min-w-0 flex-1 text-xl">
-          {label} <Count>{count}</Count>
+    <section aria-labelledby={`col-${id}`} className="contents">
+      <div className="row-start-1 min-w-0 border border-b-0 bg-muted/45 px-2.5 pt-3 pb-2.5">
+        <h2 id={`col-${id}`} className="text-xl">
+          {label}
+          {statuses.length === 0 && (
+            <>
+              {" "}
+              <Count>{count}</Count>
+            </>
+          )}
         </h2>
-        <Button
-          variant="ghost"
-          size="icon-sm"
-          aria-label={`Fold ${label}`}
-          className="-my-0.5 -mr-1.5 shrink-0 text-muted-foreground"
-          onClick={onFold}
-        >
-          <FoldHorizontal />
-        </Button>
+        {statuses.length > 0 && (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="outline"
+                size="sm"
+                aria-label={`Show in ${label}: ${only ? statusLabel[only] : "All"}, ${count}`}
+                className="mt-2"
+              >
+                {only ? statusLabel[only] : "All"}
+                <span className="font-mono text-xs font-normal text-muted-foreground">{count}</span>
+                <ChevronDown data-icon="inline-end" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-56">
+              <DropdownMenuRadioGroup
+                value={only ?? "all"}
+                onValueChange={(v) => onOnly(v === "all" ? undefined : (v as PhaseStatus))}
+              >
+                <DropdownMenuRadioItem value="all">
+                  All
+                  <MenuCount>{total}</MenuCount>
+                </DropdownMenuRadioItem>
+                {statuses.map(({ status, n }) => (
+                  <DropdownMenuRadioItem key={status} value={status} disabled={n === 0 && status !== only}>
+                    {statusLabel[status]}
+                    <MenuCount>{n}</MenuCount>
+                  </DropdownMenuRadioItem>
+                ))}
+              </DropdownMenuRadioGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
       </div>
 
-      <div
-        className={cn(
-          "relative min-h-0 pb-3 [scrollbar-gutter:stable]",
-          docked ? "overflow-y-auto" : "overflow-y-hidden",
-          !mini && "px-3",
-        )}
-      >
-        {entries.length === 0 ? (
-          <p className="px-3 text-sm">{empty}</p>
-        ) : mini ? (
-          <ul className="divide-y border bg-card py-1">
-            {sorted.map((e) => (
-              <MiniRow key={e.id} e={e} col={id} accent={accentFor(e, id, day, walk)} {...props} />
-            ))}
-          </ul>
+      <div className="relative row-start-2 min-h-0 min-w-0 overflow-y-auto border border-t-0 bg-muted/45 px-2.5 pb-3.5">
+        {items.length === 0 ? (
+          <p className="text-sm">{empty}</p>
         ) : (
-          <ul className="flex flex-col gap-2 *:shrink-0">
-            {sorted.map((e) =>
-              e.invented ? (
-                <InventedCard key={e.id} e={e} accent={accentFor(e, id, day, walk)} day={day} />
+          <ul className={mini ? "-mx-2.5 divide-y border-y" : "flex flex-col gap-2 *:shrink-0"}>
+            {sorted.map(({ e, step, status }) =>
+              mini ? (
+                <ListRow
+                  key={e.id}
+                  e={e}
+                  col={step}
+                  status={status}
+                  accent={accentFor(e, step, day, walk)}
+                  {...props}
+                />
+              ) : e.invented ? (
+                <InventedCard
+                  key={e.id}
+                  e={e}
+                  col={step}
+                  status={status!}
+                  accent={accentFor(e, step, day, walk)}
+                  day={day}
+                />
               ) : (
-                <NamedCard key={e.id} e={e} col={id} accent={accentFor(e, id, day, walk)} {...props} />
+                <NamedCard
+                  key={e.id}
+                  e={e}
+                  col={step}
+                  status={status!}
+                  accent={accentFor(e, step, day, walk)}
+                  {...props}
+                />
               ),
             )}
           </ul>
@@ -236,7 +254,12 @@ function Column({
 
 const snoozedEntry = (e: Entry, day: Day, walk: BoardProps["walk"]) => !e.invented && isSnoozed(e.id, day, walk);
 
-/** A column's count, in the mono face on a white chip, beside its name. */
+/** A count in a column's menu, in the mono face, after the status. */
+function MenuCount({ children }: { children: React.ReactNode }) {
+  return <span className="ml-auto font-mono text-xs text-muted-foreground">{children}</span>;
+}
+
+/** A column's count, in the mono face on a white chip, beside its name: Completed's, which has no menu. */
 function Count({ children }: { children: React.ReactNode }) {
   return (
     <span className="relative -top-0.5 inline-block bg-card px-1.5 align-middle font-mono text-xs font-normal whitespace-nowrap">
@@ -245,51 +268,9 @@ function Count({ children }: { children: React.ReactNode }) {
   );
 }
 
-/** A folded column: a strip with its count and its name on end. The whole strip unfolds it. */
-function Folded({ label, n, onUnfold }: { label: string; n: number; onUnfold: () => void }) {
-  return (
-    <section aria-label={label} className="row-span-2 min-h-0 bg-muted">
-      <button
-        type="button"
-        onClick={onUnfold}
-        aria-label={`Unfold ${label}, ${n}`}
-        className="group flex h-full w-full flex-col items-center gap-3 pt-3"
-      >
-        <UnfoldHorizontal aria-hidden className="size-4 text-muted-foreground group-hover:text-primary" />
-        <Count>{n}</Count>
-        <span className="font-display text-xl font-medium [writing-mode:vertical-rl] group-hover:text-primary">
-          {label}
-        </span>
-      </button>
-    </section>
-  );
-}
-
 /* ------------------------------------------------------------------ *
- * Accents and figures
+ * Figures
  * ------------------------------------------------------------------ */
-
-/**
- * The accent as a card's left border, replacing its hairline (the hub's
- * card-accent). The countdown or request beside it says what it means.
- */
-const accentBorder: Record<Accent, string> = {
-  urgent: "border-l-3 border-l-destructive",
-  soon: "border-l-3 border-l-warning",
-  requested: "border-l-3 border-l-primary",
-};
-
-/**
- * The accent on a line in a mini column: a bar drawn over the list's left
- * hairline, so it replaces the line rather than sitting beside it, as the
- * card's does.
- */
-const accentBar: Record<Accent, string> = {
-  urgent: "before:bg-destructive",
-  soon: "before:bg-warning",
-  requested: "before:bg-primary",
-};
-const bar = "before:absolute before:-top-px before:bottom-0 before:-left-px before:w-[3px]";
 
 /**
  * The renewal's change in percent, in the mono face; over 10% in the text
@@ -307,19 +288,33 @@ function Pct({ pct }: { pct: number }) {
 }
 
 /**
- * A household's name, as a card's heading and a mini line set it alike: the
- * headings' display face at 500, at the line's 14px. Until 2026-10-01 a mini
- * line's name was the body face at 400, so the same household read two ways.
+ * When a renewal was completed, "Oct 9", where a card has its change, on a
+ * Completed card (completedOn in phases.ts): set as the
+ * change is, in the mono face in gray, since the change and the countdown
+ * are done with once a renewal is closed.
+ */
+function Completed({ on }: { on: string }) {
+  return (
+    <span className="shrink-0 font-mono text-sm text-muted-foreground">
+      <span className="sr-only">Completed </span>
+      {on}
+    </span>
+  );
+}
+
+/**
+ * A household's name, as every card sets it: the headings' display face at
+ * 500, at the card's 14px.
  */
 const nameStyle = "min-w-0 flex-1 font-display text-sm font-medium [overflow-wrap:break-word]";
 
 /**
- * The way into a household's drawer from its line or card: a button laid
- * over the whole of it, named for the household, so what's on the line or
- * card reads as text and the click lands anywhere on it. Anything with a
- * button of its own sits above it. Its focus ring is drawn inside the edge,
- * so the column's scroll area doesn't clip it. It carries the household's
- * id, so closing the drawer can give the focus back to it (Upline.tsx).
+ * The way into a household's drawer from its card: a button laid over the
+ * whole of it, named for the household, so what's on the card reads as text
+ * and the click lands anywhere on it. Anything with a button of its own sits
+ * above it. Its focus ring is drawn inside the edge. It carries the
+ * household's id, so closing the drawer can give the focus back to it
+ * (Upline.tsx).
  */
 function OpenOverlay({
   id,
@@ -370,39 +365,48 @@ function NotBuilt({ className, children }: { className: string; children: React.
 }
 
 /* ------------------------------------------------------------------ *
- * Mini columns
+ * Initial Outreach and Completed
  * ------------------------------------------------------------------ */
 
 /**
- * One household in a mini column: the name, set as a card's is, and the
- * change in percent, at 14px, so a column of 55 reads as a list of names. A
- * red or yellow line also counts down between the two ("8 days", by a clock,
- * in the accent's color, with the date on hover), short so it fits the line;
- * the clock says it's the time left to the renewal. A Completed line is only
- * the name, since the change and the countdown are done with once a renewal
- * is closed. Under the name, a named household's requests follow, and Life
- * quote requested or Info updated among them explains a blue bar; a snoozed
- * one says so. A long name wraps rather than being cut short, so nothing
- * depends on a tooltip. The whole line opens the household's drawer, where
- * the renewal email is a click away; an invented line doesn't open, and says
- * so.
+ * A household in Initial Outreach or Completed, a row in the column's list
+ * (Column): the name, set as every card's is, and the change in percent, at
+ * 14px; a renewal running
+ * short on time also counts down between the two ("8 days", by a clock, red
+ * 700 when it's urgent, with the date on hover). A Completed card has the day
+ * it was completed where the change would be, since the change and the
+ * countdown are done with once a renewal is closed. Under the name, its
+ * status (Initial Outreach's), then a named household's requests and whether
+ * it's snoozed. A long name wraps rather than being cut short, so nothing
+ * depends on a tooltip. The whole card opens the household's drawer, where
+ * the renewal email is a click away, and the row turns white under the
+ * pointer to say so; an invented household's doesn't open, and says so.
+ * (These were one-line lists in a white box, the mini columns, until
+ * 2026-10-01, then cards for part of that day.)
  */
-function MiniRow({ e, col, accent, ...props }: BoardProps & { e: Entry; col: ColumnId; accent: Accent | null }) {
+function ListRow({
+  e,
+  col,
+  status,
+  accent,
+  ...props
+}: BoardProps & { e: Entry; col: ColumnId; status?: PhaseStatus; accent: Accent | null }) {
   const { day, walk, household, onHousehold } = props;
   const selected = household === e.id;
   const open = () => onHousehold(e.id);
-  const frame = cn("relative px-3 py-2 text-sm", accent && [bar, accentBar[accent]]);
+  const frame = cn("relative px-2.5 py-3 text-sm", !e.invented && selected && "bg-card");
   const snoozed = !e.invented && isSnoozed(e.id, day, walk);
 
-  const line = (
+  const body = (
     <>
       <div className="flex items-start gap-2">
         <span className={nameStyle}>{setName(e.name)}</span>
         {timed(accent) && (
           <Countdown renews={e.renews} day={day} tone={accent} short onOpen={e.invented ? undefined : open} />
         )}
-        {col !== "completed" && <Pct pct={e.pct} />}
+        {col === "completed" ? <Completed on={completedOn(e, walk)} /> : <Pct pct={e.pct} />}
       </div>
+      {status && <PhaseStatusLine status={status} day={day} className="mt-1" />}
       {!e.invented && <Requests requests={requestsFor(e.id, day, walk)} className="mt-1" />}
       {snoozed && (
         <StatusLine icon={AlarmClock} className="mt-1">
@@ -412,11 +416,11 @@ function MiniRow({ e, col, accent, ...props }: BoardProps & { e: Entry; col: Col
     </>
   );
 
-  if (e.invented) return <NotBuilt className={frame}>{line}</NotBuilt>;
+  if (e.invented) return <NotBuilt className={frame}>{body}</NotBuilt>;
 
   return (
-    <li className={cn(frame, "hover:bg-background", selected && "bg-muted hover:bg-muted")}>
-      {line}
+    <li className={cn(frame, "hover:bg-card")}>
+      {body}
       <OpenOverlay id={e.id} name={e.name} selected={selected} onOpen={open} />
     </li>
   );
@@ -427,66 +431,89 @@ function MiniRow({ e, col, accent, ...props }: BoardProps & { e: Entry; col: Col
  * ------------------------------------------------------------------ */
 
 /**
- * A card in Recommendation Ready or Sent, the two the same: the name with the
- * change in percent beside it (as a mini line has it), then its status, a
- * line each, close under the name: the countdown once it's red or yellow ("8
- * days", by a clock, in the accent's color, so the bar down the edge says
- * what it means) or that it's snoozed, then what the household asked for,
- * which explains a blue bar. Then one sentence, what the shop found or who
- * it's waiting on, and the action if there is one. The countdown sits under
- * the name rather than beside it, as a line's does, since a card is too
- * narrow for both without wrapping the name. Everything is 14px, the kit's
- * row size. What's renewing, the carrier and last year's price to this
- * year's came off on 2026-10-01; the drawer's header has all three. `foot`
- * sits above the card's drawer button, for anything that's a button of its
- * own. The accent replaces the card's left hairline; while its drawer is
- * open, the rest of the edge turns blue.
+ * A card in Shopping Renewal or Closing, the two the same: the name, then the
+ * countdown once the renewal is running short ("8 days", by a clock, red 700
+ * when it's urgent) and the change in percent, the same top line as an
+ * Initial Outreach card's. Under the name, whether it's snoozed, with Undo,
+ * and what the household asked for. Then one sentence, what the shop found
+ * or who it's waiting on, and the action if there is one. At the foot, under
+ * a rule that runs edge to edge of the card, its status. Everything is 14px,
+ * the kit's row size. What's renewing, the carrier and last year's price to
+ * this year's came off on 2026-10-01; the drawer's header has all three.
+ * `foot` sits above the card's drawer button, for anything that's a button of
+ * its own.
  */
 function Card({
   name,
   pct,
+  when,
   status,
   detail,
   foot,
+  phase,
 }: {
   name: string;
   pct: number;
+  /** The countdown, beside the change. */
+  when?: React.ReactNode;
   status?: React.ReactNode;
   detail?: React.ReactNode;
   foot?: React.ReactNode;
+  /** The card's status, at its foot. */
+  phase: React.ReactNode;
 }) {
   return (
     <div className="p-3 text-sm">
       <div className="flex items-start gap-2">
         <h3 className={nameStyle}>{setName(name)}</h3>
+        {when}
         <Pct pct={pct} />
       </div>
       {status && <div className="mt-1 flex flex-col items-start gap-1">{status}</div>}
       {detail && <p className="mt-2">{detail}</p>}
       {foot && <div className="relative z-10">{foot}</div>}
+      <div className="-mx-3 mt-3 border-t px-3 pt-3">{phase}</div>
     </div>
   );
 }
 
-const cardFrame = (accent: Accent | null, selected = false) =>
-  cn(
-    "relative block border bg-card text-card-foreground",
-    accent ? accentBorder[accent] : selected && "border-l-primary",
-    selected && "border-y-primary border-r-primary",
-  );
+/**
+ * A card's frame: its hairline, all blue while its drawer is open. There's no
+ * accent down its left edge (it came off on 2026-10-01): the countdown's
+ * color and the request lines say what it said.
+ */
+const cardFrame = (selected = false) =>
+  cn("relative block border bg-card text-card-foreground", selected && "border-primary");
 
 /**
- * A card for an invented household: its countdown once it's red or yellow,
- * what its column says about it, and no drawer behind it.
+ * A card for an invented household: its countdown when it's running short,
+ * what its column says about it, the button a named household's card would
+ * carry, which goes nowhere (the card's tooltip says why), its status, and
+ * no drawer behind it.
  */
-function InventedCard({ e, accent, day }: { e: Entry; accent: Accent | null; day: Day }) {
+function InventedCard({
+  e,
+  col,
+  status,
+  accent,
+  day,
+}: {
+  e: Entry;
+  col: ColumnId;
+  status: PhaseStatus;
+  accent: Accent | null;
+  day: Day;
+}) {
+  const foot = col === "ready" ? <ReviewResults /> : col === "sent" && e.approved && <CloseOut />;
   return (
-    <NotBuilt className={cardFrame(accent)}>
+    <NotBuilt className={cardFrame()}>
       <Card
         name={e.name}
         pct={e.pct}
-        status={timed(accent) && <Countdown renews={e.renews} day={day} tone={accent} short />}
+        when={timed(accent) && <Countdown renews={e.renews} day={day} tone={accent} short />}
         detail={e.invented!.detail}
+        foot={foot}
+        phase={<PhaseStatusLine status={status} day={day} />}
       />
     </NotBuilt>
   );
@@ -506,28 +533,32 @@ function earlierShop(id: string) {
 const firstOf = (name: string) => name.split(" ")[0];
 
 /**
- * A named household's card, which follows the walk. The whole card opens the
- * household's drawer. What's on it:
+ * A named household's card in Shopping Renewal or Closing, which follows the
+ * walk. The whole card opens the household's drawer. `col` is its step
+ * (board.ts), which says what's on it:
  *
- * - Recommendation Ready: what the shop found, in one sentence. The Pruitts'
- *   also has View the full report, which opens their drawer with their shop
- *   results over it.
- * - Recommendation Sent: who it's waiting on, or, once they've said yes,
- *   what they approved and View profile and close. (A Ready to close chip
- *   said it a third time until 2026-10-01.)
+ * - Ready for Review in Shopping Renewal (the ready step): what the shop
+ *   found, in one sentence, and Review Shopping Results, which opens the
+ *   drawer with the results over it.
+ * - Awaiting Response in Shopping Renewal (sent, not approved): who it's
+ *   waiting on.
+ * - Ready for Review in Closing (sent and approved): what they approved and
+ *   View profile and close.
  *
- * Completed is a mini column (MiniRow), so a household closed out in the walk
- * leaves its note and Undo on the drawer's Close out page (phases.tsx); they
- * were on its Completed card until 2026-10-01.
- *
- * A first card (firstCards.ts) says what the board gives it (board.ts), with
- * the same View profile and close once it's approved.
+ * A household closed out in the walk leaves its note and Undo on the
+ * drawer's Close out page (phases.tsx). A first card (firstCards.ts) says
+ * what the board gives it (board.ts), with the same buttons.
  *
  * A task snoozed from the drawer's banner sinks to the foot of its column,
- * loses its accent and its action, and says so under its name, in the
- * countdown's place, with Undo.
+ * loses its countdown and its action, and says so under its name, with Undo.
  */
-function NamedCard({ e, col, accent, ...props }: BoardProps & { e: Entry; col: ColumnId; accent: Accent | null }) {
+function NamedCard({
+  e,
+  col,
+  status: phase,
+  accent,
+  ...props
+}: BoardProps & { e: Entry; col: ColumnId; status: PhaseStatus; accent: Accent | null }) {
   const { day, walk, update, household, onHousehold } = props;
   const h = thisWeek.find((x) => x.id === e.id);
   const ew = earlier.find((x) => x.id === e.id);
@@ -549,16 +580,6 @@ function NamedCard({ e, col, accent, ...props }: BoardProps & { e: Entry; col: C
         pruitt.carrier,
         options.find((o) => o.id === "ao")!.carrier,
       );
-      foot = (
-        <Button
-          variant="link"
-          className="mt-2 h-auto p-0 font-sans text-sm"
-          onClick={() => onHousehold(e.id, "results")}
-        >
-          View the full report
-          <ArrowRight data-icon="inline-end" />
-        </Button>
-      );
     } else if (ew?.monday) {
       detail = earlierShop(e.id);
     }
@@ -575,9 +596,14 @@ function NamedCard({ e, col, accent, ...props }: BoardProps & { e: Entry; col: C
     }
   }
 
+  // A recommendation to send has Review Shopping Results, which opens the
+  // drawer with the results over it. (The Pruitts' card had View the full
+  // report, a link, until 2026-10-01.)
+  if (col === "ready") foot = <ReviewResults onOpen={() => onHousehold(e.id, "results")} />;
+
   if (snoozed) foot = null;
 
-  const when = snoozed ? (
+  const snoozeLine = snoozed && (
     <p className="flex flex-wrap items-center gap-x-2 gap-y-1">
       <StatusLine icon={AlarmClock}>Snoozed {snoozeLabel(walk.snoozed[e.id].until)}.</StatusLine>
       <Button
@@ -588,21 +614,30 @@ function NamedCard({ e, col, accent, ...props }: BoardProps & { e: Entry; col: C
         Undo
       </Button>
     </p>
-  ) : (
-    timed(accent) && <Countdown renews={e.renews} day={day} tone={accent} short onOpen={profile} />
+  );
+  const countdown = !snoozed && timed(accent) && (
+    <Countdown renews={e.renews} day={day} tone={accent} short onOpen={profile} />
   );
   const requests = requestsFor(e.id, day, walk);
-  const status = (when || requests.length > 0) && (
+  const status = (snoozeLine || requests.length > 0) && (
     <>
-      {when}
+      {snoozeLine}
       <Requests requests={requests} />
     </>
   );
 
   return (
-    <li className={cn(cardFrame(accent, selected), "hover:bg-background")}>
+    <li className={cn(cardFrame(selected), "hover:bg-background")}>
       <OpenOverlay id={e.id} name={e.name} selected={selected} onOpen={profile} />
-      <Card name={e.name} pct={e.pct} status={status} detail={detail} foot={foot} />
+      <Card
+        name={e.name}
+        pct={e.pct}
+        when={countdown}
+        status={status}
+        detail={detail}
+        foot={foot}
+        phase={<PhaseStatusLine status={phase} day={day} />}
+      />
     </li>
   );
 }
@@ -611,12 +646,36 @@ function NamedCard({ e, col, accent, ...props }: BoardProps & { e: Entry; col: C
  * The foot of an approved card: View profile and close opens the drawer,
  * whose banner leads to Close out. The card doesn't ask for a memo, because
  * closing is a morning's work in the carrier's portal and on the phone, not
- * a field on the homepage (the 2026-09-29 review).
+ * a field on the homepage (the 2026-09-29 review). Without `onProfile` it's
+ * an invented household's, which has no drawer (CardButton).
  */
-function CloseOut({ onProfile }: { onProfile: () => void }) {
-  return (
-    <Button className="mt-3" onClick={onProfile}>
-      View profile and close
+function CloseOut({ onProfile }: { onProfile?: () => void }) {
+  return <CardButton onClick={onProfile}>View profile and close</CardButton>;
+}
+
+/**
+ * The foot of a recommendation to send: Review
+ * Shopping Results opens the drawer with the shop's results over it. Without
+ * `onOpen` it's an invented household's (CardButton).
+ */
+function ReviewResults({ onOpen }: { onOpen?: () => void }) {
+  return <CardButton onClick={onOpen}>Review Shopping Results</CardButton>;
+}
+
+/**
+ * A card's button. Without `onClick` it's on an invented household's card,
+ * which has no drawer: drawn the same, so every card in a column reads alike,
+ * but it does nothing, stays out of the tab order (the card itself takes the
+ * focus) and leaves the card's tooltip to say the household isn't built out.
+ */
+function CardButton({ onClick, children }: { onClick?: () => void; children: React.ReactNode }) {
+  return onClick ? (
+    <Button className="mt-3" onClick={onClick}>
+      {children}
+    </Button>
+  ) : (
+    <Button className="mt-3" tabIndex={-1} aria-disabled>
+      {children}
     </Button>
   );
 }

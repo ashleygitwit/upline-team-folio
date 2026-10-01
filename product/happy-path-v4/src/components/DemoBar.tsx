@@ -13,7 +13,9 @@ import { screens } from "@/walk";
 /**
  * The presenter's bar. Not part of the product: it sits on the slate ground so
  * it reads as the stage, not the app, and it carries the only way to jump
- * between days. Arrow keys do the same as Back and Next.
+ * between days. Arrow keys do the same as Back and Next. (Until 2026-10-01 it
+ * also had a 4 columns switch, between the board's six columns and the four
+ * it has now.)
  */
 export function DemoBar({ index, onGo }: { index: number; onGo: (i: number) => void }) {
   const screen = screens[index];

@@ -29,10 +29,10 @@ import { initialWalk, type WalkProps } from "@/walk";
  * week. It's the board at 8:00 AM Monday, before she's touched it, so it
  * reads the same whatever the presenter does later.
  *
- * Action Needed is what the board's Needs me keeps, in three groups: approvals
+ * Action Needed is what needs Jenna (needsMe in board.ts), in three groups: approvals
  * to bind (Ready to close), recommendations to send, and renewals inside their
  * column's deadlines that are still open (Renewing soon; inside ten days
- * until 2026-10-01). A household that's only on Needs me for a blue accent (a
+ * until 2026-10-01). A household that only needs her for a blue accent (a
  * life quote or a change requested) isn't listed, since those have no flow of
  * their own yet. Each line is a mini line from the board, with its accent and
  * its countdown, in the accent's color, instead of the change, since what

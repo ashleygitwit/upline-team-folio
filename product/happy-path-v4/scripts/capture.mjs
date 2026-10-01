@@ -6,9 +6,9 @@
 // cropped off and every scrolling region (drawer tabs, the pages over the
 // drawer, the phone) opened out to its full height, so nothing on the
 // feedback board hides behind a scroll. The homepage's board is the
-// exception: its columns scroll inside themselves by design, so it's
-// captured as Jenna sees it on a screen tall enough for the whole page, with
-// the board at its 800px. Run after any change: npm run capture
+// exception: its columns are 1000px tall and scroll inside themselves by
+// design, so it's captured as Jenna sees it. Run after any change: npm run
+// capture
 //
 // Writes captures/NN-slug.png and captures/manifest.json, which says what
 // each file is, which stop it belongs to and how it was reached; the board
@@ -104,9 +104,18 @@ async function hover(name) {
   await button(name).hover();
 }
 
-/** Opens a household's drawer from its line or card on the homepage's board. */
+/** Opens a household's drawer from its card or row on the homepage's board. */
 async function openProfile(name) {
-  await click(`Open ${name}`);
+  await fit();
+  // By the name, at the card's top left: the middle can be a button of the
+  // card's own (Review Shopping Results), which opens a page instead.
+  await button(`Open ${name}`).click({ position: { x: 8, y: 8 } });
+  await page.waitForTimeout(250);
+}
+
+/** The Pruitts' Review Shopping Results, which opens their drawer with their results over it. */
+async function reviewPruittsResults() {
+  await page.locator('li:has([data-household="pruitt"])').getByRole("button", { name: "Review Shopping Results" }).click();
   await page.waitForTimeout(250);
 }
 
@@ -224,7 +233,8 @@ const captures = [
       await page.waitForTimeout(400);
       // The column scrolls inside itself, so bring its foot into view.
       await page
-        .locator('section[aria-labelledby="col-sent"] .overflow-y-auto')
+        .locator('section[aria-labelledby="col-closing"] > div')
+        .nth(1)
         .evaluate((el) => el.scrollTo(0, el.scrollHeight));
     },
   },
@@ -266,7 +276,7 @@ const captures = [
     slug: "04m-drawer-gray-banner",
     stop: 4,
     title: "Household drawer: gray banner (email scheduled)",
-    via: "The Pruitts' Scheduled line",
+    via: "The Pruitts' Scheduled card",
     run: async () => {
       await jump("Monday: Jenna opens Upline");
       await openProfile("Leah & Tom Pruitt");
@@ -324,54 +334,14 @@ const captures = [
     },
   },
   {
-    slug: "04q-completed-folded",
-    stop: 4,
-    title: "Completed folded to a strip",
-    via: "The fold control in Completed's header",
-    run: async () => {
-      await jump("Monday: Jenna opens Upline");
-      await click("Fold Completed");
-    },
-  },
-  {
-    slug: "04s-mini-column-folded",
-    stop: 4,
-    title: "A mini column folded to a strip",
-    via: "The fold control in Awaiting Response's header",
-    run: async () => {
-      await jump("Monday: Jenna opens Upline");
-      await click("Fold Awaiting Response");
-    },
-  },
-  {
-    slug: "04t-needs-me",
-    stop: 4,
-    title: "Needs me: only what has an accent",
-    via: "Needs me in the toolbar",
-    run: async () => {
-      await jump("Monday: Jenna opens Upline");
-      await click(/^Needs me/);
-    },
-  },
-  {
-    slug: "04u-search",
-    stop: 4,
-    title: "Searched by name",
-    via: "Search by name → \"mar\"",
-    run: async () => {
-      await jump("Monday: Jenna opens Upline");
-      await page.getByRole("searchbox", { name: "Search by name" }).fill("mar");
-    },
-  },
-  {
     slug: "04r-not-in-prototype",
     stop: 4,
     title: "An invented household: not built out for the prototype",
-    via: "Point at any line or card that isn't one of the named twelve",
+    via: "Point at any card that isn't one of the named twelve",
     run: async () => {
       await jump("Monday: Jenna opens Upline");
     },
-    after: () => page.locator('section[aria-labelledby="col-awaiting"] [tabindex="0"]').first().hover(),
+    after: () => page.locator('section[aria-labelledby="col-initial-outreach"] [tabindex="0"]').first().hover(),
   },
   // The first cards (household/firstCards.ts): a profile and a page each.
   ...[
@@ -528,7 +498,7 @@ const captures = [
     slug: "10a-pruitts-details-info-updated",
     stop: 10,
     title: "The Pruitts' drawer: Details, with the changed detail marked",
-    via: "The Pruitts' Shopping line → Details tab",
+    via: "The Pruitts' Shopping Renewal card → Details tab",
     run: async () => {
       await answerQuestionnaire();
       await jump("Wednesday");
@@ -540,7 +510,7 @@ const captures = [
     slug: "10b-pruitts-activity",
     stop: 10,
     title: "The Pruitts' drawer: Recent activity while shopping",
-    via: "The Pruitts' Shopping line (the drawer opens on Recent activity)",
+    via: "The Pruitts' Shopping Renewal card (the drawer opens on Recent activity)",
     run: async () => {
       await answerQuestionnaire();
       await jump("Wednesday");
@@ -563,7 +533,7 @@ const captures = [
     slug: "10d-nudge-page",
     stop: 10,
     title: "Nudge page",
-    via: "Tobi Adeyemi's Awaiting Response line → banner → Review",
+    via: "Tobi Adeyemi's Awaiting Response card → banner → Review",
     run: async () => {
       await answerQuestionnaire();
       await jump("Wednesday");
@@ -605,7 +575,7 @@ const captures = [
       slug: `${slug}-first-card-${file}`,
       stop: 10,
       title: `A first card: ${name}, ${what}`,
-      via: `${name}'s line (the drawer opens on Recent activity)`,
+      via: `${name}'s card (the drawer opens on Recent activity)`,
       run: async () => {
         await answerQuestionnaire();
         await jump("Wednesday");
@@ -641,11 +611,11 @@ const captures = [
     slug: "12a-results-step-1",
     stop: 12,
     title: "Shop results: step 1, Shopping Results",
-    via: "The Pruitts' card → View the full report (their drawer, with the results over it)",
+    via: "The Pruitts' card → Review Shopping Results (their drawer, with the results over it)",
     run: async () => {
       await answerQuestionnaire();
       await jump("Thursday: results are back");
-      await page.getByText("View the full report").click();
+      await reviewPruittsResults();
       await page.waitForTimeout(250);
     },
   },
@@ -657,7 +627,7 @@ const captures = [
     run: async () => {
       await answerQuestionnaire();
       await jump("Thursday: results are back");
-      await page.getByText("View the full report").click();
+      await reviewPruittsResults();
       await click("Continue to select your recommendation");
     },
   },
@@ -669,7 +639,7 @@ const captures = [
     run: async () => {
       await answerQuestionnaire();
       await jump("Thursday: results are back");
-      await page.getByText("View the full report").click();
+      await reviewPruittsResults();
       await click("Continue to select your recommendation");
       await click("Review recommendation email");
     },
@@ -682,7 +652,7 @@ const captures = [
     run: async () => {
       await answerQuestionnaire();
       await jump("Thursday: results are back");
-      await page.getByText("View the full report").click();
+      await reviewPruittsResults();
       await click("View quotes from the carriers");
       await page.waitForTimeout(250);
     },
@@ -695,7 +665,7 @@ const captures = [
     run: async () => {
       await answerQuestionnaire();
       await jump("Thursday: results are back");
-      await page.getByText("View the full report").click();
+      await reviewPruittsResults();
       await click("Continue to select your recommendation");
       await click("Review recommendation email");
       await click("Send recommendation email");
@@ -710,7 +680,7 @@ const captures = [
     run: async () => {
       await answerQuestionnaire();
       await jump("Thursday: results are back");
-      await page.getByText("View the full report").click();
+      await reviewPruittsResults();
       await click("Continue to select your recommendation");
       await click("Review recommendation email");
       await click("Send recommendation email");
