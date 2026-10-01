@@ -15,9 +15,12 @@ import type { Walk } from "@/walk";
  * week out step by step) and keeps that step (`step`), so the walk and the
  * deadlines work as they did, and its card says what that step's card said.
  * The one thing new is a wait the six steps don't have, Closing's Awaiting
- * Response: bound, and waiting on the carrier to confirm. Nothing in the
- * walk gets there, since closing out still goes straight to Completed, so
- * it's three of the invented households bound before the walk's day.
+ * Response: the household said yes, and Jenna is waiting on them for what
+ * binding needs (a signature, the first payment, the signed application).
+ * Nothing in the walk gets there, since an approval in the walk is bound and
+ * closed out straight from Ready for Review, so it's three of the invented
+ * households that finished before the walk's day. (For part of 2026-10-01 it
+ * meant bound and waiting on the carrier to confirm.)
  */
 export type PhaseId = "initial-outreach" | "shopping-renewal" | "closing" | "completed";
 export type PhaseStatus = "scheduled" | "inProgress" | "readyForReview" | "awaitingResponse";
@@ -135,18 +138,22 @@ function phaseOf(e: Entry, step: ColumnId): { phase: PhaseId; status?: PhaseStat
   }
 }
 
-/** How many of Completed's invented households are still waiting on the carrier to confirm. */
-const waitingOnCarrier = 3;
+/** How many of Completed's invented households are still waiting on the policyholder, in Closing. */
+const waitingOnPolicyholder = 3;
+
+/** What binding still needs from the household, a different one on each of Closing's waiting cards. */
+const stillNeeds = ["signature", "first payment", "signed application"];
 
 /**
  * Every column's households on the walk's day, soonest renewal first whatever
- * the status, so a red or yellow card rises to the top. Closing's three
- * waiting on the carrier are the invented households in Completed that
- * switched carriers (not ones that stayed or renewed as is) with the latest
- * renewals, bound recently, ahead of a renewal still to come, and no two with
+ * the status, so a card running short on time rises to the top. Closing's
+ * three waiting on the policyholder are the invented households in
+ * Completed that switched carriers (not ones that stayed or renewed as is)
+ * with the latest renewals, ahead of a renewal still to come, and no two with
  * the same new carrier, so the column doesn't read as one card three times
- * (Monday's three latest all went to Erie). They keep Completed's step, so
- * they never flag and the Monday email leaves them be.
+ * (Monday's three latest all went to Erie). Each says what they approved and
+ * what binding is waiting on from them. They keep Completed's step, so they
+ * never count down and the Monday email leaves them be.
  */
 export function phasesFor(day: Day, walk: Walk): Record<PhaseId, Placed[]> {
   const board = boardFor(day, walk);
@@ -171,17 +178,18 @@ export function phasesFor(day: Day, walk: Walk): Record<PhaseId, Placed[]> {
     const carrier = p.e.invented!.h.shop.pick;
     if (waiting.some((w) => w.e.invented!.h.shop.pick === carrier)) continue;
     waiting.push(p);
-    if (waiting.length === waitingOnCarrier) break;
+    if (waiting.length === waitingOnPolicyholder) break;
   }
-  for (const p of waiting) {
+  waiting.forEach((p, i) => {
     const { h } = p.e.invented!;
     placed.completed.splice(placed.completed.indexOf(p), 1);
+    const detail = `${h.first} approved ${h.shop.pick}. Waiting on ${h.first}'s ${stillNeeds[i]} to bind it.`;
     placed.closing.push({
-      e: { ...p.e, invented: { h, detail: `Bound with ${h.shop.pick}. Waiting on ${h.shop.pick} to confirm.` } },
+      e: { ...p.e, invented: { h, detail } },
       step: "completed",
       status: "awaitingResponse",
     });
-  }
+  });
 
   const soonest = (a: Placed, b: Placed) => renewalDate(a.e.renews).getTime() - renewalDate(b.e.renews).getTime();
   for (const list of Object.values(placed)) list.sort(soonest);

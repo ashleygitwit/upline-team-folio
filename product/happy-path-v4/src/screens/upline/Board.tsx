@@ -1,8 +1,15 @@
 import { useState } from "react";
-import { AlarmClock } from "lucide-react";
+import { AlarmClock, ChevronDown } from "lucide-react";
 import { cn } from "cn";
 import { Countdown, PhaseStatusLine, Requests, StatusLine } from "@/components/Status";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { accentFor, bigIncrease, pctLabel, setName, timed, type Accent, type ColumnId, type Entry } from "@/board";
 import { earlier, options, pruitt, thisWeek, type Day } from "@/data";
@@ -39,10 +46,10 @@ const notInPrototype = "This household isn't built out for the prototype.";
  * opens the household's profile drawer, the one way in; the invented
  * households (pipeline.ts) have no drawer and say so when pointed at.
  *
- * Each column's statuses are filters under its name, and picking one narrows
- * that column alone to it. A column opens on its `opensOn` status (phases.ts),
- * what Jenna most likely came for, as long as anyone has it that day; once
- * she picks, her pick holds. They're the page's own, so every stop opens on
+ * Under each column's name, a menu picks which of its statuses to show, or
+ * all of them; it narrows that column alone. A column opens on its `opensOn`
+ * status (phases.ts), what Jenna most likely came for, as long as anyone has
+ * it that day; once she picks, her pick holds. They're the page's own, so every stop opens on
  * the defaults again. The toolbar's Needs me and search, which narrowed every
  * column at once, came off on 2026-10-01, Needs me as not important and
  * search for now.
@@ -108,21 +115,25 @@ export function Board(props: BoardProps) {
  * semibold. The header and the list are the panel's two halves, laid on the
  * board's two rows (the section itself is `display: contents`), so every
  * header is as tall as the tallest and the first cards line up, while each
- * list stops at its last card. Every household is a card, 8px apart, with a
- * card's 12px padding; a snoozed task sinks to the foot of a card column. The
- * list is positioned, so the cards' screen-reader labels (absolutely
- * positioned) stay inside it rather than stretching the page. (For part of
- * 2026-10-01 the columns were ruled apart by hairlines instead, a screen
- * tall, each scrolling inside itself.)
+ * list stops at its last card. In Shopping Renewal and Closing every
+ * household is a card, 8px apart; a snoozed task sinks to the foot. Initial
+ * Outreach and Completed are lists instead, so the cards keep the emphasis:
+ * each household a row on the panel's own ground, ruled off from the next by
+ * a hairline that runs the panel's width, and turning white under the
+ * pointer, as it is while its drawer is open (they were cards for part of
+ * 2026-10-01). The list is positioned, so the screen-reader labels
+ * (absolutely positioned) stay inside it rather than stretching the page.
+ * (For part of 2026-10-01 the columns were ruled apart by hairlines instead,
+ * a screen tall, each scrolling inside itself.)
  *
- * The column's statuses sit under its name as filters, each with its count,
- * drawn as v3's stage filters and the toolbar's Needs me (until it came off)
- * were: an outline button, on as the blue outline, one size down to sit in a
- * column. Picking one narrows the column to that status; picking it again
- * shows them all. One is on at a time, and a status with no one in it drops
- * out, unless it's the one on, as v3's stages did. Their counts are the
- * column's, so a column with them has no count of its own beside its name;
- * Completed, which has none, keeps its count.
+ * Under the column's name, one menu picks what it shows: All, or one of its
+ * statuses, each with its count. Its button says what's showing and how many,
+ * as the kit's quiet outline button, a size down to sit in a column. A status
+ * with no one in it is in the menu but can't be picked. The counts are the
+ * column's, so a column with the menu has no count of its own beside its
+ * name; Completed, which has none, keeps its count. (Until 2026-10-01 the
+ * statuses were a row of outline buttons, one each, as v3's stage filters
+ * were.)
  */
 function Column({
   id,
@@ -147,8 +158,8 @@ function Column({
   count: string;
   empty: string;
 }) {
-  const filters = statuses.filter(({ status, n }) => n > 0 || status === only);
   const { day, walk } = props;
+  const total = statuses.reduce((sum, { n }) => sum + n, 0);
   const sorted = mini
     ? items
     : [...items].sort((a, b) => Number(snoozedEntry(a.e, day, walk)) - Number(snoozedEntry(b.e, day, walk)));
@@ -158,29 +169,45 @@ function Column({
       <div className="row-start-1 min-w-0 border border-b-0 bg-muted/45 px-2.5 pt-3 pb-2.5">
         <h2 id={`col-${id}`} className="text-xl">
           {label}
-          {filters.length === 0 && (
+          {statuses.length === 0 && (
             <>
               {" "}
               <Count>{count}</Count>
             </>
           )}
         </h2>
-        {filters.length > 0 && (
-          <div role="group" aria-label={`Filter ${label} by status`} className="mt-2 flex flex-wrap gap-2">
-            {filters.map(({ status, n }) => (
+        {statuses.length > 0 && (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
               <Button
-                key={status}
                 variant="outline"
                 size="sm"
-                aria-pressed={only === status}
-                onClick={() => onOnly(only === status ? undefined : status)}
-                className="aria-pressed:border-primary aria-pressed:text-primary aria-pressed:hover:text-primary"
+                aria-label={`Show in ${label}: ${only ? statusLabel[only] : "All"}, ${count}`}
+                className="mt-2"
               >
-                {statusLabel[status]}
-                <span className="font-mono text-xs font-normal text-muted-foreground">{n}</span>
+                {only ? statusLabel[only] : "All"}
+                <span className="font-mono text-xs font-normal text-muted-foreground">{count}</span>
+                <ChevronDown data-icon="inline-end" />
               </Button>
-            ))}
-          </div>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-56">
+              <DropdownMenuRadioGroup
+                value={only ?? "all"}
+                onValueChange={(v) => onOnly(v === "all" ? undefined : (v as PhaseStatus))}
+              >
+                <DropdownMenuRadioItem value="all">
+                  All
+                  <MenuCount>{total}</MenuCount>
+                </DropdownMenuRadioItem>
+                {statuses.map(({ status, n }) => (
+                  <DropdownMenuRadioItem key={status} value={status} disabled={n === 0 && status !== only}>
+                    {statusLabel[status]}
+                    <MenuCount>{n}</MenuCount>
+                  </DropdownMenuRadioItem>
+                ))}
+              </DropdownMenuRadioGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
         )}
       </div>
 
@@ -188,10 +215,10 @@ function Column({
         {items.length === 0 ? (
           <p className="text-sm">{empty}</p>
         ) : (
-          <ul className="flex flex-col gap-2 *:shrink-0">
+          <ul className={mini ? "-mx-2.5 divide-y border-y" : "flex flex-col gap-2 *:shrink-0"}>
             {sorted.map(({ e, step, status }) =>
               mini ? (
-                <MiniCard
+                <ListRow
                   key={e.id}
                   e={e}
                   col={step}
@@ -228,7 +255,12 @@ function Column({
 
 const snoozedEntry = (e: Entry, day: Day, walk: BoardProps["walk"]) => !e.invented && isSnoozed(e.id, day, walk);
 
-/** A column's count, in the mono face on a white chip, beside its name: Completed's, which has no status filters. */
+/** A count in a column's menu, in the mono face, after the status. */
+function MenuCount({ children }: { children: React.ReactNode }) {
+  return <span className="ml-auto font-mono text-xs text-muted-foreground">{children}</span>;
+}
+
+/** A column's count, in the mono face on a white chip, beside its name: Completed's, which has no menu. */
 function Count({ children }: { children: React.ReactNode }) {
   return (
     <span className="relative -top-0.5 inline-block bg-card px-1.5 align-middle font-mono text-xs font-normal whitespace-nowrap">
@@ -338,8 +370,9 @@ function NotBuilt({ className, children }: { className: string; children: React.
  * ------------------------------------------------------------------ */
 
 /**
- * A household in Initial Outreach or Completed, the short card: the name, set
- * as every card's is, and the change in percent, at 14px; a renewal running
+ * A household in Initial Outreach or Completed, a row in the column's list
+ * (Column): the name, set as every card's is, and the change in percent, at
+ * 14px; a renewal running
  * short on time also counts down between the two ("8 days", by a clock, red
  * 700 when it's urgent, with the date on hover). A Completed card has the day
  * it was completed where the change would be, since the change and the
@@ -347,11 +380,12 @@ function NotBuilt({ className, children }: { className: string; children: React.
  * status (Initial Outreach's), then a named household's requests and whether
  * it's snoozed. A long name wraps rather than being cut short, so nothing
  * depends on a tooltip. The whole card opens the household's drawer, where
- * the renewal email is a click away; an invented household's doesn't open,
- * and says so. (These were one-line lists in a white box, the mini columns,
- * until 2026-10-01.)
+ * the renewal email is a click away, and the row turns white under the
+ * pointer to say so; an invented household's doesn't open, and says so.
+ * (These were one-line lists in a white box, the mini columns, until
+ * 2026-10-01, then cards for part of that day.)
  */
-function MiniCard({
+function ListRow({
   e,
   col,
   status,
@@ -361,7 +395,7 @@ function MiniCard({
   const { day, walk, household, onHousehold } = props;
   const selected = household === e.id;
   const open = () => onHousehold(e.id);
-  const frame = cn(cardFrame(!e.invented && selected), "p-3 text-sm");
+  const frame = cn("relative px-2.5 py-3 text-sm", !e.invented && selected && "bg-card");
   const snoozed = !e.invented && isSnoozed(e.id, day, walk);
 
   const body = (
@@ -386,7 +420,7 @@ function MiniCard({
   if (e.invented) return <NotBuilt className={frame}>{body}</NotBuilt>;
 
   return (
-    <li className={cn(frame, "hover:bg-background")}>
+    <li className={cn(frame, "hover:bg-card")}>
       {body}
       <OpenOverlay id={e.id} name={e.name} selected={selected} onOpen={open} />
     </li>

@@ -104,9 +104,9 @@ async function hover(name) {
 }
 
 /**
- * Opens a household's drawer from its card on the homepage's board. Each
- * column opens on one status, which can hide the card, so the columns' status
- * filters are cleared first, showing every card.
+ * Opens a household's drawer from its card or row on the homepage's board.
+ * Each column opens on one status, which can hide it, so every column's menu
+ * is set to All first.
  */
 async function openProfile(name) {
   await showAll();
@@ -117,11 +117,16 @@ async function openProfile(name) {
   await page.waitForTimeout(250);
 }
 
-/** Clears every column's status filter, so the board shows every card. */
+/** Sets every column's menu to All, so the board shows every card. */
 async function showAll() {
-  // One at a time, since each click takes a button out of the set.
-  const on = page.locator('[data-board] [role="group"] button[aria-pressed="true"]');
-  while ((await on.count()) > 0) await on.first().click();
+  const menus = page.locator('[data-board] button[aria-haspopup="menu"]');
+  for (let i = 0; i < (await menus.count()); i++) {
+    const menu = menus.nth(i);
+    if ((await menu.textContent())?.startsWith("All")) continue;
+    await menu.click();
+    await page.getByRole("menuitemradio", { name: /^All/ }).click();
+    await page.waitForTimeout(150);
+  }
 }
 
 /** The Pruitts' Review Shopping Results, which opens their drawer with their results over it. */
