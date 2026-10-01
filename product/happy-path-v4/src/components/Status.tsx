@@ -4,7 +4,7 @@ import { cn } from "cn";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import type { Day } from "@/data";
 import { RowTip } from "@/lib/rowTip";
-import { statusLabel, type PhaseStatus } from "@/phases";
+import { sendsAt, statusLabel, type PhaseStatus } from "@/phases";
 import { countdown, renewalDay, type Request } from "@/tasks";
 
 /**
@@ -109,12 +109,14 @@ const phaseIcons: Record<PhaseStatus, LucideIcon> = {
  * means the countdown and nothing else; In Progress by a magnifying glass,
  * for Upline out shopping; and Ready for Review by an eye. Ready for Review
  * is the one that needs Jenna, so it's in the text color and the rest are
- * gray, as a big change is set apart from a small one.
+ * gray, as a big change is set apart from a small one. Scheduled also says
+ * when the email goes ("Scheduled · Tomorrow, 9 AM").
  */
-export function PhaseStatusLine({ status, className }: { status: PhaseStatus; className?: string }) {
+export function PhaseStatusLine({ status, day, className }: { status: PhaseStatus; day: Day; className?: string }) {
   return (
     <StatusLine icon={phaseIcons[status]} className={cn(status === "readyForReview" && "text-foreground", className)}>
       {statusLabel[status]}
+      {status === "scheduled" && ` · ${sendsAt(day)}`}
     </StatusLine>
   );
 }

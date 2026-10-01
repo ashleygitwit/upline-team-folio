@@ -1,20 +1,19 @@
-import { useState } from "react";
 import { cn } from "cn";
 import { boardFor } from "@/board";
-import { Input } from "@/components/ui/input";
 import { agency, pruitt, dayName, money, optionById, options, type Day } from "@/data";
 import { Board, type BoardProps } from "@/screens/upline/Board";
 import type { Walk } from "@/walk";
 
 /**
- * The homepage, the same every day: a greeting, the day's line, the toolbar,
- * then the board. The header is set as the v3 Policyholder List's was,
+ * The homepage, the same every day: a greeting, the day's line, then the
+ * board. The header is set as the v3 Policyholder List's was,
  * left-aligned on the page's edge with the room above it that page had (its
- * 40px, the Home link and 40px more), and the toolbar and board follow at
- * that page's gaps. The blue band that sat here came off on 2026-09-30, after
+ * 40px, the Home link and 40px more), and the board follows at that page's
+ * gaps. The blue band that sat here came off on 2026-09-30, after
  * the board replaced the Action Needed and Scheduled Emails sections (the
  * Policyholder List went with them, since the board is the whole book now).
- * The toolbar's search is the page's own, so it starts clear at every stop.
+ * The toolbar between them, Needs me and a name search, came off on
+ * 2026-10-01.
  *
  * The page scrolls. The board is one screen tall under the presenter bar,
  * less the gaps above and below it, and at most 800px, so once the header
@@ -25,39 +24,26 @@ import type { Walk } from "@/walk";
  * on a laptop and Ashley stuck above the fold.
  */
 export function Home({ day, walk, ...props }: BoardProps) {
-  const [query, setQuery] = useState("");
-
   return (
     <>
-      {/* On the four-column board (phases.ts), the header is white, as
-          Upline's bar over it is, and a hairline runs under the toolbar from
-          edge to edge of the window, with the board's column rules hanging
-          from it (below). */}
-      <div className={cn("shell max-w-none pt-25", walk.fourColumns && "border-b bg-card pb-4")}>
+      {/* The toolbar under the line (Needs me and search) came off on
+          2026-10-01, so the board follows the line at the 32px the toolbar
+          did. On the four-column board (phases.ts), a hairline runs under the
+          header from edge to edge of the window, with the board's column
+          rules hanging from it (below); the header stays on the page's gray
+          50 (it was white, as Upline's bar is, for part of 2026-10-01). */}
+      <div className={cn("shell max-w-none pt-25", walk.fourColumns ? "border-b pb-8" : "pb-4")}>
         <h1 id="home-title" className="text-4xl">
           {day === "fri" ? `Happy ${dayName[day]}` : "Good morning"}, {agency.agent.first}
         </h1>
         <p aria-live="polite" className="mt-2 font-display text-lg text-muted-foreground">
           {lineFor(day, walk)}
         </p>
-
-        {/* Needs me sat at the toolbar's left until 2026-10-01, when it came
-            off as not important; search keeps its place on the right. */}
-        <div className="mt-8 flex flex-wrap items-center justify-end gap-4">
-          <Input
-            type="search"
-            aria-label="Search by name"
-            placeholder="Search by name"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            className="w-72"
-          />
-        </div>
       </div>
 
       {/* 2.5rem is the gaps above and below the board, pt-4 and pb-6. The
           four-column board has neither, so its column rules run from the
-          toolbar's hairline to the foot of the page: it's a screen tall, or
+          header's hairline to the foot of the page: it's a screen tall, or
           800px, and takes the rest of a taller window (Upline.tsx makes it
           the page's last row). Size containment keeps its households from
           stretching it to the length of its longest column. */}
@@ -68,7 +54,7 @@ export function Home({ day, walk, ...props }: BoardProps) {
         )}
       >
         <div className={walk.fourColumns ? "h-full" : "h-[calc(100svh-var(--demo-bar-h)-2.5rem)] max-h-200"}>
-          <Board day={day} walk={walk} query={query} {...props} />
+          <Board day={day} walk={walk} {...props} />
         </div>
       </div>
     </>

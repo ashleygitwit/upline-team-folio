@@ -25,7 +25,9 @@ export type PhaseStatus = "scheduled" | "inProgress" | "readyForReview" | "await
 
 /**
  * The four columns. Completed is `narrow`, half as wide as the others, since
- * its lines are names alone.
+ * its lines are names alone. Each of the others opens filtered to `opensOn`,
+ * what Jenna most likely came to it for (Board.tsx): the emails going out,
+ * the recommendations to send, and the approvals to bind.
  */
 export const phases: {
   id: PhaseId;
@@ -33,6 +35,7 @@ export const phases: {
   mini?: boolean;
   narrow?: boolean;
   statuses: PhaseStatus[];
+  opensOn?: PhaseStatus;
   empty: string;
 }[] = [
   {
@@ -40,15 +43,23 @@ export const phases: {
     label: "Initial Outreach",
     mini: true,
     statuses: ["scheduled", "awaitingResponse"],
+    opensOn: "scheduled",
     empty: "Nothing scheduled or waiting.",
   },
   {
     id: "shopping-renewal",
     label: "Shopping Renewal",
     statuses: ["inProgress", "readyForReview", "awaitingResponse"],
+    opensOn: "readyForReview",
     empty: "Nothing being shopped.",
   },
-  { id: "closing", label: "Closing", statuses: ["readyForReview", "awaitingResponse"], empty: "Nothing to close." },
+  {
+    id: "closing",
+    label: "Closing",
+    statuses: ["readyForReview", "awaitingResponse"],
+    opensOn: "readyForReview",
+    empty: "Nothing to close.",
+  },
   { id: "completed", label: "Completed", mini: true, narrow: true, statuses: [], empty: "Nothing finished yet." },
 ];
 
@@ -58,6 +69,14 @@ export const statusLabel: Record<PhaseStatus, string> = {
   readyForReview: "Ready for Review",
   awaitingResponse: "Awaiting Response",
 };
+
+/**
+ * When a scheduled renewal email goes out, as its status says it: the walk's
+ * Monday emails go tomorrow, Tuesday, and from Wednesday Scheduled holds next
+ * week's, which go the coming Tuesday. Both at 9 AM, as the drawer's banner
+ * says ("Renewal email scheduled for Tues 9AM.").
+ */
+export const sendsAt = (day: Day) => (day === "mon" ? "Tomorrow, 9 AM" : "Tuesday, 9 AM");
 
 /** A household on the four-column board: its entry, its step on the six-column board, and its status. */
 export type Placed = { e: Entry; step: ColumnId; status?: PhaseStatus };

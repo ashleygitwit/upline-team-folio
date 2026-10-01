@@ -35,13 +35,6 @@ export type BoardProps = WalkProps & {
   onHousehold: (id: string, phase?: Phase) => void;
 };
 
-/**
- * The toolbar's filter: a name to search for. Needs me, which kept only what
- * needs Jenna, sat beside it until 2026-10-01, when it came off as not
- * important.
- */
-export type BoardFilters = { query: string };
-
 const notInPrototype = "This household isn't built out for the prototype.";
 
 /**
@@ -59,8 +52,8 @@ const notInPrototype = "This household isn't built out for the prototype.";
  * line and card opens the household's profile drawer, the one way in; the
  * invented households
  * (pipeline.ts) have no drawer and say so when pointed at. The toolbar's
- * search narrows every column at once, and a column's count then says how
- * many of its whole it's showing.
+ * Needs me and search narrowed every column at once until 2026-10-01, when
+ * both came off, Needs me as not important and search for now.
  *
  * Each column has a floor: a mini column is wide enough for a couple's name
  * beside its change, and a full column for "Recommendation" at the
@@ -73,19 +66,25 @@ const notInPrototype = "This household isn't built out for the prototype.";
  * Completed, each card with its status. A household keeps its step on the
  * six-column board, which is what its accent and its card's sentence go by,
  * wherever it's drawn. Each column's statuses are filters under its name,
- * and picking one narrows that column alone to it; like search, they're the
- * page's own, so they start clear at every stop. Its columns don't fold
+ * and picking one narrows that column alone to it. A column opens on its
+ * `opensOn` status (phases.ts), what Jenna most likely came for, as long as
+ * anyone has it that day; once she picks, her pick holds. They're the page's
+ * own, so every stop opens on the defaults again. Its columns don't fold
  * (since 2026-10-01), so a column folded on the six-column board is open
  * here.
  */
-export function Board({ query, ...props }: BoardProps & BoardFilters) {
+export function Board(props: BoardProps) {
   const { day, walk, update } = props;
   const board = walk.fourColumns ? phaseColumns(day, walk) : stepColumns(day, walk);
   const docked = useDocked();
-  const q = query.trim().toLowerCase();
-  const [onlyStatus, setOnlyStatus] = useState<Partial<Record<string, PhaseStatus>>>({});
-  const matchingIn = (col: BoardColumn) =>
-    col.items.filter(({ e }) => !q || e.name.toLowerCase().includes(q));
+  // The status Jenna picked in each column, or null for all of them; a column
+  // she hasn't touched has none here, and opens on its default.
+  const [picked, setPicked] = useState<Partial<Record<string, PhaseStatus | null>>>({});
+  const onlyIn = (col: BoardColumn) => {
+    const pick = picked[col.id];
+    if (pick !== undefined) return pick ?? undefined;
+    return col.items.some((i) => i.status === col.opensOn) ? col.opensOn : undefined;
+  };
   // The four-column board's columns are ruled apart by hairlines rather than
   // set on gray panels, and don't fold.
   const ruled = walk.fourColumns;
@@ -111,12 +110,8 @@ export function Board({ query, ...props }: BoardProps & BoardFilters) {
         style={{ gridTemplateColumns: template, gridTemplateRows: "auto minmax(0, 1fr)" }}
       >
         {board.map((c) => {
-          // Search first, which the status filters count, then
-          // the column's own status filter, if one is picked.
-          const matching = matchingIn(c);
-          const only = onlyStatus[c.id];
-          const shown = only ? matching.filter((i) => i.status === only) : matching;
-          const filtering = !!q || !!only;
+          const only = onlyIn(c);
+          const shown = only ? c.items.filter((i) => i.status === only) : c.items;
           return isFolded(c.id) ? (
             <Folded
               key={c.id}
@@ -135,18 +130,12 @@ export function Board({ query, ...props }: BoardProps & BoardFilters) {
               items={shown}
               statuses={c.statuses?.map((status) => ({
                 status,
-                n: matching.filter((i) => i.status === status).length,
+                n: c.items.filter((i) => i.status === status).length,
               }))}
               only={only}
-              onOnly={(status) => setOnlyStatus((o) => ({ ...o, [c.id]: status }))}
-              count={filtering ? `${shown.length} of ${c.items.length}` : `${shown.length}`}
-              empty={
-                q
-                  ? "No one here matches."
-                  : only
-                    ? `Nothing here is ${statusLabel[only]}.`
-                    : c.empty
-              }
+              onOnly={(status) => setPicked((o) => ({ ...o, [c.id]: status ?? null }))}
+              count={only ? `${shown.length} of ${c.items.length}` : `${shown.length}`}
+              empty={only ? `Nothing here is ${statusLabel[only]}.` : c.empty}
               docked={docked}
               onFold={ruled ? undefined : () => setFolded(c.id, true)}
               {...props}
@@ -171,6 +160,8 @@ type BoardColumn = {
   narrow?: boolean;
   items: Placed[];
   statuses?: PhaseStatus[];
+  /** The status the column opens on, if anyone has it. */
+  opensOn?: PhaseStatus;
   empty: string;
 };
 
@@ -240,19 +231,21 @@ const empty: Record<ColumnId, string> = {
  * filters, each with its count, drawn as v3's stage filters and the
  * toolbar's Needs me (until it came off) were: an outline button, on as the
  * blue outline, one size down to sit in a column. Picking one narrows the
- * column to that status, and its count then says how many of its whole it's
- * showing; picking it again shows them all. One is on at a time. They count
- * what search leaves, and a status with no one in it drops out, unless it's
- * the one on, as v3's stages did.
+ * column to that status; picking it again shows them all. One is on at a
+ * time, and a status with no one in it drops out, unless it's the one on, as
+ * v3's stages did. Their counts are the column's, so a column with them has
+ * no count of its own beside its name (since 2026-10-01); Completed, which
+ * has none, keeps its count.
  *
  * The four-column board's columns are `ruled`, drawn closer to the brand's
  * own surfaces: no gray panel, a gray 200 hairline between columns, as the
  * cards carry, and a 16px gutter either side of it, with the first column's
- * edge on the page's, under the greeting. The rules hang from the hairline under
- * the toolbar and run to the foot of the page (Home.tsx), so the header
+ * edge on the page's, under the greeting. The rules hang from the hairline
+ * under the header and run to the foot of the page (Home.tsx), so the header
  * keeps 16px off it and the list 16px off the foot. Every column insets its
- * households the same, so a mini column's list sits where the cards do, and
- * a line is as roomy as a card (12px all round, a card's padding).
+ * households the same, and every household is a card, 8px apart, so Initial
+ * Outreach's and Completed's sit as the other columns' do, with a card's
+ * 12px padding.
  */
 function Column({
   id,
@@ -301,7 +294,13 @@ function Column({
       <div className={ruled ? "pt-4 pb-3" : "px-3 pt-3 pb-2"}>
         <div className="flex items-start gap-2">
           <h2 id={`col-${id}`} className="min-w-0 flex-1 text-xl">
-            {label} <Count>{count}</Count>
+            {label}
+            {filters.length === 0 && (
+              <>
+                {" "}
+                <Count>{count}</Count>
+              </>
+            )}
           </h2>
           {onFold && (
             <Button
@@ -345,7 +344,7 @@ function Column({
         {items.length === 0 ? (
           <p className={cn("text-sm", !ruled && "px-3")}>{empty}</p>
         ) : mini ? (
-          <ul className={cn("divide-y border bg-card", !ruled && "py-1")}>
+          <ul className={ruled ? "flex flex-col gap-2 *:shrink-0" : "divide-y border bg-card py-1"}>
             {sorted.map(({ e, step, status }) => (
               <MiniRow
                 key={e.id}
@@ -552,8 +551,11 @@ function MiniRow({
   const { day, walk, household, onHousehold } = props;
   const selected = household === e.id;
   const open = () => onHousehold(e.id);
-  // A card's padding on the four-column board (`roomy`), and a tighter line on the six.
-  const frame = cn("relative text-sm", roomy ? "p-3" : "px-3 py-2", accent && [bar, accentBar[accent]]);
+  // On the four-column board (`roomy`) each household is a card of its own,
+  // framed as the other columns' are; on the six, a tighter line in a list.
+  const frame = roomy
+    ? cn(cardFrame(accent, !e.invented && selected), "p-3 text-sm")
+    : cn("relative px-3 py-2 text-sm", accent && [bar, accentBar[accent]]);
   const snoozed = !e.invented && isSnoozed(e.id, day, walk);
 
   const line = (
@@ -565,7 +567,7 @@ function MiniRow({
         )}
         {col !== "completed" && <Pct pct={e.pct} />}
       </div>
-      {status && <PhaseStatusLine status={status} className="mt-1" />}
+      {status && <PhaseStatusLine status={status} day={day} className="mt-1" />}
       {!e.invented && <Requests requests={requestsFor(e.id, day, walk)} className="mt-1" />}
       {snoozed && (
         <StatusLine icon={AlarmClock} className="mt-1">
@@ -578,7 +580,7 @@ function MiniRow({
   if (e.invented) return <NotBuilt className={frame}>{line}</NotBuilt>;
 
   return (
-    <li className={cn(frame, "hover:bg-background", selected && "bg-muted hover:bg-muted")}>
+    <li className={cn(frame, "hover:bg-background", !roomy && selected && "bg-muted hover:bg-muted")}>
       {line}
       <OpenOverlay id={e.id} name={e.name} selected={selected} onOpen={open} />
     </li>
@@ -608,25 +610,33 @@ function MiniRow({
 function Card({
   name,
   pct,
+  when,
   status,
   detail,
   foot,
+  phase,
 }: {
   name: string;
   pct: number;
+  /** The countdown beside the change, as a line has it (the four-column board). */
+  when?: React.ReactNode;
   status?: React.ReactNode;
   detail?: React.ReactNode;
   foot?: React.ReactNode;
+  /** The card's status on the four-column board, at its foot under a rule that runs edge to edge. */
+  phase?: React.ReactNode;
 }) {
   return (
     <div className="p-3 text-sm">
       <div className="flex items-start gap-2">
         <h3 className={nameStyle}>{setName(name)}</h3>
+        {when}
         <Pct pct={pct} />
       </div>
       {status && <div className="mt-1 flex flex-col items-start gap-1">{status}</div>}
       {detail && <p className="mt-2">{detail}</p>}
       {foot && <div className="relative z-10">{foot}</div>}
+      {phase && <div className="-mx-3 mt-3 border-t px-3 pt-3">{phase}</div>}
     </div>
   );
 }
@@ -660,15 +670,10 @@ function InventedCard({
       <Card
         name={e.name}
         pct={e.pct}
-        status={
-          (status || when) && (
-            <>
-              {status && <PhaseStatusLine status={status} />}
-              {when}
-            </>
-          )
-        }
+        when={status && when}
+        status={!status && when}
         detail={e.invented!.detail}
+        phase={status && <PhaseStatusLine status={status} day={day} />}
       />
     </NotBuilt>
   );
@@ -769,7 +774,7 @@ function NamedCard({
 
   if (snoozed) foot = null;
 
-  const when = snoozed ? (
+  const snoozeLine = snoozed && (
     <p className="flex flex-wrap items-center gap-x-2 gap-y-1">
       <StatusLine icon={AlarmClock}>Snoozed {snoozeLabel(walk.snoozed[e.id].until)}.</StatusLine>
       <Button
@@ -780,13 +785,17 @@ function NamedCard({
         Undo
       </Button>
     </p>
-  ) : (
-    timed(accent) && <Countdown renews={e.renews} day={day} tone={accent} short onOpen={profile} />
+  );
+  const countdown = !snoozed && timed(accent) && (
+    <Countdown renews={e.renews} day={day} tone={accent} short onOpen={profile} />
   );
   const requests = requestsFor(e.id, day, walk);
-  const status = (phase || when || requests.length > 0) && (
+  // On the four-column board (a card with a status), the countdown sits
+  // beside the change and the status at the foot; on the six, the countdown
+  // or the snooze heads the lines under the name.
+  const when = phase ? snoozeLine : snoozeLine || countdown;
+  const status = (when || requests.length > 0) && (
     <>
-      {phase && <PhaseStatusLine status={phase} />}
       {when}
       <Requests requests={requests} />
     </>
@@ -795,7 +804,15 @@ function NamedCard({
   return (
     <li className={cn(cardFrame(accent, selected), "hover:bg-background")}>
       <OpenOverlay id={e.id} name={e.name} selected={selected} onOpen={profile} />
-      <Card name={e.name} pct={e.pct} status={status} detail={detail} foot={foot} />
+      <Card
+        name={e.name}
+        pct={e.pct}
+        when={phase && countdown}
+        status={status}
+        detail={detail}
+        foot={foot}
+        phase={phase && <PhaseStatusLine status={phase} day={day} />}
+      />
     </li>
   );
 }

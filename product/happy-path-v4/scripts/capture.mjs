@@ -344,16 +344,6 @@ const captures = [
     },
   },
   {
-    slug: "04u-search",
-    stop: 4,
-    title: "Searched by name",
-    via: "Search by name → \"mar\"",
-    run: async () => {
-      await jump("Monday: Jenna opens Upline");
-      await page.getByRole("searchbox", { name: "Search by name" }).fill("mar");
-    },
-  },
-  {
     slug: "04r-not-in-prototype",
     stop: 4,
     title: "An invented household: not built out for the prototype",
