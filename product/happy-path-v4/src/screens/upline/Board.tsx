@@ -69,15 +69,18 @@ const notInPrototype = "This household isn't built out for the prototype.";
  * instead (phases.ts): Initial Outreach, Shopping Renewal, Closing and
  * Completed, each card with its status. A household keeps its step on the
  * six-column board, which is what its accent, Needs me and its card's
- * sentence go by, wherever it's drawn.
+ * sentence go by, wherever it's drawn. Each column's statuses are filters
+ * under its name, and picking one narrows that column alone to it; like
+ * search and Needs me, they're the page's own, so they start clear at every
+ * stop.
  */
 export function Board({ query, needsOnly, ...props }: BoardProps & BoardFilters) {
   const { day, walk, update } = props;
   const board = walk.fourColumns ? phaseColumns(day, walk) : stepColumns(day, walk);
   const docked = useDocked();
   const q = query.trim().toLowerCase();
-  const filtering = !!q || needsOnly;
-  const shownIn = (col: BoardColumn) =>
+  const [onlyStatus, setOnlyStatus] = useState<Partial<Record<string, PhaseStatus>>>({});
+  const matchingIn = (col: BoardColumn) =>
     col.items.filter(
       ({ e, step }) => (!q || e.name.toLowerCase().includes(q)) && (!needsOnly || needsYou(e, step, day, walk)),
     );
@@ -95,7 +98,12 @@ export function Board({ query, needsOnly, ...props }: BoardProps & BoardFilters)
         style={{ gridTemplateColumns: template, gridTemplateRows: "auto minmax(0, 1fr)" }}
       >
         {board.map((c) => {
-          const shown = shownIn(c);
+          // Search and Needs me first, which the status filters count, then
+          // the column's own status filter, if one is picked.
+          const matching = matchingIn(c);
+          const only = onlyStatus[c.id];
+          const shown = only ? matching.filter((i) => i.status === only) : matching;
+          const filtering = !!q || needsOnly || !!only;
           return isFolded(c.id) ? (
             <Folded key={c.id} label={c.label} n={shown.length} onUnfold={() => setFolded(c.id, false)} />
           ) : (
@@ -105,9 +113,22 @@ export function Board({ query, needsOnly, ...props }: BoardProps & BoardFilters)
               label={c.label}
               mini={c.mini}
               items={shown}
-              statuses={c.statuses}
+              statuses={c.statuses?.map((status) => ({
+                status,
+                n: matching.filter((i) => i.status === status).length,
+              }))}
+              only={only}
+              onOnly={(status) => setOnlyStatus((o) => ({ ...o, [c.id]: status }))}
               count={filtering ? `${shown.length} of ${c.items.length}` : `${shown.length}`}
-              empty={q ? "No one here matches." : needsOnly ? "Nothing needs you here." : c.empty}
+              empty={
+                q
+                  ? "No one here matches."
+                  : needsOnly
+                    ? "Nothing needs you here."
+                    : only
+                      ? `Nothing here is ${statusLabel[only]}.`
+                      : c.empty
+              }
               docked={docked}
               onFold={() => setFolded(c.id, true)}
               {...props}
@@ -195,9 +216,14 @@ const empty: Record<ColumnId, string> = {
  * takes room (Windows, or a Mac set to always show them) doesn't shift the
  * cards when it docks.
  *
- * On the four-column board, a line under the name counts the column's
- * statuses ("48 Scheduled 55 Awaiting Response"), each held together so the
- * line breaks between them; it counts what's shown, as the count does.
+ * On the four-column board, the column's statuses sit under its name as
+ * filters, each with its count, drawn as Needs me and v3's stage filters
+ * are: an outline button, on as the blue outline, one size down to sit in
+ * a column. Picking one narrows the column to that status, and its count
+ * then says how many of its whole it's showing; picking it again shows them
+ * all. One is on at a time. They count what search and Needs me leave, and
+ * a status with no one in it drops out, unless it's the one on, as v3's
+ * stages did.
  */
 function Column({
   id,
@@ -205,6 +231,8 @@ function Column({
   mini,
   items,
   statuses,
+  only,
+  onOnly,
   count,
   empty,
   docked,
@@ -215,12 +243,16 @@ function Column({
   label: string;
   mini?: boolean;
   items: Placed[];
-  statuses?: PhaseStatus[];
+  statuses?: { status: PhaseStatus; n: number }[];
+  /** The status the column is narrowed to, if one is picked. */
+  only?: PhaseStatus;
+  onOnly: (status: PhaseStatus | undefined) => void;
   count: string;
   empty: string;
   docked: boolean;
   onFold: () => void;
 }) {
+  const filters = statuses?.filter(({ status, n }) => n > 0 || status === only) ?? [];
   const { day, walk } = props;
   const sorted = mini
     ? items
@@ -228,31 +260,38 @@ function Column({
 
   return (
     <section aria-labelledby={`col-${id}`} className="row-span-2 grid min-h-0 min-w-0 grid-rows-subgrid bg-muted">
-      <div className="flex items-start gap-2 px-3 pt-3 pb-2">
-        <div className="min-w-0 flex-1">
-          <h2 id={`col-${id}`} className="text-xl">
+      <div className="px-3 pt-3 pb-2">
+        <div className="flex items-start gap-2">
+          <h2 id={`col-${id}`} className="min-w-0 flex-1 text-xl">
             {label} <Count>{count}</Count>
           </h2>
-          {statuses && statuses.length > 0 && (
-            <p className="mt-1 flex flex-wrap gap-x-3 gap-y-0.5 text-sm text-muted-foreground">
-              {statuses.map((s) => (
-                <span key={s} className="whitespace-nowrap">
-                  <span className="font-mono text-xs">{items.filter((i) => i.status === s).length}</span>{" "}
-                  {statusLabel[s]}
-                </span>
-              ))}
-            </p>
-          )}
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            aria-label={`Fold ${label}`}
+            className="-my-0.5 -mr-1.5 shrink-0 text-muted-foreground"
+            onClick={onFold}
+          >
+            <FoldHorizontal />
+          </Button>
         </div>
-        <Button
-          variant="ghost"
-          size="icon-sm"
-          aria-label={`Fold ${label}`}
-          className="-my-0.5 -mr-1.5 shrink-0 text-muted-foreground"
-          onClick={onFold}
-        >
-          <FoldHorizontal />
-        </Button>
+        {filters.length > 0 && (
+          <div role="group" aria-label={`Filter ${label} by status`} className="mt-2 flex flex-wrap gap-2">
+            {filters.map(({ status, n }) => (
+              <Button
+                key={status}
+                variant="outline"
+                size="sm"
+                aria-pressed={only === status}
+                onClick={() => onOnly(only === status ? undefined : status)}
+                className="aria-pressed:border-primary aria-pressed:text-primary aria-pressed:hover:text-primary"
+              >
+                {statusLabel[status]}
+                <span className="font-mono text-xs font-normal text-muted-foreground">{n}</span>
+              </Button>
+            ))}
+          </div>
+        )}
       </div>
 
       <div
