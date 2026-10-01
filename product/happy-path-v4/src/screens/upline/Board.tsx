@@ -9,9 +9,11 @@ import {
   bigIncrease,
   boardFor,
   columns,
+  needsYou,
   pctLabel,
   renewalChip,
   setName,
+  timed,
   type Accent,
   type ColumnId,
   type Entry,
@@ -65,7 +67,7 @@ export function Board({ query, needsOnly, ...props }: BoardProps & BoardFilters)
   const filtering = !!q || needsOnly;
   const shownIn = (col: ColumnId) =>
     board[col].filter(
-      (e) => (!q || e.name.toLowerCase().includes(q)) && (!needsOnly || accentFor(e, col, day, walk)),
+      (e) => (!q || e.name.toLowerCase().includes(q)) && (!needsOnly || needsYou(e, col, day, walk)),
     );
   const isFolded = (col: ColumnId) => walk.folded.includes(col);
   const setFolded = (col: ColumnId, fold: boolean) =>
@@ -231,7 +233,7 @@ function Folded({ label, n, onUnfold }: { label: string; n: number; onUnfold: ()
 const accentBorder: Record<Accent, string> = {
   urgent: "border-l-3 border-l-destructive-strong",
   soon: "border-l-3 border-l-warning",
-  needs: "border-l-3 border-l-primary",
+  requested: "border-l-3 border-l-primary",
 };
 
 /**
@@ -242,7 +244,7 @@ const accentBorder: Record<Accent, string> = {
 const accentBar: Record<Accent, string> = {
   urgent: "before:bg-destructive-strong",
   soon: "before:bg-warning",
-  needs: "before:bg-primary",
+  requested: "before:bg-primary",
 };
 const bar = "before:absolute before:-top-px before:bottom-0 before:-left-px before:w-[3px]";
 
@@ -311,9 +313,10 @@ function NotBuilt({ className, children }: { className: string; children: React.
 
 /**
  * One household in a mini column: the name and the change in percent, at
- * 14px, so a column of 55 reads as a list of names. A line with an accent
- * adds its renewal chip under the name, in the accent's color, so the bar
- * says what it means; a named household's own chips follow. A long name wraps
+ * 14px, so a column of 55 reads as a list of names. A line with a red or
+ * yellow accent adds its renewal chip under the name, in the accent's color,
+ * so the bar says what it means; a named household's own chips follow, and a
+ * blue one explains a blue bar. A long name wraps
  * rather than being cut short, so nothing depends on a tooltip. The whole
  * line opens the household's drawer, where the renewal email is a click
  * away; an invented line doesn't open, and says so.
@@ -322,7 +325,7 @@ function MiniRow({ e, accent, ...props }: BoardProps & { e: Entry; accent: Accen
   const { day, walk, household, onHousehold } = props;
   const selected = household === e.id;
   const frame = cn("relative px-3 py-2 text-sm", accent && [bar, accentBar[accent]]);
-  const chips = [...(accent ? [renewalChip(e, day, accent)] : []), ...(e.invented ? [] : chipsFor(e.id, day, walk))];
+  const chips = [...(timed(accent) ? [renewalChip(e, day, accent)] : []), ...(e.invented ? [] : chipsFor(e.id, day, walk))];
 
   const line = (
     <>
@@ -350,8 +353,9 @@ function MiniRow({ e, accent, ...props }: BoardProps & { e: Entry; accent: Accen
 
 /**
  * A card in a full column: the name with the change in percent beside it (as
- * a mini line has it), then its chips, led by the renewal chip in the color
- * of the card's accent, so the bar down the edge says what it means; then
+ * a mini line has it), then its chips, led by the renewal chip (in the color
+ * of a red or yellow accent, so the bar down the edge says what it means; a
+ * blue bar is explained by the household's blue chip that follows); then
  * what's renewing, last year's price to this year's, one sentence, and the
  * action if there is one. Everything is 14px, the kit's row size, with the
  * name set apart by the display face and weight (chips are the kit's 12px

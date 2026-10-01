@@ -105,13 +105,13 @@ export const isSnoozed = (id: string, day: Day, walk: Walk) => {
 
 /**
  * A chip: what it says, and, for the renewal chip on the board and in the
- * Monday email, the tone of the accent it explains (board.ts), so the chip
- * and the bar beside it are the same color.
+ * Monday email, the tone of the red or yellow accent it explains (board.ts),
+ * so the chip and the bar beside it are the same color.
  */
 export type Chip = {
   id: "snoozed" | "life" | "info" | "closing" | "renewal";
   label: string;
-  tone?: "urgent" | "soon" | "needs";
+  tone?: "urgent" | "soon";
 };
 
 /**
@@ -142,6 +142,13 @@ export function lifeRequested(id: string, day: Day, walk: Walk) {
   if (id !== pruitt.id || day === "mon") return false;
   return walk.danaAnswered && walk.danaLife && (walk.lifeQuote[pruitt.id] ?? true) && !walk.skipped.includes(id);
 }
+
+/**
+ * Whether the household has asked for something on top of the renewal: a
+ * life quote, or a change on file. It's what a blue accent means (board.ts).
+ */
+export const changeRequested = (id: string, day: Day, walk: Walk) =>
+  lifeRequested(id, day, walk) || changedFields(id, day, walk).length > 0;
 
 /** The chips a household wears on the walk's day, in the order they're drawn. */
 export function chipsFor(id: string, day: Day, walk: Walk): Chip[] {

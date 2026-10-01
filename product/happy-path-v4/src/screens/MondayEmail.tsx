@@ -15,6 +15,7 @@ import {
   pctLabel,
   renewalChip,
   setName,
+  timed,
   type Accent,
   type ColumnId,
   type Entry,
@@ -31,7 +32,9 @@ import { initialWalk, type WalkProps } from "@/walk";
  *
  * Action Needed is what the board's Needs me keeps, in three groups: approvals
  * to bind (Ready to close), recommendations to send, and renewals inside ten
- * days that are still open. Each line is a mini line from the board, with its
+ * days that are still open. A household that's only on Needs me for a blue
+ * accent (a life quote or a change requested) isn't listed, since those have
+ * no flow of their own yet. Each line is a mini line from the board, with its
  * accent and its renewal chip in the accent's color instead of the change,
  * since what matters here is how long is left. It was the earlier weeks' four
  * until 2026-09-30.
@@ -46,7 +49,9 @@ export function MondayEmail({ go }: WalkProps) {
   const needs = needsMe(board, day, initialWalk);
   const toClose = needs.filter(({ e }) => e.approved);
   const toSend = needs.filter(({ col }) => col === "ready");
-  const soon = needs.filter(({ e, col }) => !e.approved && col !== "ready");
+  const soon = needs.filter(
+    ({ e, col }) => !e.approved && col !== "ready" && timed(accentFor(e, col, day, initialWalk)),
+  );
   const byRenewal = (a: { e: Entry }, b: { e: Entry }) =>
     Date.parse(`${a.e.renews} 2026`) - Date.parse(`${b.e.renews} 2026`);
 
@@ -153,7 +158,7 @@ function Group({ title, children }: { title: string; children: ReactNode }) {
 const accentBar: Record<Accent, string> = {
   urgent: "before:bg-destructive-strong",
   soon: "before:bg-warning",
-  needs: "before:bg-primary",
+  requested: "before:bg-primary",
 };
 
 /**

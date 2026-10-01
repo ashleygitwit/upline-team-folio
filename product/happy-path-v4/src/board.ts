@@ -2,7 +2,7 @@ import { dayDate, earlier, thisWeek, type Day } from "@/data";
 import { cards } from "@/household/data";
 import { pickLine, pools, shopLine, type Invented } from "@/pipeline";
 import { statusFor } from "@/status";
-import { isSnoozed, renewalDate, renewsIn, type Chip } from "@/tasks";
+import { changeRequested, isSnoozed, renewalDate, renewsIn, type Chip } from "@/tasks";
 import type { Walk } from "@/walk";
 
 /**
@@ -245,13 +245,15 @@ export const daysUntil = (renews: string, day: Day) =>
 
 /**
  * The accent down a card's or line's left edge, the hub's card-accent: red
- * when the renewal is five days out or less and it isn't done, orange when
- * it's ten or less, and blue when it's waiting on Jenna (a recommendation to
- * send, or an approval to bind). Red beats orange beats blue. Completed and
- * snoozed carry none. The words on the card say the same thing, so nothing
- * rests on the color.
+ * when the renewal is five days out or less and it isn't done, yellow when
+ * it's ten or less, and blue when the household has asked for something on
+ * top of the renewal (a life quote, or a change on file). Blue means that and
+ * nothing else, so a recommendation to send or an approval to bind carries no
+ * bar of its own: its column, or its Ready to close chip, already says so.
+ * Red beats yellow beats blue. Completed and snoozed carry none. The words on
+ * the card say the same thing, so nothing rests on the color.
  */
-export type Accent = "urgent" | "soon" | "needs";
+export type Accent = "urgent" | "soon" | "requested";
 
 export function accentFor(e: Entry, col: ColumnId, day: Day, walk: Walk): Accent | null {
   if (col === "completed") return null;
@@ -259,27 +261,42 @@ export function accentFor(e: Entry, col: ColumnId, day: Day, walk: Walk): Accent
   const days = daysUntil(e.renews, day);
   if (days <= 5) return "urgent";
   if (days <= 10) return "soon";
-  if (col === "ready" || e.approved) return "needs";
+  if (!e.invented && changeRequested(e.id, day, walk)) return "requested";
   return null;
 }
 
+/** Whether an accent is about time (red or yellow), so the renewal chip explains it. */
+export const timed = (accent: Accent | null): accent is "urgent" | "soon" =>
+  accent === "urgent" || accent === "soon";
+
 /**
- * When it renews, as a chip in the accent's color, so the chip says what the
- * bar means. Red and orange are about time, so they count down ("Renews in 8
- * days"); blue and no accent say it as a card always has (the date, counted
- * down inside a week), blue or gray.
+ * When it renews, as a chip. Red and yellow are about time, so the chip takes
+ * their color and counts down ("Renews in 8 days"), and says what the bar
+ * means. Otherwise it's gray and says it as a card always has (the date,
+ * counted down inside a week); a blue bar is explained by the household's own
+ * blue chip (Life quote requested or Info updated) instead.
  */
 export function renewalChip(e: Entry, day: Day, accent: Accent | null): Chip {
   const days = daysUntil(e.renews, day);
   const counted =
     days < 0 ? `Renewed ${e.renews}` : days === 0 ? "Renews today" : days === 1 ? "Renews tomorrow" : `Renews in ${days} days`;
-  const label = accent === "urgent" || accent === "soon" ? counted : renewsIn(e.renews, day);
-  return { id: "renewal", label, tone: accent ?? undefined };
+  return timed(accent) ? { id: "renewal", label: counted, tone: accent } : { id: "renewal", label: renewsIn(e.renews, day) };
 }
 
-/** Everything the Needs me toggle keeps: anything with an accent. */
+/**
+ * Whether a household needs Jenna on the walk's day: a recommendation to
+ * send, an approval to bind, or anything with an accent. Completed and
+ * snoozed don't.
+ */
+export function needsYou(e: Entry, col: ColumnId, day: Day, walk: Walk) {
+  if (col === "completed") return false;
+  if (!e.invented && isSnoozed(e.id, day, walk)) return false;
+  return col === "ready" || !!e.approved || accentFor(e, col, day, walk) !== null;
+}
+
+/** Everything the Needs me toggle keeps. */
 export const needsMe = (board: Record<ColumnId, Entry[]>, day: Day, walk: Walk) =>
-  columns.flatMap((c) => board[c.id].filter((e) => accentFor(e, c.id, day, walk)).map((e) => ({ e, col: c.id })));
+  columns.flatMap((c) => board[c.id].filter((e) => needsYou(e, c.id, day, walk)).map((e) => ({ e, col: c.id })));
 
 /**
  * A change in percent, as the board and the Monday email show it: "+18%", or
