@@ -8,14 +8,32 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { screens } from "@/walk";
+import { Switch } from "@/components/ui/switch";
+import { screens, type ScreenId } from "@/walk";
+
+/** The stops that show the homepage's board. */
+const onBoard: ScreenId[] = ["monday", "review", "wednesday", "thursday", "friday"];
 
 /**
  * The presenter's bar. Not part of the product: it sits on the slate ground so
  * it reads as the stage, not the app, and it carries the only way to jump
  * between days. Arrow keys do the same as Back and Next.
+ *
+ * On a stop that shows the board, the 4 columns switch swaps the board for
+ * the four-column experiment (phases.ts), and it stays as it's set for the
+ * rest of the walk.
  */
-export function DemoBar({ index, onGo }: { index: number; onGo: (i: number) => void }) {
+export function DemoBar({
+  index,
+  onGo,
+  fourColumns,
+  onFourColumns,
+}: {
+  index: number;
+  onGo: (i: number) => void;
+  fourColumns: boolean;
+  onFourColumns: (on: boolean) => void;
+}) {
   const screen = screens[index];
   const last = screens.length - 1;
 
@@ -58,6 +76,11 @@ export function DemoBar({ index, onGo }: { index: number; onGo: (i: number) => v
           </p>
         </div>
         <div className="flex shrink-0 items-center gap-2">
+          {onBoard.includes(screen.id) && (
+            <label className="mr-4 flex items-center gap-2 text-sm text-dark-muted-fg">
+              <Switch checked={fourColumns} onCheckedChange={onFourColumns} />4 columns
+            </label>
+          )}
           <span className="mr-1 hidden font-mono text-xs text-dark-muted-fg sm:inline">
             {index + 1} of {screens.length}
           </span>

@@ -23,6 +23,17 @@ On 2026-09-30 the team settled on a kanban for the MVP homepage, and Stockton Hi
 - **The Monday email is the board at 8:00 AM.** Its Action Needed lists what Needs me keeps, in three groups: Ready to close (4), Recommendations ready to send (10) and Renewing soon (36, inside their column's deadlines and still open; 8, inside ten days, until 2026-10-01), each line with the board's accent and its countdown in the same color, under one sentence that counts them. That makes Action Needed 50 lines, against 22 before. Its Scheduled Emails lists the same 48 as the board's Scheduled column, biggest increase first by percent (Tobi Adeyemi's 22%, then the Pruitts' 18%), with the change in percent as the board shows it. It reads the same whatever the presenter does later.
 - **The nudge list came off the homepage.** From Wednesday, Scheduled holds next week's emails, and the nudges and follow-ups open from each household's drawer, as they already did.
 
+## Experiment: four columns
+
+On 2026-10-01 Amanda asked to try the board in four columns, one for each phase of a renewal, with a status on every card in place of a column for every step. It's off by default: the **4 columns** switch in the presenter bar, on any stop that shows the board, turns it on, and it stays as set for the rest of the walk (`src/phases.ts`). The six-column board above is unchanged.
+
+- **Initial Outreach** is Scheduled and Awaiting Response, today's first two columns, as one-line lists.
+- **Shopping Renewal** is In Progress (Shopping), Ready for Review (Recommendation Ready) and Awaiting Response (a recommendation sent, waiting on a yes), as cards.
+- **Closing** is Ready for Review (they said yes, so bind it and close it out) and Awaiting Response (bound, waiting on the carrier to confirm), as cards. Nothing in the walk reaches the carrier wait, since closing out still goes straight to Completed, so it holds three invented households bound before the walk's day, each with a different new carrier.
+- **Completed** is as it was.
+
+Each card and line says its status under the name, after an icon: Scheduled by the envelope with a clock, Awaiting Response by an hourglass, In Progress by a magnifying glass and Ready for Review by an eye, with Ready for Review in the text color and the rest gray. Every column runs soonest renewal first whatever the status, so on Thursday the Pruitts' card sits under Shopping Renewal's 15 sent recommendations, and each column's header counts its statuses under its name. A household keeps its step on the six columns, so its accent, Needs me and its card's sentence are what they are there, and the drawer names the column and the status over the household's name ("Initial Outreach · Scheduled"). To take the experiment out, delete `src/phases.ts` and what imports it.
+
 ## Carried over from v3
 
 v3 was rebuilt from Ashley's v2 (`Ashley_v2_sept_22` on Through Line) after Ashley walked it through with Amanda and Doug. What follows is v3's account, edited where the board changed it.

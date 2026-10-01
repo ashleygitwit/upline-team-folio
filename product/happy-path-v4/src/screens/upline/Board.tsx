@@ -1,7 +1,7 @@
 import { useLayoutEffect, useState } from "react";
 import { AlarmClock, ArrowRight, FoldHorizontal, UnfoldHorizontal } from "lucide-react";
 import { cn } from "cn";
-import { Countdown, Requests, StatusLine } from "@/components/Status";
+import { Countdown, PhaseStatusLine, Requests, StatusLine } from "@/components/Status";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import {
@@ -22,6 +22,7 @@ import type { Phase } from "@/household/activity";
 import { cards, fileFor } from "@/household/data";
 import { firstCards } from "@/household/firstCards";
 import { RowTip } from "@/lib/rowTip";
+import { phases, phasesFor, statusLabel, type Placed, type PhaseStatus } from "@/phases";
 import { shopSentence } from "@/pipeline";
 import { statusFor } from "@/status";
 import { isSnoozed, requestsFor, snoozeLabel } from "@/tasks";
@@ -63,21 +64,27 @@ const notInPrototype = "This household isn't built out for the prototype.";
  * column-heading size beside the fold control. All six fit from about 1410
  * wide; narrower, the board scrolls sideways inside itself, with Completed
  * the column past the edge, and folding any one column brings it back.
+ *
+ * The presenter bar's 4 columns switch draws the four-column experiment
+ * instead (phases.ts): Initial Outreach, Shopping Renewal, Closing and
+ * Completed, each card with its status. A household keeps its step on the
+ * six-column board, which is what its accent, Needs me and its card's
+ * sentence go by, wherever it's drawn.
  */
 export function Board({ query, needsOnly, ...props }: BoardProps & BoardFilters) {
   const { day, walk, update } = props;
-  const board = boardFor(day, walk);
+  const board = walk.fourColumns ? phaseColumns(day, walk) : stepColumns(day, walk);
   const docked = useDocked();
   const q = query.trim().toLowerCase();
   const filtering = !!q || needsOnly;
-  const shownIn = (col: ColumnId) =>
-    board[col].filter(
-      (e) => (!q || e.name.toLowerCase().includes(q)) && (!needsOnly || needsYou(e, col, day, walk)),
+  const shownIn = (col: BoardColumn) =>
+    col.items.filter(
+      ({ e, step }) => (!q || e.name.toLowerCase().includes(q)) && (!needsOnly || needsYou(e, step, day, walk)),
     );
-  const isFolded = (col: ColumnId) => walk.folded.includes(col);
-  const setFolded = (col: ColumnId, fold: boolean) =>
+  const isFolded = (col: string) => walk.folded.includes(col);
+  const setFolded = (col: string, fold: boolean) =>
     update((w) => ({ folded: fold ? [...w.folded, col] : w.folded.filter((c) => c !== col) }));
-  const template = columns
+  const template = board
     .map((c) => (isFolded(c.id) ? "3rem" : c.mini ? "minmax(13rem, 1fr)" : "minmax(13.75rem, 1fr)"))
     .join(" ");
 
@@ -87,8 +94,8 @@ export function Board({ query, needsOnly, ...props }: BoardProps & BoardFilters)
         className="grid h-full min-h-0 gap-x-2"
         style={{ gridTemplateColumns: template, gridTemplateRows: "auto minmax(0, 1fr)" }}
       >
-        {columns.map((c) => {
-          const shown = shownIn(c.id);
+        {board.map((c) => {
+          const shown = shownIn(c);
           return isFolded(c.id) ? (
             <Folded key={c.id} label={c.label} n={shown.length} onUnfold={() => setFolded(c.id, false)} />
           ) : (
@@ -97,9 +104,10 @@ export function Board({ query, needsOnly, ...props }: BoardProps & BoardFilters)
               id={c.id}
               label={c.label}
               mini={c.mini}
-              entries={shown}
-              count={filtering ? `${shown.length} of ${board[c.id].length}` : `${shown.length}`}
-              empty={q ? "No one here matches." : needsOnly ? "Nothing needs you here." : empty[c.id]}
+              items={shown}
+              statuses={c.statuses}
+              count={filtering ? `${shown.length} of ${c.items.length}` : `${shown.length}`}
+              empty={q ? "No one here matches." : needsOnly ? "Nothing needs you here." : c.empty}
               docked={docked}
               onFold={() => setFolded(c.id, true)}
               {...props}
@@ -109,6 +117,32 @@ export function Board({ query, needsOnly, ...props }: BoardProps & BoardFilters)
       </div>
     </div>
   );
+}
+
+/**
+ * A column as the board draws it: its households, each with its step on the
+ * six-column board, and on the four-column board its status, and the
+ * statuses it can hold, which its header counts.
+ */
+type BoardColumn = {
+  id: string;
+  label: string;
+  mini?: boolean;
+  items: Placed[];
+  statuses?: PhaseStatus[];
+  empty: string;
+};
+
+/** The six columns, one for each step. */
+function stepColumns(day: Day, walk: BoardProps["walk"]): BoardColumn[] {
+  const board = boardFor(day, walk);
+  return columns.map((c) => ({ ...c, items: board[c.id].map((e) => ({ e, step: c.id })), empty: empty[c.id] }));
+}
+
+/** The four-column experiment, one for each phase (phases.ts). */
+function phaseColumns(day: Day, walk: BoardProps["walk"]): BoardColumn[] {
+  const placed = phasesFor(day, walk);
+  return phases.map((p) => ({ ...p, items: placed[p.id] }));
 }
 
 /**
@@ -160,22 +194,28 @@ const empty: Record<ColumnId, string> = {
  * is docked, and keeps its scrollbar's room either way, so a scrollbar that
  * takes room (Windows, or a Mac set to always show them) doesn't shift the
  * cards when it docks.
+ *
+ * On the four-column board, a line under the name counts the column's
+ * statuses ("48 Scheduled 55 Awaiting Response"), each held together so the
+ * line breaks between them; it counts what's shown, as the count does.
  */
 function Column({
   id,
   label,
   mini,
-  entries,
+  items,
+  statuses,
   count,
   empty,
   docked,
   onFold,
   ...props
 }: BoardProps & {
-  id: ColumnId;
+  id: string;
   label: string;
   mini?: boolean;
-  entries: Entry[];
+  items: Placed[];
+  statuses?: PhaseStatus[];
   count: string;
   empty: string;
   docked: boolean;
@@ -183,15 +223,27 @@ function Column({
 }) {
   const { day, walk } = props;
   const sorted = mini
-    ? entries
-    : [...entries].sort((a, b) => Number(snoozedEntry(a, day, walk)) - Number(snoozedEntry(b, day, walk)));
+    ? items
+    : [...items].sort((a, b) => Number(snoozedEntry(a.e, day, walk)) - Number(snoozedEntry(b.e, day, walk)));
 
   return (
     <section aria-labelledby={`col-${id}`} className="row-span-2 grid min-h-0 min-w-0 grid-rows-subgrid bg-muted">
       <div className="flex items-start gap-2 px-3 pt-3 pb-2">
-        <h2 id={`col-${id}`} className="min-w-0 flex-1 text-xl">
-          {label} <Count>{count}</Count>
-        </h2>
+        <div className="min-w-0 flex-1">
+          <h2 id={`col-${id}`} className="text-xl">
+            {label} <Count>{count}</Count>
+          </h2>
+          {statuses && statuses.length > 0 && (
+            <p className="mt-1 flex flex-wrap gap-x-3 gap-y-0.5 text-sm text-muted-foreground">
+              {statuses.map((s) => (
+                <span key={s} className="whitespace-nowrap">
+                  <span className="font-mono text-xs">{items.filter((i) => i.status === s).length}</span>{" "}
+                  {statusLabel[s]}
+                </span>
+              ))}
+            </p>
+          )}
+        </div>
         <Button
           variant="ghost"
           size="icon-sm"
@@ -210,21 +262,35 @@ function Column({
           !mini && "px-3",
         )}
       >
-        {entries.length === 0 ? (
+        {items.length === 0 ? (
           <p className="px-3 text-sm">{empty}</p>
         ) : mini ? (
           <ul className="divide-y border bg-card py-1">
-            {sorted.map((e) => (
-              <MiniRow key={e.id} e={e} col={id} accent={accentFor(e, id, day, walk)} {...props} />
+            {sorted.map(({ e, step, status }) => (
+              <MiniRow
+                key={e.id}
+                e={e}
+                col={step}
+                status={status}
+                accent={accentFor(e, step, day, walk)}
+                {...props}
+              />
             ))}
           </ul>
         ) : (
           <ul className="flex flex-col gap-2 *:shrink-0">
-            {sorted.map((e) =>
+            {sorted.map(({ e, step, status }) =>
               e.invented ? (
-                <InventedCard key={e.id} e={e} accent={accentFor(e, id, day, walk)} day={day} />
+                <InventedCard key={e.id} e={e} status={status} accent={accentFor(e, step, day, walk)} day={day} />
               ) : (
-                <NamedCard key={e.id} e={e} col={id} accent={accentFor(e, id, day, walk)} {...props} />
+                <NamedCard
+                  key={e.id}
+                  e={e}
+                  col={step}
+                  status={status}
+                  accent={accentFor(e, step, day, walk)}
+                  {...props}
+                />
               ),
             )}
           </ul>
@@ -385,9 +451,15 @@ function NotBuilt({ className, children }: { className: string; children: React.
  * one says so. A long name wraps rather than being cut short, so nothing
  * depends on a tooltip. The whole line opens the household's drawer, where
  * the renewal email is a click away; an invented line doesn't open, and says
- * so.
+ * so. On the four-column board, its status comes first under the name.
  */
-function MiniRow({ e, col, accent, ...props }: BoardProps & { e: Entry; col: ColumnId; accent: Accent | null }) {
+function MiniRow({
+  e,
+  col,
+  status,
+  accent,
+  ...props
+}: BoardProps & { e: Entry; col: ColumnId; status?: PhaseStatus; accent: Accent | null }) {
   const { day, walk, household, onHousehold } = props;
   const selected = household === e.id;
   const open = () => onHousehold(e.id);
@@ -403,6 +475,7 @@ function MiniRow({ e, col, accent, ...props }: BoardProps & { e: Entry; col: Col
         )}
         {col !== "completed" && <Pct pct={e.pct} />}
       </div>
+      {status && <PhaseStatusLine status={status} className="mt-1" />}
       {!e.invented && <Requests requests={requestsFor(e.id, day, walk)} className="mt-1" />}
       {snoozed && (
         <StatusLine icon={AlarmClock} className="mt-1">
@@ -476,16 +549,35 @@ const cardFrame = (accent: Accent | null, selected = false) =>
   );
 
 /**
- * A card for an invented household: its countdown once it's red or yellow,
- * what its column says about it, and no drawer behind it.
+ * A card for an invented household: its status on the four-column board,
+ * its countdown once it's red or yellow, what its column says about it, and
+ * no drawer behind it.
  */
-function InventedCard({ e, accent, day }: { e: Entry; accent: Accent | null; day: Day }) {
+function InventedCard({
+  e,
+  status,
+  accent,
+  day,
+}: {
+  e: Entry;
+  status?: PhaseStatus;
+  accent: Accent | null;
+  day: Day;
+}) {
+  const when = timed(accent) && <Countdown renews={e.renews} day={day} tone={accent} short />;
   return (
     <NotBuilt className={cardFrame(accent)}>
       <Card
         name={e.name}
         pct={e.pct}
-        status={timed(accent) && <Countdown renews={e.renews} day={day} tone={accent} short />}
+        status={
+          (status || when) && (
+            <>
+              {status && <PhaseStatusLine status={status} />}
+              {when}
+            </>
+          )
+        }
         detail={e.invented!.detail}
       />
     </NotBuilt>
@@ -526,8 +618,18 @@ const firstOf = (name: string) => name.split(" ")[0];
  * A task snoozed from the drawer's banner sinks to the foot of its column,
  * loses its accent and its action, and says so under its name, in the
  * countdown's place, with Undo.
+ *
+ * On the four-column board, `col` is still the household's step on the six
+ * columns, so the card says what that step's card says, and its status
+ * comes first under the name.
  */
-function NamedCard({ e, col, accent, ...props }: BoardProps & { e: Entry; col: ColumnId; accent: Accent | null }) {
+function NamedCard({
+  e,
+  col,
+  status: phase,
+  accent,
+  ...props
+}: BoardProps & { e: Entry; col: ColumnId; status?: PhaseStatus; accent: Accent | null }) {
   const { day, walk, update, household, onHousehold } = props;
   const h = thisWeek.find((x) => x.id === e.id);
   const ew = earlier.find((x) => x.id === e.id);
@@ -592,8 +694,9 @@ function NamedCard({ e, col, accent, ...props }: BoardProps & { e: Entry; col: C
     timed(accent) && <Countdown renews={e.renews} day={day} tone={accent} short onOpen={profile} />
   );
   const requests = requestsFor(e.id, day, walk);
-  const status = (when || requests.length > 0) && (
+  const status = (phase || when || requests.length > 0) && (
     <>
+      {phase && <PhaseStatusLine status={phase} />}
       {when}
       <Requests requests={requests} />
     </>

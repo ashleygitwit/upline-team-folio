@@ -132,6 +132,8 @@ export type Walk = {
   danaLife: boolean;
   /** The board's columns Jenna folded to a strip, by id (board.ts); they stay folded for the walk. */
   folded: string[];
+  /** Whether the board is the four-column experiment (phases.ts), from the presenter bar's switch. */
+  fourColumns: boolean;
 };
 
 export const initialWalk: Walk = {
@@ -154,6 +156,7 @@ export const initialWalk: Walk = {
   snoozed: {},
   danaLife: true,
   folded: [],
+  fourColumns: false,
 };
 
 export type WalkProps = {

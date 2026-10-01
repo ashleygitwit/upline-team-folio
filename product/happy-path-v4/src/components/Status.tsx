@@ -1,9 +1,10 @@
 import { useContext, type ReactNode } from "react";
-import { Clock, HandHeart, PencilLine, type LucideIcon } from "lucide-react";
+import { Clock, Eye, HandHeart, Hourglass, MailClock, PencilLine, Search, type LucideIcon } from "lucide-react";
 import { cn } from "cn";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import type { Day } from "@/data";
 import { RowTip } from "@/lib/rowTip";
+import { statusLabel, type PhaseStatus } from "@/phases";
 import { countdown, renewalDay, type Request } from "@/tasks";
 
 /**
@@ -90,6 +91,31 @@ export function StatusLine({ icon: Icon, children, className }: { icon: LucideIc
       </span>
       <span>{children}</span>
     </span>
+  );
+}
+
+const phaseIcons: Record<PhaseStatus, LucideIcon> = {
+  scheduled: MailClock,
+  awaitingResponse: Hourglass,
+  inProgress: Search,
+  readyForReview: Eye,
+};
+
+/**
+ * Where a card is in its column on the four-column board (phases.ts, an
+ * experiment), in words after an icon: Scheduled by the envelope with a
+ * clock at its corner, which already means an email set to go out; Awaiting
+ * Response by an hourglass, for a wait on someone else, since the clock
+ * means the countdown and nothing else; In Progress by a magnifying glass,
+ * for Upline out shopping; and Ready for Review by an eye. Ready for Review
+ * is the one that needs Jenna, so it's in the text color and the rest are
+ * gray, as a big change is set apart from a small one.
+ */
+export function PhaseStatusLine({ status, className }: { status: PhaseStatus; className?: string }) {
+  return (
+    <StatusLine icon={phaseIcons[status]} className={cn(status === "readyForReview" && "text-foreground", className)}>
+      {statusLabel[status]}
+    </StatusLine>
   );
 }
 
