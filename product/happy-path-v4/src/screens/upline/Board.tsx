@@ -9,7 +9,6 @@ import {
   bigIncrease,
   boardFor,
   columns,
-  needsYou,
   pctLabel,
   setName,
   timed,
@@ -36,8 +35,12 @@ export type BoardProps = WalkProps & {
   onHousehold: (id: string, phase?: Phase) => void;
 };
 
-/** The toolbar's two filters: a name to search for, and whether to keep only what needs Jenna. */
-export type BoardFilters = { query: string; needsOnly: boolean };
+/**
+ * The toolbar's filter: a name to search for. Needs me, which kept only what
+ * needs Jenna, sat beside it until 2026-10-01, when it came off as not
+ * important.
+ */
+export type BoardFilters = { query: string };
 
 const notInPrototype = "This household isn't built out for the prototype.";
 
@@ -56,8 +59,8 @@ const notInPrototype = "This household isn't built out for the prototype.";
  * line and card opens the household's profile drawer, the one way in; the
  * invented households
  * (pipeline.ts) have no drawer and say so when pointed at. The toolbar's
- * search and Needs me narrow every column at once, and a column's count then
- * says how many of its whole it's showing.
+ * search narrows every column at once, and a column's count then says how
+ * many of its whole it's showing.
  *
  * Each column has a floor: a mini column is wide enough for a couple's name
  * beside its change, and a full column for "Recommendation" at the
@@ -68,23 +71,25 @@ const notInPrototype = "This household isn't built out for the prototype.";
  * The presenter bar's 4 columns switch draws the four-column experiment
  * instead (phases.ts): Initial Outreach, Shopping Renewal, Closing and
  * Completed, each card with its status. A household keeps its step on the
- * six-column board, which is what its accent, Needs me and its card's
- * sentence go by, wherever it's drawn. Each column's statuses are filters
- * under its name, and picking one narrows that column alone to it; like
- * search and Needs me, they're the page's own, so they start clear at every
- * stop.
+ * six-column board, which is what its accent and its card's sentence go by,
+ * wherever it's drawn. Each column's statuses are filters under its name,
+ * and picking one narrows that column alone to it; like search, they're the
+ * page's own, so they start clear at every stop. Its columns don't fold
+ * (since 2026-10-01), so a column folded on the six-column board is open
+ * here.
  */
-export function Board({ query, needsOnly, ...props }: BoardProps & BoardFilters) {
+export function Board({ query, ...props }: BoardProps & BoardFilters) {
   const { day, walk, update } = props;
   const board = walk.fourColumns ? phaseColumns(day, walk) : stepColumns(day, walk);
   const docked = useDocked();
   const q = query.trim().toLowerCase();
   const [onlyStatus, setOnlyStatus] = useState<Partial<Record<string, PhaseStatus>>>({});
   const matchingIn = (col: BoardColumn) =>
-    col.items.filter(
-      ({ e, step }) => (!q || e.name.toLowerCase().includes(q)) && (!needsOnly || needsYou(e, step, day, walk)),
-    );
-  const isFolded = (col: string) => walk.folded.includes(col);
+    col.items.filter(({ e }) => !q || e.name.toLowerCase().includes(q));
+  // The four-column board's columns are ruled apart by hairlines rather than
+  // set on gray panels, and don't fold.
+  const ruled = walk.fourColumns;
+  const isFolded = (col: string) => !ruled && walk.folded.includes(col);
   const setFolded = (col: string, fold: boolean) =>
     update((w) => ({ folded: fold ? [...w.folded, col] : w.folded.filter((c) => c !== col) }));
   const template = board
@@ -98,9 +103,6 @@ export function Board({ query, needsOnly, ...props }: BoardProps & BoardFilters)
             : "minmax(13.75rem, 1fr)",
     )
     .join(" ");
-  // The four-column board's columns are ruled apart by hairlines rather than
-  // set on gray panels.
-  const ruled = walk.fourColumns;
 
   return (
     <div data-board className="h-full overflow-x-auto">
@@ -109,12 +111,12 @@ export function Board({ query, needsOnly, ...props }: BoardProps & BoardFilters)
         style={{ gridTemplateColumns: template, gridTemplateRows: "auto minmax(0, 1fr)" }}
       >
         {board.map((c) => {
-          // Search and Needs me first, which the status filters count, then
+          // Search first, which the status filters count, then
           // the column's own status filter, if one is picked.
           const matching = matchingIn(c);
           const only = onlyStatus[c.id];
           const shown = only ? matching.filter((i) => i.status === only) : matching;
-          const filtering = !!q || needsOnly || !!only;
+          const filtering = !!q || !!only;
           return isFolded(c.id) ? (
             <Folded
               key={c.id}
@@ -141,14 +143,12 @@ export function Board({ query, needsOnly, ...props }: BoardProps & BoardFilters)
               empty={
                 q
                   ? "No one here matches."
-                  : needsOnly
-                    ? "Nothing needs you here."
-                    : only
-                      ? `Nothing here is ${statusLabel[only]}.`
-                      : c.empty
+                  : only
+                    ? `Nothing here is ${statusLabel[only]}.`
+                    : c.empty
               }
               docked={docked}
-              onFold={() => setFolded(c.id, true)}
+              onFold={ruled ? undefined : () => setFolded(c.id, true)}
               {...props}
             />
           );
@@ -237,18 +237,18 @@ const empty: Record<ColumnId, string> = {
  * cards when it docks.
  *
  * On the four-column board, the column's statuses sit under its name as
- * filters, each with its count, drawn as Needs me and v3's stage filters
- * are: an outline button, on as the blue outline, one size down to sit in
- * a column. Picking one narrows the column to that status, and its count
- * then says how many of its whole it's showing; picking it again shows them
- * all. One is on at a time. They count what search and Needs me leave, and
- * a status with no one in it drops out, unless it's the one on, as v3's
- * stages did.
+ * filters, each with its count, drawn as v3's stage filters and the
+ * toolbar's Needs me (until it came off) were: an outline button, on as the
+ * blue outline, one size down to sit in a column. Picking one narrows the
+ * column to that status, and its count then says how many of its whole it's
+ * showing; picking it again shows them all. One is on at a time. They count
+ * what search leaves, and a status with no one in it drops out, unless it's
+ * the one on, as v3's stages did.
  *
  * The four-column board's columns are `ruled`, drawn closer to the brand's
  * own surfaces: no gray panel, a gray 200 hairline between columns, as the
  * cards carry, and a 16px gutter either side of it, with the first column's
- * edge on the page's, under Needs me. The rules hang from the hairline under
+ * edge on the page's, under the greeting. The rules hang from the hairline under
  * the toolbar and run to the foot of the page (Home.tsx), so the header
  * keeps 16px off it and the list 16px off the foot. Every column insets its
  * households the same, so a mini column's list sits where the cards do, and
@@ -281,7 +281,8 @@ function Column({
   count: string;
   empty: string;
   docked: boolean;
-  onFold: () => void;
+  /** Folds the column to a strip; the four-column board's don't fold. */
+  onFold?: () => void;
 }) {
   const filters = statuses?.filter(({ status, n }) => n > 0 || status === only) ?? [];
   const { day, walk } = props;
@@ -302,15 +303,17 @@ function Column({
           <h2 id={`col-${id}`} className="min-w-0 flex-1 text-xl">
             {label} <Count>{count}</Count>
           </h2>
-          <Button
-            variant="ghost"
-            size="icon-sm"
-            aria-label={`Fold ${label}`}
-            className="-my-0.5 -mr-1.5 shrink-0 text-muted-foreground"
-            onClick={onFold}
-          >
-            <FoldHorizontal />
-          </Button>
+          {onFold && (
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              aria-label={`Fold ${label}`}
+              className="-my-0.5 -mr-1.5 shrink-0 text-muted-foreground"
+              onClick={onFold}
+            >
+              <FoldHorizontal />
+            </Button>
+          )}
         </div>
         {filters.length > 0 && (
           <div role="group" aria-label={`Filter ${label} by status`} className="mt-2 flex flex-wrap gap-2">

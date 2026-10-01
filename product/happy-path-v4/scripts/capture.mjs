@@ -344,16 +344,6 @@ const captures = [
     },
   },
   {
-    slug: "04t-needs-me",
-    stop: 4,
-    title: "Needs me: only what has an accent",
-    via: "Needs me in the toolbar",
-    run: async () => {
-      await jump("Monday: Jenna opens Upline");
-      await click(/^Needs me/);
-    },
-  },
-  {
     slug: "04u-search",
     stop: 4,
     title: "Searched by name",

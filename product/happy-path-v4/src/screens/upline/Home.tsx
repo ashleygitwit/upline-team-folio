@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { cn } from "cn";
-import { boardFor, needsMe } from "@/board";
-import { Button } from "@/components/ui/button";
+import { boardFor } from "@/board";
 import { Input } from "@/components/ui/input";
 import { agency, pruitt, dayName, money, optionById, options, type Day } from "@/data";
 import { Board, type BoardProps } from "@/screens/upline/Board";
@@ -15,8 +14,7 @@ import type { Walk } from "@/walk";
  * that page's gaps. The blue band that sat here came off on 2026-09-30, after
  * the board replaced the Action Needed and Scheduled Emails sections (the
  * Policyholder List went with them, since the board is the whole book now).
- * The toolbar's search and Needs me are the page's own, so they start clear
- * at every stop.
+ * The toolbar's search is the page's own, so it starts clear at every stop.
  *
  * The page scrolls. The board is one screen tall under the presenter bar,
  * less the gaps above and below it, and at most 800px, so once the header
@@ -28,15 +26,14 @@ import type { Walk } from "@/walk";
  */
 export function Home({ day, walk, ...props }: BoardProps) {
   const [query, setQuery] = useState("");
-  const [needsOnly, setNeedsOnly] = useState(false);
-  const needs = needsMe(boardFor(day, walk), day, walk).length;
 
   return (
     <>
-      {/* On the four-column board (phases.ts), a hairline runs under the
-          toolbar from edge to edge of the window, and the board's column
-          rules hang from it (below). */}
-      <div className={cn("shell max-w-none pt-25", walk.fourColumns && "border-b pb-4")}>
+      {/* On the four-column board (phases.ts), the header is white, as
+          Upline's bar over it is, and a hairline runs under the toolbar from
+          edge to edge of the window, with the board's column rules hanging
+          from it (below). */}
+      <div className={cn("shell max-w-none pt-25", walk.fourColumns && "border-b bg-card pb-4")}>
         <h1 id="home-title" className="text-4xl">
           {day === "fri" ? `Happy ${dayName[day]}` : "Good morning"}, {agency.agent.first}
         </h1>
@@ -44,18 +41,9 @@ export function Home({ day, walk, ...props }: BoardProps) {
           {lineFor(day, walk)}
         </p>
 
-        <div className="mt-8 flex flex-wrap items-center justify-between gap-4">
-          {/* Drawn as the Policyholder List's stage buttons were: on is the
-              blue outline, so it doesn't compete with a primary action. */}
-          <Button
-            variant="outline"
-            aria-pressed={needsOnly}
-            onClick={() => setNeedsOnly((on) => !on)}
-            className="aria-pressed:border-primary aria-pressed:text-primary aria-pressed:hover:text-primary"
-          >
-            Needs me
-            <span className="font-mono text-xs font-normal text-muted-foreground">{needs}</span>
-          </Button>
+        {/* Needs me sat at the toolbar's left until 2026-10-01, when it came
+            off as not important; search keeps its place on the right. */}
+        <div className="mt-8 flex flex-wrap items-center justify-end gap-4">
           <Input
             type="search"
             aria-label="Search by name"
@@ -80,7 +68,7 @@ export function Home({ day, walk, ...props }: BoardProps) {
         )}
       >
         <div className={walk.fourColumns ? "h-full" : "h-[calc(100svh-var(--demo-bar-h)-2.5rem)] max-h-200"}>
-          <Board day={day} walk={walk} query={query} needsOnly={needsOnly} {...props} />
+          <Board day={day} walk={walk} query={query} {...props} />
         </div>
       </div>
     </>
@@ -94,7 +82,7 @@ const count = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : 
  * far, counted off the board. Monday counts what's waiting on Jenna and
  * what's going out; Wednesday has nothing to send or bind; Thursday and
  * Friday follow the Pruitts. Renewals running short on time are the board's
- * to show, with their accents and Needs me, so the line doesn't count them.
+ * to show, with their accents, so the line doesn't count them.
  */
 function lineFor(day: Day, walk: Walk): string {
   const board = boardFor(day, walk);

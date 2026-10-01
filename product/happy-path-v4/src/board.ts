@@ -365,7 +365,10 @@ export function needsYou(e: Entry, col: ColumnId, day: Day, walk: Walk) {
   return col === "ready" || !!e.approved || accentFor(e, col, day, walk) !== null;
 }
 
-/** Everything the Needs me toggle keeps. */
+/**
+ * Everything that needs Jenna, the Monday email's Action Needed. The board's
+ * Needs me toggle kept it too, until it came off on 2026-10-01.
+ */
 export const needsMe = (board: Record<ColumnId, Entry[]>, day: Day, walk: Walk) =>
   columns.flatMap((c) => board[c.id].filter((e) => needsYou(e, c.id, day, walk)).map((e) => ({ e, col: c.id })));
 

@@ -11,9 +11,9 @@ import type { Walk } from "@/walk";
  * off, the default, the board is the six columns.
  *
  * Every household goes where its step on the six-column board says, and keeps
- * that step (`step`), so the walk, the deadlines and Needs me work as they do
- * there, and its card says what that step's card says. The one thing new is
- * a wait the six columns don't have, Closing's Awaiting Response: bound, and
+ * that step (`step`), so the walk and the deadlines work as they do there,
+ * and its card says what that step's card says. The one thing new is a wait
+ * the six columns don't have, Closing's Awaiting Response: bound, and
  * waiting on the carrier to confirm. Nothing in the walk gets there, since
  * closing out still goes straight to Completed, so it's three of the
  * invented households bound before the walk's day.
@@ -97,7 +97,7 @@ const waitingOnCarrier = 3;
  * renewals, bound recently, ahead of a renewal still to come, and no two with
  * the same new carrier, so the column doesn't read as one card three times
  * (Monday's three latest all went to Erie). They keep Completed's step, so
- * they never flag and Needs me leaves them be.
+ * they never flag and the Monday email leaves them be.
  */
 export function phasesFor(day: Day, walk: Walk): Record<PhaseId, Placed[]> {
   const board = boardFor(day, walk);
