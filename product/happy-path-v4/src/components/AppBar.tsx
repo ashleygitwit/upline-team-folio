@@ -1,4 +1,5 @@
 import { ChevronDown } from "lucide-react";
+import { cn } from "cn";
 import logo from "@/assets/upline-logo.svg";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -17,12 +18,15 @@ import { agency } from "@/data";
  * nowhere. My Policyholder List was
  * between them until 2026-09-30, when the homepage's board replaced it. The
  * bar runs the page's full width, as the board does, so the mark sits on the
- * same edge as the greeting and the board's first column.
+ * same edge as the greeting and the board's first column. When the homepage
+ * takes v3's 1280 width (`narrow`, the four-column board), the
+ * bar's contents do too, so the mark keeps that edge; the bar's own ground
+ * and hairline still run the window's width.
  */
-export function AppBar({ onHome }: { onHome: () => void }) {
+export function AppBar({ onHome, narrow = false }: { onHome: () => void; narrow?: boolean }) {
   return (
     <header className="border-b bg-card">
-      <div className="shell flex h-16 max-w-none items-center justify-between">
+      <div className={cn("shell flex h-16 items-center justify-between", narrow ? "max-w-7xl" : "max-w-none")}>
         <div className="flex items-center gap-4">
           <button type="button" onClick={onHome} aria-label="Upline, back to the homepage">
             <img src={logo} alt="" className="h-6 w-auto" />

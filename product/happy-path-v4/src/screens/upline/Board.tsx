@@ -85,10 +85,10 @@ export function Board(props: BoardProps) {
     if (pick !== undefined) return pick ?? undefined;
     return col.items.some((i) => i.status === col.opensOn) ? col.opensOn : undefined;
   };
-  // The four-column board's columns are ruled apart by hairlines rather than
-  // set on gray panels, and don't fold.
-  const ruled = walk.fourColumns;
-  const isFolded = (col: string) => !ruled && walk.folded.includes(col);
+  // The four-column board is drawn as v3's Policyholder List board was
+  // (`panels`), its columns don't fold, and its households are all cards.
+  const panels = walk.fourColumns;
+  const isFolded = (col: string) => !panels && walk.folded.includes(col);
   const setFolded = (col: string, fold: boolean) =>
     update((w) => ({ folded: fold ? [...w.folded, col] : w.folded.filter((c) => c !== col) }));
   const template = board
@@ -100,27 +100,24 @@ export function Board(props: BoardProps) {
   return (
     <div data-board className="h-full overflow-x-auto">
       <div
-        className={cn("grid h-full min-h-0", !ruled && "gap-x-2")}
-        style={{ gridTemplateColumns: template, gridTemplateRows: "auto minmax(0, 1fr)" }}
+        className={cn("grid", panels ? "gap-x-3" : "h-full min-h-0 gap-x-2")}
+        style={{
+          gridTemplateColumns: template,
+          gridTemplateRows: panels ? "auto auto" : "auto minmax(0, 1fr)",
+        }}
       >
         {board.map((c) => {
           const only = onlyIn(c);
           const shown = only ? c.items.filter((i) => i.status === only) : c.items;
           return isFolded(c.id) ? (
-            <Folded
-              key={c.id}
-              label={c.label}
-              n={shown.length}
-              ruled={ruled}
-              onUnfold={() => setFolded(c.id, false)}
-            />
+            <Folded key={c.id} label={c.label} n={shown.length} onUnfold={() => setFolded(c.id, false)} />
           ) : (
             <Column
               key={c.id}
               id={c.id}
               label={c.label}
               mini={c.mini}
-              ruled={ruled}
+              panels={panels}
               items={shown}
               statuses={c.statuses?.map((status) => ({
                 status,
@@ -131,7 +128,7 @@ export function Board(props: BoardProps) {
               count={only ? `${shown.length} of ${c.items.length}` : `${shown.length}`}
               empty={only ? `Nothing here is ${statusLabel[only]}.` : c.empty}
               docked={docked}
-              onFold={ruled ? undefined : () => setFolded(c.id, true)}
+              onFold={panels ? undefined : () => setFolded(c.id, true)}
               {...props}
             />
           );
@@ -229,21 +226,24 @@ const empty: Record<ColumnId, string> = {
  * no count of its own beside its name (since 2026-10-01); Completed, which
  * has none, keeps its count.
  *
- * The four-column board's columns are `ruled`, drawn closer to the brand's
- * own surfaces: no gray panel, a gray 200 hairline between columns, as the
- * cards carry, and a 16px gutter either side of it, with the first column's
- * edge on the page's, under the greeting. The rules hang from the hairline
- * under the header and run to the foot of the page (Home.tsx), so the header
- * keeps 16px off it and the list 16px off the foot. Every column insets its
- * households the same, and every household is a card, 8px apart, so Initial
- * Outreach's and Completed's sit as the other columns' do, with a card's
- * 12px padding.
+ * The four-column board's columns are drawn as v3's Policyholder List board
+ * drew its six (`panels`, since 2026-10-01): each a panel of gray 100 at 45%
+ * with a hairline round it, 12px apart, as long as its cards, with the page
+ * scrolling rather than the column. Its name keeps the column-heading size,
+ * 20px in the display face, as the six columns' do, rather than v3's 14px
+ * semibold. The header and the list are the panel's two halves, laid on the
+ * board's two rows (the section itself is `display: contents`), so every
+ * header is as tall as the tallest and the first cards line up, while each
+ * list stops at its last card. Every household is a card, 8px apart, so
+ * Initial Outreach's and Completed's sit as the other columns' do, with a
+ * card's 12px padding. (For part of 2026-10-01 the four were ruled apart by
+ * hairlines instead, each scrolling inside itself.)
  */
 function Column({
   id,
   label,
   mini,
-  ruled,
+  panels,
   items,
   statuses,
   only,
@@ -257,7 +257,7 @@ function Column({
   id: string;
   label: string;
   mini?: boolean;
-  ruled: boolean;
+  panels: boolean;
   items: Placed[];
   statuses?: { status: PhaseStatus; n: number }[];
   /** The status the column is narrowed to, if one is picked. */
@@ -278,12 +278,13 @@ function Column({
   return (
     <section
       aria-labelledby={`col-${id}`}
-      className={cn(
-        "row-span-2 grid min-h-0 min-w-0 grid-rows-subgrid",
-        ruled ? "border-l px-4 first:border-l-0 first:pl-0 last:pr-0" : "bg-muted",
-      )}
+      className={panels ? "contents" : "row-span-2 grid min-h-0 min-w-0 grid-rows-subgrid bg-muted"}
     >
-      <div className={ruled ? "pt-4 pb-3" : "px-3 pt-3 pb-2"}>
+      <div
+        className={
+          panels ? "row-start-1 min-w-0 border border-b-0 bg-muted/45 px-2.5 pt-3 pb-2.5" : "px-3 pt-3 pb-2"
+        }
+      >
         <div className="flex items-start gap-2">
           <h2 id={`col-${id}`} className="min-w-0 flex-1 text-xl">
             {label}
@@ -326,23 +327,26 @@ function Column({
       </div>
 
       <div
-        className={cn(
-          "relative min-h-0 [scrollbar-gutter:stable]",
-          ruled ? "pb-4" : "pb-3",
-          docked ? "overflow-y-auto" : "overflow-y-hidden",
-          !mini && !ruled && "px-3",
-        )}
+        className={
+          panels
+            ? "relative row-start-2 min-h-60 min-w-0 self-start border border-t-0 bg-muted/45 px-2.5 pb-3.5"
+            : cn(
+                "relative min-h-0 pb-3 [scrollbar-gutter:stable]",
+                docked ? "overflow-y-auto" : "overflow-y-hidden",
+                !mini && "px-3",
+              )
+        }
       >
         {items.length === 0 ? (
-          <p className={cn("text-sm", !ruled && "px-3")}>{empty}</p>
+          <p className={cn("text-sm", !panels && "px-3")}>{empty}</p>
         ) : mini ? (
-          <ul className={ruled ? "flex flex-col gap-2 *:shrink-0" : "divide-y border bg-card py-1"}>
+          <ul className={panels ? "flex flex-col gap-2 *:shrink-0" : "divide-y border bg-card py-1"}>
             {sorted.map(({ e, step, status }) => (
               <MiniRow
                 key={e.id}
                 e={e}
                 col={step}
-                roomy={ruled}
+                roomy={panels}
                 status={status}
                 accent={accentFor(e, step, day, walk)}
                 {...props}
@@ -390,22 +394,15 @@ function Count({ children }: { children: React.ReactNode }) {
   );
 }
 
-/**
- * A folded column: a strip with its count and its name on end. The whole strip
- * unfolds it. On the four-column board it's ruled off as the columns are,
- * with no panel.
- */
-function Folded({ label, n, ruled, onUnfold }: { label: string; n: number; ruled: boolean; onUnfold: () => void }) {
+/** A folded column: a strip with its count and its name on end. The whole strip unfolds it. */
+function Folded({ label, n, onUnfold }: { label: string; n: number; onUnfold: () => void }) {
   return (
-    <section
-      aria-label={label}
-      className={cn("row-span-2 min-h-0", ruled ? "border-l first:border-l-0" : "bg-muted")}
-    >
+    <section aria-label={label} className="row-span-2 min-h-0 bg-muted">
       <button
         type="button"
         onClick={onUnfold}
         aria-label={`Unfold ${label}, ${n}`}
-        className={cn("group flex h-full w-full flex-col items-center gap-3", ruled ? "pt-4" : "pt-3")}
+        className="group flex h-full w-full flex-col items-center gap-3 pt-3"
       >
         <UnfoldHorizontal aria-hidden className="size-4 text-muted-foreground group-hover:text-primary" />
         <Count>{n}</Count>

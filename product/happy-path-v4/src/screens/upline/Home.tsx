@@ -24,15 +24,17 @@ import type { Walk } from "@/walk";
  * on a laptop and Ashley stuck above the fold.
  */
 export function Home({ day, walk, ...props }: BoardProps) {
+  // The four-column board (phases.ts) takes v3's Policyholder List width:
+  // the header and the board at most 1280 wide, centered, so a wide window
+  // leaves room either side (Upline's bar follows, so the mark keeps their
+  // edge).
+  const width = walk.fourColumns ? "max-w-7xl" : "max-w-none";
   return (
     <>
       {/* The toolbar under the line (Needs me and search) came off on
           2026-10-01, so the board follows the line at the 32px the toolbar
-          did. On the four-column board (phases.ts), a hairline runs under the
-          header from edge to edge of the window, with the board's column
-          rules hanging from it (below); the header stays on the page's gray
-          50 (it was white, as Upline's bar is, for part of 2026-10-01). */}
-      <div className={cn("shell max-w-none pt-25", walk.fourColumns ? "border-b pb-8" : "pb-4")}>
+          did. */}
+      <div className={cn("shell pt-25 pb-4", width)}>
         <h1 id="home-title" className="text-4xl">
           {day === "fri" ? `Happy ${dayName[day]}` : "Good morning"}, {agency.agent.first}
         </h1>
@@ -42,18 +44,12 @@ export function Home({ day, walk, ...props }: BoardProps) {
       </div>
 
       {/* 2.5rem is the gaps above and below the board, pt-4 and pb-6. The
-          four-column board has neither, so its column rules run from the
-          header's hairline to the foot of the page: it's a screen tall, or
-          800px, and takes the rest of a taller window (Upline.tsx makes it
-          the page's last row). Size containment keeps its households from
-          stretching it to the length of its longest column. */}
-      <div
-        className={cn(
-          "shell max-w-none",
-          walk.fourColumns ? "min-h-[min(100svh-var(--demo-bar-h),50rem)] [contain:size]" : "pt-4 pb-6",
-        )}
-      >
-        <div className={walk.fourColumns ? "h-full" : "h-[calc(100svh-var(--demo-bar-h)-2.5rem)] max-h-200"}>
+          four-column board has no height of its own, as v3's Policyholder
+          List board had none: it's as long as its longest column, and the
+          page scrolls. (For part of 2026-10-01 it was a screen tall, its
+          columns ruled apart by hairlines and each scrolling inside itself.) */}
+      <div className={cn("shell pt-4 pb-6", width)}>
+        <div className={walk.fourColumns ? undefined : "h-[calc(100svh-var(--demo-bar-h)-2.5rem)] max-h-200"}>
           <Board day={day} walk={walk} {...props} />
         </div>
       </div>
