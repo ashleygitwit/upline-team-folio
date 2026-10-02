@@ -5,11 +5,13 @@ import type { Card } from "@/household/data";
 import { firstCards } from "@/household/firstCards";
 import { fileOf } from "@/household/households";
 import { OutreachReview } from "@/household/phases";
+import { previewHref } from "@/questionnaire";
 import type { WalkProps } from "@/walk";
 
 /**
  * A household's outreach review wired to the walk: the email Jenna edits is
- * the one Leah gets, Life decides the questionnaire's life question, Send now
+ * the one Leah gets, Life decides the questionnaire's life question (and the
+ * preview's, as View the Questionnaire opens it), Send now
  * sends it then (so the household moves to Awaiting Response), and Skip asks
  * first. This week's six have Send now and Skip until Monday's over; a first
  * card (firstCards.ts) has them while its email is still waiting to go, and
@@ -76,6 +78,7 @@ export function OutreachFor({
           : undefined
       }
       onOpenQuestionnaire={card.id === pruitt.id ? onOpenQuestionnaire : undefined}
+      questionnairePreview={card.id === pruitt.id ? previewHref(walk.lifeQuote[pruitt.id] ?? true) : undefined}
     />
   );
 }
