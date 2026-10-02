@@ -24,11 +24,14 @@ import { Recommendation } from "@/household/Recommendation";
  */
 
 /**
- * The renewal email before it goes: the policy as it renews, the email, and
- * shaping the shop. `sent` locks it and says when it went; `skipped` swaps
- * the footer for an Undo. This week's six bring the walk's email; an earlier
- * week's household, whose email went before the walk, reads a draft built
- * from its card.
+ * The renewal email before it goes: the policy as it renews, the email, with
+ * View the Questionnaire under it, and shaping the shop, with twice the
+ * page's 24px under it. The button goes where the email's link does, so only
+ * the Pruitts' opens anything, and the others' say why on hover as their
+ * links do. `sent` locks it and says when it went; `skipped` swaps the footer
+ * for an Undo. This week's six bring the walk's email; an earlier week's
+ * household, whose email went before the walk, reads a draft built from its
+ * card.
  */
 export function OutreachReview({
   card,
@@ -84,20 +87,36 @@ export function OutreachReview({
         )
       }
     >
-      <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-8 pb-6">
         <PolicyNow card={card} file={file} />
-        <EmailFrame
-          toolbar={`From ${agency.agent.name}'s mailbox`}
-          to={card.target ? outreachEmail.to : `${file.namedInsured} <${card.email}>`}
-          subject={email?.subject ?? "A quick look at your renewal"}
-        >
-          <LinkedEmail
-            body={email?.body ?? outreachDraft(card)}
-            onChange={email?.onChange ?? (() => {})}
-            onLink={card.target ? onOpenQuestionnaire : undefined}
-            readOnly={!!sent}
-          />
-        </EmailFrame>
+        <div>
+          <EmailFrame
+            toolbar={`From ${agency.agent.name}'s mailbox`}
+            to={card.target ? outreachEmail.to : `${file.namedInsured} <${card.email}>`}
+            subject={email?.subject ?? "A quick look at your renewal"}
+          >
+            <LinkedEmail
+              body={email?.body ?? outreachDraft(card)}
+              onChange={email?.onChange ?? (() => {})}
+              onLink={card.target ? onOpenQuestionnaire : undefined}
+              readOnly={!!sent}
+            />
+          </EmailFrame>
+          {card.target && onOpenQuestionnaire ? (
+            <Button variant="outline" className="mt-4" onClick={onOpenQuestionnaire}>
+              View the Questionnaire
+            </Button>
+          ) : (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="outline" className="mt-4" aria-disabled>
+                  View the Questionnaire
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Only the Pruitts' questionnaire is in this prototype.</TooltipContent>
+            </Tooltip>
+          )}
+        </div>
         <ShapeTheShop card={card} file={file} life={life} locked={!!sent} />
       </div>
     </PhasePage>
