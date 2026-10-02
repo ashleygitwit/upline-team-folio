@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { AlarmClock, ChevronDown } from "lucide-react";
+import { AlarmClock, Check, ChevronDown } from "lucide-react";
 import { cn } from "cn";
 import { CarrierMark } from "@/components/CarrierMark";
 import { Countdown, PhaseStatusLine, Requests, StatusLine } from "@/components/Status";
@@ -311,14 +311,16 @@ function StatusRow({ status, when, className }: { status: React.ReactNode; when?
 }
 
 /**
- * When a renewal was completed, "Oct 9", where a card has its change, on a
- * Completed card (completedOn in phases.ts): set as the
- * change is, in the mono face in gray, since the change and the countdown
- * are done with once a renewal is closed.
+ * When a renewal was completed, "Oct 9", on a Completed row (completedOn in
+ * phases.ts), where an open renewal has when it renews: at the right of the
+ * row's last line, set as the renewal date is, but after a check and in the
+ * success color, blue 600, so it reads as done. Until 2026-10-01 it was
+ * beside the name, where the change is, in the mono face in gray.
  */
 function Completed({ on }: { on: string }) {
   return (
-    <span className="shrink-0 font-mono text-sm text-muted-foreground">
+    <span className="inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap text-success">
+      <Check aria-hidden className="size-3.5 shrink-0" />
       <span className="sr-only">Completed </span>
       {on}
     </span>
@@ -418,9 +420,10 @@ function NotBuilt({ className, children }: { className: string; children: React.
  * of the same line (by a clock, "8 days" in red under two weeks out and
  * "Oct 26" after, with the full date on hover), then a named household's
  * requests and whether it's snoozed. A Completed row has what the policy
- * ended up costing (endCost in phases.ts) under what's renewing, and the day
- * it was completed beside the name, and no status or renewal, since those
- * are done with once a renewal is closed. Until 2026-10-01 the change sat
+ * ended up costing (endCost in phases.ts) under what's renewing, with the
+ * day it was completed at the right of the same line, by a check (Completed,
+ * below), and no status or renewal, since those are done with once a
+ * renewal is closed. Until 2026-10-01 the change sat
  * beside the name, with a countdown between them once the renewal was
  * running short, and neither row said what's renewing or what it costs. A
  * long name wraps rather than being cut short, so nothing depends on a
@@ -447,11 +450,14 @@ function ListRow({
       <div className="flex items-baseline gap-2">
         <NameMark carrier={e.carrier} />
         <span className={nameStyle}>{setName(e.name)}</span>
-        {col === "completed" && <Completed on={completedOn(e, walk)} />}
       </div>
       <p className={cn("mt-1 text-muted-foreground", underName)}>{e.lines}</p>
       {col === "completed" ? (
-        <p className={cn("text-muted-foreground", underName)}>{money(endCost(e, walk))}</p>
+        <StatusRow
+          className={underName}
+          status={<p className="text-muted-foreground">{money(endCost(e, walk))}</p>}
+          when={<Completed on={completedOn(e, walk)} />}
+        />
       ) : (
         <Price was={e.was} now={e.now} pct={e.pct} className={underName} />
       )}

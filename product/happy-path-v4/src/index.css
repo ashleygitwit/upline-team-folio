@@ -91,8 +91,8 @@
      foreground on it is 3.87:1, so type on either fill is slate/800 (4.69:1
      on red, 12.26:1 on yellow), and red that is itself text on white steps
      down to red/700. Success is the primary, blue/600, rather than the hub's
-     green (the Agent's actor color, and 2.65:1 with white); nothing on the
-     board is a success state yet. */
+     green (the Agent's actor color, and 2.65:1 with white): the check and
+     date on a Completed row. */
   --warning: #ffd24a;           /* yellow/500 — warning states */
   --success: var(--brand-blue); /* blue/600 — success states */
   --status-foreground: #18181e; /* slate/800 — type on a red/500 or yellow/500 fill */
