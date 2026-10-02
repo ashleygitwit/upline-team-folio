@@ -90,7 +90,7 @@ function Hero({ day, walk }: { day: Day; walk: Walk }) {
       <div className="shell py-(--space-section)">
         <div className="mx-auto max-w-180 text-center">
           <h1 id="home-title" className="text-5xl text-balance">
-            {day === "fri" ? `Happy ${dayName[day]}` : "Good morning"}, {agency.agent.first}
+            {greeting(day)}
           </h1>
           <p aria-live="polite" className="mt-(--space-block) font-display text-xl font-medium text-balance">
             {lineFor(day, walk)}
@@ -99,4 +99,16 @@ function Hero({ day, walk }: { day: Day; walk: Walk }) {
       </div>
     </div>
   );
+}
+
+/**
+ * The band's headline, by day: Monday's good morning; Wednesday's break,
+ * since the emails went Tuesday and nothing needs Jenna; Thursday's push to
+ * finish, with the quotes back; and Friday's. Wednesday and Thursday were
+ * "Good morning, Jenna" until 2026-10-01.
+ */
+function greeting(day: Day) {
+  if (day === "wed") return "Take a well-deserved break";
+  if (day === "thu") return "Let's wrap up the week";
+  return `${day === "fri" ? `Happy ${dayName[day]}` : "Good morning"}, ${agency.agent.first}`;
 }
