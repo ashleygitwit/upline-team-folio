@@ -9,12 +9,72 @@ import { Stage } from "@/components/Stage";
 import { Countdown } from "@/components/Status";
 import { bigIncrease, pctLabel, setName } from "@/board";
 import { agency } from "@/data";
-import { lineFor } from "@/dayLine";
-import { completedOn, phases, phasesFor, statusLabel, type Placed } from "@/phases";
+import { count, lineFor } from "@/dayLine";
+import { phases, phasesFor, statusLabel, type PhaseId, type PhaseStatus, type Placed } from "@/phases";
 import { initialWalk, type WalkProps } from "@/walk";
 
 /** How many lines a list shows before it leaves the rest to Upline. */
 const shown = 5;
+
+const verb = (n: number, one: string, many: string) => (n === 1 ? one : many);
+
+/**
+ * The email's sections, the board's columns in reverse without Completed, and
+ * the lists in each in the email's own order, each with the line under its
+ * heading saying what it is. Shopping Renewal's In Progress comes last, under
+ * Awaiting Response.
+ */
+const sections: { id: PhaseId; lists: { status: PhaseStatus; about: (n: number) => string }[] }[] = [
+  {
+    id: "closing",
+    lists: [
+      {
+        status: "readyForReview",
+        about: (n) =>
+          `${count(n, "household", "households")} said yes to your recommendation and ${verb(n, "is", "are")} ready to bind.`,
+      },
+      {
+        status: "awaitingResponse",
+        about: (n) =>
+          `${count(n, "household", "households")} said yes and still ${verb(n, "needs", "need")} to send a signature, first payment or signed application before you can bind.`,
+      },
+    ],
+  },
+  {
+    id: "shopping-renewal",
+    lists: [
+      {
+        status: "readyForReview",
+        about: (n) =>
+          `Upline finished shopping ${count(n, "renewal", "renewals")}. Review the quotes and send your ${verb(n, "recommendation", "recommendations")}.`,
+      },
+      {
+        status: "awaitingResponse",
+        about: (n) =>
+          `${count(n, "household has", "households have")} your recommendation and ${verb(n, "hasn't", "haven't")} answered yet.`,
+      },
+      {
+        status: "inProgress",
+        about: (n) => `Upline is getting carrier quotes for ${count(n, "renewal", "renewals")}.`,
+      },
+    ],
+  },
+  {
+    id: "initial-outreach",
+    lists: [
+      {
+        status: "scheduled",
+        about: (n) =>
+          `Upline has ${count(n, "automated renewal email", "automated renewal emails")} scheduled to send tomorrow at 9 AM.`,
+      },
+      {
+        status: "awaitingResponse",
+        about: (n) =>
+          `${count(n, "household", "households")} got their renewal email and ${verb(n, "hasn't", "haven't")} answered yet.`,
+      },
+    ],
+  },
+];
 
 /**
  * How the week starts: an email, not a login. Upline writes to Jenna (this is
@@ -24,16 +84,20 @@ const shown = 5;
  * later.
  *
  * The band says what the homepage's header does, the greeting and Monday's
- * line (dayLine.ts). Then the board, a section for each of its four
- * columns (phases.ts) in its order, with the column's count, and inside each
- * a list for each status in the order its menu has them, soonest renewal
- * first as the board runs them. A list shows its first five and, when there
- * are more, a View all on Upline link under it. Each line is a board line
- * with the carrier's mark in front: the name, when it renews (a countdown in
- * red under two weeks out and the date after, without a tooltip, since this
- * is an email) and the change, or for Completed the day it was completed. Until 2026-10-01 the email had
- * the homepage's sections from before the board, Action Needed and Scheduled
- * Emails, with every line in full.
+ * line (dayLine.ts). Then a section for each of the board's columns but
+ * Completed (phases.ts), last first, Closing, Shopping Renewal and Initial
+ * Outreach, with the column's count, and inside each a list for each status
+ * (`sections`), soonest renewal first as the board runs them. A list says
+ * what it is under its heading, then shows its first five and, when there
+ * are more, a View all on Upline link under it; Ready for Review shows them
+ * all. Each line is a board line with the carrier's mark in front: the name,
+ * when it renews (a countdown in red under two weeks out and the date after,
+ * without a tooltip, since this is an email) and the change. Until 2026-10-01
+ * the email had the homepage's sections from before the board, Action Needed
+ * and Scheduled Emails, with every line in full. Until 2026-10-02 it had all
+ * four columns in the board's order, Completed last, each status in the order
+ * its menu has them, every list stopping at five, and no line under the
+ * headings.
  */
 export function MondayEmail({ go }: WalkProps) {
   const day = "mon";
@@ -66,31 +130,27 @@ export function MondayEmail({ go }: WalkProps) {
       </header>
 
       <div className="px-8 pb-12">
-        {phases.map((p) => {
-          const items = placed[p.id];
+        {sections.map((s) => {
+          const items = placed[s.id];
           if (items.length === 0) return null;
-          const lists =
-            p.statuses.length === 0
-              ? [{ id: p.id, title: undefined, items }]
-              : p.statuses.map((s) => ({
-                  id: `${p.id}-${s}`,
-                  title: statusLabel[s],
-                  items: items.filter((i) => i.status === s),
-                }));
           return (
-            <Group key={p.id} title={p.label} count={items.length}>
+            <Group key={s.id} title={phases.find((p) => p.id === s.id)!.label} count={items.length}>
               <Card size="sm">
                 <CardContent className="gap-6">
-                  {lists.map((l) => (
-                    <Lines
-                      key={l.id}
-                      id={l.id}
-                      title={l.title}
-                      items={l.items}
-                      completed={p.id === "completed"}
-                      onViewAll={toUpline}
-                    />
-                  ))}
+                  {s.lists.map((l) => {
+                    const lines = items.filter((i) => i.status === l.status);
+                    return (
+                      <Lines
+                        key={l.status}
+                        id={`${s.id}-${l.status}`}
+                        title={statusLabel[l.status]}
+                        about={l.about(lines.length)}
+                        items={lines}
+                        all={l.status === "readyForReview"}
+                        onViewAll={toUpline}
+                      />
+                    );
+                  })}
                 </CardContent>
               </Card>
             </Group>
@@ -124,42 +184,47 @@ function Group({ title, count, children }: { title: string; count: number; child
 /**
  * One list in a column's card: the status as its heading, with its count as
  * the column's has it, in the mono face in gray (it was an eyebrow,
- * "SCHEDULED · 48", until 2026-10-01; Completed has no statuses, so its one
- * list goes without), then its first five lines and, past five, View all on
+ * "SCHEDULED · 48", until 2026-10-01), a line in gray saying what the list
+ * is, as Recent Activity sets a detail under its heading, then its lines:
+ * every one when `all`, otherwise the first five and, past five, View all on
  * Upline.
  */
 function Lines({
   id,
   title,
+  about,
   items,
-  completed,
+  all,
   onViewAll,
 }: {
   id: string;
-  title?: string;
+  title: string;
+  about: string;
   items: Placed[];
-  completed: boolean;
+  all: boolean;
   onViewAll: () => void;
 }) {
   if (items.length === 0) return null;
   const heading = `email-${id}`;
+  const cut = !all && items.length > shown;
   return (
-    <section aria-labelledby={title && heading}>
-      {title && (
-        <h3 id={heading} className="mb-3 font-display text-base font-medium">
-          {title} <span className="font-mono text-sm font-normal text-muted-foreground">{items.length}</span>
-        </h3>
-      )}
-      <ul className="divide-y border-y text-sm">
-        {items.slice(0, shown).map((p) => (
-          <Line key={p.e.id} {...p} completed={completed} />
+    <section aria-labelledby={heading} aria-describedby={`${heading}-about`}>
+      <h3 id={heading} className="font-display text-base font-medium">
+        {title} <span className="font-mono text-sm font-normal text-muted-foreground">{items.length}</span>
+      </h3>
+      <p id={`${heading}-about`} className="mt-1 text-sm text-muted-foreground">
+        {about}
+      </p>
+      <ul className="mt-3 divide-y border-y text-sm">
+        {(cut ? items.slice(0, shown) : items).map((p) => (
+          <Line key={p.e.id} {...p} />
         ))}
       </ul>
-      {items.length > shown && (
+      {cut && (
         <Button
           variant="link"
           className="mt-2 h-auto p-0 font-sans text-sm"
-          aria-describedby={title && heading}
+          aria-describedby={heading}
           onClick={onViewAll}
         >
           View all on Upline
@@ -169,11 +234,8 @@ function Lines({
   );
 }
 
-/**
- * A household's line: the carrier's mark and the name, then when it renews
- * and the change in percent, or for Completed the day it was completed.
- */
-function Line({ e, completed }: Placed & { completed: boolean }) {
+/** A household's line: the carrier's mark and the name, then when it renews and the change in percent. */
+function Line({ e }: Placed) {
   return (
     <li className="flex items-center justify-between gap-4 py-2">
       <span className="flex min-w-0 items-start gap-2">
@@ -182,17 +244,10 @@ function Line({ e, completed }: Placed & { completed: boolean }) {
         <span className="min-w-0">{setName(e.name)}</span>
       </span>
       <span className="flex shrink-0 items-center gap-3">
-        {!completed && <Countdown renews={e.renews} day="mon" tip={false} />}
-        {completed ? (
-          <span className="font-mono text-muted-foreground">
-            <span className="sr-only">Completed </span>
-            {completedOn(e, initialWalk)}
-          </span>
-        ) : (
-          <span className={cn("font-mono", bigIncrease(e.pct) ? "text-foreground" : "text-muted-foreground")}>
-            {pctLabel(e.pct)}
-          </span>
-        )}
+        <Countdown renews={e.renews} day="mon" tip={false} />
+        <span className={cn("font-mono", bigIncrease(e.pct) ? "text-foreground" : "text-muted-foreground")}>
+          {pctLabel(e.pct)}
+        </span>
       </span>
     </li>
   );

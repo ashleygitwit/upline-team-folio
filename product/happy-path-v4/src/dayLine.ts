@@ -2,7 +2,7 @@ import { boardFor } from "@/board";
 import { pruitt, money, optionById, options, type Day } from "@/data";
 import type { Walk } from "@/walk";
 
-const count = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`;
+export const count = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`;
 
 /**
  * What's going on, in one line, by day and by what the presenter has done so
