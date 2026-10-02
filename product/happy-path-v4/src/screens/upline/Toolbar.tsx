@@ -58,9 +58,11 @@ export function Toolbar({
 }
 
 /**
- * v2.5's Filters: a button that opens a panel of selects, the quiet gray
- * button until something is set, then the blue outline, so it says the board
- * is narrowed. Renewal date, Stage (the board's columns), Premium, and
+ * v2.5's Filters: a button that opens a panel of selects, drawn as Board and
+ * List are, the outline button, with a blue outline and blue type while
+ * anything is set, as the view showing has, so it says the board is
+ * narrowed. (It was the quiet gray button until something was set until
+ * 2026-10-02.) Renewal date, Stage (the board's columns), Premium, and
  * Closing · needs me, which is Closing's Ready for Review (said yes, waiting
  * on Jenna to bind it). It's the kit's default height here, a size up from
  * v2.5's, so it lines up with the search and the view buttons.
@@ -71,7 +73,7 @@ function FiltersMenu({ filters, onFilters }: { filters: Filters; onFilters: (f: 
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant={on ? "outline" : "secondary"} className={cn(on && "border-primary text-primary")}>
+        <Button variant="outline" className={cn(on && "border-primary text-primary hover:text-primary")}>
           <Funnel data-icon="inline-start" />
           Filters
         </Button>

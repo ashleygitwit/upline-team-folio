@@ -73,6 +73,9 @@ export function CarrierLogo({ name }: { name: string }) {
  * An email as it will go out: where it comes from, who it's to, and the
  * words, which can be edited. Everything in it keeps 24px from its sides, as
  * the drawer does, and the words 24px from the To and Subject above them.
+ * The strip at its top, where it comes from, is blue 100 with the envelope
+ * in blue 600, so it reads as an email at a glance; it was gray 100 with gray
+ * type until 2026-10-02.
  */
 export function EmailFrame({
   toolbar,
@@ -87,8 +90,8 @@ export function EmailFrame({
 }) {
   return (
     <div className="border bg-card">
-      <div className="flex items-center gap-2 border-b bg-muted px-6 py-3 text-sm text-muted-foreground">
-        <Mail className="size-4" aria-hidden />
+      <div className="flex items-center gap-2 border-b bg-blue-100 px-6 py-3 text-sm">
+        <Mail className="size-4 text-primary" aria-hidden />
         {toolbar}
       </div>
       <dl className="grid grid-cols-[54px_1fr] gap-x-2 gap-y-1 border-b px-6 py-4 text-sm">

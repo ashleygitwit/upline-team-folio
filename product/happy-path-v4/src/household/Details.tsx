@@ -57,7 +57,7 @@ export function Details({ card, file, changed = [] }: { card: Household; file: H
         {file.people.map((p) => (
           <Row key={p.name}>
             <Avatar size="sm">
-              <AvatarFallback className="bg-muted text-foreground">{initials(p.name)}</AvatarFallback>
+              <AvatarFallback className="bg-blue-100 text-primary">{initials(p.name)}</AvatarFallback>
             </Avatar>
             <div>
               <p className="font-medium">

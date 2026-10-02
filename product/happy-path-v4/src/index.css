@@ -104,7 +104,10 @@
   --primary-foreground: #ffffff;
   --secondary-foreground: var(--slate-700);
   --gray-100: #ecebe9;
-  --accent: var(--gray-100);
+  /* The highlight on a menu item under the pointer or the keyboard. Blue 100
+     here rather than the hub's gray 100, from 2026-10-02 (Amanda, swapping
+     grays for blue 100 or slate 700); keep it if the tokens are re-copied. */
+  --accent: var(--blue-100);
   --card-border: var(--border);
   --accent-foreground: var(--foreground);
   --input: var(--border);

@@ -1,10 +1,11 @@
 "use client"
 
 /**
- * Upline mode: the popover surface with the navigation menu viewport's hairline
- * ring in place of a shadow, the kit's 8px radius, and no arrow. It fades and
- * scales in over 100ms, and the site's reduced-motion rule flattens that to an
- * instant show.
+ * Upline mode: slate 700 with white type, as the drawer's toast is, so every
+ * passing message is the same dark strip, square, with no shadow, ring or
+ * arrow. It fades and scales in over 100ms, and the site's reduced-motion rule
+ * flattens that to an instant show. Until 2026-10-02 it was the popover
+ * surface, white, with the navigation menu viewport's hairline ring.
  *
  * Portaled, because the band it opens over is overflow-clip.
  *
@@ -63,7 +64,7 @@ function TooltipContent({
         data-slot="tooltip-content"
         sideOffset={sideOffset}
         className={cn(
-          "z-50 w-fit max-w-[min(90vw,28rem)] origin-(--radix-tooltip-content-transform-origin) rounded-none bg-popover px-3 py-2 text-sm text-popover-foreground ring-1 ring-border duration-100 animate-in fade-in-0 zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
+          "z-50 w-fit max-w-[min(90vw,28rem)] origin-(--radix-tooltip-content-transform-origin) rounded-none bg-dark-bg px-3 py-2 text-sm text-dark-fg duration-100 animate-in fade-in-0 zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
           className
         )}
         {...props}

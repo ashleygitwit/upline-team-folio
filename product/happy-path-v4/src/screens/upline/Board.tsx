@@ -119,27 +119,52 @@ export function Board({
 
 /**
  * One column, a panel as v3's Policyholder List board drew its columns: gray
- * 100 at 45% with a hairline round it. Its name is at the column-heading
- * size, 20px in the display face, rather than v3's 14px semibold. The header
+ * 100 at 45% with a hairline round it, its header in the same gray box, the
+ * name in the text color (slate 700) and the menu on its right, ruled off
+ * from the cards under it by a hairline in the divider color, so the name
+ * lines up with the cards. It is one row, the name and the menu
+ * side by side, 10px all round as the panel keeps 10px at its sides, and it
+ * never wraps: when the column is too narrow for both, the status in the
+ * menu's button is cut short ("Awaiting Re…"), since the menu itself lists
+ * every status in full. Until 2026-10-02 the header was the panel's own
+ * gray, with the menu under the name and no rule; for part of that day it
+ * was slate 700 with the name in white, first with the menu wrapping under
+ * the name when the column was too narrow, and then transparent, outside
+ * the gray box. Its name is 16px in the display face, as a
+ * card's name is, two steps under the hub's 20px column heading (it was 20px
+ * until 2026-10-02), so a status fits beside it. (v3's was 14px semibold.)
+ * The header
  * and the list are the panel's two halves, laid on the board's two rows (the
  * section itself is `display: contents`), so every header is as tall as the
  * tallest and the first cards line up, and every panel runs the board's
  * height, its list scrolling inside it when it holds more than fits (each
  * list stopped at its last card, with the page scrolling, for part of
  * 2026-10-01). In Shopping Renewal and Closing every
- * household is a card, 8px apart; a snoozed task sinks to the foot. Initial
+ * household is a card, 8px apart, the first 10px under the header, as the
+ * cards keep 10px from the panel's sides (they met the header until
+ * 2026-10-02); a snoozed task sinks to the foot. Initial
  * Outreach and Completed are lists instead, so the cards keep the emphasis:
- * each household a row on the panel's own ground, ruled off from the next by
- * a hairline that runs the panel's width, and turning white under the
+ * each household a row on the panel's own ground, starting right under the
+ * header's rule and ruled off from the next by a hairline that runs the
+ * panel's width (the list has no top rule of its own, so two never meet),
+ * and turning white under the
  * pointer, as it is while its drawer is open (they were cards for part of
  * 2026-10-01). The list is positioned, so the screen-reader labels
  * (absolutely positioned) stay inside it rather than stretching the page.
  * (For part of 2026-10-01 the columns were ruled apart by hairlines instead,
  * a screen tall, each scrolling inside itself.)
  *
- * Under the column's name, one menu picks what it shows: All, or one of its
- * statuses, each with its count. Its button says what's showing and how many,
- * as the kit's quiet outline button, a size down to sit in a column. A status
+ * In Shopping Renewal and Closing, what needs Jenna (Ready for Review) comes
+ * first, then what's waiting, each soonest renewal first, and a snoozed task
+ * last. Until 2026-10-02 every card ran soonest renewal first whatever its
+ * status, so Thursday's two other recommendations to send sat under shops in
+ * progress and sent recommendations (Ashley's review: to-dos first).
+ *
+ * At the right of the column's name, one menu picks what it shows: All, or
+ * one of its statuses, each with its count. Its button says what's showing
+ * and how many, as the kit's outline button a size down. Its menu opens from
+ * its right edge.
+ * A status
  * with no one in it is in the menu but can't be picked. The counts are the
  * column's, so a column with the menu has no count of its own beside its
  * name; Completed, which has none, keeps its count. (Until 2026-10-01 the
@@ -171,14 +196,15 @@ function Column({
 }) {
   const { day, walk } = props;
   const total = statuses.reduce((sum, { n }) => sum + n, 0);
-  const sorted = mini
-    ? items
-    : [...items].sort((a, b) => Number(snoozedEntry(a.e, day, walk)) - Number(snoozedEntry(b.e, day, walk)));
+  // What needs Jenna first, then the rest, then anything snoozed, each
+  // soonest renewal first as phasesFor runs them (the sort keeps their order).
+  const rank = ({ e, status }: Placed) => (snoozedEntry(e, day, walk) ? 2 : status === "readyForReview" ? 0 : 1);
+  const sorted = mini ? items : [...items].sort((a, b) => rank(a) - rank(b));
 
   return (
     <section aria-labelledby={`col-${id}`} className="contents">
-      <div className="row-start-1 min-w-0 border border-b-0 bg-muted/45 px-2.5 pt-3 pb-2.5">
-        <h2 id={`col-${id}`} className="text-xl">
+      <div className="row-start-1 flex min-w-0 items-center justify-between gap-2 border bg-muted/45 p-2.5">
+        <h2 id={`col-${id}`} className="shrink-0 text-base whitespace-nowrap">
           {label}
           {statuses.length === 0 && (
             <>
@@ -194,14 +220,14 @@ function Column({
                 variant="outline"
                 size="sm"
                 aria-label={`Show in ${label}: ${only ? statusLabel[only] : "All"}, ${count}`}
-                className="mt-2"
+                className="min-w-0 shrink"
               >
-                {only ? statusLabel[only] : "All"}
-                <span className="font-mono text-xs font-normal text-muted-foreground">{count}</span>
+                <span className="truncate">{only ? statusLabel[only] : "All"}</span>
+                <span className="shrink-0 font-mono text-xs font-normal text-muted-foreground">{count}</span>
                 <ChevronDown data-icon="inline-end" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-56">
+            <DropdownMenuContent align="end" className="w-56">
               <DropdownMenuRadioGroup
                 value={only ?? "all"}
                 onValueChange={(v) => onOnly(v === "all" ? undefined : (v as PhaseStatus))}
@@ -222,11 +248,18 @@ function Column({
         )}
       </div>
 
-      <div className="relative row-start-2 min-h-0 min-w-0 overflow-y-auto border border-t-0 bg-muted/45 px-2.5 pb-3.5">
+      <div
+        className={cn(
+          "relative row-start-2 min-h-0 min-w-0 overflow-y-auto border border-t-0 bg-muted/45 px-2.5 pb-3.5",
+          // The cards, and a column's empty line, sit 10px under the
+          // header's rule; a list's rows start right under it.
+          (!mini || items.length === 0) && "pt-2.5",
+        )}
+      >
         {items.length === 0 ? (
           <p className="text-sm">{empty}</p>
         ) : (
-          <ul className={mini ? "-mx-2.5 divide-y border-y" : "flex flex-col gap-2 *:shrink-0"}>
+          <ul className={mini ? "-mx-2.5 divide-y border-b" : "flex flex-col gap-2 *:shrink-0"}>
             {sorted.map(({ e, step, status }) =>
               mini ? (
                 <ListRow key={e.id} e={e} col={step} status={status} {...props} />
@@ -250,7 +283,11 @@ function MenuCount({ children }: { children: React.ReactNode }) {
   return <span className="ml-auto font-mono text-xs text-muted-foreground">{children}</span>;
 }
 
-/** A column's count, in the mono face on a white chip, beside its name: Completed's, which has no menu. */
+/**
+ * A column's count, in the mono face on a white chip, beside its name:
+ * Completed's, which has no menu. (It was on slate 600 for part of
+ * 2026-10-02, while the header was slate.)
+ */
 function Count({ children }: { children: React.ReactNode }) {
   return (
     <span className="relative -top-0.5 inline-block bg-card px-1.5 align-middle font-mono text-xs font-normal whitespace-nowrap">
@@ -513,7 +550,9 @@ function ListRow({
  * the price and the carrier were off the card (they came off that morning,
  * and came back that afternoon).
  * `foot` sits above the card's drawer button, for anything that's a button of
- * its own.
+ * its own. On a card waiting on someone else (`quiet`), the sentence is gray,
+ * so it reads as secondary beside what needs Jenna; it was in the text color
+ * on every card until 2026-10-02.
  */
 function Card({
   name,
@@ -527,6 +566,7 @@ function Card({
   detail,
   foot,
   phase,
+  quiet = false,
 }: {
   name: string;
   carrier: string;
@@ -543,6 +583,8 @@ function Card({
   foot?: React.ReactNode;
   /** The card's status, at its foot. */
   phase: React.ReactNode;
+  /** Whether the card is waiting on someone else, rather than on Jenna. */
+  quiet?: boolean;
 }) {
   return (
     <div className="p-3 text-sm">
@@ -553,7 +595,7 @@ function Card({
       <p className={cn("mt-1 text-muted-foreground", underName)}>{lines}</p>
       <Price was={was} now={now} pct={pct} className={underName} />
       {status && <div className={cn("mt-1 flex flex-col items-start gap-1", underName)}>{status}</div>}
-      {detail && <p className={cn("mt-2", underName)}>{detail}</p>}
+      {detail && <p className={cn("mt-2", quiet && "text-muted-foreground", underName)}>{detail}</p>}
       {foot && <div className="relative z-10">{foot}</div>}
       <StatusRow className="-mx-3 mt-3 border-t px-3 pt-3" status={phase} when={when} />
     </div>
@@ -561,12 +603,19 @@ function Card({
 }
 
 /**
- * A card's frame: its hairline, all blue while its drawer is open. There's no
- * accent down its left edge (it came off on 2026-10-01): the countdown's
- * color and the request lines say what it said.
+ * A card's frame: its hairline, blue when the card needs Jenna (Ready for
+ * Review, with its button), as Recent activity draws what needs her in the
+ * drawer, and 2px of blue while its drawer is open. Until 2026-10-02 every
+ * card's hairline was gray, and turned blue while its drawer was open.
+ * There's no accent down its left edge (it came off on 2026-10-01): the
+ * countdown's color and the request lines say what it said.
  */
-const cardFrame = (selected = false) =>
-  cn("relative block border bg-card text-card-foreground", selected && "border-primary");
+const cardFrame = (selected = false, needsJenna = false) =>
+  cn(
+    "relative block border bg-card text-card-foreground",
+    (selected || needsJenna) && "border-primary",
+    selected && "ring-1 ring-primary ring-inset",
+  );
 
 /**
  * A card for an invented household: when it renews, what its column says
@@ -586,8 +635,9 @@ function InventedCard({
   day: Day;
 }) {
   const foot = col === "ready" ? <ReviewResults /> : col === "sent" && e.approved && <CloseOut />;
+  const needsJenna = status === "readyForReview";
   return (
-    <NotBuilt className={cardFrame()}>
+    <NotBuilt className={cardFrame(false, needsJenna)}>
       <Card
         name={e.name}
         carrier={e.carrier}
@@ -599,6 +649,7 @@ function InventedCard({
         detail={e.invented!.detail}
         foot={foot}
         phase={<PhaseStatusLine status={status} />}
+        quiet={!needsJenna}
       />
     </NotBuilt>
   );
@@ -708,9 +759,10 @@ function NamedCard({
       <Requests requests={requests} />
     </>
   );
+  const needsJenna = phase === "readyForReview" && !snoozed;
 
   return (
-    <li className={cn(cardFrame(selected), "hover:bg-background")}>
+    <li className={cn(cardFrame(selected, needsJenna), "hover:bg-background")}>
       <OpenOverlay id={e.id} name={e.name} selected={selected} onOpen={profile} />
       <Card
         name={e.name}
@@ -724,6 +776,7 @@ function NamedCard({
         detail={detail}
         foot={foot}
         phase={<PhaseStatusLine status={phase} />}
+        quiet={!needsJenna}
       />
       {cue === e.id && <DemoCue />}
     </li>

@@ -22,7 +22,9 @@ import { renewalDate } from "@/tasks";
  * one's doesn't, and its name says so when pointed at. v3's Contact column
  * isn't here, since only the named households have a phone or an email. The
  * table runs the page's length rather than fitting the window as the board
- * does.
+ * does. The row whose drawer is open is blue 100, as the board marks the open
+ * card in blue (gray 100 until 2026-10-02), and its gray words go to the
+ * text color there, since gray on blue 100 is about 3:1.
  */
 export function List({
   placed,
@@ -66,7 +68,10 @@ export function List({
                 <TableRow
                   key={e.id}
                   onClick={onOpen}
-                  className={cn(onOpen && "cursor-pointer", selected && "bg-muted hover:bg-muted")}
+                  className={cn(
+                    onOpen && "cursor-pointer",
+                    selected && "bg-blue-100 hover:bg-blue-100 [&_.text-muted-foreground]:text-foreground",
+                  )}
                 >
                   <TableCell className="py-3 pl-5 font-display text-base font-medium">
                     {onOpen ? (
