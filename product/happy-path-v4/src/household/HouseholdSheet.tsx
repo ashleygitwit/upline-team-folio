@@ -281,7 +281,7 @@ export function HouseholdSheet({
           {/* The board's column and the card's status (phases.ts), then what
               they asked for, as the board's cards say them. The column was an
               eyebrow over the name until 2026-10-01. Snoozed was a chip here
-              too; the gray banner says it, with Undo. */}
+              too; the quiet blue 100 banner says it, with Undo. */}
           <div className="mt-3 flex flex-col gap-1 text-sm">
             {place ? <PlaceLine {...place} /> : <p className="text-muted-foreground">{activity.stage}</p>}
             <Requests requests={requestsFor(card.id, day, walk)} />
@@ -373,16 +373,19 @@ export function HouseholdSheet({
  * What's going on with the household, and a way to it, over the tabs:
  * uplineinsurance.com's founding-member banner (Navbar.tsx there), a strip
  * across the drawer with the message on the left and its link on the right,
- * underlined on hover. Blue with white type when it needs Jenna; the quiet
- * gray, with the link in blue, when it doesn't. The whole strip is the one
+ * underlined on hover. Blue with white type when it needs Jenna; blue 100,
+ * with the link in blue, when it doesn't, so the two read as one family, the
+ * loud one and the quiet one (it was gray 100 until 2026-10-02, when Amanda
+ * swapped the gray for blue 100). The whole strip is the one
  * target, as there, and its focus ring is inside it, since a ring outside it
  * would be cut off at the drawer's edges. A banner with nowhere to go is only
  * its message. One for an email scheduled to go out leads with an envelope
  * with a clock at its corner, so it reads as waiting rather than done; it was
  * a plain clock until 2026-10-01, when the clock came to mean the countdown
  * to a renewal. A blue banner for a task on today's
- * list ends in an alarm clock, which snoozes it; a snoozed banner is gray
- * and ends in Undo.
+ * list ends in an alarm clock, which snoozes it; a snoozed banner is the
+ * quiet one and ends in Undo. On blue 100 the focus ring is blue 600, since
+ * the kit's blue 300 barely shows on it.
  */
 function StatusBanner({
   text,
@@ -400,7 +403,7 @@ function StatusBanner({
   const blue = tone === "blue";
   const strip = cn(
     "flex w-full items-center justify-between gap-4 px-6 py-3 text-left text-sm",
-    blue ? "bg-primary text-primary-foreground" : "bg-muted text-foreground",
+    blue ? "bg-primary text-primary-foreground" : "bg-blue-100 text-foreground",
   );
   const message = (
     <span className="flex items-center gap-2">
@@ -420,14 +423,14 @@ function StatusBanner({
   }
   if (!opens) return <p className={strip}>{message}</p>;
   return (
-    <div className={cn("flex items-stretch", blue ? "bg-primary" : "bg-muted")}>
+    <div className={cn("flex items-stretch", blue ? "bg-primary" : "bg-blue-100")}>
       <button
         type="button"
         onClick={(e) => onOpen(opens, e.currentTarget)}
         className={cn(
           "group min-w-0 flex-1 pointer-coarse:min-h-11 focus-visible:-outline-offset-4",
           strip,
-          blue && "focus-visible:outline-primary-foreground",
+          blue ? "focus-visible:outline-primary-foreground" : "focus-visible:outline-primary",
         )}
       >
         {message}

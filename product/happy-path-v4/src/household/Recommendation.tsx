@@ -149,15 +149,19 @@ export function Recommendation({
                   <TableHeader>
                     {/* The kit's table heads, as the rows are set, rather
                         than eyebrows, which they were until 2026-10-01, with
-                        "Current carrier" at 9.5px over the current one. */}
-                    <TableRow className="bg-muted hover:bg-muted">
-                      <TableHead className="h-auto min-w-32 py-2 align-bottom">Coverage</TableHead>
-                      <TableHead className="h-auto bg-background py-2 align-bottom">
+                        "Current carrier" at 9.5px over the current one. The
+                        heads are white on slate 700, and what the household
+                        has today is blue 100 down its column, head included,
+                        so it reads apart from the quotes; until 2026-10-02
+                        the heads were on gray 100 and today's column gray 50. */}
+                    <TableRow className="bg-dark-bg hover:bg-dark-bg">
+                      <TableHead className="h-auto min-w-32 py-2 align-bottom text-dark-fg">Coverage</TableHead>
+                      <TableHead className="h-auto bg-blue-100 py-2 align-bottom">
                         {rec.currentLabel}
-                        <span className="block font-normal text-muted-foreground">Current carrier</span>
+                        <span className="block font-normal">Current carrier</span>
                       </TableHead>
                       {rec.cols.map((c) => (
-                        <TableHead key={c.id} className="h-auto py-2 align-bottom">
+                        <TableHead key={c.id} className="h-auto py-2 align-bottom text-dark-fg">
                           {c.name}
                         </TableHead>
                       ))}
@@ -186,7 +190,7 @@ export function Recommendation({
                             <p className="mt-1.5 max-w-[180px] text-xs font-normal text-muted-foreground">{row.help}</p>
                           )}
                         </TableCell>
-                        <TableCell className="bg-background align-top">{row.current}</TableCell>
+                        <TableCell className="bg-blue-100 align-top">{row.current}</TableCell>
                         {rec.cols.map((c) => (
                           <TableCell key={c.id} className="align-top">
                             <CovMark value={row.quotes[c.id]} />

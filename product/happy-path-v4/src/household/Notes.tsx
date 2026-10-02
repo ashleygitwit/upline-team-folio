@@ -48,7 +48,7 @@ export function Notes({ first, notes, onAdd }: { first: string; notes: Note[]; o
             {notes.map((n) => (
               <li key={n.id} className="flex gap-3">
                 <Avatar aria-hidden>
-                  <AvatarFallback className="bg-muted text-foreground">{agency.agent.initials}</AvatarFallback>
+                  <AvatarFallback className="bg-blue-100 text-primary">{agency.agent.initials}</AvatarFallback>
                 </Avatar>
                 <div className="min-w-0">
                   <p className="text-sm text-muted-foreground">

@@ -36,8 +36,10 @@ export function AppBar({ onHome }: { onHome: () => void }) {
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="-mr-2 h-auto gap-3 py-1 pr-2 pl-3 font-sans font-normal">
               {agency.agent.name}
+              {/* Initials in blue 600 on blue 100, as every avatar in the
+                  drawer has them (gray 100 until 2026-10-02). */}
               <Avatar aria-hidden>
-                <AvatarFallback className="bg-muted text-foreground">{agency.agent.initials}</AvatarFallback>
+                <AvatarFallback className="bg-blue-100 text-primary">{agency.agent.initials}</AvatarFallback>
               </Avatar>
               <ChevronDown aria-hidden className="text-muted-foreground" />
             </Button>
