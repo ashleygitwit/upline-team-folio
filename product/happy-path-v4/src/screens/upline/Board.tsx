@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { AlarmClock, ChevronDown } from "lucide-react";
 import { cn } from "cn";
+import { CarrierMark } from "@/components/CarrierMark";
 import { Countdown, PhaseStatusLine, Requests, StatusLine } from "@/components/Status";
 import { Button } from "@/components/ui/button";
 import {
@@ -346,6 +347,23 @@ function Completed({ on }: { on: string }) {
 const nameStyle = "min-w-0 flex-1 font-display text-base font-medium [overflow-wrap:break-word]";
 
 /**
+ * The carrier's mark in front of a household's name, as the Monday email has
+ * it: the current policy's carrier, centered on the name's first line, with
+ * its name for a screen reader, since the mark is a picture.
+ */
+function NameMark({ carrier }: { carrier: string }) {
+  return (
+    <span className="flex h-6 shrink-0 items-center self-start">
+      <CarrierMark carrier={carrier} />
+      <span className="sr-only">{carrier}, </span>
+    </span>
+  );
+}
+
+/** How far a line under the name sits in, to start under the name rather than the mark. */
+const underName = "ml-7";
+
+/**
  * The way into a household's drawer from its card: a button laid over the
  * whole of it, named for the household, so what's on the card reads as text
  * and the click lands anywhere on it. Anything with a button of its own sits
@@ -407,8 +425,8 @@ function NotBuilt({ className, children }: { className: string; children: React.
 
 /**
  * A household in Initial Outreach or Completed, a row in the column's list
- * (Column): the name, set as every card's is, and the change in percent, at
- * 14px. Under the name, its status (Initial Outreach's), with the countdown
+ * (Column): the carrier's mark, the name, set as every card's is, and the
+ * change in percent, at 14px. Under the name, its status (Initial Outreach's), with the countdown
  * at the right of the same line once the renewal is running short ("8 days",
  * by a clock, red 700 when it's urgent, with the date on hover); until
  * 2026-10-01 the countdown sat between the name and the change. A Completed
@@ -438,12 +456,13 @@ function ListRow({
   const body = (
     <>
       <div className="flex items-baseline gap-2">
+        <NameMark carrier={e.carrier} />
         <span className={nameStyle}>{setName(e.name)}</span>
         {col === "completed" ? <Completed on={completedOn(e, walk)} /> : <Pct pct={e.pct} />}
       </div>
       {status && (
         <StatusRow
-          className="mt-1"
+          className={cn("mt-1", underName)}
           status={<PhaseStatusLine status={status} day={day} />}
           when={
             timed(accent) && (
@@ -452,9 +471,9 @@ function ListRow({
           }
         />
       )}
-      {!e.invented && <Requests requests={requestsFor(e.id, day, walk)} className="mt-1" />}
+      {!e.invented && <Requests requests={requestsFor(e.id, day, walk)} className={cn("mt-1", underName)} />}
       {snoozed && (
-        <StatusLine icon={AlarmClock} className="mt-1">
+        <StatusLine icon={AlarmClock} className={cn("mt-1", underName)}>
           Snoozed {snoozeLabel(walk.snoozed[e.id].until)}.
         </StatusLine>
       )}
@@ -476,22 +495,23 @@ function ListRow({
  * ------------------------------------------------------------------ */
 
 /**
- * A card in Shopping Renewal or Closing, the two the same: the name, and
- * under it last year's price to this year's and the change in percent, as
- * Ashley's v2 cards had them. Then whether it's snoozed, with Undo, and what
+ * A card in Shopping Renewal or Closing, the two the same: the carrier's
+ * mark and the name, and under the name last year's price to this year's
+ * and the change in percent, as Ashley's v2 cards had them. Then whether it's snoozed, with Undo, and what
  * the household asked for. Then one sentence, what the shop found or who
  * it's waiting on, and the action if there is one. At the foot, under a rule
  * that runs edge to edge of the card, its status, with the countdown at the
  * right of the same line once the renewal is running short ("8 days", by a
  * clock, red 700 when it's urgent). Everything but the name is 14px, the
  * kit's row size. Until 2026-10-01 the countdown and the change sat beside
- * the name, and the price was off the card (it came off that morning, with
- * what's renewing and the carrier; the drawer's header has all three).
+ * the name, and the price and the carrier were off the card (they came off
+ * that morning, with what's renewing; the drawer's header has all three).
  * `foot` sits above the card's drawer button, for anything that's a button of
  * its own.
  */
 function Card({
   name,
+  carrier,
   was,
   now,
   pct,
@@ -502,6 +522,7 @@ function Card({
   phase,
 }: {
   name: string;
+  carrier: string;
   /** Last year's premium and this year's renewal, and the change between them. */
   was: number;
   now: number;
@@ -516,8 +537,11 @@ function Card({
 }) {
   return (
     <div className="p-3 text-sm">
-      <h3 className={nameStyle}>{setName(name)}</h3>
-      <Price was={was} now={now} pct={pct} className="mt-1" />
+      <div className="flex gap-2">
+        <NameMark carrier={carrier} />
+        <h3 className={nameStyle}>{setName(name)}</h3>
+      </div>
+      <Price was={was} now={now} pct={pct} className={cn("mt-1", underName)} />
       {status && <div className="mt-1 flex flex-col items-start gap-1">{status}</div>}
       {detail && <p className="mt-2">{detail}</p>}
       {foot && <div className="relative z-10">{foot}</div>}
@@ -558,6 +582,7 @@ function InventedCard({
     <NotBuilt className={cardFrame()}>
       <Card
         name={e.name}
+        carrier={e.carrier}
         was={e.was}
         now={e.now}
         pct={e.pct}
@@ -682,6 +707,7 @@ function NamedCard({
       <OpenOverlay id={e.id} name={e.name} selected={selected} onOpen={profile} />
       <Card
         name={e.name}
+        carrier={e.carrier}
         was={e.was}
         now={e.now}
         pct={e.pct}
