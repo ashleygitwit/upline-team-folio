@@ -477,8 +477,9 @@ function ListRow({
 
 /**
  * A card in Shopping Renewal or Closing, the two the same: the carrier's
- * mark and the name, and under the name last year's price to this year's
- * and the change in percent, as Ashley's v2 cards had them. Then whether
+ * mark and the name, and under the name what's renewing ("Home + Auto"),
+ * then last year's price to this year's and the change in percent, as
+ * Ashley's v2 cards had them. Then whether
  * it's snoozed, with Undo, and what the household asked for, and one
  * sentence, what the shop found or who it's waiting on, all of it starting
  * under the name rather than the mark. Then the action if there is one, a
@@ -487,15 +488,16 @@ function ListRow({
  * the right of the same line (by a clock, "8 days" in red under two weeks
  * out and "Oct 26" after). Everything but the name is 14px, the kit's row
  * size. Until 2026-10-01 a countdown and the change sat beside the name, the
- * countdown only once the renewal was running short, and the price and the
- * carrier were off the card (they came off
- * that morning, with what's renewing; the drawer's header has all three).
+ * countdown only once the renewal was running short, and what's renewing,
+ * the price and the carrier were off the card (they came off that morning,
+ * and came back that afternoon).
  * `foot` sits above the card's drawer button, for anything that's a button of
  * its own.
  */
 function Card({
   name,
   carrier,
+  lines,
   was,
   now,
   pct,
@@ -507,6 +509,8 @@ function Card({
 }: {
   name: string;
   carrier: string;
+  /** What's renewing: "Home + Auto". */
+  lines: string;
   /** Last year's premium and this year's renewal, and the change between them. */
   was: number;
   now: number;
@@ -525,7 +529,8 @@ function Card({
         <NameMark carrier={carrier} />
         <h3 className={nameStyle}>{setName(name)}</h3>
       </div>
-      <Price was={was} now={now} pct={pct} className={cn("mt-1", underName)} />
+      <p className={cn("mt-1 text-muted-foreground", underName)}>{lines}</p>
+      <Price was={was} now={now} pct={pct} className={underName} />
       {status && <div className={cn("mt-1 flex flex-col items-start gap-1", underName)}>{status}</div>}
       {detail && <p className={cn("mt-2", underName)}>{detail}</p>}
       {foot && <div className="relative z-10">{foot}</div>}
@@ -565,6 +570,7 @@ function InventedCard({
       <Card
         name={e.name}
         carrier={e.carrier}
+        lines={e.lines}
         was={e.was}
         now={e.now}
         pct={e.pct}
@@ -688,6 +694,7 @@ function NamedCard({
       <Card
         name={e.name}
         carrier={e.carrier}
+        lines={e.lines}
         was={e.was}
         now={e.now}
         pct={e.pct}
