@@ -6,3 +6,6 @@ import { createContext } from "react";
  * so only the date shows.
  */
 export const RowTip = createContext<(over: boolean) => void>(() => {});
+
+/** What a household with no drawer behind it says when pointed at, on the board or the list. */
+export const notInPrototype = "This household isn't built out for the prototype.";

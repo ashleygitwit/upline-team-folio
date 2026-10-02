@@ -17,8 +17,8 @@ import { earlier, money, options, pruitt, thisWeek, type Day } from "@/data";
 import type { Phase } from "@/household/activity";
 import { cards, fileFor } from "@/household/data";
 import { firstCards } from "@/household/firstCards";
-import { RowTip } from "@/lib/rowTip";
-import { completedOn, phases, phasesFor, statusLabel, type PhaseId, type PhaseStatus, type Placed } from "@/phases";
+import { notInPrototype, RowTip } from "@/lib/rowTip";
+import { completedOn, phases, statusLabel, type PhaseId, type PhaseStatus, type Placed } from "@/phases";
 import { shopSentence } from "@/pipeline";
 import { statusFor } from "@/status";
 import { isSnoozed, requestsFor, snoozeLabel } from "@/tasks";
@@ -31,8 +31,6 @@ export type BoardProps = WalkProps & {
   /** Opens a household's drawer, with one of its pages over it if `phase` says which. */
   onHousehold: (id: string, phase?: Phase) => void;
 };
-
-const notInPrototype = "This household isn't built out for the prototype.";
 
 /**
  * The homepage's board, which replaced Action Needed and Scheduled Emails on
@@ -51,9 +49,11 @@ const notInPrototype = "This household isn't built out for the prototype.";
  * all of them; it narrows that column alone. Every column opens on All, and
  * once Jenna picks, her pick holds. The picks are the page's own, so every
  * stop opens on All again. (For part of 2026-10-01 the columns each opened
- * on one status instead.) The toolbar's Needs me and search, which narrowed every
- * column at once, came off on 2026-10-01, Needs me as not important and
- * search for now.
+ * on one status instead.) The toolbar above the board (Toolbar.tsx) narrows
+ * every column at once, before the menus do, so a menu's counts are what the
+ * filters and search leave; a column they empty says so. (The toolbar's
+ * Needs me and search came off on 2026-10-01, and v2.5's Filters and v3's
+ * search came back the same day.)
  *
  * The board is drawn as v3's Policyholder List board was, the columns side by
  * side, 12px apart, but 1000px tall: a column with more than fits scrolls
@@ -63,9 +63,16 @@ const notInPrototype = "This household isn't built out for the prototype.";
  * countdown and change; narrower than all four, the board scrolls sideways
  * inside itself.
  */
-export function Board(props: BoardProps) {
-  const { day, walk } = props;
-  const placed = phasesFor(day, walk);
+export function Board({
+  placed,
+  filtered,
+  ...props
+}: BoardProps & {
+  /** Every column's households, as the toolbar leaves them (Home.tsx). */
+  placed: Record<PhaseId, Placed[]>;
+  /** Whether the toolbar's filters or search are narrowing them. */
+  filtered: boolean;
+}) {
   // The status Jenna picked in each column; none is All.
   const [picked, setPicked] = useState<Partial<Record<PhaseId, PhaseStatus>>>({});
 
@@ -96,7 +103,7 @@ export function Board(props: BoardProps) {
               only={only}
               onOnly={(status) => setPicked((o) => ({ ...o, [c.id]: status }))}
               count={`${shown.length}`}
-              empty={only ? `Nothing here is ${statusLabel[only]}.` : c.empty}
+              empty={only ? `Nothing here is ${statusLabel[only]}.` : filtered ? "No one here matches." : c.empty}
               {...props}
             />
           );
@@ -272,7 +279,7 @@ function Pct({ pct }: { pct: number }) {
  * change, as Ashley's v2 cards had it under the name. A flat renewal has
  * the one price, as hers did.
  */
-function Price({ was, now, pct, className }: { was: number; now: number; pct: number; className?: string }) {
+export function Price({ was, now, pct, className }: { was: number; now: number; pct: number; className?: string }) {
   return (
     <p className={cn("flex flex-wrap items-baseline gap-x-2 text-muted-foreground", className)}>
       <span>
@@ -330,7 +337,7 @@ const nameStyle = "min-w-0 flex-1 font-display text-base font-medium [overflow-w
  * it: the current policy's carrier, centered on the name's first line, with
  * its name for a screen reader, since the mark is a picture.
  */
-function NameMark({ carrier }: { carrier: string }) {
+export function NameMark({ carrier }: { carrier: string }) {
   return (
     <span className="flex h-6 shrink-0 items-center self-start">
       <CarrierMark carrier={carrier} />
