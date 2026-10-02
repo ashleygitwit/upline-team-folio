@@ -715,12 +715,22 @@ const captures = [
     },
   },
   // 13
-  { slug: "13-that-evening", stop: 13, title: "That evening", card: true, run: () => jump("That evening") },
-  // 14
-  { slug: "14-leahs-recommendation", stop: 14, title: "Leah's recommendation: the email", run: () => jump("Leah's recommendation") },
   {
-    slug: "14a-leahs-page",
-    stop: 14,
+    slug: "13-review-the-pruitts-results",
+    stop: 13,
+    title: "Review the Pruitts' results",
+    run: async () => {
+      await answerQuestionnaire();
+      await jump("Review the Pruitts' results");
+    },
+  },
+  // 14
+  { slug: "14-that-evening", stop: 14, title: "That evening", card: true, run: () => jump("That evening") },
+  // 15
+  { slug: "15-leahs-recommendation", stop: 15, title: "Leah's recommendation: the email", run: () => jump("Leah's recommendation") },
+  {
+    slug: "15a-leahs-page",
+    stop: 15,
     title: "Leah's recommendation: the page",
     via: "The link in the email",
     run: async () => {
@@ -729,8 +739,8 @@ const captures = [
     },
   },
   {
-    slug: "14b-leah-approved",
-    stop: 14,
+    slug: "15b-leah-approved",
+    stop: 15,
     title: "Leah's recommendation: approved",
     via: "Approve Auto-Owners",
     run: async () => {
@@ -739,12 +749,12 @@ const captures = [
       await click("Approve Auto-Owners");
     },
   },
-  // 15
-  { slug: "15-closing-the-week", stop: 15, title: "Closing the week", card: true, run: () => jump("Closing the week") },
   // 16
+  { slug: "16-closing-the-week", stop: 16, title: "Closing the week", card: true, run: () => jump("Closing the week") },
+  // 17
   {
-    slug: "16-friday",
-    stop: 16,
+    slug: "17-friday",
+    stop: 17,
     title: "Friday: bind it",
     run: async () => {
       await answerQuestionnaire();
@@ -752,8 +762,8 @@ const captures = [
     },
   },
   {
-    slug: "16a-pruitts-drawer-bind",
-    stop: 16,
+    slug: "17a-pruitts-drawer-bind",
+    stop: 17,
     title: "The Pruitts' drawer: approved, waiting to be bound",
     via: "The Pruitts' card → View profile and close",
     run: async () => {
@@ -764,8 +774,8 @@ const captures = [
     },
   },
   {
-    slug: "16b-close-out-page",
-    stop: 16,
+    slug: "17b-close-out-page",
+    stop: 17,
     title: "Close-out page for the Pruitts",
     via: "The Pruitts' drawer → banner → Review",
     run: async () => {
@@ -776,8 +786,8 @@ const captures = [
     },
   },
   {
-    slug: "16c-done",
-    stop: 16,
+    slug: "17c-done",
+    stop: 17,
     title: "After Close out: Done. The Pruitts are set.",
     via: "Close-out page → What happened → Close out → close the drawer",
     run: async () => {
@@ -788,6 +798,16 @@ const captures = [
       await page.getByRole("textbox", { name: "What happened" }).fill("Bound Auto-Owners in the portal this morning.");
       await click("Close out");
       await closeDrawer();
+    },
+  },
+  // 18
+  {
+    slug: "18-close-out-the-pruitts",
+    stop: 18,
+    title: "Close out the Pruitts",
+    run: async () => {
+      await answerQuestionnaire();
+      await jump("Close out the Pruitts");
     },
   },
 ];

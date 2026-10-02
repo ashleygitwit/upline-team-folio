@@ -59,8 +59,14 @@ export function App() {
           {screen.id === "questionnaire" && <Questionnaire {...props} />}
           {screen.id === "wednesday" && <Upline key="wednesday" day="wed" {...props} />}
           {screen.id === "thursday" && <Upline key="thursday" day="thu" {...props} />}
+          {screen.id === "thursday-results" && (
+            <Upline key="thursday-results" day="thu" household="pruitt" page="results" {...props} />
+          )}
           {screen.id === "dana-page" && <DanaPage {...props} />}
           {screen.id === "friday" && <Upline key="friday" day="fri" {...props} />}
+          {screen.id === "friday-closeout" && (
+            <Upline key="friday-closeout" day="fri" household="pruitt" page="closing" {...props} />
+          )}
         </main>
       </div>
     </TooltipProvider>

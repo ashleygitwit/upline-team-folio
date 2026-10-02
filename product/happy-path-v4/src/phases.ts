@@ -93,9 +93,11 @@ const lastFriday = daysBefore(dayDate.mon, 3);
  * email; the earlier weeks' named households on Monday, when Jenna clears
  * them; of Monday's sent recommendations, the two already approved on Monday
  * too (Lena Park's drawer says Monday at 4:00 PM) and the rest on Tuesday,
- * once they answered; and anyone finished before the week 13 days before the
- * renewal, as Grace Tanaka was (Oct 2, for Oct 15), and no later than the
- * Friday before it.
+ * once they answered; and anyone finished before the week 35 days before the
+ * renewal, as Grace Tanaka was (Oct 2, for Nov 6), and no later than the
+ * Friday before it. It was 13 days until 2026-10-02, when every renewal but
+ * the Pruitts' moved 22 days later (pipeline.ts), and the 22 days went on
+ * here so no one's completed day moved with it.
  */
 export function completedOn(e: Entry, walk: Walk): string {
   if (walk.skipped.includes(e.id)) return short(dayDate[walk.outreachOn[e.id] ?? "mon"]);
@@ -104,7 +106,7 @@ export function completedOn(e: Entry, walk: Walk): string {
   if (earlier.some((x) => x.id === e.id)) return short(dayDate.mon);
   const sent = pools.sent.findIndex((h) => h.id === e.id);
   if (sent >= 0) return short(sent < 2 ? dayDate.mon : daysBefore(dayDate.wed, 1));
-  const before = daysBefore(renewalDate(e.renews), 13);
+  const before = daysBefore(renewalDate(e.renews), 35);
   return short(before < lastFriday ? before : lastFriday);
 }
 

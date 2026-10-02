@@ -1,9 +1,12 @@
 import type { Day, PickId } from "./data";
 
 /**
- * The walk: sixteen stops, one household (the Pruitts) from Monday's list to
+ * The walk: eighteen stops, one household (the Pruitts) from Monday's list to
  * a bound policy, with the rest of the week moving around them. The presenter
  * bar steps through these in order, and each stop can be jumped to directly.
+ * Three open the Pruitts' drawer with a page already on top, after the day's
+ * homepage: their renewal email on Monday, their results on Thursday and the
+ * close-out on Friday (the last two from 2026-10-02).
  *
  * Seven of the stops are cards, the ones with `text`: a slate screen before
  * each change of day or person and before Jenna first signs in to Upline,
@@ -24,10 +27,12 @@ export type ScreenId =
   | "wednesday"
   | "card-thursday"
   | "thursday"
+  | "thursday-results"
   | "card-thursday-evening"
   | "dana-page"
   | "card-friday"
-  | "friday";
+  | "friday"
+  | "friday-closeout";
 
 export const screens: { id: ScreenId; label: string; where: string; text?: string }[] = [
   {
@@ -49,7 +54,7 @@ export const screens: { id: ScreenId; label: string; where: string; text?: strin
     id: "card-tuesday",
     label: "Meanwhile, at the Pruitts'",
     where: "Tuesday, October 13, 9:02 AM",
-    text: "Leah and Tom's home and auto renew with Erie on November 15. Jenna's renewal email has just reached Leah's phone.",
+    text: "Leah and Tom's home and auto renew with Erie on November 3. Jenna's renewal email has just reached Leah's phone.",
   },
   { id: "dana-inbox", label: "Leah's inbox", where: "Leah's phone · Tuesday, 9:02 AM" },
   { id: "questionnaire", label: "Leah's questionnaire", where: "Leah's phone · Tuesday, 7:40 PM" },
@@ -57,7 +62,7 @@ export const screens: { id: ScreenId; label: string; where: string; text?: strin
     id: "card-wednesday",
     label: "Back at the agency",
     where: "Wednesday, October 14",
-    text: "Leah answered Jenna's questions last night, and Upline has started shopping the Pruitts' home and auto.",
+    text: "While Leah was answering her questionnaire, Jenna was working through her shopping recommendations and closing tasks. On Wednesday, she logs back in and sees Leah and Tom are currently being shopped by Upline.",
   },
   { id: "wednesday", label: "Wednesday", where: "Upline · Wednesday, October 14" },
   {
@@ -67,6 +72,7 @@ export const screens: { id: ScreenId; label: string; where: string; text?: strin
     text: "The carriers have come back on the Pruitts, and Jenna has a recommendation to make.",
   },
   { id: "thursday", label: "Thursday: results are back", where: "Upline · Thursday, October 15" },
+  { id: "thursday-results", label: "Review the Pruitts' results", where: "Upline · Thursday, October 15" },
   {
     id: "card-thursday-evening",
     label: "That evening",
@@ -81,6 +87,7 @@ export const screens: { id: ScreenId; label: string; where: string; text?: strin
     text: "Leah and Tom said yes. All that's left is for Jenna to bind it in the carrier's portal.",
   },
   { id: "friday", label: "Friday: bind it", where: "Upline · Friday, October 16" },
+  { id: "friday-closeout", label: "Close out the Pruitts", where: "Upline · Friday, October 16" },
 ];
 
 /** A note Jenna left on a household: the walk's day, the clock time she posted it, and what she wrote. */

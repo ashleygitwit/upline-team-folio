@@ -132,7 +132,10 @@ function household(n: number, from: Date, to: Date): Invented {
   const pct = rand() < 0.1 ? 0 : rand() < 0.65 ? between(2, 9) : between(10, 16);
   const now = was + Math.min(820, Math.round((was * pct) / 100));
 
-  const date = new Date(from.getTime() + between(0, Math.round((to.getTime() - from.getTime()) / 86_400_000)) * 86_400_000);
+  // By calendar day, so a range across the end of daylight saving time
+  // doesn't land an hour short, on the day before.
+  const span = Math.round((to.getTime() - from.getTime()) / 86_400_000);
+  const date = new Date(from.getFullYear(), from.getMonth(), from.getDate() + between(0, span));
 
   // What a shop would come back with: two other markets, one usually under
   // the renewal. About one in six stays put.
@@ -174,22 +177,28 @@ const cohort = (count: number, from: [number, number], to: [number, number]) =>
  * The pools, by where each starts the week. board.ts moves them from day to
  * day: this week's go out Tuesday and wait for an answer from Wednesday, the
  * waiting pool's soonest renewals answer and get shopped, and so on.
+ *
+ * Every range is 22 days later than it was until 2026-10-02 (Oct 13 to Nov
+ * 27), so everyone renews after the Pruitts' November 3 and they come first
+ * in whichever column they're in, which makes the walk easier to follow.
+ * Nothing renews within two weeks of the walk's week any more, so no
+ * countdown is red.
  */
 export const pools = {
   /** Next week's emails, scheduled from Wednesday on. */
-  nextWeek: cohort(48, [11, 19], [11, 27]),
+  nextWeek: cohort(48, [12, 11], [12, 19]),
   /** This week's emails beside the named six: 42 + 6 = 48 going out Tuesday. */
-  thisWeek: cohort(42, [11, 4], [11, 20]),
+  thisWeek: cohort(42, [11, 26], [12, 12]),
   /** Emailed in earlier weeks, no answer yet. */
-  awaiting: cohort(55, [10, 20], [11, 13]),
+  awaiting: cohort(55, [11, 11], [12, 5]),
   /** Answered, being shopped on Monday. */
-  shopping: cohort(8, [10, 26], [11, 3]),
+  shopping: cohort(8, [11, 17], [11, 25]),
   /** Results back, recommendation ready to send on Monday. */
-  ready: cohort(8, [10, 21], [10, 31]),
+  ready: cohort(8, [11, 12], [11, 22]),
   /** Recommendation out on Monday; the first two have said yes. */
-  sent: cohort(8, [10, 16], [10, 30]),
+  sent: cohort(8, [11, 7], [11, 21]),
   /** Finished before the week started. */
-  completed: cohort(10, [10, 13], [10, 25]),
+  completed: cohort(10, [11, 4], [11, 16]),
 };
 
 /**
