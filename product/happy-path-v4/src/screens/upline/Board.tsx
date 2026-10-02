@@ -497,9 +497,11 @@ function ListRow({
 /**
  * A card in Shopping Renewal or Closing, the two the same: the carrier's
  * mark and the name, and under the name last year's price to this year's
- * and the change in percent, as Ashley's v2 cards had them. Then whether it's snoozed, with Undo, and what
- * the household asked for. Then one sentence, what the shop found or who
- * it's waiting on, and the action if there is one. At the foot, under a rule
+ * and the change in percent, as Ashley's v2 cards had them. Then whether
+ * it's snoozed, with Undo, and what the household asked for, and one
+ * sentence, what the shop found or who it's waiting on, all of it starting
+ * under the name rather than the mark. Then the action if there is one, a
+ * button the card's width inside its padding. At the foot, under a rule
  * that runs edge to edge of the card, its status, with the countdown at the
  * right of the same line once the renewal is running short ("8 days", by a
  * clock, red 700 when it's urgent). Everything but the name is 14px, the
@@ -542,8 +544,8 @@ function Card({
         <h3 className={nameStyle}>{setName(name)}</h3>
       </div>
       <Price was={was} now={now} pct={pct} className={cn("mt-1", underName)} />
-      {status && <div className="mt-1 flex flex-col items-start gap-1">{status}</div>}
-      {detail && <p className="mt-2">{detail}</p>}
+      {status && <div className={cn("mt-1 flex flex-col items-start gap-1", underName)}>{status}</div>}
+      {detail && <p className={cn("mt-2", underName)}>{detail}</p>}
       {foot && <div className="relative z-10">{foot}</div>}
       <StatusRow className="-mx-3 mt-3 border-t px-3 pt-3" status={phase} when={when} />
     </div>
@@ -749,11 +751,11 @@ function ReviewResults({ onOpen }: { onOpen?: () => void }) {
  */
 function CardButton({ onClick, children }: { onClick?: () => void; children: React.ReactNode }) {
   return onClick ? (
-    <Button className="mt-3" onClick={onClick}>
+    <Button className="mt-3 w-full" onClick={onClick}>
       {children}
     </Button>
   ) : (
-    <Button className="mt-3" tabIndex={-1} aria-disabled>
+    <Button className="mt-3 w-full" tabIndex={-1} aria-disabled>
       {children}
     </Button>
   );
