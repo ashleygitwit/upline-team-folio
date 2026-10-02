@@ -215,14 +215,15 @@ export function phasesFor(day: Day, walk: Walk): Record<PhaseId, Placed[]> {
 }
 
 /**
- * Where a household is on the four-column board, as its drawer says it over
- * its name: "Initial Outreach · Scheduled", or "Completed".
+ * Where a household is on the four-column board, as its drawer's header says
+ * it under the name (PlaceLine in components/Status.tsx): the column, and the
+ * status in it, or none for Completed.
  */
-export function phaseLabel(id: string, day: Day, walk: Walk): string | null {
+export function placeOf(id: string, day: Day, walk: Walk): { phase: string; status?: PhaseStatus } | null {
   const placed = phasesFor(day, walk);
   for (const p of phases) {
     const found = placed[p.id].find(({ e }) => e.id === id);
-    if (found) return found.status ? `${p.label} · ${statusLabel[found.status]}` : p.label;
+    if (found) return { phase: p.label, status: found.status };
   }
   return null;
 }

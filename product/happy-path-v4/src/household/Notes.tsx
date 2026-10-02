@@ -35,16 +35,16 @@ export function Notes({ first, notes, onAdd }: { first: string; notes: Note[]; o
 
   return (
     <>
-      <div ref={list} className="min-h-0 flex-1 overflow-y-auto px-5 pt-4.5 pb-7">
+      <div ref={list} className="min-h-0 flex-1 overflow-y-auto p-6">
         {notes.length === 0 ? (
           <div className="flex h-full flex-col items-center justify-center py-10 text-center">
             <p className="font-display text-lg">No notes yet</p>
-            <p className="mt-1 max-w-xs text-sm text-muted-foreground">
+            <p className="mt-2 max-w-xs text-sm text-muted-foreground">
               Add anything you learn about {first} or how the renewal is going.
             </p>
           </div>
         ) : (
-          <ol className="flex flex-col gap-5">
+          <ol className="flex flex-col gap-6">
             {notes.map((n) => (
               <li key={n.id} className="flex gap-3">
                 <Avatar aria-hidden>
@@ -55,14 +55,14 @@ export function Notes({ first, notes, onAdd }: { first: string; notes: Note[]; o
                     <span className="sr-only">{agency.agent.name}, </span>
                     {stamp(n)}
                   </p>
-                  <p className="mt-0.5 text-sm break-words whitespace-pre-wrap">{n.text}</p>
+                  <p className="mt-1 text-sm break-words whitespace-pre-wrap">{n.text}</p>
                 </div>
               </li>
             ))}
           </ol>
         )}
       </div>
-      <div className="border-t px-5 pt-3.5 pb-4">
+      <div className="border-t px-6 py-4">
         <Textarea
           aria-label="Add a note"
           value={draft}
@@ -76,7 +76,7 @@ export function Notes({ first, notes, onAdd }: { first: string; notes: Note[]; o
           placeholder={`What's going on with ${first}?`}
           className="max-h-40"
         />
-        <div className="mt-2.5 flex justify-end">
+        <div className="mt-3 flex justify-end">
           <Button onClick={add} disabled={!draft.trim()}>
             Add note
           </Button>

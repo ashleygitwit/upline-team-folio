@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { AlarmClock, ArrowRight, MailClock } from "lucide-react";
 import { cn } from "cn";
-import { Requests } from "@/components/Status";
+import { PlaceLine, Requests } from "@/components/Status";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -17,7 +17,7 @@ import { columnTitle, spoken } from "@/household/columns";
 import { money, type Card, type QuoteDoc } from "@/household/data";
 import { fileOf } from "@/household/households";
 import { focusPanel } from "@/lib/focus";
-import { phaseLabel } from "@/phases";
+import { placeOf } from "@/phases";
 import { Details } from "@/household/Details";
 import { Notes } from "@/household/Notes";
 import { OutreachFor } from "@/household/Outreach";
@@ -104,6 +104,7 @@ export function HouseholdSheet({
     upNext: [],
     past: [],
   };
+  const place = placeOf(card.id, day, walk);
   // "Leah and Tom", "Tobi": who the household is, in a sentence.
   const who = card.name.includes("&") ? spoken(card.name.replace(/\s+\S+$/, "")) : card.first;
 
@@ -267,23 +268,28 @@ export function HouseholdSheet({
         if (quotes) closeQuotes();
         else back();
       }}
-      className="w-full gap-0 overflow-hidden bg-popover p-0 outline-none data-[side=right]:sm:max-w-[640px]"
+      // The close button sits level with the name's line, and its cross's
+      // edge on the 24px the drawer's words keep from its edge.
+      className="w-full gap-0 overflow-hidden bg-popover p-0 outline-none data-[side=right]:sm:max-w-[640px] [&>[data-slot=sheet-close]]:top-6"
     >
       {/* The profile, which nothing in can take the focus while a page covers it. */}
       <div inert={page !== null} className="flex min-h-0 flex-1 flex-col">
-        <SheetHeader className="gap-0 px-5 pt-4.5 pb-0 pr-14">
-          {/* The board's column and the card's status (phases.ts). */}
-          <p className="eyebrow text-muted-foreground">{phaseLabel(card.id, day, walk) ?? activity.stage}</p>
-          <SheetTitle className="mt-1.5 font-display text-2xl">{card.name}</SheetTitle>
+        <SheetHeader className="gap-0 p-6 pr-14">
+          <SheetTitle className="font-display text-2xl">{card.name}</SheetTitle>
           <SheetDescription className="mt-2">
             {card.jumpPct === 0
               ? `No change (${money(card.premium)})`
               : `+${card.jumpPct}% (${money(card.was)} → ${money(card.premium)})`}{" "}
             · {card.lines} · renews {card.renewal}
           </SheetDescription>
-          {/* What they asked for, in gray as the board says it. Snoozed was a
-              chip here too until 2026-10-01; the gray banner says it, with Undo. */}
-          <Requests requests={requestsFor(card.id, day, walk)} className="mt-2.5 text-sm" />
+          {/* The board's column and the card's status (phases.ts), then what
+              they asked for, as the board's cards say them. The column was an
+              eyebrow over the name until 2026-10-01. Snoozed was a chip here
+              too; the gray banner says it, with Undo. */}
+          <div className="mt-3 flex flex-col gap-1 text-sm">
+            {place ? <PlaceLine {...place} /> : <p className="text-muted-foreground">{activity.stage}</p>}
+            <Requests requests={requestsFor(card.id, day, walk)} />
+          </div>
         </SheetHeader>
 
         {snoozed ? (
@@ -297,14 +303,10 @@ export function HouseholdSheet({
           activity.banner && <StatusBanner {...activity.banner} onOpen={openPhase} snooze={snooze} />
         )}
 
-        <Tabs
-          value={tab}
-          onValueChange={(v) => setTab(v as Tab)}
-          className={cn("min-h-0 flex-1 gap-0", !activity.banner && "mt-3.5")}
-        >
-          {/* The list's side padding gives way on a phone, where the drawer is
-              three quarters of the screen, so the three tabs still fit. */}
-          <TabsList variant="line" className="w-full justify-start border-b px-2 sm:px-4">
+        <Tabs value={tab} onValueChange={(v) => setTab(v as Tab)} className="min-h-0 flex-1 gap-0">
+          {/* The list's 12px and a tab's own 12px put the first tab's name on
+              the 24px the drawer's words keep from its edge. */}
+          <TabsList variant="line" className="w-full justify-start border-b px-3">
             <TabsTrigger value="activity" className="flex-none">
               Recent activity
             </TabsTrigger>
@@ -316,11 +318,11 @@ export function HouseholdSheet({
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="activity" className="min-h-0 overflow-y-auto bg-background px-5 pt-4.5 pb-7">
+          <TabsContent value="activity" className="min-h-0 overflow-y-auto bg-background p-6">
             <RecentActivity activity={activity} onOpen={openPhase} />
           </TabsContent>
 
-          <TabsContent value="details" className="min-h-0 overflow-y-auto bg-background px-5 pt-4.5 pb-7">
+          <TabsContent value="details" className="min-h-0 overflow-y-auto bg-background p-6">
             <Details card={card} file={file} changed={changedFields(card.id, day, walk)} />
           </TabsContent>
 
@@ -362,7 +364,7 @@ export function HouseholdSheet({
 
       <div aria-live="polite" role="status">
         {toast && (
-          <div className="absolute bottom-6 left-1/2 z-30 w-max max-w-[calc(100%-2.5rem)] -translate-x-1/2 bg-dark-bg px-4.5 py-3 text-sm font-medium text-dark-fg animate-in duration-200 fade-in-0">
+          <div className="absolute bottom-6 left-1/2 z-30 w-max max-w-[calc(100%-3rem)] -translate-x-1/2 bg-dark-bg px-6 py-3 text-sm font-medium text-dark-fg animate-in duration-200 fade-in-0">
             {toast}
           </div>
         )}
@@ -401,7 +403,7 @@ function StatusBanner({
 }) {
   const blue = tone === "blue";
   const strip = cn(
-    "flex w-full items-center justify-between gap-4 px-5 py-2 text-left text-sm",
+    "flex w-full items-center justify-between gap-4 px-6 py-3 text-left text-sm",
     blue ? "bg-primary text-primary-foreground" : "bg-muted text-foreground",
   );
   const message = (
@@ -412,7 +414,7 @@ function StatusBanner({
   );
   if (undo) {
     return (
-      <div className={cn("mt-3.5", strip)}>
+      <div className={strip}>
         <span>{text}</span>
         <Button variant="link" className="h-auto p-0 font-sans text-sm" onClick={undo}>
           Undo
@@ -420,9 +422,9 @@ function StatusBanner({
       </div>
     );
   }
-  if (!opens) return <p className={cn("mt-3.5", strip)}>{message}</p>;
+  if (!opens) return <p className={strip}>{message}</p>;
   return (
-    <div className={cn("mt-3.5 flex items-stretch", blue ? "bg-primary" : "bg-muted")}>
+    <div className={cn("flex items-stretch", blue ? "bg-primary" : "bg-muted")}>
       <button
         type="button"
         onClick={(e) => onOpen(opens, e.currentTarget)}
@@ -450,7 +452,7 @@ function StatusBanner({
               variant="ghost"
               size="icon-sm"
               aria-label="Snooze"
-              className="mr-2 self-center text-primary-foreground hover:bg-primary-foreground/15 hover:text-primary-foreground focus-visible:outline-primary-foreground"
+              className="mr-4 self-center text-primary-foreground hover:bg-primary-foreground/15 hover:text-primary-foreground focus-visible:outline-primary-foreground"
             >
               <AlarmClock />
             </Button>

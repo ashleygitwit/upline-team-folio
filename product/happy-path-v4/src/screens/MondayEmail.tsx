@@ -122,9 +122,11 @@ function Group({ title, count, children }: { title: string; count: number; child
 }
 
 /**
- * One list in a column's card: the status as the eyebrow, with its count
- * (Completed has no statuses, so its one list goes without), then its first
- * five lines and, past five, View all on Upline.
+ * One list in a column's card: the status as its heading, with its count as
+ * the column's has it, in the mono face in gray (it was an eyebrow,
+ * "SCHEDULED · 48", until 2026-10-01; Completed has no statuses, so its one
+ * list goes without), then its first five lines and, past five, View all on
+ * Upline.
  */
 function Lines({
   id,
@@ -144,8 +146,8 @@ function Lines({
   return (
     <section aria-labelledby={title && heading}>
       {title && (
-        <h3 id={heading} className="eyebrow mb-2 text-muted-foreground">
-          {title} · {items.length}
+        <h3 id={heading} className="mb-3 font-display text-base font-medium">
+          {title} <span className="font-mono text-sm font-normal text-muted-foreground">{items.length}</span>
         </h3>
       )}
       <ul className="divide-y border-y text-sm">

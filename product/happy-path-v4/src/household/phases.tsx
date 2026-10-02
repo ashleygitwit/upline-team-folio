@@ -1,5 +1,7 @@
 import { useState } from "react";
-import { Check, LoaderCircle, Send } from "lucide-react";
+import { Check, LoaderCircle, Search, Send } from "lucide-react";
+import { cn } from "cn";
+import { StatusLine } from "@/components/Status";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -82,7 +84,7 @@ export function OutreachReview({
         )
       }
     >
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-8">
         <PolicyNow card={card} file={file} />
         <EmailFrame
           toolbar={`From ${agency.agent.name}'s mailbox`}
@@ -156,10 +158,10 @@ export function NudgeReview({
         )
       }
     >
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-8">
         <div>
           <SectionHead>Why it's going</SectionHead>
-          <p className="mt-1.5 text-sm">
+          <p className="mt-3 text-sm">
             {nudge.why}
             {state.state === "scheduled" && ` It goes ${goes} at 9:00 AM from your inbox.`}
           </p>
@@ -176,31 +178,36 @@ export function NudgeReview({
   );
 }
 
-/** A shop in progress: who VA is quoting, which quotes are back, and when the results are due. Nothing needs Jenna. */
+/**
+ * A shop in progress: who VA is quoting, which quotes are back, and when the
+ * results are due. Nothing needs Jenna. Each carrier says where its quote is
+ * as a status line, a check once it's in and the board's magnifying glass
+ * while it's out; until 2026-10-01 an eyebrow at the row's end said it again
+ * ("Back", "Shopping"), and the page sat in a gray panel inside the gray body.
+ */
 export function ShopInProgress({ shop }: { shop: Shop }) {
   return (
     <PhasePage title="Shopping">
-      <div className="bg-muted px-5 pt-4.5 pb-4">
-        <Badge variant="outline" className="bg-card">
-          <LoaderCircle className="animate-spin motion-reduce:animate-none" data-icon="inline-start" />
-          Shopping in progress
-        </Badge>
-        <p className="mt-2.5 font-display text-lg">Results back {shop.due}.</p>
-        <p className="mt-1 text-sm text-muted-foreground">
-          VA is running {shop.carriers.length} carriers for this household, quoted directly with each one.
-        </p>
-        <div className="mt-3.5 grid gap-2">
-          {shop.carriers.map((c) => (
-            <div key={c.name} className="grid grid-cols-[48px_1fr_auto] items-center gap-3 border bg-card px-3.5 py-3">
-              <CarrierLogo name={c.name} />
-              <div>
-                <p className="text-base font-medium">{c.name}</p>
-                <p className="text-sm text-muted-foreground">{c.back ? "Quote is in" : "Quote in progress"}</p>
-              </div>
-              <span className="eyebrow text-primary">{c.back ? "Back" : "Shopping"}</span>
+      <Badge variant="outline" className="bg-card">
+        <LoaderCircle className="animate-spin motion-reduce:animate-none" data-icon="inline-start" />
+        Shopping in progress
+      </Badge>
+      <p className="mt-3 font-display text-lg">Results back {shop.due}.</p>
+      <p className="mt-2 text-sm text-muted-foreground">
+        VA is running {shop.carriers.length} carriers for this household, quoted directly with each one.
+      </p>
+      <div className="mt-6 grid gap-3">
+        {shop.carriers.map((c) => (
+          <div key={c.name} className="grid grid-cols-[48px_1fr] items-center gap-3 border bg-card px-4 py-3">
+            <CarrierLogo name={c.name} />
+            <div>
+              <p className="text-base font-medium">{c.name}</p>
+              <StatusLine icon={c.back ? Check : Search} className={cn("mt-1 text-sm", c.back && "text-success")}>
+                {c.back ? "Quote is in" : "Quote in progress"}
+              </StatusLine>
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
       </div>
     </PhasePage>
   );
@@ -275,31 +282,27 @@ export function CloseOut({
       {closed ? (
         <div>
           <SectionHead>What happened</SectionHead>
-          <p className="mt-1.5 text-sm">{closed.note || "Closed out without a note."}</p>
+          <p className="mt-3 text-sm">{closed.note || "Closed out without a note."}</p>
         </div>
       ) : (
-        <div className="flex flex-col gap-4">
-          {closing && (
+        <div className="flex flex-col gap-8">
+          {closing && <p className="text-base">{closing.sub}</p>}
+          {closing && closing.owes.length > 0 && (
             <div>
-              <p className="text-base">{closing.sub}</p>
-              {closing.owes.length > 0 && (
-                <>
-                  <SectionHead className="mt-4">What's left</SectionHead>
-                  <ul className="mt-2 grid gap-1.5 text-sm">
-                    {closing.owes.map((o) => (
-                      <li key={o} className="flex items-center gap-2.5">
-                        <span aria-hidden className="size-2 shrink-0 border border-primary" />
-                        {o}
-                      </li>
-                    ))}
-                  </ul>
-                </>
-              )}
+              <SectionHead>What's left</SectionHead>
+              <ul className="mt-3 grid gap-2 text-sm">
+                {closing.owes.map((o) => (
+                  <li key={o} className="flex items-center gap-3">
+                    <span aria-hidden className="size-2 shrink-0 border border-primary" />
+                    {o}
+                  </li>
+                ))}
+              </ul>
             </div>
           )}
           <div>
             <SectionHead>What happened</SectionHead>
-            <p className="mt-1.5 mb-3 text-sm text-muted-foreground">
+            <p className="mt-3 mb-3 text-sm text-muted-foreground">
               Is {card.first} staying put? Did you bind a new carrier, or are you still waiting on something?
             </p>
             <Textarea
@@ -315,7 +318,12 @@ export function CloseOut({
   );
 }
 
-/** The policy as it renews: each line, the total, and why it went up. */
+/**
+ * The policy as it renews: each line and the total, under "Current policy
+ * with Erie", then why it went up, under a heading of its own, 32px on, as
+ * the page's sections are. The first heading was a blue eyebrow ("Current
+ * policy · Erie") and the second a 14px label under a rule until 2026-10-01.
+ */
 function PolicyNow({ card, file }: { card: Card; file: HouseholdFile }) {
   const now = file.policies.reduce((s, p) => s + p.current, 0);
   const next = file.policies.reduce((s, p) => s + p.renewal, 0);
@@ -328,35 +336,37 @@ function PolicyNow({ card, file }: { card: Card; file: HouseholdFile }) {
       : `${carrier}'s renewal is up ${pct}%. No claims, no changes on file.`);
 
   return (
-    <div>
-      <p className="eyebrow mb-2.5 text-primary">Current policy · {carrier}</p>
-      {file.policies.map((p) => (
-        <div key={p.line} className="flex items-baseline justify-between gap-3 border-t py-2 text-sm">
+    <>
+      <div>
+        <SectionHead className="mb-3">Current policy with {carrier}</SectionHead>
+        {file.policies.map((p) => (
+          <div key={p.line} className="flex items-baseline justify-between gap-3 border-t py-2 text-sm">
+            <p>
+              <span className="font-medium">{lineName(p.line)}</span>
+              <span className="text-muted-foreground"> renews {p.renews ?? card.renewal}</span>
+            </p>
+            <p className="font-mono whitespace-nowrap">
+              {money(p.current)} <span className="text-muted-foreground">→</span> {money(p.renewal)}
+            </p>
+          </div>
+        ))}
+        <div className="flex items-baseline justify-between gap-3 border-t py-2 text-base">
           <p>
-            <span className="font-medium">{lineName(p.line)}</span>
-            <span className="text-muted-foreground"> renews {p.renews ?? card.renewal}</span>
+            <span className="font-medium">Total</span>
+            <span className="ml-2 text-sm font-medium text-muted-foreground">
+              {pct === 0 ? "No change" : `${pct > 0 ? "+" : ""}${pct}%`}
+            </span>
           </p>
-          <p className="font-mono whitespace-nowrap">
-            {money(p.current)} <span className="text-muted-foreground">→</span> {money(p.renewal)}
+          <p className="font-mono text-sm whitespace-nowrap">
+            {money(now)} <span className="text-muted-foreground">→</span> {money(next)}
           </p>
         </div>
-      ))}
-      <div className="flex items-baseline justify-between gap-3 border-t py-2 text-base">
-        <p>
-          <span className="font-medium">Total</span>
-          <span className="ml-2 text-sm font-medium text-muted-foreground">
-            {pct === 0 ? "No change" : `${pct > 0 ? "+" : ""}${pct}%`}
-          </span>
-        </p>
-        <p className="font-mono text-sm whitespace-nowrap">
-          {money(now)} <span className="text-muted-foreground">→</span> {money(next)}
-        </p>
       </div>
-      <div className="mt-3 border-t pt-3 text-sm">
-        <p className="mb-1 font-medium">{pct === 0 ? "What is driving it?" : "What is driving the increase?"}</p>
-        <p>{why}</p>
+      <div>
+        <SectionHead>{pct === 0 ? "What is driving it?" : "What is driving the increase?"}</SectionHead>
+        <p className="mt-3 text-sm">{why}</p>
       </div>
-    </div>
+    </>
   );
 }
 
@@ -417,7 +427,7 @@ function ShapeTheShop({
   return (
     <div>
       <SectionHead>Shape the shop</SectionHead>
-      <p className="mt-1.5 mb-3 text-sm text-muted-foreground">
+      <p className="mt-3 mb-3 text-sm text-muted-foreground">
         {locked
           ? "What we asked about in the email."
           : "Pick what you want included. Recommended items are on. Grayed items do not apply."}

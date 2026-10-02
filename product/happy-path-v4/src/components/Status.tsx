@@ -1,5 +1,5 @@
 import { useContext, type ReactNode } from "react";
-import { Clock, Eye, HandHeart, Hourglass, MailClock, PencilLine, Search, type LucideIcon } from "lucide-react";
+import { Check, Clock, Eye, HandHeart, Hourglass, MailClock, PencilLine, Search, type LucideIcon } from "lucide-react";
 import { cn } from "cn";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import type { Day } from "@/data";
@@ -106,6 +106,28 @@ export function PhaseStatusLine({ status, day, className }: { status: PhaseStatu
     <StatusLine icon={phaseIcons[status]} className={cn(status === "readyForReview" && "text-foreground", className)}>
       {statusLabel[status]}
       {status === "scheduled" && ` · ${sendsAt(day)}`}
+    </StatusLine>
+  );
+}
+
+/**
+ * Where a household is on the board, as its drawer's header says it under the
+ * name (placeOf in phases.ts): the column and the status, "Closing · Ready
+ * for Review", after the status's icon and in its color, as the board's
+ * cards say the status; Completed by a check in the success color, as a
+ * Completed row's date is. It was an eyebrow over the name until 2026-10-01.
+ */
+export function PlaceLine({ phase, status, className }: { phase: string; status?: PhaseStatus; className?: string }) {
+  if (!status) {
+    return (
+      <StatusLine icon={Check} className={cn("text-success", className)}>
+        {phase}
+      </StatusLine>
+    );
+  }
+  return (
+    <StatusLine icon={phaseIcons[status]} className={cn(status === "readyForReview" && "text-foreground", className)}>
+      {phase} · {statusLabel[status]}
     </StatusLine>
   );
 }

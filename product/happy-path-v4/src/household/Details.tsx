@@ -22,9 +22,9 @@ const initials = (name: string) =>
 export function Details({ card, file, changed = [] }: { card: Household; file: HouseholdFile; changed?: string[] }) {
   const mark = (field: string) => changed.includes(field) && <Changed />;
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-3">
       <Block title="Contact">
-        <dl className="mt-3 grid grid-cols-[auto_1fr] gap-x-3 gap-y-1.5 text-sm">
+        <dl className="mt-3 grid grid-cols-[auto_1fr] gap-x-3 gap-y-2 text-sm">
           <dt className="text-muted-foreground">Named insured</dt>
           <dd className="text-right font-medium">{file.namedInsured}</dd>
           <dt className="text-muted-foreground">Phone</dt>
@@ -109,7 +109,7 @@ export function Details({ card, file, changed = [] }: { card: Household; file: H
 
       {file.home && (
         <Block title="The home">
-          <dl className="mt-3 grid grid-cols-[auto_1fr] gap-x-3 gap-y-1.5 text-sm">
+          <dl className="mt-3 grid grid-cols-[auto_1fr] gap-x-3 gap-y-2 text-sm">
             <dt className="text-muted-foreground">Roof</dt>
             <dd className="text-right font-medium">{file.home.roof}</dd>
             <dt className="text-muted-foreground">Trampoline</dt>
@@ -138,9 +138,15 @@ function Changed() {
   );
 }
 
+/**
+ * One part of the file, a card a part, 12px apart as the design hub stacks
+ * its cards, with 24px of padding, as every card and panel the hub and the
+ * marketing site ship has (it was the kit's small card, 16px, until
+ * 2026-10-01), and its heading 12px over what's in it.
+ */
 function Block({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <Card size="sm">
+    <Card className="[--card-spacing:--spacing(6)]">
       <CardContent className="gap-0">
         <SectionHead>{title}</SectionHead>
         {children}
@@ -150,5 +156,5 @@ function Block({ title, children }: { title: string; children: ReactNode }) {
 }
 
 function Row({ children }: { children: ReactNode }) {
-  return <div className="flex items-center gap-2.5 border-t py-2 text-sm first-of-type:mt-2">{children}</div>;
+  return <div className="flex items-center gap-3 border-t py-2 text-sm first-of-type:mt-3">{children}</div>;
 }
