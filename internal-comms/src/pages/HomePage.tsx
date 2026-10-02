@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import type { VenturePlan } from '../types';
 import { ProductJourneyEmbed } from '../components/ProductJourneyEmbed';
 
@@ -15,6 +16,8 @@ const INSIGHT = {
 };
 
 export function HomePage({ plan }: HomePageProps) {
+  const journeyFrame = useContentHeight();
+
   return (
     <>
       <section className="hero">
