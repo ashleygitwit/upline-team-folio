@@ -65,11 +65,8 @@ export function Upline({
     root.style.setProperty("--sheet-top", `${Math.max(demoBar, appBarBottom)}px`);
   }, [household]);
 
-  // White under the band, as the Monday email is, so the board's gray
-  // columns are the only gray on the page (Ashley's review, 2026-10-02: too
-  // much gray on gray). It was gray 50 until then.
   return (
-    <div className="min-h-[calc(100svh-var(--demo-bar-h))] bg-card">
+    <div className="min-h-[calc(100svh-var(--demo-bar-h))] bg-background">
       <div ref={appBar}>
         <AppBar onHome={() => setHousehold(null)} />
       </div>
