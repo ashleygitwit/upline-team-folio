@@ -8,7 +8,9 @@
 // feedback board hides behind a scroll. The homepage's board is the
 // exception: it fits the window and its columns scroll inside themselves by
 // design, so it's held at a 900px window's height and captured as Jenna sees
-// it on one. Run after any change: npm run capture
+// it on one. The demo's blinking dot on the Pruitts' card (DemoCue.tsx) is
+// hidden, since it's a cue for the presenter, not up for feedback. Run after
+// any change: npm run capture
 //
 // Writes captures/NN-slug.png and captures/manifest.json, which says what
 // each file is, which stop it belongs to and how it was reached; the board
@@ -40,6 +42,7 @@ const unclamp = `
   [data-phase-body] { flex: 1 0 auto !important; }
   [class*="max-w-[390px]"] { height: auto !important; min-height: 780px !important; max-height: none !important; overflow: visible !important; }
   [data-fit-window] { height: ${MIN_HEIGHT - BAR}px !important; }
+  [data-demo-cue] { display: none !important; }
 `;
 
 const manifest = [];
@@ -496,42 +499,7 @@ const captures = [
     },
   },
   {
-    slug: "10a-pruitts-details-info-updated",
-    stop: 10,
-    title: "The Pruitts' drawer: Details, with the changed detail marked",
-    via: "The Pruitts' Shopping Renewal card → Details tab",
-    run: async () => {
-      await answerQuestionnaire();
-      await jump("Wednesday");
-      await openProfile("Leah & Tom Pruitt");
-      await tab("Details").click();
-    },
-  },
-  {
-    slug: "10b-pruitts-activity",
-    stop: 10,
-    title: "The Pruitts' drawer: Recent activity while shopping",
-    via: "The Pruitts' Shopping Renewal card (the drawer opens on Recent activity)",
-    run: async () => {
-      await answerQuestionnaire();
-      await jump("Wednesday");
-      await openProfile("Leah & Tom Pruitt");
-    },
-  },
-  {
-    slug: "10c-shop-in-progress",
-    stop: 10,
-    title: "Shop in progress page",
-    via: "The Pruitts' drawer → banner → View",
-    run: async () => {
-      await answerQuestionnaire();
-      await jump("Wednesday");
-      await openProfile("Leah & Tom Pruitt");
-      await clickBanner("View");
-    },
-  },
-  {
-    slug: "10d-nudge-page",
+    slug: "10a-nudge-page",
     stop: 10,
     title: "Nudge page",
     via: "Tobi Adeyemi's Awaiting Response card → banner → Review",
@@ -543,7 +511,7 @@ const captures = [
     },
   },
   {
-    slug: "10e-nudge-skipped",
+    slug: "10b-nudge-skipped",
     stop: 10,
     title: "A skipped nudge: the banner, and the page's Undo",
     via: "Nudge page → Skip nudge → back on the profile → banner → Review",
@@ -558,7 +526,7 @@ const captures = [
     },
   },
   {
-    slug: "10g-drawer-no-banner",
+    slug: "10c-drawer-no-banner",
     stop: 10,
     title: "Household drawer with nothing going on (no banner)",
     via: "Diane Mercer's Completed card",
@@ -569,8 +537,8 @@ const captures = [
     },
   },
   ...[
-    ["10h", "elena-varga", "Elena Varga", "next week's email, scheduled", "renewal email, with Send now and Skip", () => clickBanner("Review")],
-    ["10i", "sara-ortiz", "Sara Ortiz", "waiting on an answer", "renewal email, sent Tuesday", () => clickLine("View: Renewal email sent")],
+    ["10d", "elena-varga", "Elena Varga", "next week's email, scheduled", "renewal email, with Send now and Skip", () => clickBanner("Review")],
+    ["10e", "sara-ortiz", "Sara Ortiz", "waiting on an answer", "renewal email, sent Tuesday", () => clickLine("View: Renewal email sent")],
   ].flatMap(([slug, file, name, what, pageName, open]) => [
     {
       slug: `${slug}-first-card-${file}`,
@@ -587,7 +555,7 @@ const captures = [
       slug: `${slug}a-first-card-${file}-page`,
       stop: 10,
       title: `${name}'s ${pageName}`,
-      via: `${name}'s drawer → ${slug === "10h" ? "banner" : "Recent activity → Renewal email sent"}`,
+      via: `${name}'s drawer → ${slug === "10d" ? "banner" : "Recent activity → Renewal email sent"}`,
       run: async () => {
         await answerQuestionnaire();
         await jump("Wednesday");
@@ -597,11 +565,43 @@ const captures = [
     },
   ]),
   // 11
-  { slug: "11-the-quotes-are-in", stop: 11, title: "The quotes are in", card: true, run: () => jump("The quotes are in") },
-  // 12
   {
-    slug: "12-thursday",
-    stop: 12,
+    slug: "11-check-in-on-the-pruitts",
+    stop: 11,
+    title: "Check in on the Pruitts: their drawer, Recent activity while shopping",
+    run: async () => {
+      await answerQuestionnaire();
+      await jump("Check in on the Pruitts");
+    },
+  },
+  {
+    slug: "11a-pruitts-details-info-updated",
+    stop: 11,
+    title: "The Pruitts' drawer: Details, with the changed detail marked",
+    via: "Details tab",
+    run: async () => {
+      await answerQuestionnaire();
+      await jump("Check in on the Pruitts");
+      await tab("Details").click();
+    },
+  },
+  {
+    slug: "11b-shop-in-progress",
+    stop: 11,
+    title: "Shop in progress page",
+    via: "The Pruitts' drawer → banner → View",
+    run: async () => {
+      await answerQuestionnaire();
+      await jump("Check in on the Pruitts");
+      await clickBanner("View");
+    },
+  },
+  // 12
+  { slug: "12-the-quotes-are-in", stop: 12, title: "The quotes are in", card: true, run: () => jump("The quotes are in") },
+  // 13
+  {
+    slug: "13-thursday",
+    stop: 13,
     title: "Thursday: results are back",
     run: async () => {
       await answerQuestionnaire();
@@ -609,8 +609,8 @@ const captures = [
     },
   },
   {
-    slug: "12a-results-step-1",
-    stop: 12,
+    slug: "13a-results-step-1",
+    stop: 13,
     title: "Shop results: step 1, Shopping Results",
     via: "The Pruitts' card → Review Shopping Results (their drawer, with the results over it)",
     run: async () => {
@@ -621,8 +621,8 @@ const captures = [
     },
   },
   {
-    slug: "12b-results-step-2",
-    stop: 12,
+    slug: "13b-results-step-2",
+    stop: 13,
     title: "Shop results: step 2, Select Your Recommendation",
     via: "Continue to select your recommendation",
     run: async () => {
@@ -633,8 +633,8 @@ const captures = [
     },
   },
   {
-    slug: "12c-results-step-3",
-    stop: 12,
+    slug: "13c-results-step-3",
+    stop: 13,
     title: "Shop results: step 3, Review Your Recommendation Email",
     via: "Review recommendation email",
     run: async () => {
@@ -646,8 +646,8 @@ const captures = [
     },
   },
   {
-    slug: "12d-view-quotes",
-    stop: 12,
+    slug: "13d-view-quotes",
+    stop: 13,
     title: "Quotes from the carriers",
     via: "Step 1 → View quotes from the carriers",
     run: async () => {
@@ -659,8 +659,8 @@ const captures = [
     },
   },
   {
-    slug: "12e-recommendation-sent",
-    stop: 12,
+    slug: "13e-recommendation-sent",
+    stop: 13,
     title: "After Send recommendation email: back on the Pruitts' profile",
     via: "Step 3 → Send recommendation email",
     run: async () => {
@@ -674,8 +674,8 @@ const captures = [
     },
   },
   {
-    slug: "12f-results-read-only",
-    stop: 12,
+    slug: "13f-results-read-only",
+    stop: 13,
     title: "Shop results once sent: step 3, read-only",
     via: "After sending → back on the profile → banner → View → step 3",
     run: async () => {
@@ -692,8 +692,8 @@ const captures = [
     },
   },
   {
-    slug: "12g-pruitts-details-blue",
-    stop: 12,
+    slug: "13g-pruitts-details-blue",
+    stop: 13,
     title: "The Pruitts' drawer: Details, results to review",
     via: "The Pruitts' card → Details tab",
     run: async () => {
@@ -704,8 +704,8 @@ const captures = [
     },
   },
   {
-    slug: "12h-pruitts-activity-results",
-    stop: 12,
+    slug: "13h-pruitts-activity-results",
+    stop: 13,
     title: "The Pruitts' drawer: Recent activity, with the results card",
     via: "The Pruitts' card (the drawer opens on Recent activity)",
     run: async () => {
@@ -714,23 +714,23 @@ const captures = [
       await openProfile("Leah & Tom Pruitt");
     },
   },
-  // 13
+  // 14
   {
-    slug: "13-review-the-pruitts-results",
-    stop: 13,
+    slug: "14-review-the-pruitts-results",
+    stop: 14,
     title: "Review the Pruitts' results",
     run: async () => {
       await answerQuestionnaire();
       await jump("Review the Pruitts' results");
     },
   },
-  // 14
-  { slug: "14-that-evening", stop: 14, title: "That evening", card: true, run: () => jump("That evening") },
   // 15
-  { slug: "15-leahs-recommendation", stop: 15, title: "Leah's recommendation: the email", run: () => jump("Leah's recommendation") },
+  { slug: "15-that-evening", stop: 15, title: "That evening", card: true, run: () => jump("That evening") },
+  // 16
+  { slug: "16-leahs-recommendation", stop: 16, title: "Leah's recommendation: the email", run: () => jump("Leah's recommendation") },
   {
-    slug: "15a-leahs-page",
-    stop: 15,
+    slug: "16a-leahs-page",
+    stop: 16,
     title: "Leah's recommendation: the page",
     via: "The link in the email",
     run: async () => {
@@ -739,8 +739,8 @@ const captures = [
     },
   },
   {
-    slug: "15b-leah-approved",
-    stop: 15,
+    slug: "16b-leah-approved",
+    stop: 16,
     title: "Leah's recommendation: approved",
     via: "Approve Auto-Owners",
     run: async () => {
@@ -749,12 +749,12 @@ const captures = [
       await click("Approve Auto-Owners");
     },
   },
-  // 16
-  { slug: "16-closing-the-week", stop: 16, title: "Closing the week", card: true, run: () => jump("Closing the week") },
   // 17
+  { slug: "17-closing-the-week", stop: 17, title: "Closing the week", card: true, run: () => jump("Closing the week") },
+  // 18
   {
-    slug: "17-friday",
-    stop: 17,
+    slug: "18-friday",
+    stop: 18,
     title: "Friday: bind it",
     run: async () => {
       await answerQuestionnaire();
@@ -762,8 +762,8 @@ const captures = [
     },
   },
   {
-    slug: "17a-pruitts-drawer-bind",
-    stop: 17,
+    slug: "18a-pruitts-drawer-bind",
+    stop: 18,
     title: "The Pruitts' drawer: approved, waiting to be bound",
     via: "The Pruitts' card → View profile and close",
     run: async () => {
@@ -774,8 +774,8 @@ const captures = [
     },
   },
   {
-    slug: "17b-close-out-page",
-    stop: 17,
+    slug: "18b-close-out-page",
+    stop: 18,
     title: "Close-out page for the Pruitts",
     via: "The Pruitts' drawer → banner → Review",
     run: async () => {
@@ -786,8 +786,8 @@ const captures = [
     },
   },
   {
-    slug: "17c-done",
-    stop: 17,
+    slug: "18c-done",
+    stop: 18,
     title: "After Close out: Done. The Pruitts are set.",
     via: "Close-out page → What happened → Close out → close the drawer",
     run: async () => {
@@ -800,10 +800,10 @@ const captures = [
       await closeDrawer();
     },
   },
-  // 18
+  // 19
   {
-    slug: "18-close-out-the-pruitts",
-    stop: 18,
+    slug: "19-close-out-the-pruitts",
+    stop: 19,
     title: "Close out the Pruitts",
     run: async () => {
       await answerQuestionnaire();

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { AlarmClock, Check, ChevronDown } from "lucide-react";
 import { cn } from "cn";
 import { CarrierMark } from "@/components/CarrierMark";
+import { DemoCue } from "@/components/DemoCue";
 import { Countdown, PhaseStatusLine, Requests, StatusLine } from "@/components/Status";
 import { Button } from "@/components/ui/button";
 import {
@@ -30,6 +31,8 @@ export type BoardProps = WalkProps & {
   household: string | null;
   /** Opens a household's drawer, with one of its pages over it if `phase` says which. */
   onHousehold: (id: string, phase?: Phase) => void;
+  /** The household whose card or row carries the demo's blinking dot, if any (DemoCue.tsx). */
+  cue?: string | null;
 };
 
 /**
@@ -440,7 +443,7 @@ function ListRow({
   status,
   ...props
 }: BoardProps & { e: Entry; col: ColumnId; status?: PhaseStatus }) {
-  const { day, walk, household, onHousehold } = props;
+  const { day, walk, household, onHousehold, cue } = props;
   const selected = household === e.id;
   const open = () => onHousehold(e.id);
   const frame = cn("relative px-2.5 py-3 text-sm", !e.invented && selected && "bg-card");
@@ -484,6 +487,7 @@ function ListRow({
     <li className={cn(frame, "hover:bg-card")}>
       {body}
       <OpenOverlay id={e.id} name={e.name} selected={selected} onOpen={open} />
+      {cue === e.id && <DemoCue />}
     </li>
   );
 }
@@ -640,7 +644,7 @@ function NamedCard({
   status: phase,
   ...props
 }: BoardProps & { e: Entry; col: ColumnId; status: PhaseStatus }) {
-  const { day, walk, update, household, onHousehold } = props;
+  const { day, walk, update, household, onHousehold, cue } = props;
   const h = thisWeek.find((x) => x.id === e.id);
   const ew = earlier.find((x) => x.id === e.id);
   const snoozed = isSnoozed(e.id, day, walk);
@@ -721,6 +725,7 @@ function NamedCard({
         foot={foot}
         phase={<PhaseStatusLine status={phase} day={day} />}
       />
+      {cue === e.id && <DemoCue />}
     </li>
   );
 }

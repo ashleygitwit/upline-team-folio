@@ -1,12 +1,14 @@
 import type { Day, PickId } from "./data";
 
 /**
- * The walk: eighteen stops, one household (the Pruitts) from Monday's list to
+ * The walk: nineteen stops, one household (the Pruitts) from Monday's list to
  * a bound policy, with the rest of the week moving around them. The presenter
  * bar steps through these in order, and each stop can be jumped to directly.
- * Three open the Pruitts' drawer with a page already on top, after the day's
- * homepage: their renewal email on Monday, their results on Thursday and the
- * close-out on Friday (the last two from 2026-10-02).
+ * Four open the Pruitts' drawer, after the day's homepage: on Wednesday on
+ * their profile, as clicking their card would, and on the other three with a
+ * page already on top, their renewal email on Monday, their results on
+ * Thursday and the close-out on Friday (Thursday's and Friday's from
+ * 2026-10-02, and Wednesday's later that day).
  *
  * Seven of the stops are cards, the ones with `text`: a slate screen before
  * each change of day or person and before Jenna first signs in to Upline,
@@ -25,6 +27,7 @@ export type ScreenId =
   | "questionnaire"
   | "card-wednesday"
   | "wednesday"
+  | "wednesday-pruitt"
   | "card-thursday"
   | "thursday"
   | "thursday-results"
@@ -65,6 +68,7 @@ export const screens: { id: ScreenId; label: string; where: string; text?: strin
     text: "While Leah was answering her questionnaire, Jenna was working through her shopping recommendations and closing tasks. On Wednesday, she logs back in and sees Leah and Tom are currently being shopped by Upline.",
   },
   { id: "wednesday", label: "Wednesday", where: "Upline · Wednesday, October 14" },
+  { id: "wednesday-pruitt", label: "Check in on the Pruitts", where: "Upline · Wednesday, October 14" },
   {
     id: "card-thursday",
     label: "The quotes are in",
@@ -89,6 +93,13 @@ export const screens: { id: ScreenId; label: string; where: string; text?: strin
   { id: "friday", label: "Friday: bind it", where: "Upline · Friday, October 16" },
   { id: "friday-closeout", label: "Close out the Pruitts", where: "Upline · Friday, October 16" },
 ];
+
+/**
+ * For the demo only, not the product: each day's first homepage, where a
+ * blinking dot on the Pruitts' card points the presenter at it (DemoCue.tsx),
+ * and its day.
+ */
+export const cues: Partial<Record<ScreenId, Day>> = { monday: "mon", wednesday: "wed", thursday: "thu", friday: "fri" };
 
 /** A note Jenna left on a household: the walk's day, the clock time she posted it, and what she wrote. */
 export type Note = { id: number; day: Day; time: string; text: string };
@@ -137,6 +148,11 @@ export type Walk = {
   snoozed: Record<string, Snooze>;
   /** Whether Leah said yes to a life quote in her questionnaire. */
   danaLife: boolean;
+  /**
+   * The days whose homepage dot (`cues`) has gone: Jenna opened the
+   * Pruitts' drawer there, or the walk moved on from it.
+   */
+  cuesGone: Day[];
 };
 
 export const initialWalk: Walk = {
@@ -158,6 +174,7 @@ export const initialWalk: Walk = {
   notes: {},
   snoozed: {},
   danaLife: true,
+  cuesGone: [],
 };
 
 export type WalkProps = {
