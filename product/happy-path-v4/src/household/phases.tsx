@@ -27,9 +27,9 @@ import { Recommendation } from "@/household/Recommendation";
  * The renewal email before it goes: the policy as it renews, the email, with
  * View the Questionnaire under it, and shaping the shop, with twice the
  * page's 24px under it. The button opens `questionnairePreview`, the
- * questionnaire all on one page, in a new tab (QuestionnairePreview.tsx);
- * the email's link goes on to Leah's questionnaire in the walk. Only the
- * Pruitts have either, and the others' say why on hover. `sent` locks it and
+ * questionnaire all on one page, in a new tab (QuestionnairePreview.tsx).
+ * Only the Pruitts' opens; the others' say why on hover. The email's own
+ * link line is words, not a link (LinkedEmail in parts.tsx). `sent` locks it and
  * says when it went; `skipped` swaps the footer for an Undo. This week's six
  * bring the walk's email; an earlier week's household, whose email went
  * before the walk, reads a draft built from its card.
@@ -43,7 +43,6 @@ export function OutreachReview({
   skipped,
   onSkip,
   onSend,
-  onOpenQuestionnaire,
   questionnairePreview,
 }: {
   card: Card;
@@ -54,8 +53,6 @@ export function OutreachReview({
   skipped?: { onUndo: () => void };
   onSkip?: () => void;
   onSend?: () => void;
-  /** Goes to Leah's questionnaire in the walk, from the Pruitts' email. */
-  onOpenQuestionnaire?: () => void;
   /** Where the Pruitts' questionnaire preview opens, in a new tab. */
   questionnairePreview?: string;
 }) {
@@ -102,7 +99,6 @@ export function OutreachReview({
             <LinkedEmail
               body={email?.body ?? outreachDraft(card)}
               onChange={email?.onChange ?? (() => {})}
-              onLink={card.target ? onOpenQuestionnaire : undefined}
               readOnly={!!sent}
             />
           </EmailFrame>

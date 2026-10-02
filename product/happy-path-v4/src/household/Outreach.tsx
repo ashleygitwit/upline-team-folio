@@ -27,7 +27,6 @@ export function OutreachFor({
   update,
   onDone,
   onSkipOutreach,
-  onOpenQuestionnaire,
 }: Pick<WalkProps, "walk" | "update"> & {
   card: Card;
   day: Day;
@@ -35,8 +34,6 @@ export function OutreachFor({
   onDone: (said: string) => void;
   /** Asks before skipping the household's outreach. */
   onSkipOutreach: () => void;
-  /** Goes to Leah's questionnaire in the walk, from the Pruitts' email. */
-  onOpenQuestionnaire: () => void;
 }) {
   const file = fileOf(card);
   const h = thisWeek.find((x) => x.id === card.id);
@@ -77,7 +74,6 @@ export function OutreachFor({
             }
           : undefined
       }
-      onOpenQuestionnaire={card.id === pruitt.id ? onOpenQuestionnaire : undefined}
       questionnairePreview={card.id === pruitt.id ? previewHref(walk.lifeQuote[pruitt.id] ?? true) : undefined}
     />
   );

@@ -31,7 +31,6 @@ export function HouseholdDrawer({
   page,
   onPage,
   onClose,
-  onOpenQuestionnaire,
   returnFocus,
   walk,
   update,
@@ -42,7 +41,6 @@ export function HouseholdDrawer({
   page: Page | null;
   onPage: (page: Page | null) => void;
   onClose: () => void;
-  onOpenQuestionnaire: () => void;
   /** Gives the focus back to what opened the drawer, once it has closed. */
   returnFocus: (id: string) => void;
 }) {
@@ -96,7 +94,6 @@ export function HouseholdDrawer({
             toast={toast}
             onDone={done}
             onSkipOutreach={() => setSkipping(shown)}
-            onOpenQuestionnaire={onOpenQuestionnaire}
             results={results}
             returnFocus={returnFocus}
           />

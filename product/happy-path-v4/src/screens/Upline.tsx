@@ -70,7 +70,6 @@ export function Upline({
         page={page}
         onPage={setPage}
         onClose={() => setHousehold(null)}
-        onOpenQuestionnaire={() => props.go("questionnaire")}
         returnFocus={returnFocus}
         walk={props.walk}
         update={props.update}

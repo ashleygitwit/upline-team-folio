@@ -2,7 +2,6 @@ import type { ReactNode } from "react";
 import { ArrowDown, ArrowRight, ArrowUp, Car, Check, House, Layers2, Mail, Umbrella } from "lucide-react";
 import { cn } from "cn";
 import { Textarea } from "@/components/ui/textarea";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import type { Card, Kind } from "@/household/data";
 
 export function KindIcon({ kind, className }: { kind: Kind; className?: string }) {
@@ -105,20 +104,21 @@ export function EmailFrame({
 
 /**
  * An email's words, still editable until it goes, with its questionnaire link
- * as a link: the paragraphs either side of it are two boxes that read as one,
- * and the link line between them goes to the questionnaire. Without `onLink`
- * the link is drawn but says it isn't in this prototype, since only the
- * Pruitts' questionnaire is. An email with no link line is one box.
+ * set apart: the paragraphs either side of it are two boxes that read as one,
+ * and the link line between them is its words, with the address under them,
+ * and can't be edited. It isn't a link: the questionnaire opens from View the
+ * Questionnaire under the renewal email (phases.tsx). Until 2026-10-02 the
+ * Pruitts' went to Leah's questionnaire in the walk, and the others said on
+ * hover that only the Pruitts' was in this prototype. An email with no link
+ * line is one box.
  */
 export function LinkedEmail({
   body,
   onChange,
-  onLink,
   readOnly,
 }: {
   body: string;
   onChange: (body: string) => void;
-  onLink?: () => void;
   readOnly?: boolean;
 }) {
   const paragraphs = body.split(/\n\n+/);
@@ -157,20 +157,7 @@ export function LinkedEmail({
         className={words}
       />
       <p className="my-4 px-2.5 text-[15px] leading-relaxed">
-        {onLink ? (
-          <button type="button" onClick={onLink} className={linkStyle}>
-            {label}
-          </button>
-        ) : (
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <button type="button" aria-disabled className={linkStyle}>
-                {label}
-              </button>
-            </TooltipTrigger>
-            <TooltipContent>Only the Pruitts' questionnaire is in this prototype.</TooltipContent>
-          </Tooltip>
-        )}
+        {label}
         <span className="block text-sm break-all text-muted-foreground">{url.replace(/^https?:\/\//, "")}</span>
       </p>
       <Textarea
@@ -186,4 +173,3 @@ export function LinkedEmail({
 
 /** A paragraph that's only a link: its words, an arrow, and the address, as Leah's inbox reads it. */
 const linkLine = /^(.*?) → (https?:\/\/\S+)$/;
-const linkStyle = "text-left text-primary underline underline-offset-4 hover:no-underline";
