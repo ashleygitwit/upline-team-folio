@@ -11,9 +11,11 @@ import { quoteDoc, type Card, type HouseholdFile } from "@/household/data";
  * for anyone past shopping. They keep their invented ids and their places on
  * the board (board.ts), so the board reads the same.
  *
- * Three were renamed on 2026-10-01 so no two of the seven share a first name
- * or a surname: Troy Lowry was Cole Carver, Lena Park was Hank Kowalski and
- * Elena Varga was Iris Fischer.
+ * Two were renamed on 2026-10-01 so no two share a first name or a surname:
+ * Troy Lowry was Cole Carver and Lena Park was Hank Kowalski. There were
+ * seven until 2026-10-02: Elena Varga (Iris Fischer before that), first in
+ * Scheduled from Wednesday with next week's email, came off the board with
+ * next week's emails (board.ts).
  *
  * | Household    | Monday                         | Wednesday to Friday                    |
  * | ------------ | ------------------------------ | -------------------------------------- |
@@ -22,7 +24,6 @@ import { quoteDoc, type Card, type HouseholdFile } from "@/household/data";
  * | Hank Fischer | Recommendation Ready, first    | Recommendation Sent, first             |
  * | Lena Park    | Recommendation Sent, first     | Completed                              |
  * | Grace Tanaka | Completed, first               | Completed, first                       |
- * | Elena Varga  | not on the board yet           | Scheduled, first                       |
  * | Sara Ortiz   | Scheduled                      | Awaiting (Wed), Shopping (Thu–Fri, first) |
  *
  * On Wednesday the Pruitts are the first card in Shopping. Cole was shopped
@@ -35,7 +36,7 @@ export type FirstCard = {
   /**
    * The renewal email Jenna drafted, and, for one that hasn't gone out yet,
    * the days of the walk it's still waiting on, when she can send it early or
-   * skip it. Sara's goes Tuesday with this week's; Elena's goes next Tuesday.
+   * skip it. Sara's goes Tuesday with this week's.
    */
   outreach: { subject: string; email: string; waitsOn?: Day[] };
   /** What needs Jenna on Monday, as the earlier weeks' do (tasks.ts). */
@@ -826,61 +827,6 @@ const tanaka: FirstCard = {
 };
 
 /* ------------------------------------------------------------------ *
- * Elena Varga (was Iris Fischer): next week's email, waiting from Wednesday
- * ------------------------------------------------------------------ */
-
-const varga: FirstCard = {
-  card: {
-    id: "inv-10",
-    name: "Elena Varga",
-    first: "Elena",
-    email: "elena.varga@gmail.com",
-    kinds: ["home", "auto"],
-    carrier: "Auto-Owners",
-    lines: "Home + Auto · Auto-Owners",
-    renewal: "Dec 18",
-    daysOut: 45,
-    jumpPct: 16,
-    was: 4886,
-    premium: 5668,
-    note: "Roof moved to actual cash value.",
-    col: "outreach",
-  },
-  file: {
-    namedInsured: "Elena Varga",
-    phone: "(330) 555-0183",
-    address: "4120 Hudson Dr, Stow, OH 44224",
-    people: [
-      { name: "Elena Varga", role: "Named insured", note: "Primary contact" },
-      { name: "Laszlo Varga", role: "Spouse", note: "Named insured" },
-    ],
-    vehicles: [
-      { year: "2023", make: "Hyundai", model: "Palisade" },
-      { year: "2019", make: "Kia", model: "Soul" },
-    ],
-    policies: [
-      { line: "Homeowners (HO-3)", carrier: "Auto-Owners", current: 2210, renewal: 2690, detail: "Dwelling $455,000 · $1,000 AOP" },
-      { line: "Personal auto", carrier: "Auto-Owners", current: 2676, renewal: 2978, detail: "2 vehicles · 2 drivers" },
-    ],
-    home: { roof: "Original 2008", trampoline: "No", dog: "No" },
-    driver: "Auto-Owners is up 16% on home and auto. Most of it is on the house: the roof is from 2008, and Auto-Owners now pays a roof claim at actual cash value.",
-  },
-  outreach: {
-    subject: "A heads up on your December 18 renewal",
-    email: email(
-      "Hi Elena,",
-      "Hope you and Laszlo are doing well. It's that time of year again, and I wanted to give you a heads up on where your renewal is coming in.",
-      "Your home and auto renew on December 18 at $5,668, which is about $780 more than last year. Most of that is on the house: the roof is from 2008, and Auto-Owners will now pay a roof claim at actual cash value rather than full replacement.",
-      "That's a change worth shopping. Before I can, there are a few details I need to confirm. It takes about five minutes:",
-      `Answer a few quick questions → ${link("varga")}`,
-      "Once I have your answers I'll get to work and come back to you well before the 18th.",
-      "Jenna",
-    ),
-    waitsOn: ["wed", "thu", "fri"],
-  },
-};
-
-/* ------------------------------------------------------------------ *
  * Sara Ortiz: this week's email, answered Wednesday night
  * ------------------------------------------------------------------ */
 
@@ -936,5 +882,5 @@ const ortiz: FirstCard = {
 };
 
 export const firstCards: Record<string, FirstCard> = Object.fromEntries(
-  [doyle, lowry, fischer, park, tanaka, varga, ortiz].map((f) => [f.card.id, f]),
+  [doyle, lowry, fischer, park, tanaka, ortiz].map((f) => [f.card.id, f]),
 );

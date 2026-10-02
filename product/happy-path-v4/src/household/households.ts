@@ -3,7 +3,7 @@ import { firstCards } from "@/household/firstCards";
 
 /**
  * Every household with a drawer: the twelve named ones (data.ts, which is
- * v2.5's word for word) and the seven first cards (firstCards.ts), which are
+ * v2.5's word for word) and the six first cards (firstCards.ts), which are
  * v4's own and so live apart from them.
  */
 export const cardFor = (id: string): Card | undefined => cards.find((c) => c.id === id) ?? firstCards[id]?.card;

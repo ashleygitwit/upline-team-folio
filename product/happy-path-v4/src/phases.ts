@@ -69,17 +69,19 @@ export const statusLabel: Record<PhaseStatus, string> = {
   awaitingResponse: "Awaiting Response",
 };
 
-/**
- * When a scheduled renewal email goes out, as its status says it: the walk's
- * Monday emails go tomorrow, Tuesday, and from Wednesday Scheduled holds next
- * week's, which go the coming Tuesday. Both at 9 AM, as the drawer's banner
- * says ("Renewal email scheduled for Tues 9AM.").
- */
-export const sendsAt = (day: Day) => (day === "mon" ? "Tomorrow, 9 AM" : "Tuesday, 9 AM");
-
 const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 const short = (d: Date) => `${months[d.getMonth()]} ${d.getDate()}`;
 const daysBefore = (d: Date, n: number) => new Date(d.getFullYear(), d.getMonth(), d.getDate() - n);
+
+/**
+ * The day the scheduled renewal emails go out, as their status says it,
+ * "10/13": the Tuesday after the Monday email. Only Monday has any, since
+ * they've all gone by Wednesday (board.ts). Until 2026-10-02 it said the
+ * time instead ("Tomorrow, 9 AM"); the drawer's banner still does ("Renewal
+ * email scheduled for Tues 9AM.").
+ */
+const tuesday = daysBefore(dayDate.mon, -1);
+export const sendsOn = `${tuesday.getMonth() + 1}/${tuesday.getDate()}`;
 
 /** The Friday before the walk's week. */
 const lastFriday = daysBefore(dayDate.mon, 3);

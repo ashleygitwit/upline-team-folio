@@ -113,7 +113,7 @@ export function List({
                   <TableCell className="py-3">{phase.label}</TableCell>
                   <TableCell className="py-3 pr-5">
                     {status ? (
-                      <PhaseStatusLine status={status} day={day} />
+                      <PhaseStatusLine status={status} />
                     ) : (
                       <span className="text-muted-foreground">Completed {completedOn(e, walk)}</span>
                     )}

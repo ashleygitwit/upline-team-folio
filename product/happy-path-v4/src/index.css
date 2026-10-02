@@ -283,6 +283,11 @@
   height: auto;
 }
 
+/* The demo's blinking dot (DemoCue.tsx). Not part of the product. */
+@keyframes demo-cue-blink {
+  50% { opacity: 0.15; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;

@@ -162,7 +162,7 @@ const done = (h: Invented, i: number) =>
   );
 
 function inventedFor(day: Day): Record<ColumnId, Entry[]> {
-  const { nextWeek, thisWeek: w1, awaiting: aw, shopping: sh, ready: rd, sent: sn, completed: cp } = pools;
+  const { thisWeek: w1, awaiting: aw, shopping: sh, ready: rd, sent: sn, completed: cp } = pools;
   const sentMon = sn.map((h, i) =>
     i < 2
       ? invented(
@@ -186,7 +186,9 @@ function inventedFor(day: Day): Record<ColumnId, Entry[]> {
     };
   }
 
-  // From Wednesday: Tuesday's emails are out and waiting, except two who
+  // From Wednesday nothing is Scheduled: Tuesday's emails are out, and next
+  // week's are scheduled next Monday, after the walk (they held Scheduled
+  // from Wednesday until 2026-10-02). Tuesday's are waiting, except two who
   // answered Tuesday night, as Leah did, and move with the Pruitts: shopped
   // Wednesday, back Thursday, sent Thursday afternoon. No one is shopped
   // under two weeks from renewal (the team's rule, from the strategy
@@ -210,7 +212,7 @@ function inventedFor(day: Day): Record<ColumnId, Entry[]> {
   const back = day === "wed" ? 0 : day === "thu" ? 3 : 6;
 
   return {
-    scheduled: nextWeek.map((h) => invented(h)),
+    scheduled: [],
     awaiting: [...unanswered, ...(day === "wed" ? answered : []), ...tuesday.slice(back), ...stillWaiting].map((h) =>
       invented(h),
     ),

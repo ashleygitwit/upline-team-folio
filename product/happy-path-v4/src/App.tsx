@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { DemoBar } from "@/components/DemoBar";
 import { MondayEmail } from "@/screens/MondayEmail";
@@ -7,7 +7,7 @@ import { DanaInbox } from "@/screens/DanaInbox";
 import { Questionnaire } from "@/screens/Questionnaire";
 import { DanaPage } from "@/screens/DanaPage";
 import { Interlude } from "@/screens/Interlude";
-import { initialWalk, screens, type ScreenId, type Walk } from "@/walk";
+import { cues, initialWalk, screens, type ScreenId, type Walk } from "@/walk";
 
 export function App() {
   const [index, setIndex] = useState(0);
@@ -28,6 +28,15 @@ export function App() {
   useEffect(() => {
     window.scrollTo({ top: 0 });
   }, [index]);
+
+  // The demo's blinking dot on a homepage goes for good once the walk moves
+  // on from it, whichever way (DemoCue.tsx).
+  const at = useRef(index);
+  useEffect(() => {
+    const left = cues[screens[at.current].id];
+    if (at.current !== index && left) update((w) => ({ cuesGone: [...new Set([...w.cuesGone, left])] }));
+    at.current = index;
+  }, [index, update]);
 
   // Arrow keys step through the walk, except while someone is typing, picking
   // a radio, or working inside a sheet or dialog.
@@ -53,17 +62,20 @@ export function App() {
         <main className="flex-1">
           {screen.text && <Interlude key={screen.id} title={screen.label} when={screen.where} text={screen.text} />}
           {screen.id === "monday-email" && <MondayEmail {...props} />}
-          {screen.id === "monday" && <Upline key="monday" day="mon" {...props} />}
+          {screen.id === "monday" && <Upline key="monday" day="mon" cue {...props} />}
           {screen.id === "review" && <Upline key="review" day="mon" household="pruitt" page="outreach" {...props} />}
           {screen.id === "dana-inbox" && <DanaInbox {...props} />}
           {screen.id === "questionnaire" && <Questionnaire {...props} />}
-          {screen.id === "wednesday" && <Upline key="wednesday" day="wed" {...props} />}
-          {screen.id === "thursday" && <Upline key="thursday" day="thu" {...props} />}
+          {screen.id === "wednesday" && <Upline key="wednesday" day="wed" cue {...props} />}
+          {screen.id === "wednesday-pruitt" && (
+            <Upline key="wednesday-pruitt" day="wed" household="pruitt" {...props} />
+          )}
+          {screen.id === "thursday" && <Upline key="thursday" day="thu" cue {...props} />}
           {screen.id === "thursday-results" && (
             <Upline key="thursday-results" day="thu" household="pruitt" page="results" {...props} />
           )}
           {screen.id === "dana-page" && <DanaPage {...props} />}
-          {screen.id === "friday" && <Upline key="friday" day="fri" {...props} />}
+          {screen.id === "friday" && <Upline key="friday" day="fri" cue {...props} />}
           {screen.id === "friday-closeout" && (
             <Upline key="friday-closeout" day="fri" household="pruitt" page="closing" {...props} />
           )}
