@@ -21,10 +21,14 @@ const verb = (n: number, one: string, many: string) => (n === 1 ? one : many);
 /**
  * The email's sections, the board's columns in reverse without Completed, and
  * the lists in each in the email's own order, each with the line under its
- * heading saying what it is. Shopping Renewal's In Progress comes last, under
- * Awaiting Response.
+ * heading saying what it is, and `all` when it shows every line instead of
+ * its first five. Shopping Renewal's In Progress comes last, under Awaiting
+ * Response.
  */
-const sections: { id: PhaseId; lists: { status: PhaseStatus; about: (n: number) => string }[] }[] = [
+const sections: {
+  id: PhaseId;
+  lists: { status: PhaseStatus; about: (n: number) => string; all?: boolean }[];
+}[] = [
   {
     id: "closing",
     lists: [
@@ -32,6 +36,7 @@ const sections: { id: PhaseId; lists: { status: PhaseStatus; about: (n: number) 
         status: "readyForReview",
         about: (n) =>
           `${count(n, "household", "households")} said yes to your recommendation and ${verb(n, "is", "are")} ready to bind.`,
+        all: true,
       },
       {
         status: "awaitingResponse",
@@ -47,11 +52,13 @@ const sections: { id: PhaseId; lists: { status: PhaseStatus; about: (n: number) 
         status: "readyForReview",
         about: (n) =>
           `Upline finished shopping ${count(n, "renewal", "renewals")}. Review the quotes and send your ${verb(n, "recommendation", "recommendations")}.`,
+        all: true,
       },
       {
         status: "awaitingResponse",
         about: (n) =>
           `${count(n, "household has", "households have")} your recommendation and ${verb(n, "hasn't", "haven't")} answered yet.`,
+        all: true,
       },
       {
         status: "inProgress",
@@ -89,15 +96,15 @@ const sections: { id: PhaseId; lists: { status: PhaseStatus; about: (n: number) 
  * Outreach, with the column's count, and inside each a list for each status
  * (`sections`), soonest renewal first as the board runs them. A list says
  * what it is under its heading, then shows its first five and, when there
- * are more, a View all on Upline link under it; Ready for Review shows them
- * all. Each line is a board line with the carrier's mark in front: the name,
+ * are more, a link under it to see them all ("View all Scheduled"); Ready
+ * for Review and Shopping Renewal's Awaiting Response show them all. Each line is a board line with the carrier's mark in front: the name,
  * when it renews (a countdown in red under two weeks out and the date after,
  * without a tooltip, since this is an email) and the change. Until 2026-10-01
  * the email had the homepage's sections from before the board, Action Needed
  * and Scheduled Emails, with every line in full. Until 2026-10-02 it had all
  * four columns in the board's order, Completed last, each status in the order
  * its menu has them, every list stopping at five, and no line under the
- * headings.
+ * headings, and a list's link said View all on Upline.
  */
 export function MondayEmail({ go }: WalkProps) {
   const day = "mon";
@@ -146,7 +153,7 @@ export function MondayEmail({ go }: WalkProps) {
                         title={statusLabel[l.status]}
                         about={l.about(lines.length)}
                         items={lines}
-                        all={l.status === "readyForReview"}
+                        all={l.all ?? false}
                         onViewAll={toUpline}
                       />
                     );
@@ -186,8 +193,8 @@ function Group({ title, count, children }: { title: string; count: number; child
  * the column's has it, in the mono face in gray (it was an eyebrow,
  * "SCHEDULED · 48", until 2026-10-01), a line in gray saying what the list
  * is, as Recent Activity sets a detail under its heading, then its lines:
- * every one when `all`, otherwise the first five and, past five, View all on
- * Upline.
+ * every one when `all`, otherwise the first five and, past five, a link to
+ * Upline that names the list ("View all In Progress").
  */
 function Lines({
   id,
@@ -221,13 +228,8 @@ function Lines({
         ))}
       </ul>
       {cut && (
-        <Button
-          variant="link"
-          className="mt-2 h-auto p-0 font-sans text-sm"
-          aria-describedby={heading}
-          onClick={onViewAll}
-        >
-          View all on Upline
+        <Button variant="link" className="mt-2 h-auto p-0 font-sans text-sm" onClick={onViewAll}>
+          View all {title}
         </Button>
       )}
     </section>
