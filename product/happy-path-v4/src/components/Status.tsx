@@ -5,7 +5,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import type { Day } from "@/data";
 import { RowTip } from "@/lib/rowTip";
 import { sendsAt, statusLabel, type PhaseStatus } from "@/phases";
-import { countdown, renewalDay, type Request } from "@/tasks";
+import { countdown, isShortOnTime, renewalDay, type Request } from "@/tasks";
 
 /**
  * A household's status in words, as a line with an icon, wherever it's said:
@@ -15,22 +15,15 @@ import { countdown, renewalDay, type Request } from "@/tasks";
  * them read as things to press. Now only an action gets a box.
  */
 
-/** The countdown's color beside a red or yellow accent. */
-const tones = {
-  urgent: "text-destructive-strong",
-  soon: "text-foreground",
-} as const;
-
 /**
- * How long until a household renews: a clock and the count, "8 days"
- * (`short`) on the board's cards and lines, where the clock says what it's
- * counting, or "Renews in 8 days" in the Monday email. It takes the color of
- * the accent beside it: red 700, the red that carries text on white, for
- * red; the text color for yellow, since no yellow carries text on white and
- * the bar beside it says yellow; gray with no accent. The date is on hover.
- * A tooltip has no way in by touch or keyboard, so the drawer's header says
- * the date too, and the Monday email, being an email, goes without
- * (`tip={false}`).
+ * When a household renews, by a clock, on every board card and line and in
+ * the Monday email: under two weeks out the count, "8 days", in red 700, the
+ * red that carries text on white, and further out the date, "Oct 26", in
+ * gray (countdown in tasks.ts). Until 2026-10-01 only a renewal inside its
+ * column's deadlines (board.ts) said it, red when urgent and in the text
+ * color beside a yellow bar when soon. The full date is on hover. A tooltip
+ * has no way in by touch or keyboard, so the drawer's header says the date
+ * too, and the Monday email, being an email, goes without (`tip={false}`).
  *
  * A board line or card is one big button underneath (OpenOverlay in
  * Board.tsx), so the count sits over it to be hovered, and `onOpen` makes a
@@ -39,16 +32,12 @@ const tones = {
 export function Countdown({
   renews,
   day,
-  tone,
-  short = false,
   tip = true,
   onOpen,
   className,
 }: {
   renews: string;
   day: Day;
-  tone?: "urgent" | "soon";
-  short?: boolean;
   tip?: boolean;
   onOpen?: () => void;
   className?: string;
@@ -61,12 +50,12 @@ export function Countdown({
       onPointerLeave={tip ? () => setOver(false) : undefined}
       className={cn(
         "relative z-10 inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap",
-        tone ? tones[tone] : "text-muted-foreground",
+        isShortOnTime(renews, day) ? "text-destructive-strong" : "text-muted-foreground",
         className,
       )}
     >
       <Clock aria-hidden className="size-3.5 shrink-0" />
-      {countdown(renews, day, short)}
+      {countdown(renews, day)}
     </span>
   );
   if (!tip) return count;
@@ -127,7 +116,7 @@ const requestIcons: Record<Request["id"], LucideIcon> = { life: HandHeart, info:
  * What a household asked for on top of the renewal (requestsFor in
  * tasks.ts), a line each: Life quote requested by a hand holding a heart,
  * and Info updated by the pencil that marks what changed in the drawer's
- * Details. Either is what a blue accent means. Nothing when there's nothing,
+ * Details. Nothing when there's nothing,
  * so the line above keeps its place.
  */
 export function Requests({ requests, className }: { requests: Request[]; className?: string }) {

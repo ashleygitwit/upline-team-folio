@@ -57,18 +57,30 @@ export function renewalDate(renews: string) {
 }
 
 /**
- * How long until a renewal like "Oct 20" on the walk's day, as the board and
- * the Monday email count it down: "8 days" on the board's cards and lines,
- * where the clock beside it says what it's counting, and "Renews in 8 days"
- * in the email. The date is on hover (renewalDay); until 2026-10-01 a card
- * said the date until it was flagged and "Renews in 8 days" after.
+ * Under two weeks from the renewal, a renewal is short on time: too late to
+ * shop (the team's rule, from the strategy sprint), so it counts down, in
+ * red (Countdown in components/Status.tsx).
  */
-export function countdown(renews: string, day: Day, short = false) {
+export const shortOnTime = 14;
+
+/** Whether a renewal is under two weeks out, or past, on the walk's day. */
+export const isShortOnTime = (renews: string, day: Day) =>
+  daysBetween(dayDate[day], renewalDate(renews)) < shortOnTime;
+
+/**
+ * When a renewal like "Oct 20" is, on the walk's day, as the board and the
+ * Monday email say it beside a clock: under two weeks out it counts down,
+ * "8 days" (or Today, or Tomorrow), and further out it's the date, "Oct 26".
+ * The full date is on hover (renewalDay). Until 2026-10-01 only a renewal
+ * inside its column's deadlines said it, as a countdown, and the email said
+ * "Renews in 8 days".
+ */
+export function countdown(renews: string, day: Day) {
   const days = daysBetween(dayDate[day], renewalDate(renews));
   if (days < 0) return `Renewed ${renews}`;
-  if (days === 0) return short ? "Today" : "Renews today";
-  if (days === 1) return short ? "Tomorrow" : "Renews tomorrow";
-  return short ? `${days} days` : `Renews in ${days} days`;
+  if (days === 0) return "Today";
+  if (days === 1) return "Tomorrow";
+  return days < shortOnTime ? `${days} days` : renews;
 }
 
 /** The countdown's date in full, for its tooltip: "Renews Tuesday, October 20". */
@@ -123,7 +135,7 @@ export const isSnoozed = (id: string, day: Day, walk: Walk) => {
 /**
  * Something a household asked for on top of the renewal, as a gray line
  * under its name on the board and in its drawer's header (Requests in
- * components/Status.tsx). Either one is what a blue accent means (board.ts).
+ * components/Status.tsx).
  * They were gray chips until 2026-10-01, with Snoozed, Ready to close and
  * the renewal beside them, all the size and fill of a button.
  */
@@ -157,13 +169,6 @@ export function lifeRequested(id: string, day: Day, walk: Walk) {
   if (id !== pruitt.id || day === "mon") return false;
   return walk.danaAnswered && walk.danaLife && (walk.lifeQuote[pruitt.id] ?? true) && !walk.skipped.includes(id);
 }
-
-/**
- * Whether the household has asked for something on top of the renewal: a
- * life quote, or a change on file. It's what a blue accent means (board.ts).
- */
-export const changeRequested = (id: string, day: Day, walk: Walk) =>
-  lifeRequested(id, day, walk) || changedFields(id, day, walk).length > 0;
 
 /** What a household has asked for on the walk's day, in the order the lines are drawn. */
 export function requestsFor(id: string, day: Day, walk: Walk): Request[] {

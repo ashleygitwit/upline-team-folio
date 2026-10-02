@@ -9,7 +9,7 @@ const count = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : 
  * far, counted off the board. Monday counts what's waiting on Jenna and
  * what's going out; Wednesday has nothing to send or bind; Thursday and
  * Friday follow the Pruitts. Renewals running short on time are the board's
- * to show, with their accents, so the line doesn't count them. The homepage
+ * to show, by their countdowns, so the line doesn't count them. The homepage
  * says it under its greeting (Home.tsx), and the Monday email opens on
  * Monday's (MondayEmail.tsx).
  */

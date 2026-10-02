@@ -12,7 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { accentFor, bigIncrease, pctLabel, setName, timed, type Accent, type ColumnId, type Entry } from "@/board";
+import { bigIncrease, pctLabel, setName, type ColumnId, type Entry } from "@/board";
 import { earlier, money, options, pruitt, thisWeek, type Day } from "@/data";
 import type { Phase } from "@/household/activity";
 import { cards, fileFor } from "@/household/data";
@@ -218,32 +218,11 @@ function Column({
           <ul className={mini ? "-mx-2.5 divide-y border-y" : "flex flex-col gap-2 *:shrink-0"}>
             {sorted.map(({ e, step, status }) =>
               mini ? (
-                <ListRow
-                  key={e.id}
-                  e={e}
-                  col={step}
-                  status={status}
-                  accent={accentFor(e, step, day, walk)}
-                  {...props}
-                />
+                <ListRow key={e.id} e={e} col={step} status={status} {...props} />
               ) : e.invented ? (
-                <InventedCard
-                  key={e.id}
-                  e={e}
-                  col={step}
-                  status={status!}
-                  accent={accentFor(e, step, day, walk)}
-                  day={day}
-                />
+                <InventedCard key={e.id} e={e} col={step} status={status!} day={day} />
               ) : (
-                <NamedCard
-                  key={e.id}
-                  e={e}
-                  col={step}
-                  status={status!}
-                  accent={accentFor(e, step, day, walk)}
-                  {...props}
-                />
+                <NamedCard key={e.id} e={e} col={step} status={status!} {...props} />
               ),
             )}
           </ul>
@@ -426,15 +405,15 @@ function NotBuilt({ className, children }: { className: string; children: React.
 /**
  * A household in Initial Outreach or Completed, a row in the column's list
  * (Column): the carrier's mark, the name, set as every card's is, and the
- * change in percent, at 14px. Under the name, its status (Initial Outreach's), with the countdown
- * at the right of the same line once the renewal is running short ("8 days",
- * by a clock, red 700 when it's urgent, with the date on hover); until
- * 2026-10-01 the countdown sat between the name and the change. A Completed
- * card has the day
- * it was completed where the change would be, since the change and the
- * countdown are done with once a renewal is closed. Under the status, a
- * named household's requests and whether it's snoozed. A long name wraps rather than being cut short, so nothing
- * depends on a tooltip. The whole card opens the household's drawer, where
+ * change in percent, at 14px. Under the name, its status (Initial
+ * Outreach's), with when it renews at the right of the same line (by a
+ * clock, "8 days" in red under two weeks out and "Oct 26" after, with the
+ * full date on hover); until 2026-10-01 a countdown sat between the name and
+ * the change, and only once the renewal was running short. A Completed row
+ * has the day it was completed where the change would be, and no status or
+ * renewal, since those are done with once a renewal is closed. Under the
+ * status, a named household's requests and whether it's snoozed. A long
+ * name wraps rather than being cut short, so nothing depends on a tooltip. The whole card opens the household's drawer, where
  * the renewal email is a click away, and the row turns white under the
  * pointer to say so; an invented household's doesn't open, and says so.
  * (These were one-line lists in a white box, the mini columns, until
@@ -444,9 +423,8 @@ function ListRow({
   e,
   col,
   status,
-  accent,
   ...props
-}: BoardProps & { e: Entry; col: ColumnId; status?: PhaseStatus; accent: Accent | null }) {
+}: BoardProps & { e: Entry; col: ColumnId; status?: PhaseStatus }) {
   const { day, walk, household, onHousehold } = props;
   const selected = household === e.id;
   const open = () => onHousehold(e.id);
@@ -464,11 +442,7 @@ function ListRow({
         <StatusRow
           className={cn("mt-1", underName)}
           status={<PhaseStatusLine status={status} day={day} />}
-          when={
-            timed(accent) && (
-              <Countdown renews={e.renews} day={day} tone={accent} short onOpen={e.invented ? undefined : open} />
-            )
-          }
+          when={<Countdown renews={e.renews} day={day} onOpen={e.invented ? undefined : open} />}
         />
       )}
       {!e.invented && <Requests requests={requestsFor(e.id, day, walk)} className={cn("mt-1", underName)} />}
@@ -502,11 +476,12 @@ function ListRow({
  * sentence, what the shop found or who it's waiting on, all of it starting
  * under the name rather than the mark. Then the action if there is one, a
  * button the card's width inside its padding. At the foot, under a rule
- * that runs edge to edge of the card, its status, with the countdown at the
- * right of the same line once the renewal is running short ("8 days", by a
- * clock, red 700 when it's urgent). Everything but the name is 14px, the
- * kit's row size. Until 2026-10-01 the countdown and the change sat beside
- * the name, and the price and the carrier were off the card (they came off
+ * that runs edge to edge of the card, its status, with when it renews at
+ * the right of the same line (by a clock, "8 days" in red under two weeks
+ * out and "Oct 26" after). Everything but the name is 14px, the kit's row
+ * size. Until 2026-10-01 a countdown and the change sat beside the name, the
+ * countdown only once the renewal was running short, and the price and the
+ * carrier were off the card (they came off
  * that morning, with what's renewing; the drawer's header has all three).
  * `foot` sits above the card's drawer button, for anything that's a button of
  * its own.
@@ -529,7 +504,7 @@ function Card({
   was: number;
   now: number;
   pct: number;
-  /** The countdown, at the right of the status. */
+  /** When it renews, at the right of the status. */
   when?: React.ReactNode;
   status?: React.ReactNode;
   detail?: React.ReactNode;
@@ -561,8 +536,8 @@ const cardFrame = (selected = false) =>
   cn("relative block border bg-card text-card-foreground", selected && "border-primary");
 
 /**
- * A card for an invented household: its countdown when it's running short,
- * what its column says about it, the button a named household's card would
+ * A card for an invented household: when it renews, what its column says
+ * about it, the button a named household's card would
  * carry, which goes nowhere (the card's tooltip says why), its status, and
  * no drawer behind it.
  */
@@ -570,13 +545,11 @@ function InventedCard({
   e,
   col,
   status,
-  accent,
   day,
 }: {
   e: Entry;
   col: ColumnId;
   status: PhaseStatus;
-  accent: Accent | null;
   day: Day;
 }) {
   const foot = col === "ready" ? <ReviewResults /> : col === "sent" && e.approved && <CloseOut />;
@@ -588,7 +561,7 @@ function InventedCard({
         was={e.was}
         now={e.now}
         pct={e.pct}
-        when={timed(accent) && <Countdown renews={e.renews} day={day} tone={accent} short />}
+        when={<Countdown renews={e.renews} day={day} />}
         detail={e.invented!.detail}
         foot={foot}
         phase={<PhaseStatusLine status={status} day={day} />}
@@ -628,15 +601,15 @@ const firstOf = (name: string) => name.split(" ")[0];
  * what the board gives it (board.ts), with the same buttons.
  *
  * A task snoozed from the drawer's banner sinks to the foot of its column,
- * loses its countdown and its action, and says so under its name, with Undo.
+ * loses its action, and says so under its name, with Undo. It keeps when it
+ * renews, as every card does (it lost its countdown too until 2026-10-01).
  */
 function NamedCard({
   e,
   col,
   status: phase,
-  accent,
   ...props
-}: BoardProps & { e: Entry; col: ColumnId; status: PhaseStatus; accent: Accent | null }) {
+}: BoardProps & { e: Entry; col: ColumnId; status: PhaseStatus }) {
   const { day, walk, update, household, onHousehold } = props;
   const h = thisWeek.find((x) => x.id === e.id);
   const ew = earlier.find((x) => x.id === e.id);
@@ -693,9 +666,7 @@ function NamedCard({
       </Button>
     </p>
   );
-  const countdown = !snoozed && timed(accent) && (
-    <Countdown renews={e.renews} day={day} tone={accent} short onOpen={profile} />
-  );
+  const countdown = <Countdown renews={e.renews} day={day} onOpen={profile} />;
   const requests = requestsFor(e.id, day, walk);
   const status = (snoozeLine || requests.length > 0) && (
     <>

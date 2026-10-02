@@ -7,7 +7,7 @@ import { BandGrain } from "@/components/BandGrain";
 import { CarrierMark } from "@/components/CarrierMark";
 import { Stage } from "@/components/Stage";
 import { Countdown } from "@/components/Status";
-import { accentFor, bigIncrease, pctLabel, setName, timed } from "@/board";
+import { bigIncrease, pctLabel, setName } from "@/board";
 import { agency } from "@/data";
 import { lineFor } from "@/dayLine";
 import { completedOn, phases, phasesFor, statusLabel, type Placed } from "@/phases";
@@ -29,9 +29,9 @@ const shown = 5;
  * a list for each status in the order its menu has them, soonest renewal
  * first as the board runs them. A list shows its first five and, when there
  * are more, a View all on Upline link under it. Each line is a board line
- * with the carrier's mark in front: the name, the countdown when it's running
- * short (in the accent's color, without a tooltip, since this is an email),
- * and the change, or the day it was completed. Until 2026-10-01 the email had
+ * with the carrier's mark in front: the name, when it renews (a countdown in
+ * red under two weeks out and the date after, without a tooltip, since this
+ * is an email) and the change, or for Completed the day it was completed. Until 2026-10-01 the email had
  * the homepage's sections from before the board, Action Needed and Scheduled
  * Emails, with every line in full.
  */
@@ -168,12 +168,10 @@ function Lines({
 }
 
 /**
- * A household's line: the carrier's mark and the name, then what the board's
- * line has on the right, the countdown when it's running short and the change
- * in percent, or for Completed the day it was completed.
+ * A household's line: the carrier's mark and the name, then when it renews
+ * and the change in percent, or for Completed the day it was completed.
  */
-function Line({ e, step, completed }: Placed & { completed: boolean }) {
-  const accent = accentFor(e, step, "mon", initialWalk);
+function Line({ e, completed }: Placed & { completed: boolean }) {
   return (
     <li className="flex items-center justify-between gap-4 py-2">
       <span className="flex min-w-0 items-start gap-2">
@@ -182,7 +180,7 @@ function Line({ e, step, completed }: Placed & { completed: boolean }) {
         <span className="min-w-0">{setName(e.name)}</span>
       </span>
       <span className="flex shrink-0 items-center gap-3">
-        {timed(accent) && <Countdown renews={e.renews} day="mon" tone={accent} short tip={false} />}
+        {!completed && <Countdown renews={e.renews} day="mon" tip={false} />}
         {completed ? (
           <span className="font-mono text-muted-foreground">
             <span className="sr-only">Completed </span>
