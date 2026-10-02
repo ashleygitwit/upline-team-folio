@@ -1,5 +1,5 @@
 import { boardFor, columns as steps, daysUntil, type ColumnId, type Entry } from "@/board";
-import { dayDate, earlier, pruitt, thisWeek, type Day } from "@/data";
+import { dayDate, earlier, optionById, pruitt, thisWeek, type Day } from "@/data";
 import { pools } from "@/pipeline";
 import { renewalDate } from "@/tasks";
 import type { Walk } from "@/walk";
@@ -106,6 +106,27 @@ export function completedOn(e: Entry, walk: Walk): string {
   if (sent >= 0) return short(sent < 2 ? dayDate.mon : daysBefore(dayDate.wed, 1));
   const before = daysBefore(renewalDate(e.renews), 13);
   return short(before < lastFriday ? before : lastFriday);
+}
+
+/** Every invented household, by id, for a first card (firstCards.ts), which no longer carries its own. */
+const invented = new Map(Object.values(pools).flatMap((pool) => pool.map((h) => [h.id, h] as const)));
+
+/**
+ * What a completed renewal ended up costing, as its Completed row says it
+ * under the name: the new carrier's price when it moved, and the renewal's
+ * when it stayed, renewed as it was without an answer, or was skipped. The
+ * Pruitts' is Jenna's pick in the walk; an earlier week's that moved has its
+ * price on file (`bound` in data.ts).
+ */
+export function endCost(e: Entry, walk: Walk): number {
+  if (walk.skipped.includes(e.id)) return e.now;
+  if (e.id === pruitt.id) return optionById(walk.pick).price;
+  const bound = earlier.find((x) => x.id === e.id)?.bound;
+  if (bound) return bound;
+  const h = e.invented?.h ?? invented.get(e.id);
+  if (!h) return e.now;
+  const detail = e.invented?.detail ?? e.detail ?? "";
+  return detail.startsWith("Bound with") || detail.startsWith("Staying") ? h.shop.price : e.now;
 }
 
 /** A household on the board: its entry, its step (board.ts), and its status. */

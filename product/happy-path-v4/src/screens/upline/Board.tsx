@@ -18,7 +18,7 @@ import type { Phase } from "@/household/activity";
 import { cards, fileFor } from "@/household/data";
 import { firstCards } from "@/household/firstCards";
 import { notInPrototype, RowTip } from "@/lib/rowTip";
-import { completedOn, phases, statusLabel, type PhaseId, type PhaseStatus, type Placed } from "@/phases";
+import { completedOn, endCost, phases, statusLabel, type PhaseId, type PhaseStatus, type Placed } from "@/phases";
 import { shopSentence } from "@/pipeline";
 import { statusFor } from "@/status";
 import { isSnoozed, requestsFor, snoozeLabel } from "@/tasks";
@@ -411,16 +411,20 @@ function NotBuilt({ className, children }: { className: string; children: React.
 
 /**
  * A household in Initial Outreach or Completed, a row in the column's list
- * (Column): the carrier's mark, the name, set as every card's is, and the
- * change in percent, at 14px. Under the name, its status (Initial
- * Outreach's), with when it renews at the right of the same line (by a
- * clock, "8 days" in red under two weeks out and "Oct 26" after, with the
- * full date on hover); until 2026-10-01 a countdown sat between the name and
- * the change, and only once the renewal was running short. A Completed row
- * has the day it was completed where the change would be, and no status or
- * renewal, since those are done with once a renewal is closed. Under the
- * status, a named household's requests and whether it's snoozed. A long
- * name wraps rather than being cut short, so nothing depends on a tooltip. The whole card opens the household's drawer, where
+ * (Column): the carrier's mark and the name, set as every card's is, and
+ * under the name what's renewing ("Home + Auto"), as on a card. An Initial
+ * Outreach row then has last year's price to this year's and the change in
+ * percent, as a card does, and its status, with when it renews at the right
+ * of the same line (by a clock, "8 days" in red under two weeks out and
+ * "Oct 26" after, with the full date on hover), then a named household's
+ * requests and whether it's snoozed. A Completed row has what the policy
+ * ended up costing (endCost in phases.ts) under what's renewing, and the day
+ * it was completed beside the name, and no status or renewal, since those
+ * are done with once a renewal is closed. Until 2026-10-01 the change sat
+ * beside the name, with a countdown between them once the renewal was
+ * running short, and neither row said what's renewing or what it costs. A
+ * long name wraps rather than being cut short, so nothing depends on a
+ * tooltip. The whole card opens the household's drawer, where
  * the renewal email is a click away, and the row turns white under the
  * pointer to say so; an invented household's doesn't open, and says so.
  * (These were one-line lists in a white box, the mini columns, until
@@ -443,8 +447,14 @@ function ListRow({
       <div className="flex items-baseline gap-2">
         <NameMark carrier={e.carrier} />
         <span className={nameStyle}>{setName(e.name)}</span>
-        {col === "completed" ? <Completed on={completedOn(e, walk)} /> : <Pct pct={e.pct} />}
+        {col === "completed" && <Completed on={completedOn(e, walk)} />}
       </div>
+      <p className={cn("mt-1 text-muted-foreground", underName)}>{e.lines}</p>
+      {col === "completed" ? (
+        <p className={cn("text-muted-foreground", underName)}>{money(endCost(e, walk))}</p>
+      ) : (
+        <Price was={e.was} now={e.now} pct={e.pct} className={underName} />
+      )}
       {status && (
         <StatusRow
           className={cn("mt-1", underName)}

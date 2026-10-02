@@ -114,17 +114,18 @@ const requestIcons: Record<Request["id"], LucideIcon> = { life: HandHeart, info:
 
 /**
  * What a household asked for on top of the renewal (requestsFor in
- * tasks.ts), a line each: Life quote requested by a hand holding a heart,
- * and Info updated by the pencil that marks what changed in the drawer's
- * Details. Nothing when there's nothing,
- * so the line above keeps its place.
+ * tasks.ts), a line each: Life quote requested by a hand holding a heart, in
+ * blue, since it's a sale to make on top of the renewal (it was gray for
+ * part of 2026-10-01), and Info updated by the pencil that marks what
+ * changed in the drawer's Details, in gray. Nothing when there's nothing, so
+ * the line above keeps its place.
  */
 export function Requests({ requests, className }: { requests: Request[]; className?: string }) {
   if (requests.length === 0) return null;
   return (
     <span className={cn("flex flex-col gap-1", className)}>
       {requests.map((r) => (
-        <StatusLine key={r.id} icon={requestIcons[r.id]}>
+        <StatusLine key={r.id} icon={requestIcons[r.id]} className={cn(r.id === "life" && "text-primary")}>
           {r.label}
         </StatusLine>
       ))}
