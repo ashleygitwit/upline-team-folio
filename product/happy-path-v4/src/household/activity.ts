@@ -317,7 +317,7 @@ function callahanLater(h: Household, day: Day, walk: Walk): Activity {
         tone: "blue",
         text: pick.current
           ? "Leah and Tom are staying with Erie. Close it out."
-          : `Leah and Tom approved ${pick.carrier}. Bind it before Nov 15.`,
+          : `Leah and Tom approved ${pick.carrier}. Bind it before Nov 3.`,
         opens: { phase: "closing", action: "Review" },
       },
       upNext: [renew],
@@ -326,16 +326,16 @@ function callahanLater(h: Household, day: Day, walk: Walk): Activity {
           ...approved,
           big: true,
           detail: pick.current
-            ? "There's nothing to bind. Erie renews on its own on November 15, so close it out."
-            : `Bind it in the ${pick.carrier} portal before November 15, then close it out.`,
+            ? "There's nothing to bind. Erie renews on its own on November 3, so close it out."
+            : `Bind it in the ${pick.carrier} portal before November 3, then close it out.`,
           opens: { phase: "closing", action: "Close out" },
         },
         ...decided,
       ],
       closing: {
         sub: pick.current
-          ? "Leah and Tom are staying with Erie. There's nothing to bind: Erie renews on its own on November 15."
-          : `Leah and Tom approved ${pick.carrier} Thursday at 6:20 PM. Bind it in the ${pick.carrier} portal before November 15.`,
+          ? "Leah and Tom are staying with Erie. There's nothing to bind: Erie renews on its own on November 3."
+          : `Leah and Tom approved ${pick.carrier} Thursday at 6:20 PM. Bind it in the ${pick.carrier} portal before November 3.`,
         owes: pick.current ? [] : [`Bind ${pick.carrier} in the portal`],
       },
     };
@@ -589,7 +589,7 @@ const earlierWeeks: Record<string, (day: Day, walk: Walk) => Activity> = {
     shoppingEarlier(
       "Neha",
       day,
-      "Oct 28",
+      "Nov 19",
       ["Auto-Owners", "Erie", "Grange"],
       { when: "Mon 7:15 AM", label: "Neha finished the questionnaire" },
       "Oct 6",
@@ -599,7 +599,7 @@ const earlierWeeks: Record<string, (day: Day, walk: Walk) => Activity> = {
     shoppingEarlier(
       "Marcus",
       day,
-      "Oct 30",
+      "Nov 21",
       ["Erie", "Auto-Owners", "Grange"],
       { when: "Oct 11", label: "Marcus finished the questionnaire", detail: "One VIN is still missing." },
       "Oct 6",
@@ -619,7 +619,7 @@ const earlierWeeks: Record<string, (day: Day, walk: Walk) => Activity> = {
       (sent) => ({
         stage: stage.sent,
         banner: { tone: "gray", text: "Recommendation sent Monday. Waiting on Sofia.", opens: resultsView },
-        upNext: [renewal("Oct 22")],
+        upNext: [renewal("Nov 13")],
         past: sent,
       }),
     ),
@@ -667,9 +667,9 @@ const earlierWeeks: Record<string, (day: Day, walk: Walk) => Activity> = {
       ],
       { when: "Oct 9", label: "Diane approved Auto-Owners" },
       {
-        banner: "Diane approved Auto-Owners. Bind it before Oct 18.",
-        detail: "Bind it in the portal before October 18, then close it out.",
-        sub: "Diane approved Auto-Owners on October 9. Bind it in the portal before October 18.",
+        banner: "Diane approved Auto-Owners. Bind it before Nov 9.",
+        detail: "Bind it in the portal before November 9, then close it out.",
+        sub: "Diane approved Auto-Owners on October 9. Bind it in the portal before November 9.",
         owes: ["Bind Auto-Owners in the portal"],
         done: "Bound with Auto-Owners.",
       },
@@ -690,9 +690,9 @@ const earlierWeeks: Record<string, (day: Day, walk: Walk) => Activity> = {
       ],
       { when: "Oct 8", label: "Rhea is staying with Westfield" },
       {
-        banner: "Rhea is staying with Westfield. Bind it before Oct 16.",
-        detail: "Bind the renewal and confirm the mortgagee clause before October 16, then close it out.",
-        sub: "Rhea is staying with Westfield. Bind the renewal and confirm the mortgagee clause before October 16.",
+        banner: "Rhea is staying with Westfield. Bind it before Nov 7.",
+        detail: "Bind the renewal and confirm the mortgagee clause before November 7, then close it out.",
+        sub: "Rhea is staying with Westfield. Bind the renewal and confirm the mortgagee clause before November 7.",
         owes: ["Bind Westfield", "Confirm mortgagee clause"],
         done: "Staying with Westfield.",
       },
@@ -767,7 +767,7 @@ const firstCardWeeks: Record<string, (day: Day, walk: Walk) => Activity> = {
     return {
       stage: stage.reached,
       banner: n.banner,
-      upNext: [...n.upNext, renewal("Oct 20")],
+      upNext: [...n.upNext, renewal("Nov 11")],
       past: [
         ...n.past,
         { when: "Oct 7", label: "Cole opened the renewal email", detail: "No questionnaire yet." },
@@ -792,7 +792,7 @@ const firstCardWeeks: Record<string, (day: Day, walk: Walk) => Activity> = {
         stage: columnTitle("shopping"),
         banner: beingShopped("Tuesday"),
         shop: shop(carriers, "Tuesday"),
-        upNext: [dueBack("Tue"), renewal("Oct 26")],
+        upNext: [dueBack("Tue"), renewal("Nov 17")],
         past: [shopping("Mon 8:30 AM", carriers, true), ...start],
         outreachSent,
       };
@@ -810,7 +810,7 @@ const firstCardWeeks: Record<string, (day: Day, walk: Walk) => Activity> = {
     return {
       stage: stage.sent,
       banner: { tone: "gray", text: "Recommendation sent Tuesday. Waiting on Troy.", opens: resultsView },
-      upNext: [renewal("Oct 26")],
+      upNext: [renewal("Nov 17")],
       past: day === "wed" ? sent : [{ when: "Wed 8:05 PM", label: "Troy opened your recommendation", detail: "No answer yet." }, ...sent],
       outreachSent,
       recSent: "Sent to Troy Tuesday.",
@@ -840,7 +840,7 @@ const firstCardWeeks: Record<string, (day: Day, walk: Walk) => Activity> = {
           text: "Hank's Renewal Shopping Results have been updated.",
           opens: { phase: "results", action: "Review" },
         },
-        upNext: [renewal("Oct 22")],
+        upNext: [renewal("Nov 13")],
         past: [{ ...back, big: true, opens: { phase: "results", action: "View results" } }, ...start],
         outreachSent,
       };
@@ -855,7 +855,7 @@ const firstCardWeeks: Record<string, (day: Day, walk: Walk) => Activity> = {
       return {
         stage: stage.sent,
         banner: { tone: "gray", text: "Recommendation sent to Hank.", opens: resultsView },
-        upNext: [renewal("Oct 22")],
+        upNext: [renewal("Nov 13")],
         past: sent,
         outreachSent,
         recSent,
@@ -864,7 +864,7 @@ const firstCardWeeks: Record<string, (day: Day, walk: Walk) => Activity> = {
     return {
       stage: stage.sent,
       banner: { tone: "gray", text: "Recommendation sent Monday. Waiting on Hank.", opens: resultsView },
-      upNext: [renewal("Oct 22")],
+      upNext: [renewal("Nov 13")],
       past: day === "wed" ? sent : [{ when: "Wed 6:40 PM", label: "Hank opened your recommendation", detail: "No answer yet." }, ...sent],
       outreachSent,
       recSent,
@@ -892,19 +892,19 @@ const firstCardWeeks: Record<string, (day: Day, walk: Walk) => Activity> = {
       return {
         ...base,
         stage: columnTitle("binding"),
-        banner: { tone: "blue", text: "Lena approved Grange. Bind it before Oct 16.", opens: { phase: "closing", action: "Review" } },
-        upNext: [renewal("Oct 16")],
+        banner: { tone: "blue", text: "Lena approved Grange. Bind it before Nov 7.", opens: { phase: "closing", action: "Review" } },
+        upNext: [renewal("Nov 7")],
         past: [
           {
             ...approved,
-            detail: "Bind it in the Grange portal before October 16, then close it out.",
+            detail: "Bind it in the Grange portal before November 7, then close it out.",
             big: true,
             opens: { phase: "closing", action: "Close out" },
           },
           ...start,
         ],
         closing: {
-          sub: "Lena approved Grange on October 8. Bind it in the Grange portal before October 16, then send Erie the cancellation.",
+          sub: "Lena approved Grange on October 8. Bind it in the Grange portal before November 7, then send Erie the cancellation.",
           owes: ["Bind Grange in the portal", "Send Erie the cancellation"],
         },
       };
@@ -915,9 +915,8 @@ const firstCardWeeks: Record<string, (day: Day, walk: Walk) => Activity> = {
       ...base,
       stage: stage.closed,
       banner: null,
-      upNext: day === "fri" ? [] : [{ when: "Oct 16", label: "Grange policy starts", detail: "Erie's ends the same day." }],
+      upNext: [{ when: "Nov 7", label: "Grange policy starts", detail: "Erie's ends the same day." }],
       past: [
-        ...(day === "fri" ? [{ when: "Oct 16", label: "Grange policy started" }] : []),
         { when: inWalk ? "Mon" : "Mon 4:00 PM", label: "You closed it out", detail: note || done, opens: closingView },
         approved,
         ...start,
@@ -926,8 +925,8 @@ const firstCardWeeks: Record<string, (day: Day, walk: Walk) => Activity> = {
     };
   },
 
-  /** Grace Tanaka: bound before the walk, with Erie starting Thursday. */
-  "inv-173": (day) => {
+  /** Grace Tanaka: bound before the walk. Erie starts on her renewal, after the walk's week. */
+  "inv-173": () => {
     const done = "Bound Erie in the portal. Ohio Mutual cancellation sent.";
     const history: Item[] = [
       { when: "Oct 2", label: "You closed it out", detail: done, opens: closingView },
@@ -943,12 +942,11 @@ const firstCardWeeks: Record<string, (day: Day, walk: Walk) => Activity> = {
       { when: "Sep 21", label: "Renewal email sent", opens: outreachView },
       { when: "Sep 18", label: "Ohio Mutual's renewal came in 4% higher", detail: "Under 10%, so the email offered a shop." },
     ];
-    const started = at(day) >= at("thu");
     return {
       stage: stage.closed,
       banner: null,
-      upNext: started ? [] : [{ when: "Oct 15", label: "Erie policy starts", detail: "Ohio Mutual's ends the same day." }],
-      past: started ? [{ when: "Oct 15", label: "Erie policy started" }, ...history] : history,
+      upNext: [{ when: "Nov 6", label: "Erie policy starts", detail: "Ohio Mutual's ends the same day." }],
+      past: history,
       outreachSent: "Sent September 21.",
       recSent: "Sent to Grace and Ken September 29.",
       closed: { when: "October 2", note: done },
@@ -958,7 +956,7 @@ const firstCardWeeks: Record<string, (day: Day, walk: Walk) => Activity> = {
   /** Elena Varga: next week's email, drafted Wednesday, waiting until Tuesday. */
   "inv-10": (day, walk) =>
     waitingEmail("inv-10", "Elena", day, walk, {
-      renews: "Nov 26",
+      renews: "Dec 18",
       past: [
         { when: "Wed 7:00 AM", label: "Renewal email drafted in your voice" },
         {
@@ -978,7 +976,7 @@ const firstCardWeeks: Record<string, (day: Day, walk: Walk) => Activity> = {
       detail: "Under 10%, so the email offers a shop rather than pushing one.",
     };
     if (day === "mon" || walk.skipped.includes("inv-82")) {
-      return waitingEmail("inv-82", "Sara", day, walk, { renews: "Nov 4", past: [drafted, came] });
+      return waitingEmail("inv-82", "Sara", day, walk, { renews: "Nov 26", past: [drafted, came] });
     }
     const early = walk.approved.includes("inv-82");
     const outreachSent = early ? "Sent Monday." : "Sent Tuesday at 9:00 AM.";
@@ -988,7 +986,7 @@ const firstCardWeeks: Record<string, (day: Day, walk: Walk) => Activity> = {
       drafted,
       came,
     ];
-    if (day === "wed") return { stage: stage.reached, banner: null, upNext: [renewal("Nov 4")], past: sent, outreachSent };
+    if (day === "wed") return { stage: stage.reached, banner: null, upNext: [renewal("Nov 26")], past: sent, outreachSent };
     const carriers = ["Erie", "Nationwide", "Ohio Mutual"];
     const shopped: Item[] = [
       shopping("Thu 8:30 AM", carriers, true),
@@ -1000,7 +998,7 @@ const firstCardWeeks: Record<string, (day: Day, walk: Walk) => Activity> = {
         stage: columnTitle("shopping"),
         banner: beingShopped("Monday"),
         shop: shop(carriers, "Monday"),
-        upNext: [dueBack("Mon"), renewal("Nov 4")],
+        upNext: [dueBack("Mon"), renewal("Nov 26")],
         past: shopped,
         outreachSent,
       };
@@ -1009,7 +1007,7 @@ const firstCardWeeks: Record<string, (day: Day, walk: Walk) => Activity> = {
       stage: columnTitle("shopping"),
       banner: { tone: "gray", text: "Being shopped. One carrier left, back Monday.", opens: shopView },
       shop: shop(carriers, "Monday", ["Erie", "Nationwide"]),
-      upNext: [dueBack("Mon"), renewal("Nov 4")],
+      upNext: [dueBack("Mon"), renewal("Nov 26")],
       past: [{ when: "Fri 11:20 AM", label: "Two of three quotes are in", detail: "Ohio Mutual is the one left to quote." }, ...shopped],
       outreachSent,
     };

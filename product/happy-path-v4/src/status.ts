@@ -21,7 +21,7 @@ export function statusFor(h: Household, day: Exclude<Day, "mon">, walk: Walk): S
         label: "Approved",
         detail: pick.current
           ? "Leah and Tom are staying with Erie."
-          : `Leah and Tom approved ${pick.carrier}. Bind it before November 15.`,
+          : `Leah and Tom approved ${pick.carrier}. Bind it before November 3.`,
       };
     }
   }

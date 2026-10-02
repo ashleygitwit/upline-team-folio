@@ -24,11 +24,15 @@ import { Recommendation } from "@/household/Recommendation";
  */
 
 /**
- * The renewal email before it goes: the policy as it renews, the email, and
- * shaping the shop. `sent` locks it and says when it went; `skipped` swaps
- * the footer for an Undo. This week's six bring the walk's email; an earlier
- * week's household, whose email went before the walk, reads a draft built
- * from its card.
+ * The renewal email before it goes: the policy as it renews, the email, with
+ * View the Questionnaire under it, and shaping the shop, with twice the
+ * page's 24px under it. The button opens `questionnairePreview`, the
+ * questionnaire all on one page, in a new tab (QuestionnairePreview.tsx).
+ * Only the Pruitts' opens; the others' say why on hover. The email's own
+ * link line is words, not a link (LinkedEmail in parts.tsx). `sent` locks it and
+ * says when it went; `skipped` swaps the footer for an Undo. This week's six
+ * bring the walk's email; an earlier week's household, whose email went
+ * before the walk, reads a draft built from its card.
  */
 export function OutreachReview({
   card,
@@ -39,7 +43,7 @@ export function OutreachReview({
   skipped,
   onSkip,
   onSend,
-  onOpenQuestionnaire,
+  questionnairePreview,
 }: {
   card: Card;
   file: HouseholdFile;
@@ -49,8 +53,8 @@ export function OutreachReview({
   skipped?: { onUndo: () => void };
   onSkip?: () => void;
   onSend?: () => void;
-  /** Goes to Leah's questionnaire in the walk, from the Pruitts' email. */
-  onOpenQuestionnaire?: () => void;
+  /** Where the Pruitts' questionnaire preview opens, in a new tab. */
+  questionnairePreview?: string;
 }) {
   return (
     <PhasePage
@@ -84,20 +88,38 @@ export function OutreachReview({
         )
       }
     >
-      <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-8 pb-6">
         <PolicyNow card={card} file={file} />
-        <EmailFrame
-          toolbar={`From ${agency.agent.name}'s mailbox`}
-          to={card.target ? outreachEmail.to : `${file.namedInsured} <${card.email}>`}
-          subject={email?.subject ?? "A quick look at your renewal"}
-        >
-          <LinkedEmail
-            body={email?.body ?? outreachDraft(card)}
-            onChange={email?.onChange ?? (() => {})}
-            onLink={card.target ? onOpenQuestionnaire : undefined}
-            readOnly={!!sent}
-          />
-        </EmailFrame>
+        <div>
+          <EmailFrame
+            toolbar={`From ${agency.agent.name}'s mailbox`}
+            to={card.target ? outreachEmail.to : `${file.namedInsured} <${card.email}>`}
+            subject={email?.subject ?? "A quick look at your renewal"}
+          >
+            <LinkedEmail
+              body={email?.body ?? outreachDraft(card)}
+              onChange={email?.onChange ?? (() => {})}
+              readOnly={!!sent}
+            />
+          </EmailFrame>
+          {questionnairePreview ? (
+            <Button variant="outline" className="mt-4" asChild>
+              <a href={questionnairePreview} target="_blank" rel="noopener">
+                View the Questionnaire
+                <span className="sr-only"> (opens in a new tab)</span>
+              </a>
+            </Button>
+          ) : (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="outline" className="mt-4" aria-disabled>
+                  View the Questionnaire
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Only the Pruitts' questionnaire is in this prototype.</TooltipContent>
+            </Tooltip>
+          )}
+        </div>
         <ShapeTheShop card={card} file={file} life={life} locked={!!sent} />
       </div>
     </PhasePage>

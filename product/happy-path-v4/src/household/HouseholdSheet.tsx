@@ -59,9 +59,8 @@ type Tab = "details" | "activity" | "notes";
  * things stand now, and the toast at the drawer's foot says what happened.
  *
  * The Pruitts' results are `results`, which their card on the homepage
- * opens too, as the drawer with the results over it. Their email links to
- * Leah's questionnaire (`onOpenQuestionnaire`), as if it opened in another
- * tab.
+ * opens too, as the drawer with the results over it. Their renewal email
+ * opens a preview of Leah's questionnaire in a new tab (Outreach.tsx).
  *
  * Started as v2.5's drawer (screens/queue/HouseholdSheet.tsx there).
  */
@@ -75,7 +74,6 @@ export function HouseholdSheet({
   toast,
   onDone,
   onSkipOutreach,
-  onOpenQuestionnaire,
   results,
   returnFocus,
 }: Pick<WalkProps, "walk" | "update"> & {
@@ -90,8 +88,6 @@ export function HouseholdSheet({
   onDone: (said: string) => void;
   /** Asks before skipping the household's outreach. */
   onSkipOutreach: () => void;
-  /** Goes to Leah's questionnaire in the walk, from the Pruitts' email. */
-  onOpenQuestionnaire: () => void;
   /** The Pruitts' shop results, as a page. */
   results: ReactNode;
   /** Gives the focus back to what opened the drawer, once it has closed. */
@@ -170,7 +166,6 @@ export function HouseholdSheet({
             update={update}
             onDone={onDone}
             onSkipOutreach={onSkipOutreach}
-            onOpenQuestionnaire={onOpenQuestionnaire}
           />
         );
       case "nudge": {

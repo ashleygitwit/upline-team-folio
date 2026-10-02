@@ -13,7 +13,8 @@ import type { WalkProps } from "@/walk";
  * opens in a drawer over the board, and its pages (an email, a shop, its
  * results, the close-out) slide over the drawer. The walk can open with a
  * household's drawer open, and a page over it: the review stop opens the
- * Pruitts' with their email on top.
+ * Pruitts' with their email on top, Thursday's second stop with their
+ * results, and Friday's with the close-out.
  */
 export function Upline({
   day,
@@ -70,7 +71,6 @@ export function Upline({
         page={page}
         onPage={setPage}
         onClose={() => setHousehold(null)}
-        onOpenQuestionnaire={() => props.go("questionnaire")}
         returnFocus={returnFocus}
         walk={props.walk}
         update={props.update}

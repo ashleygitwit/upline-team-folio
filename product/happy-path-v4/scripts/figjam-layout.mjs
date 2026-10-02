@@ -27,7 +27,7 @@ const manifest = JSON.parse(readFileSync(join(root, "captures/manifest.json"), "
 const screens = [...readFileSync(join(root, "src/walk.ts"), "utf8").matchAll(/label: "([^"]+)",\s*where: "([^"]+)"/g)].map(
   ([, label, where]) => ({ label, where }),
 );
-if (screens.length !== 16) throw new Error(`Read ${screens.length} stops from walk.ts, expected 16.`);
+if (screens.length !== 18) throw new Error(`Read ${screens.length} stops from walk.ts, expected 18.`);
 
 // The board's measurements.
 const ORIGIN = { x: 80, y: 80 };
