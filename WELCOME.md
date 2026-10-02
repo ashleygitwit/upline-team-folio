@@ -2,6 +2,8 @@
 
 You have access to Upline’s **venture home** — the place we keep the thinking, the plan, and the site the team reads.
 
+If you do not have the repo yet, start with [`get-this-repo.md`](get-this-repo.md) instead of this file. Paste that into Claude Code; it will clone [upline-team-folio](https://github.com/ashleygitwit/upline-team-folio) for you.
+
 This is not the Upline product. The product repo is separate (`upline-poc`). You do not need it to work here.
 
 Open a Cursor chat in this repo and say:

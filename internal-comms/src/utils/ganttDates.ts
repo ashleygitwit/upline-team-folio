@@ -84,6 +84,67 @@ export function buildWeekColumns(rangeStart: Date, totalDays: number): WeekColum
   return weeks;
 }
 
+export interface PeriodColumn {
+  start: Date;
+  days: number;
+  label: string;
+}
+
+export function buildQuarterColumns(rangeStart: Date, totalDays: number): PeriodColumn[] {
+  const cols: PeriodColumn[] = [];
+  let cursor = new Date(rangeStart);
+  let remaining = totalDays;
+  let guard = 0;
+  while (remaining > 0 && guard++ < 1000) {
+    const quarter = Math.floor(cursor.getMonth() / 3);
+    const quarterEnd = new Date(cursor.getFullYear(), (quarter + 1) * 3, 0);
+    const daysInSlice = Math.max(1, Math.min(daysBetween(cursor, quarterEnd) + 1, remaining));
+    cols.push({
+      start: new Date(cursor),
+      days: daysInSlice,
+      label: `Q${quarter + 1} ${cursor.getFullYear()}`,
+    });
+    cursor = addDays(cursor, daysInSlice);
+    remaining -= daysInSlice;
+  }
+  return cols;
+}
+
+export function buildYearColumns(rangeStart: Date, totalDays: number): PeriodColumn[] {
+  const cols: PeriodColumn[] = [];
+  let cursor = new Date(rangeStart);
+  let remaining = totalDays;
+  let guard = 0;
+  while (remaining > 0 && guard++ < 1000) {
+    const yearEnd = new Date(cursor.getFullYear(), 11, 31);
+    const daysInSlice = Math.max(1, Math.min(daysBetween(cursor, yearEnd) + 1, remaining));
+    cols.push({
+      start: new Date(cursor),
+      days: daysInSlice,
+      label: String(cursor.getFullYear()),
+    });
+    cursor = addDays(cursor, daysInSlice);
+    remaining -= daysInSlice;
+  }
+  return cols;
+}
+
+export function startOfToday(date = new Date()): Date {
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+}
+
+export function formatWeekRange(date = new Date()): string {
+  const start = startOfWeek(date);
+  const end = addDays(start, 6);
+  const startLabel = start.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  const endLabel = end.toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  });
+  return `${startLabel} – ${endLabel}`;
+}
+
 export function computeRange(initiatives: { start: string; end: string }[]) {
   const starts = initiatives.map((i) => parseDate(i.start));
   const ends = initiatives.map((i) => parseDate(i.end));
@@ -94,4 +155,41 @@ export function computeRange(initiatives: { start: string; end: string }[]) {
   const rawTotal = daysBetween(rangeStart, rangeEnd) + 1;
   const totalDays = Math.ceil(rawTotal / 7) * 7;
   return { rangeStart, rangeEnd, totalDays };
+}
+
+export type TimelineZoom = 'Day' | 'Week' | 'Month' | 'Quarter';
+
+/** Visible window for a zoom level, anchored to today. The chart stops at this view. */
+export function computeViewWindow(viewMode: TimelineZoom, today = startOfToday()) {
+  if (viewMode === 'Day') {
+    const rangeStart = startOfWeek(today);
+    return { rangeStart, totalDays: 7 };
+  }
+  if (viewMode === 'Week') {
+    const rangeStart = startOfWeek(today);
+    return { rangeStart, totalDays: 28 };
+  }
+  if (viewMode === 'Month') {
+    const rangeStart = new Date(today.getFullYear(), today.getMonth(), 1);
+    const rangeEnd = new Date(today.getFullYear(), today.getMonth() + 3, 0);
+    return { rangeStart, totalDays: daysBetween(rangeStart, rangeEnd) + 1 };
+  }
+  const quarterMonth = Math.floor(today.getMonth() / 3) * 3;
+  const rangeStart = new Date(today.getFullYear(), quarterMonth, 1);
+  const rangeEnd = new Date(today.getFullYear(), quarterMonth + 12, 0);
+  return { rangeStart, totalDays: daysBetween(rangeStart, rangeEnd) + 1 };
+}
+
+export function clipToWindow(
+  start: Date,
+  end: Date,
+  rangeStart: Date,
+  totalDays: number,
+): { start: Date; end: Date } | null {
+  const rangeEnd = addDays(rangeStart, totalDays - 1);
+  if (end < rangeStart || start > rangeEnd) return null;
+  return {
+    start: start < rangeStart ? rangeStart : start,
+    end: end > rangeEnd ? rangeEnd : end,
+  };
 }

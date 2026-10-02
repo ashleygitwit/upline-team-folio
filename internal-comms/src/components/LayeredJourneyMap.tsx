@@ -7,128 +7,11 @@ import {
   type Cell,
   type JourneyStep,
   type LayerKey,
-  type WireKind,
 } from '../data/mvpJourney';
-
-function Wireframe({ kind }: { kind: WireKind }) {
-  if (kind === 'upload') {
-    return (
-      <div className="ljm-wire" aria-hidden="true">
-        <div className="ljm-wire-drop">CSV</div>
-        <span className="ljm-wire-line" />
-        <span className="ljm-wire-line is-short" />
-      </div>
-    );
-  }
-  if (kind === 'inbox') {
-    return (
-      <div className="ljm-wire" aria-hidden="true">
-        <span className="ljm-wire-row is-on" />
-        <span className="ljm-wire-row" />
-        <span className="ljm-wire-row" />
-      </div>
-    );
-  }
-  if (kind === 'table') {
-    return (
-      <div className="ljm-wire" aria-hidden="true">
-        <div className="ljm-wire-cols">
-          <span />
-          <span />
-          <span />
-        </div>
-        <span className="ljm-wire-row is-on" />
-        <span className="ljm-wire-row" />
-        <span className="ljm-wire-row" />
-      </div>
-    );
-  }
-  if (kind === 'flags') {
-    return (
-      <div className="ljm-wire" aria-hidden="true">
-        <div className="ljm-wire-pills">
-          <i />
-          <i />
-          <i />
-        </div>
-        <span className="ljm-wire-row is-on" />
-        <span className="ljm-wire-row" />
-      </div>
-    );
-  }
-  if (kind === 'email') {
-    return (
-      <div className="ljm-wire" aria-hidden="true">
-        <span className="ljm-wire-line is-tiny" />
-        <span className="ljm-wire-line" />
-        <span className="ljm-wire-line is-short" />
-        <span className="ljm-wire-btn" />
-      </div>
-    );
-  }
-  if (kind === 'form') {
-    return (
-      <div className="ljm-wire" aria-hidden="true">
-        <span className="ljm-wire-line is-tiny" />
-        <span className="ljm-wire-field" />
-        <span className="ljm-wire-field" />
-        <span className="ljm-wire-btn" />
-      </div>
-    );
-  }
-  if (kind === 'queue') {
-    return (
-      <div className="ljm-wire" aria-hidden="true">
-        <span className="ljm-wire-ticket" />
-        <span className="ljm-wire-ticket is-mid" />
-        <span className="ljm-wire-ticket" />
-      </div>
-    );
-  }
-  if (kind === 'compare') {
-    return (
-      <div className="ljm-wire" aria-hidden="true">
-        <div className="ljm-wire-compare">
-          <span />
-          <span className="is-on" />
-          <span />
-        </div>
-        <span className="ljm-wire-btn" />
-      </div>
-    );
-  }
-  if (kind === 'calendar') {
-    return (
-      <div className="ljm-wire" aria-hidden="true">
-        <div className="ljm-wire-cal">
-          {Array.from({ length: 8 }).map((_, i) => (
-            <i key={i} className={i === 3 ? 'is-on' : undefined} />
-          ))}
-        </div>
-      </div>
-    );
-  }
-  return (
-    <div className="ljm-wire" aria-hidden="true">
-      <span className="ljm-wire-line" />
-      <span className="ljm-wire-line is-short" />
-      <span className="ljm-wire-line" />
-    </div>
-  );
-}
 
 function LayerBody({ cell, layer }: { cell: Cell; layer: LayerKey }) {
   if (layer === 'experience') {
     return <p className="ljm-copy">{cell.experience}</p>;
-  }
-  if (layer === 'ux') {
-    if (!cell.ux) return <p className="ljm-copy is-muted">No surface here.</p>;
-    return (
-      <div className="ljm-ux">
-        <Wireframe kind={cell.ux.kind} />
-        <p className="ljm-copy">{cell.ux.caption}</p>
-      </div>
-    );
   }
   if (layer === 'data') {
     if (!cell.data.length) return <p className="ljm-copy is-muted">Nothing written here.</p>;
@@ -146,16 +29,6 @@ function LayerBody({ cell, layer }: { cell: Cell; layer: LayerKey }) {
       <ul className="ljm-list">
         {cell.logic.map((d) => (
           <li key={d}>{d}</li>
-        ))}
-      </ul>
-    );
-  }
-  if (layer === 'sold') {
-    if (!cell.sold.length) return <p className="ljm-copy is-muted">No agent-facing value in this step.</p>;
-    return (
-      <ul className="ljm-list">
-        {cell.sold.map((f) => (
-          <li key={f}>{f}</li>
         ))}
       </ul>
     );
@@ -241,10 +114,6 @@ export function LayeredJourneyMap() {
             );
           })}
         </div>
-        <p className="ljm-hint">
-          One actor per step — the card sits in their lane. Click a column to inspect it. Arrow keys
-          move.
-        </p>
       </div>
 
       <div className="ljm-scroll">

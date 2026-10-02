@@ -6,6 +6,8 @@
     "sync-data": "cp data/venture-plan.json internal-comms/public/data/venture-plan.json && cp data/learnings.json internal-comms/public/data/learnings.json",
     "prepare": "npm run generate-plan && npm run sync-data",
     "dev": "npm run prepare && npm --prefix internal-comms run dev",
+    "wireframes": "cd product/wireframes && python3 -m http.server 4321 --bind 127.0.0.1",
+    "wireframes:share": "node product/wireframes/build-share.mjs",
     "build": "npm run prepare && npm --prefix internal-comms run build",
     "preview": "npm run prepare && npm --prefix internal-comms run preview"
   }

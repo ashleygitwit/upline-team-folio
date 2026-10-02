@@ -12,8 +12,12 @@ This is **not** the Upline product codebase. Build implementation stays in [upli
 | [`journey-maps.md`](journey-maps.md) | Four maps: 4-beat, POC, MVP, ideal |
 | [`va-and-shopping.md`](va-and-shopping.md) | VA hire, who owns it, how shopping runs at launch |
 | [`mvp.md`](mvp.md) | MVP goal, above-the-line vs on ice, run-cost |
+| [`standups/`](standups/) | Twice-weekly product standup transcripts. Living board: [`standups/board.md`](standups/board.md) |
 | [`2026-08-12-pricing-work-session.md`](2026-08-12-pricing-work-session.md) | Aug 12 pricing work session |
 | [`2026-08-20-path-to-1m.md`](2026-08-20-path-to-1m.md) | TAM / $1M math |
+| [`happy-path-v2.5/`](happy-path-v2.5/) | Ashley's v2 happy path, screen for screen, rebuilt in the Upline shadcn library, shown on Through Line |
+| [`happy-path-v3/`](happy-path-v3/) | Clickable prototype of the agent's week (Amanda, Sept 28), shown on Through Line |
+| [`happy-path-v4/`](happy-path-v4/) | v3 with a kanban board for the homepage at Stockton Hill's volume (Amanda, Sept 30), shown on Through Line |
 
 ## What does *not* belong here
 

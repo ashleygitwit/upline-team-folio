@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import type { VenturePlan } from '../types';
-import { GanttSection } from '../components/GanttSection';
 
 interface RoadmapPageProps {
   plan: VenturePlan | null;
@@ -28,30 +27,30 @@ const MILESTONES: Milestone[] = [
     cta: 'Read the learnings',
   },
   {
+    tag: 'Done',
+    title: 'Product strategy sprint',
+    body: 'Labor Day week — Tuesday September 8 through Friday September 11. Pricing moved to a percentage of personal-lines premium. Seven surfaces sit above the line for November 6. The business intelligence dashboard was cut to an email.',
+    href: '#/sprint',
+    cta: 'What we decided',
+  },
+  {
     tag: 'Now',
     title: 'Stockton Hill pilot',
-    body: 'Kicks off the week of Aug 31 for three weeks (through Sep 18). Outreach resets to Version A so we can compare how copy and workflow evolve across two very different agencies. Runs in tandem with sprint week and the start of the MVP build.',
+    body: 'Kickoff Friday September 18, three weeks to October 9. Format is Review Fridays — one shopped household at a time, individual sessions rather than a group. Version A outreach, so we can compare a second agency against Members 1st. Runs alongside the MVP build.',
     href: '#/poc',
     cta: 'View POC details',
   },
   {
-    tag: 'Then',
-    title: 'Product strategy sprint',
-    body: 'Week of Sep 8. Three room days, Monday through Wednesday. Thursday and Friday are company-wide. We go in with Members 1st complete and Stockton Hill underway, then write the short build spec the week after.',
-    href: '#/sprint',
-    cta: 'View strategy sprint details',
-  },
-  {
-    tag: 'Then',
+    tag: 'Now',
     title: 'MVP build',
-    body: 'The first sellable front-end experience, even if some steps stay manual (VAs shopping) at launch. Starts coming out of sprint week (Sep 14). Target launch Nov 6.',
+    body: 'Dev started September 14 — six weeks of build, then two weeks of QA. Feature freeze Friday October 23. The first three weeks overlap Stockton Hill so they can react to wireframes while design is still cheap to change.',
     href: '#/mvp',
     cta: 'View MVP details',
   },
   {
     tag: 'Then',
     title: 'MVP launch',
-    body: 'November 6. Stockton Hill, the sprint, and the build run in tandem — we are not waiting for one to finish before the next starts.',
+    body: 'November 6. One paying agency live, running their real renewal week on the software. A named design partner follows Stockton Hill in October and doubles as the QA population.',
     href: '#/mvp',
     cta: 'View MVP details',
   },
@@ -61,7 +60,6 @@ export function RoadmapPage({
   plan,
   exportMarkdown,
   hasLocalEdits,
-  onPlanChange,
   onDownload,
   onReset,
 }: RoadmapPageProps) {
@@ -82,8 +80,8 @@ export function RoadmapPage({
         <p className="eyebrow">Roadmap</p>
         <h1 className="hero-title">Where we are, and where we&rsquo;re headed.</h1>
         <p className="hero-sub">
-          The path from today&rsquo;s pilot to a first MVP — what each milestone is and what we aim
-          to learn. The interactive timeline underneath is the live plan.
+          The path from today&rsquo;s pilot to a first paying customer on November 6 — what each
+          milestone is and what we aim to learn. The live Gantt is its own page.
         </p>
       </section>
 
@@ -110,19 +108,6 @@ export function RoadmapPage({
           shortlist RPA, and Zapier write-back — while Path 1 AMS partner talks continue in
           parallel.
         </p>
-
-        <a className="scale-cta" href="#/scale">
-          <div>
-            <p className="scale-cta-eyebrow">Looking past the MVP</p>
-            <p className="scale-cta-title">Path to Scale — Oct ’26 → Q2 ’27</p>
-            <p className="scale-cta-sub">
-              Customer + VA ramp, VA-led vs auto-shopping priority, and what has to be true.
-            </p>
-          </div>
-          <span className="scale-cta-arrow" aria-hidden="true">
-            &rarr;
-          </span>
-        </a>
       </section>
 
       {plan ? (
@@ -134,7 +119,20 @@ export function RoadmapPage({
             </p>
           ) : null}
 
-          <GanttSection plan={plan} onPlanChange={onPlanChange} />
+          <section className="card phase-card gantt-teaser">
+            <div className="section-head">
+              <div>
+                <h2>Current plan</h2>
+                <p className="export-hint">
+                  Day, week, month, quarter, and year. Filter by person or workstream. Full screen
+                  on its own page.
+                </p>
+              </div>
+              <a className="copy-btn" href="#/gantt">
+                Open Gantt chart →
+              </a>
+            </div>
+          </section>
 
           {SHOW_LLM_EXPORT ? (
           <section className="card export-card">

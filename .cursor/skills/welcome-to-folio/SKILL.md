@@ -24,6 +24,7 @@ Read `WELCOME.md` at the repo root. Deliver it as a short conversation, not a du
 | Name | Likely start |
 |------|----------------|
 | Amanda | Through Line + brand. `internal-comms/`, live `#/brand`, `through-line-setup.md`. She edits design; she does not need product/ or GTM on day one. |
+| Doug / Douglas | Product standup board: `product/standups/board.md`. Then `product/README.md`. He builds in Claude, not Cursor. |
 | Claire | Brand voice + sales language. `go-to-market/pitch-deck/`, Through Line home/brand. |
 | Anyone GTM / sales | `go-to-market/README.md`, then `sales-demos/` and `pitch-deck/`. |
 | Anyone product / build | `product/README.md` — pricing, journey-maps, mvp. |

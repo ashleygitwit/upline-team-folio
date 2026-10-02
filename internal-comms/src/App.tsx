@@ -2,17 +2,21 @@ import { useCallback, useEffect, useState } from 'react';
 import type { Learnings, VenturePlan } from './types';
 import { HomePage } from './pages/HomePage';
 import { LearningsPage } from './pages/LearningsPage';
-import { RoadmapPage } from './pages/RoadmapPage';
+import { GanttPage } from './pages/GanttPage';
 import { PocPage } from './pages/PocPage';
 import { SprintPage } from './pages/SprintPage';
 import { MvpJourneyPage } from './pages/MvpJourneyPage';
 import { MvpPage } from './pages/MvpPage';
-import { PathToScalePage } from './pages/PathToScalePage';
+import { OkrPage } from './pages/OkrPage';
+import { GtmPage } from './pages/GtmPage';
+import { PricingPage } from './pages/PricingPage';
+import { BreadboardPage } from './pages/BreadboardPage';
 import { BrandPage } from './pages/BrandPage';
+import { PrototypePage } from './pages/PrototypePage';
 import { TeamPage } from './pages/TeamPage';
+import { PrivatePage } from './pages/PrivatePage';
 import {
   clearPlanStorage,
-  generateExportMarkdown,
   loadPlanFromStorage,
   savePlanToStorage,
 } from './utils/planStorage';
@@ -21,55 +25,131 @@ import './App.css';
 type RouteKey =
   | 'home'
   | 'learnings'
-  | 'roadmap'
+  | 'gantt'
   | 'poc'
   | 'sprint'
   | 'mvp-journey'
   | 'mvp'
-  | 'scale'
+  | 'okrs'
+  | 'gtm'
+  | 'prototype'
+  | 'prototype-v2-5'
+  | 'prototype-v3'
+  | 'prototype-v4'
+  | 'pricing'
+  | 'breadboard'
   | 'brand'
-  | 'team';
+  | 'team'
+  | 'private';
 
-const NAV: { key: RouteKey; label: string; href: string }[] = [
-  { key: 'home', label: 'What is Upline', href: '#/' },
-  { key: 'learnings', label: 'Learnings', href: '#/learnings' },
-  { key: 'roadmap', label: 'Roadmap', href: '#/roadmap' },
-  { key: 'brand', label: 'Brand', href: '#/brand' },
-  { key: 'team', label: 'Team', href: '#/team' },
+const NAV_SECTIONS: {
+  id: 'context' | 'progress' | 'prototype';
+  label: string;
+  items: { key: RouteKey; label: string; href: string }[];
+}[] = [
+  {
+    id: 'context',
+    label: 'Context',
+    items: [
+      { key: 'home', label: 'Overview', href: '#/' },
+      { key: 'pricing', label: 'Pricing strategy', href: '#/pricing' },
+      { key: 'learnings', label: 'Learnings', href: '#/learnings' },
+      { key: 'poc', label: 'POC results', href: '#/poc' },
+      { key: 'brand', label: 'Brand', href: '#/brand' },
+      { key: 'team', label: 'Team', href: '#/team' },
+    ],
+  },
+  {
+    id: 'progress',
+    label: 'Progress',
+    items: [
+      { key: 'gantt', label: 'Gantt chart', href: '#/gantt' },
+      { key: 'sprint', label: 'Strategy sprint', href: '#/sprint' },
+      { key: 'mvp', label: 'MVP definition', href: '#/mvp' },
+      { key: 'okrs', label: 'OKRs', href: '#/okrs' },
+      { key: 'gtm', label: 'GTM approach', href: '#/gtm' },
+    ],
+  },
+  {
+    id: 'prototype',
+    label: 'Prototype',
+    items: [
+      { key: 'prototype', label: 'Ashley_v2_sept_22', href: '#/prototype' },
+      { key: 'prototype-v2-5', label: 'Amanda_v2.5_sept_27', href: '#/prototype-v2-5' },
+      { key: 'prototype-v3', label: 'Amanda_v3_sept_28', href: '#/prototype-v3' },
+      { key: 'prototype-v4', label: 'Amanda_v4_sept_30', href: '#/prototype-v4' },
+    ],
+  },
 ];
 
-// Roadmap detail pages highlight the Roadmap nav item.
-const ROADMAP_ROUTES: RouteKey[] = [
-  'roadmap',
-  'poc',
-  'sprint',
-  'mvp-journey',
-  'mvp',
-  'scale',
-];
+function navKeyForRoute(route: RouteKey): RouteKey {
+  if (route === 'mvp-journey') return 'mvp';
+  if (route === 'breadboard') return 'sprint';
+  return route;
+}
 
-// Sub-pages surfaced in the Roadmap nav dropdown.
-const ROADMAP_MENU: { key: RouteKey; label: string; href: string }[] = [
-  { key: 'roadmap', label: 'Roadmap overview', href: '#/roadmap' },
-  { key: 'poc', label: 'Proof of Concept', href: '#/poc' },
-  { key: 'sprint', label: 'Strategy Sprint', href: '#/sprint' },
-  { key: 'mvp', label: 'MVP', href: '#/mvp' },
-];
+// Whether the left rail is collapsed to just the mark. Remembered per browser;
+// storage can be unavailable (private windows), so it falls back to open.
+const RAIL_STORAGE_KEY = 'throughline-rail-collapsed';
+
+function readRailCollapsed(): boolean {
+  try {
+    return localStorage.getItem(RAIL_STORAGE_KEY) === '1';
+  } catch {
+    return false;
+  }
+}
 
 function routeFromHash(): RouteKey {
-  const hash = window.location.hash.replace(/^#\/?/, '').split('/')[0];
-  // Legacy link support: old hashes resolve to the Roadmap page.
-  if (hash === 'milestones' || hash === 'scenario-build-now') return 'roadmap';
+  const parts = window.location.hash.replace(/^#\/?/, '').split('/').filter(Boolean);
+  const hash = parts[0] ?? '';
+  const day = parts[1];
+  // Legacy links: the roadmap overview is gone; the live plan is the Gantt.
+  if (hash === 'milestones' || hash === 'scenario-build-now' || hash === 'roadmap') {
+    if (window.location.hash !== '#/gantt') {
+      window.location.replace(`${window.location.pathname}${window.location.search}#/gantt`);
+    }
+    return 'gantt';
+  }
+  // Owner view was a sprint-week wireframe; it is no longer a Through Line page.
+  if (hash === 'owner-view') {
+    if (window.location.hash !== '#/mvp') {
+      window.location.replace(`${window.location.pathname}${window.location.search}#/mvp`);
+    }
+    return 'mvp';
+  }
+  // Path to Scale moved onto the private page.
+  if (hash === 'scale') {
+    if (window.location.hash !== '#/private') {
+      window.location.replace(`${window.location.pathname}${window.location.search}#/private`);
+    }
+    return 'private';
+  }
+  // Per-day sprint pages were retired; the week lives on one page now.
+  if (hash === 'sprint' && day) {
+    if (window.location.hash !== '#/sprint') {
+      window.location.replace(`${window.location.pathname}${window.location.search}#/sprint`);
+    }
+    return 'sprint';
+  }
   if (
     hash === 'learnings' ||
-    hash === 'roadmap' ||
+    hash === 'gantt' ||
     hash === 'poc' ||
     hash === 'sprint' ||
     hash === 'mvp-journey' ||
     hash === 'mvp' ||
-    hash === 'scale' ||
+    hash === 'okrs' ||
+    hash === 'gtm' ||
+    hash === 'prototype' ||
+    hash === 'prototype-v2-5' ||
+    hash === 'prototype-v3' ||
+    hash === 'prototype-v4' ||
+    hash === 'pricing' ||
+    hash === 'breadboard' ||
     hash === 'brand' ||
-    hash === 'team'
+    hash === 'team' ||
+    hash === 'private'
   ) {
     return hash;
   }
@@ -79,14 +159,22 @@ function routeFromHash(): RouteKey {
 function App() {
   const [plan, setPlan] = useState<VenturePlan | null>(null);
   const [learnings, setLearnings] = useState<Learnings | null>(null);
-  const [exportMarkdown, setExportMarkdown] = useState('');
   const [hasLocalEdits, setHasLocalEdits] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [route, setRoute] = useState<RouteKey>(routeFromHash());
+  const [navOpen, setNavOpen] = useState(false);
+  const [railCollapsed, setRailCollapsed] = useState(readRailCollapsed);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(RAIL_STORAGE_KEY, railCollapsed ? '1' : '0');
+    } catch {
+      /* ignore */
+    }
+  }, [railCollapsed]);
 
   const applyPlan = useCallback((next: VenturePlan, persist = true) => {
     setPlan(next);
-    setExportMarkdown(generateExportMarkdown(next));
     if (persist) {
       savePlanToStorage(next);
       setHasLocalEdits(true);
@@ -96,10 +184,15 @@ function App() {
   useEffect(() => {
     const onHashChange = () => {
       setRoute(routeFromHash());
+      setNavOpen(false);
       window.scrollTo({ top: 0 });
     };
     window.addEventListener('hashchange', onHashChange);
-    return () => window.removeEventListener('hashchange', onHashChange);
+    window.addEventListener('popstate', onHashChange);
+    return () => {
+      window.removeEventListener('hashchange', onHashChange);
+      window.removeEventListener('popstate', onHashChange);
+    };
   }, []);
 
   useEffect(() => {
@@ -118,11 +211,9 @@ function App() {
         if (stored && storedIsCurrent) {
           setPlan(stored);
           setHasLocalEdits(true);
-          setExportMarkdown(generateExportMarkdown(stored));
         } else {
           if (stored) clearPlanStorage();
           setPlan(planData);
-          setExportMarkdown(generateExportMarkdown(planData));
           setHasLocalEdits(false);
         }
       })
@@ -160,97 +251,144 @@ function App() {
     window.location.reload();
   }
 
-  const isWide = route === 'mvp-journey';
-  // The brand gradient wash is the home page's alone; see .page.is-home in App.css.
-  const pageClass = `page${isWide ? ' is-wide' : ''}${route === 'home' ? ' is-home' : ''}`;
+  const isGantt = route === 'gantt';
+  const isPrototype =
+    route === 'prototype' ||
+    route === 'prototype-v2-5' ||
+    route === 'prototype-v3' ||
+    route === 'prototype-v4';
+  const isWide = route === 'mvp-journey' || route === 'private' || isGantt;
+  const pageClass = `page${isWide ? ' is-wide' : ''}${route === 'home' ? ' is-home' : ''}${route === 'brand' ? ' is-brand' : ''}${isGantt ? ' is-gantt' : ''}${isPrototype ? ' is-prototype' : ''}`;
+  const activeNav = navKeyForRoute(route);
 
   return (
-    <>
-      <header className={isWide ? 'site-header is-wide' : 'site-header'}>
-        <div className="site-header-inner">
-          <a className="brand-lockup" href="#/" aria-label="The Upline Through Line — home">
-            <img src="/upline-u.svg" alt="Upline" className="logo" />
-            <span className="wordmark">The Through Line</span>
-          </a>
-          <nav className="site-nav" aria-label="Primary">
-          {NAV.map((item) => {
-            if (item.key === 'roadmap') {
-              const isActive = ROADMAP_ROUTES.includes(route);
-              return (
-                <div key={item.key} className="nav-has-menu">
+    <div
+      className={`app-shell${navOpen ? ' is-nav-open' : ''}${railCollapsed ? ' is-rail-collapsed' : ''}${isGantt ? ' is-gantt-shell' : ''}`}
+    >
+      <button
+        type="button"
+        className="nav-backdrop"
+        aria-label="Close navigation"
+        tabIndex={navOpen ? 0 : -1}
+        onClick={() => setNavOpen(false)}
+      />
+
+      <aside className="site-sidebar" id="site-sidebar">
+        <a className="brand-lockup" href="#/" aria-label="The Upline Through Line — home">
+          <img src="/upline-u.svg" alt="Upline" className="logo" />
+          <span className="wordmark">The Through Line</span>
+        </a>
+
+        <nav className="site-nav" aria-label="Primary">
+          {NAV_SECTIONS.map((section) => (
+            <div key={section.id} className="nav-section">
+              <p className="nav-section-kicker">{section.label}</p>
+              {section.items.map((item) => {
+                const isActive = activeNav === item.key;
+                return (
                   <a
+                    key={item.key}
                     href={item.href}
                     className={isActive ? 'nav-link active' : 'nav-link'}
                     aria-current={isActive ? 'page' : undefined}
                   >
                     {item.label}
-                    <span className="nav-caret" aria-hidden="true">
-                      ▾
-                    </span>
                   </a>
-                  <div className="nav-menu" role="menu">
-                    {ROADMAP_MENU.map((sub) => (
-                      <a
-                        key={sub.key}
-                        href={sub.href}
-                        role="menuitem"
-                        className={route === sub.key ? 'nav-menu-item active' : 'nav-menu-item'}
-                        aria-current={route === sub.key ? 'page' : undefined}
-                      >
-                        {sub.label}
-                      </a>
-                    ))}
-                  </div>
-                </div>
-              );
-            }
-            const isActive = route === item.key;
-            return (
-              <a
-                key={item.key}
-                href={item.href}
-                className={isActive ? 'nav-link active' : 'nav-link'}
-                aria-current={isActive ? 'page' : undefined}
-              >
-                {item.label}
-              </a>
-            );
-          })}
-          </nav>
+                );
+              })}
+            </div>
+          ))}
+        </nav>
+
+        <div className="sidebar-foot">
+          <a className="nav-link nav-link-quiet" href="#/private">
+            Private
+          </a>
+          <button
+            type="button"
+            className="rail-toggle"
+            aria-label={railCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            title={railCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            onClick={() => setRailCollapsed((collapsed) => !collapsed)}
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <rect x="3" y="4" width="18" height="16" rx="2" />
+              <path d="M9 4v16" />
+            </svg>
+          </button>
         </div>
-      </header>
+      </aside>
 
-      <div className={pageClass}>
-        {error ? <p className="error">{error}</p> : null}
+      <div className="app-main">
+        <header className="site-topbar">
+          <button
+            type="button"
+            className="nav-toggle"
+            aria-expanded={navOpen}
+            aria-controls="site-sidebar"
+            onClick={() => setNavOpen((open) => !open)}
+          >
+            <span className="nav-toggle-bars" aria-hidden="true" />
+            <span className="sr-only">{navOpen ? 'Close menu' : 'Open menu'}</span>
+          </button>
+          <a className="brand-lockup" href="#/" aria-label="The Upline Through Line — home">
+            <img src="/upline-u.svg" alt="" className="logo" />
+            <span className="wordmark">The Through Line</span>
+          </a>
+        </header>
 
-        {route === 'home' ? <HomePage plan={plan} /> : null}
-        {route === 'learnings' ? <LearningsPage learnings={learnings} /> : null}
-        {route === 'roadmap' ? (
-          <RoadmapPage
-            plan={plan}
-            exportMarkdown={exportMarkdown}
-            hasLocalEdits={hasLocalEdits}
-            onPlanChange={applyPlan}
-            onDownload={downloadPlanJson}
-            onReset={resetToServerPlan}
-          />
-        ) : null}
-        {route === 'poc' ? <PocPage plan={plan} /> : null}
-        {route === 'sprint' ? <SprintPage /> : null}
-        {route === 'mvp-journey' ? <MvpJourneyPage /> : null}
-        {route === 'mvp' ? <MvpPage /> : null}
-        {route === 'scale' ? <PathToScalePage /> : null}
-        {route === 'brand' ? <BrandPage /> : null}
-        {route === 'team' ? <TeamPage /> : null}
+        <div className={pageClass}>
+          {error ? <p className="error">{error}</p> : null}
 
-          <footer className="site-footer">
-            <p>
-              The Upline Through Line · Upline's home base. Present, learnings, and where we're
-              headed — one roof.
-            </p>
-          </footer>
+          {route === 'home' ? <HomePage plan={plan} /> : null}
+          {route === 'learnings' ? <LearningsPage learnings={learnings} /> : null}
+          {route === 'gantt' ? (
+            <GanttPage
+              plan={plan}
+              hasLocalEdits={hasLocalEdits}
+              onPlanChange={applyPlan}
+              onDownload={downloadPlanJson}
+              onReset={resetToServerPlan}
+            />
+          ) : null}
+          {route === 'poc' ? <PocPage plan={plan} /> : null}
+          {route === 'sprint' ? <SprintPage /> : null}
+          {route === 'breadboard' ? <BreadboardPage /> : null}
+          {route === 'mvp-journey' ? <MvpJourneyPage /> : null}
+          {route === 'mvp' ? <MvpPage /> : null}
+          {route === 'okrs' ? <OkrPage /> : null}
+          {route === 'gtm' ? <GtmPage /> : null}
+          {route === 'prototype' ? (
+            <PrototypePage src="/prototype.html" title="Upline happy-path demo, Ashley's v2" />
+          ) : null}
+          {route === 'prototype-v2-5' ? (
+            <PrototypePage src="/prototype-v2-5.html" title="Upline happy-path prototype, Ashley's v2 in the Upline library (v2.5)" />
+          ) : null}
+          {route === 'prototype-v3' ? (
+            <PrototypePage src="/prototype-v3.html" title="Upline happy-path prototype, Amanda's v3" />
+          ) : null}
+          {route === 'prototype-v4' ? (
+            <PrototypePage src="/prototype-v4.html" title="Upline happy-path prototype, Amanda's v4" />
+          ) : null}
+          {route === 'pricing' ? <PricingPage /> : null}
+          {route === 'brand' ? <BrandPage /> : null}
+          {route === 'team' ? <TeamPage /> : null}
+          {route === 'private' ? <PrivatePage /> : null}
+
+          {isGantt || isPrototype ? null : (
+            <footer className="site-footer">
+              <p>
+                The Upline Through Line · Upline&rsquo;s home base. Present, learnings, and where
+                we&rsquo;re headed — one roof.{' '}
+                <a className="site-footer-private" href="#/private">
+                  Private
+                </a>
+              </p>
+            </footer>
+          )}
+        </div>
       </div>
-    </>
+    </div>
   );
 }
 

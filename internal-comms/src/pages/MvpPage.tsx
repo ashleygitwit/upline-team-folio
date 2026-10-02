@@ -1,65 +1,3 @@
-const COST_ASSUMPTIONS: [string, string][] = [
-  ['1,500', 'households'],
-  ['~30', 'outreach / week'],
-  ['~25%', 'respond'],
-  ['~29%', 'of those reached opt to shop (25–33%)'],
-  ['30–45 min', 'to shop each'],
-  ['~6', 'closes / week'],
-  ['$8/hr', 'VA (fully loaded)'],
-  ['VA', 'shopping + biweekly data refresh'],
-  ['RPA', 'initial load + renewal pulls'],
-];
-
-interface CostRow {
-  group?: string;
-  item?: string;
-  basis?: string;
-  amt?: string;
-  note?: string;
-  total?: boolean;
-}
-
-const COST_ROWS: CostRow[] = [
-  { group: 'Labor' },
-  { item: 'Shopping (VA)', basis: '~8–9/wk × ~38 min @ $8/hr', amt: '~$190' },
-  {
-    item: 'Household-data refresh (VA)',
-    basis: '~30/wk entering window × ~4 min @ $8/hr',
-    amt: '~$65',
-    note: '→ ~$0 if the RPA does this instead',
-  },
-  {
-    item: 'Close meetings',
-    basis: "agency servicing team takes these — they're paid on the close",
-    amt: '$0',
-  },
-  { group: 'Automation & tools' },
-  {
-    item: 'RPA — initial load + weekly renewal pulls',
-    basis: 'built in-house (Stagehand + Browserbase): browser-hosting plan + LLM tokens',
-    amt: '~$20–100',
-  },
-  {
-    item: 'Email — send + reply capture (Graph / Gmail API)',
-    basis: "through the agent's own mailbox",
-    amt: 'Free',
-  },
-  {
-    item: 'Meeting transcription (Recall.ai + AssemblyAI)',
-    basis: '~$0.80/hr × meeting hrs',
-    amt: '~$16',
-  },
-  {
-    item: 'Phone recording + transcription (Twilio)',
-    basis: '~$0.0025/min + number',
-    amt: '~$10',
-  },
-  { item: 'Two-way text capture (Twilio SMS)', basis: 'number + ~$0.008/msg', amt: '~$10' },
-  { item: 'Scheduling (Calendly)', basis: 'per seat', amt: '~$12' },
-  { item: 'E-signature (Dropbox Sign / PandaDoc)', basis: 'unlimited plan', amt: '~$25' },
-  { total: true, item: 'Recurring total', basis: 'per agency / month', amt: '~$350–430' },
-];
-
 const DOMAINS = [
   {
     title: 'Client details',
@@ -109,30 +47,92 @@ interface KanbanCol {
   title: string;
   color: string;
   text: string;
-  placeholder?: boolean;
+  items: string[];
 }
 
 const KANBAN_COLS: KanbanCol[] = [
-  { title: 'Feature backlog', color: 'var(--primary)', text: 'var(--primary-foreground)', placeholder: true },
-  { title: 'MVP scope', color: 'var(--success-strong)', text: 'var(--primary-foreground)' },
-  { title: 'Future features', color: 'var(--chart-3)', text: 'var(--foreground)' },
+  {
+    title: 'Above the line — Nov 6',
+    color: 'var(--success-strong)',
+    text: 'var(--primary-foreground)',
+    items: [
+      'Renewal queue',
+      'Outreach review and send',
+      'Household questionnaire',
+      'VA shopping of three carriers',
+      'Shop results for the agent',
+      'The proposal the policyholder sees',
+      'Needs-binding state that cannot silently disappear',
+    ],
+  },
+  {
+    title: 'Cut — first thing back after',
+    color: 'var(--chart-3)',
+    text: 'var(--foreground)',
+    items: [
+      'BI dashboard as a screen (stats ship as an email)',
+      'Native mobile app',
+      'Ask Upline anything chat',
+      'SMS and omnichannel — email only',
+      'Auto-shop, binding and payment inside Upline',
+      'Writing structured data back into the AMS',
+    ],
+  },
 ];
 
 export function MvpPage() {
   return (
     <>
-      <a className="page-back" href="#/roadmap">
-        &larr; Back to roadmap
-      </a>
-
       <section className="hero">
-        <p className="eyebrow">Roadmap · Then</p>
-        <h1 className="hero-title">MVP build.</h1>
+        <p className="eyebrow">Progress</p>
+        <h1 className="hero-title">MVP definition.</h1>
         <p className="hero-sub">
-          The first sellable front-end experience (Sep 14 through Nov 6), even if some steps stay
-          manual — VAs shopping — at launch. Starts coming out of sprint week, in tandem with
-          Stockton Hill.
+          Dev started September 14. Six build weeks, then two QA weeks, ship Friday November 6.
+          Feature freeze October 23 — no new surfaces after that, bugs only. Some steps stay
+          manual at launch (VAs shopping). The first three weeks overlap Stockton Hill so they
+          can react to wireframes while design is still cheap to change.
         </p>
+      </section>
+
+      <section className="card phase-card">
+        <h2>Launch date</h2>
+        <p className="proof-statement">Friday November 6.</p>
+        <ul className="strat-list">
+          <li>
+            <strong>Design done Friday Oct 2</strong> — Stockton Hill has been reacting to
+            wireframes while change is still cheap.
+          </li>
+          <li>
+            <strong>Feature freeze Friday Oct 23</strong> — no new surfaces after that, bugs only.
+            Exit test: 30 real households, timed.
+          </li>
+          <li>
+            <strong>Ship Friday Nov 6</strong> — one paying agency running a real renewal week on
+            the seven surfaces above the line.
+          </li>
+        </ul>
+      </section>
+
+      <section className="card phase-card">
+        <h2>Weekly meetings</h2>
+        <p className="export-hint" style={{ marginTop: 0 }}>
+          Monday How Should We is retired. This team runs the weekly from here.
+        </p>
+        <ul className="strat-list">
+          <li>
+            <strong>Company weekly — Tuesday.</strong> First one is Thursday Sep 17, to tear up
+            the OKR draft. After that it is the Tuesday all-hands; product and go-to-market can
+            split into their own tracks from there.
+          </li>
+          <li>
+            <strong>Product stand-ups — Tuesday and Thursday mornings.</strong> Monday and
+            Wednesday stay the meeting-heavy days. Linear carries the ticket detail.
+          </li>
+          <li>
+            <strong>Monthly report-out</strong> uses the OKR format. That is the board cadence,
+            not a second set of goals.
+          </li>
+        </ul>
       </section>
 
       {/* GOAL */}
@@ -149,11 +149,11 @@ export function MvpPage() {
       <section className="card phase-card">
         <h2>Scope</h2>
         <p className="export-hint" style={{ marginTop: 0 }}>
-          Working strawman of the first sellable week lives on the{' '}
-          <a href="#/mvp-journey">layered MVP journey map</a> — experience, UX, data, and
-          features on the same grid. Feature cards below stay until that map is locked.
+          Thursday keep-kill set the line. Working product journey of the first sellable week lives
+          on the <a href="#/mvp-journey">layered MVP journey map</a> — experience, data, and
+          features on the same grid.
         </p>
-        <h3 className="sub-label">Feature backlog</h3>
+        <h3 className="sub-label">The November 6 cut</h3>
         <div className="kanban">
           {KANBAN_COLS.map((col) => (
             <div key={col.title} className="kanban-col">
@@ -164,85 +164,17 @@ export function MvpPage() {
                 className="kanban-col-body"
                 style={{ background: `color-mix(in srgb, ${col.color} 6%, var(--card))` }}
               >
-                {col.placeholder ? (
-                  <div className="kanban-card-ph">
-                    Feature placeholder — features will be listed here.
-                  </div>
-                ) : (
-                  <span className="kanban-empty">Empty for now</span>
-                )}
+                <ul className="kanban-list">
+                  {col.items.map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
               </div>
             </div>
           ))}
         </div>
 
         <hr className="soft-rule" />
-
-        <details className="accordion">
-          <summary>
-            Cost breakdown — what it costs to run the MVP
-            <span className="accordion-caret" aria-hidden="true">
-              ▾
-            </span>
-          </summary>
-          <div className="accordion-body">
-            <p className="export-hint">
-              Estimated monthly run-cost for one ~1,500-household agency. Excludes MVP build /
-              engineering — this is ongoing time + tool cost only. VA labor is{' '}
-              <strong>shopping</strong> plus a light <strong>biweekly data-refresh</strong> pull; the
-              RPA handles the initial load and the weekly renewal-number pulls. Directional; edit the
-              assumptions with Austin.
-            </p>
-            <div className="cost-assumptions">
-              {COST_ASSUMPTIONS.map(([v, l]) => (
-                <span key={l} className="cost-pill">
-                  <b>{v}</b> {l}
-                </span>
-              ))}
-            </div>
-            <div className="cost-table-wrap">
-              <table className="cost-table">
-                <thead>
-                  <tr>
-                    <th>Item</th>
-                    <th>Basis</th>
-                    <th className="amt">Est. $/mo</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {COST_ROWS.map((r, i) =>
-                    r.group ? (
-                      <tr key={`g-${i}`} className="cost-group">
-                        <td colSpan={3}>{r.group}</td>
-                      </tr>
-                    ) : (
-                      <tr key={r.item} className={r.total ? 'cost-total' : undefined}>
-                        <td>
-                          {r.item}
-                          {r.note ? <span className="cost-row-note"> {r.note}</span> : null}
-                        </td>
-                        <td className="cost-basis">{r.basis}</td>
-                        <td className="amt">{r.amt}</td>
-                      </tr>
-                    ),
-                  )}
-                </tbody>
-              </table>
-            </div>
-            <div className="mini-callout">
-              <p className="mini-callout-t">What this means</p>
-              <p>
-                Recurring human labor is <strong>VA shopping (~$190/mo)</strong> plus a light{' '}
-                <strong>pre-outreach data refresh (~$65/mo)</strong>. The RPA handles the initial
-                load and weekly renewal-number pulls, and the expensive close is{' '}
-                <strong>$0 to Upline</strong> (the servicing team&rsquo;s revenue). Building the RPA
-                on Stagehand + Browserbase runs <strong>~$20–100/mo</strong> — vs.{' '}
-                <strong>$8k–15k per bot per year</strong> for a commercial RPA platform, so building
-                is ~10–50× cheaper. Whole thing runs <strong>~$350–430/mo per agency</strong>.
-              </p>
-            </div>
-          </div>
-        </details>
 
         <details className="accordion">
           <summary>
@@ -284,28 +216,17 @@ export function MvpPage() {
           </div>
         </details>
 
-        <a className="scale-cta" href="#/scale">
-          <div>
-            <p className="scale-cta-eyebrow">Looking past the MVP</p>
-            <p className="scale-cta-title">Path to Scale — Oct ’26 → Q2 ’27</p>
-            <p className="scale-cta-sub">
-              Customer + VA ramp, VA-led vs auto-shopping priority, and what has to be true.
-            </p>
-          </div>
-          <span className="scale-cta-arrow" aria-hidden="true">
-            &rarr;
-          </span>
-        </a>
       </section>
 
       {/* OUTCOME */}
       <section className="card phase-card">
         <h2>Outcome</h2>
         <div className="empty-state is-tall">
-          <p className="empty-state-t">Build hasn&rsquo;t started yet — outcome TBD</p>
+          <p className="empty-state-t">Build is in flight — outcome still TBD</p>
           <p className="empty-state-b">
-            The MVP build starts Sep 14, coming out of sprint week. The outcome we&rsquo;re after:
-            a first commercial customer live on the product around Nov 6.
+            Dev started Sep 14. The outcome we&rsquo;re after: a first paying customer live on
+            the product Friday November 6, running their real renewal week on the seven surfaces
+            above the line.
           </p>
         </div>
       </section>

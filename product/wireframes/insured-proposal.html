@@ -1,0 +1,801 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Seabrook Insurance — Your October renewal, Jordan</title>
+<!--
+  Flagship #3 — the insured proposal page. Standalone: open directly in a browser.
+
+  Rules this page is built to, from the Tuesday journey walk:
+    · "We have access to the markets; we used judgment." No implication that we
+      shopped 30 carriers when we shopped 3. No fake receipts.
+    · Lead with the expert pick, not a price grid. Doctor's prescription, not a pile.
+    · Show why we rolled the others out — that is the trust builder.
+    · Best carrier first, not cheapest. One rolled-out quote here is CHEAPER on purpose.
+    · Agency-branded. Upline appears nowhere below the wireframe note bar.
+    · The close is the dangerous part: "false purchase." Approve must read as
+      "this starts the process / your quote is pending," never "you are covered."
+    · Phone stays in the process, warm, from the agent's own identity.
+
+  Same token approach as the other two wireframes; warmer values because this one
+  is consumer-facing.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet" />
+<style>
+  /* ============================================================
+     Tokens — agency palette. Warmer than the internal tools on
+     purpose, same custom-property approach so it reads as family.
+     ============================================================ */
+  :root {
+    --bg: #fbf8f2;
+    --fg: #2b2924;
+    --card: #ffffff;
+    --agency: #12433f;          /* Seabrook deep teal */
+    --agency-soft: color-mix(in srgb, var(--agency) 8%, white);
+    --agency-line: color-mix(in srgb, var(--agency) 20%, white);
+    --accent: #c07a1f;          /* warm gold */
+    --accent-soft: color-mix(in srgb, var(--accent) 14%, white);
+    --muted: #f2eee5;
+    --muted-fg: #6f6a5f;
+    --border: #e0dad0;
+    --good: #2f7d55;
+    --alarm: #a8442a;
+    --alarm-soft: color-mix(in srgb, var(--alarm) 9%, white);
+
+    --sans: 'DM Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    --serif: 'Fraunces', Georgia, Cambria, 'Times New Roman', serif;
+    --mono: 'DM Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+    --radius: 0.85rem;
+    --pill: 999px;
+    --shadow: 0 1px 3px rgb(43 41 36 / 0.06);
+    --shadow-lg: 0 20px 48px -24px rgb(18 67 63 / 0.28);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 1.25rem 1.25rem 4rem;
+    background: var(--bg); color: var(--fg);
+    font-family: var(--sans); font-size: 17px; line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3 { margin: 0; font-family: var(--serif); font-weight: 600; letter-spacing: -0.01em; line-height: 1.2; }
+  p { margin: 0; }
+  strong { font-weight: 700; }
+
+  /* wireframe chrome — the only place Upline is named */
+  .wf-note {
+    max-width: 62rem; margin: 0 auto 1.5rem;
+    display: flex; flex-wrap: wrap; align-items: baseline;
+    justify-content: space-between; gap: 0.5rem 1.5rem;
+    padding-bottom: 0.7rem; border-bottom: 1px dashed var(--border);
+    font-size: 0.75rem; color: var(--muted-fg);
+  }
+  .wf-note strong { font-family: var(--serif); font-size: 0.95rem; font-weight: 600; color: var(--fg); }
+  .wf-note a { color: var(--agency); font-weight: 600; }
+
+  .page { max-width: 62rem; margin: 0 auto; }
+
+  /* ---------- agency masthead ---------- */
+  .masthead {
+    display: flex; flex-wrap: wrap; align-items: center;
+    justify-content: space-between; gap: 0.75rem 1.5rem;
+    padding: 1.1rem 1.6rem;
+    border-radius: var(--radius) var(--radius) 0 0;
+    background: var(--agency); color: #fff;
+  }
+  .wordmark { display: flex; align-items: center; gap: 0.7rem; }
+  .crest {
+    width: 2.3rem; height: 2.3rem; border-radius: 0.5rem;
+    display: grid; place-items: center;
+    background: color-mix(in srgb, white 16%, transparent);
+    font-family: var(--serif); font-size: 1rem; font-weight: 700; letter-spacing: 0.02em;
+  }
+  .wordmark .name { font-family: var(--serif); font-size: 1.15rem; font-weight: 600; }
+  .wordmark .tag { display: block; font-size: 0.72rem; letter-spacing: 0.04em; opacity: 0.78; }
+  .mast-contact { font-size: 0.82rem; text-align: right; opacity: 0.92; }
+  .mast-contact a { color: #fff; font-weight: 600; text-decoration: none; border-bottom: 1px solid color-mix(in srgb, white 45%, transparent); }
+
+  /* ---------- status ribbon: honest state of this page ---------- */
+  .ribbon {
+    display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.3rem 0.6rem;
+    padding: 0.7rem 1.6rem;
+    background: var(--accent-soft);
+    border-bottom: 1px solid var(--border);
+    font-size: 0.85rem;
+  }
+  .ribbon .dot {
+    width: 0.5rem; height: 0.5rem; border-radius: 50%;
+    background: var(--accent); flex: none; align-self: center;
+  }
+  .ribbon strong { color: color-mix(in srgb, var(--accent) 70%, black); }
+
+  .sheet {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-top: 0;
+    border-radius: 0 0 var(--radius) var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+  .block { padding: 1.9rem 1.6rem; border-top: 1px solid var(--border); }
+  .block:first-of-type { border-top: 0; }
+  .eyebrow {
+    font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--muted-fg);
+  }
+  .block h2 { margin-top: 0.5rem; font-size: 1.45rem; }
+  .block > p + p { margin-top: 0.8rem; }
+  .lede { margin-top: 0.7rem; font-size: 1.05rem; }
+  .quiet { color: var(--muted-fg); }
+  .small { font-size: 0.85rem; }
+
+  /* ---------- opening note from the agent ---------- */
+  .opening { background: linear-gradient(180deg, var(--agency-soft), var(--card) 70%); }
+  .opening h1 { font-size: 2rem; margin-top: 0.55rem; }
+  .opening .greeting { margin-top: 0.9rem; font-size: 1.05rem; }
+  .opening .sig { margin-top: 1rem; font-family: var(--serif); font-size: 1rem; }
+
+  .judgment {
+    margin-top: 1.2rem; padding: 1rem 1.1rem;
+    border: 1px solid var(--agency-line); border-left: 3px solid var(--agency);
+    border-radius: 0.6rem; background: var(--card);
+  }
+  .judgment p + p { margin-top: 0.6rem; }
+  .judgment .headline { font-family: var(--serif); font-size: 1.02rem; font-weight: 600; }
+
+  /* ---------- the pick ---------- */
+  .pick {
+    margin-top: 1rem; border: 2px solid var(--agency);
+    border-radius: 0.8rem; overflow: hidden; background: var(--card);
+    box-shadow: var(--shadow-lg);
+  }
+  .pick-flag {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.8rem;
+    padding: 0.55rem 1.1rem; background: var(--agency); color: #fff;
+    font-size: 0.82rem; font-weight: 600; letter-spacing: 0.02em;
+  }
+  .pick-flag .second { font-weight: 400; opacity: 0.85; }
+  .pick-body { padding: 1.15rem 1.1rem 1.25rem; }
+  .pick-top {
+    display: flex; flex-wrap: wrap; align-items: flex-end;
+    justify-content: space-between; gap: 0.8rem 1.5rem;
+  }
+  .pick-carrier { font-family: var(--serif); font-size: 1.6rem; font-weight: 600; }
+  .pick-lines { margin-top: 0.15rem; font-size: 0.9rem; color: var(--muted-fg); }
+  .pick-price { text-align: right; }
+  .pick-price .now { font-family: var(--mono); font-size: 1.75rem; font-weight: 500; }
+  .pick-price .per { font-size: 0.82rem; color: var(--muted-fg); }
+  .pick-price .save { margin-top: 0.15rem; font-size: 0.86rem; font-weight: 700; color: var(--good); }
+
+  .why { margin: 1.1rem 0 0; padding: 0; list-style: none; }
+  .why li { display: flex; gap: 0.6rem; padding: 0.5rem 0; border-top: 1px solid var(--border); }
+  .why li:first-child { border-top: 0; }
+  .why .tick {
+    flex: none; width: 1.35rem; height: 1.35rem; margin-top: 0.15rem;
+    border-radius: 50%; background: var(--agency-soft); color: var(--agency);
+    display: grid; place-items: center; font-size: 0.8rem; font-weight: 700;
+  }
+  .why b { display: block; font-size: 0.95rem; }
+  .why span.note { display: block; font-size: 0.9rem; color: var(--muted-fg); }
+
+  .notcheapest {
+    margin-top: 1.1rem; padding: 0.85rem 1rem;
+    border: 1px dashed color-mix(in srgb, var(--accent) 50%, var(--border));
+    border-radius: 0.6rem; background: var(--accent-soft);
+    font-size: 0.93rem;
+  }
+  .notcheapest b { font-family: var(--serif); }
+
+  /* ---------- side by side ---------- */
+  .compare {
+    margin-top: 1rem; display: grid; grid-template-columns: 1fr 1fr;
+    border: 1px solid var(--border); border-radius: 0.7rem; overflow: hidden;
+  }
+  .compare > div { padding: 0.9rem 1rem 1.05rem; }
+  .compare > div + div { border-left: 1px solid var(--border); background: var(--agency-soft); }
+  .compare h3 { font-size: 1rem; }
+  .compare .who { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted-fg); }
+  .rows { margin: 0.7rem 0 0; padding: 0; list-style: none; font-size: 0.9rem; }
+  .rows li { display: flex; justify-content: space-between; gap: 0.7rem; padding: 0.34rem 0; border-top: 1px dashed var(--border); }
+  .rows li:first-child { border-top: 0; }
+  .rows .k { color: var(--muted-fg); }
+  .rows .v { font-weight: 600; text-align: right; }
+  .rows .v.mono { font-family: var(--mono); font-weight: 500; }
+  .rows .v.better { color: var(--good); }
+
+  /* ---------- ruled out ---------- */
+  .out { margin-top: 1rem; display: flex; flex-direction: column; gap: 0.6rem; }
+  .out-row {
+    display: grid; grid-template-columns: minmax(0, 13rem) minmax(0, 1fr);
+    gap: 0.25rem 1.1rem;
+    padding: 0.85rem 1rem;
+    border: 1px solid var(--border); border-left: 3px solid var(--alarm);
+    border-radius: 0.6rem; background: var(--card);
+  }
+  .out-row .carrier { font-family: var(--serif); font-size: 1.02rem; font-weight: 600; }
+  .out-row .quoted { font-family: var(--mono); font-size: 0.82rem; color: var(--muted-fg); }
+  .out-row .reason { font-size: 0.93rem; }
+  .out-row .reason b { color: var(--alarm); }
+  .out-row.notapproached { border-left-color: var(--border); background: var(--muted); }
+  @media (max-width: 700px) { .out-row { grid-template-columns: 1fr; } }
+
+  /* ---------- what we used ---------- */
+  .facts { margin-top: 1rem; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.6rem; }
+  .fact {
+    padding: 0.75rem 0.9rem; border: 1px solid var(--border);
+    border-radius: 0.6rem; background: var(--card);
+  }
+  .fact .k { font-size: 0.74rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted-fg); }
+  .fact .v { margin-top: 0.2rem; font-size: 0.95rem; }
+  .fact.flagged { border-color: color-mix(in srgb, var(--accent) 45%, var(--border)); background: var(--accent-soft); }
+  .fact .flag { display: inline-block; margin-left: 0.3rem; font-size: 0.7rem; font-weight: 700; color: color-mix(in srgb, var(--accent) 70%, black); }
+  @media (max-width: 640px) { .facts { grid-template-columns: 1fr; } }
+
+  /* ---------- the close ---------- */
+  .close { background: linear-gradient(180deg, var(--agency-soft), var(--card) 80%); }
+  .paths { margin-top: 1.1rem; display: grid; grid-template-columns: 1.15fr 1fr; gap: 0.9rem; align-items: start; }
+  @media (max-width: 820px) { .paths { grid-template-columns: 1fr; } }
+  .path {
+    padding: 1.1rem 1.1rem 1.2rem;
+    border: 1px solid var(--border); border-radius: 0.7rem; background: var(--card);
+  }
+  .path h3 { font-size: 1.1rem; }
+  .path p { margin-top: 0.5rem; font-size: 0.93rem; }
+  .path.primary { border: 2px solid var(--agency); }
+
+  .cta {
+    width: 100%; margin-top: 0.9rem; padding: 0.85rem 1rem;
+    border: 0; border-radius: 0.6rem;
+    background: var(--agency); color: #fff;
+    font-family: var(--sans); font-size: 1rem; font-weight: 700; cursor: pointer;
+  }
+  .cta:hover { background: color-mix(in srgb, var(--agency) 88%, black); }
+  .cta.ghost {
+    background: var(--card); color: var(--agency);
+    border: 1.5px solid var(--agency);
+  }
+  .cta.ghost:hover { background: var(--agency-soft); }
+
+  /* the sentence that keeps us out of court */
+  .notcovered {
+    margin-top: 0.85rem; padding: 0.85rem 1rem;
+    border: 1.5px solid var(--alarm); border-radius: 0.6rem;
+    background: var(--alarm-soft);
+  }
+  .notcovered .hdr {
+    font-family: var(--serif); font-size: 1rem; font-weight: 700; color: var(--alarm);
+  }
+  .notcovered p { margin-top: 0.4rem; font-size: 0.9rem; }
+  .notcovered ol { margin: 0.55rem 0 0; padding-left: 1.2rem; font-size: 0.9rem; }
+  .notcovered ol li { padding: 0.12rem 0; }
+  .notcovered ol li b { color: var(--alarm); }
+
+  .callbox { margin-top: 0.8rem; padding: 0.85rem 1rem; border-radius: 0.6rem; background: var(--muted); }
+  .callbox .num { font-family: var(--serif); font-size: 1.3rem; font-weight: 600; color: var(--agency); }
+  .callbox .num a { color: inherit; text-decoration: none; }
+  .callbox .hours { font-size: 0.84rem; color: var(--muted-fg); }
+
+  /* pending state after "start the process" */
+  .pending {
+    margin-top: 1.1rem; padding: 1.15rem 1.2rem;
+    border: 2px solid var(--good); border-radius: 0.7rem;
+    background: color-mix(in srgb, var(--good) 6%, white);
+  }
+  .pending[hidden] { display: none; }
+  .pending .chip {
+    display: inline-block; padding: 0.15rem 0.6rem; border-radius: var(--pill);
+    background: color-mix(in srgb, var(--accent) 22%, white);
+    color: color-mix(in srgb, var(--accent) 70%, black);
+    font-size: 0.75rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;
+  }
+  .pending h3 { margin-top: 0.55rem; font-size: 1.2rem; }
+  .pending p { margin-top: 0.55rem; font-size: 0.95rem; }
+  .pending .stillcovered {
+    margin-top: 0.8rem; padding: 0.7rem 0.85rem;
+    border: 1px solid var(--border); border-radius: 0.5rem; background: var(--card);
+    font-size: 0.92rem;
+  }
+  .steps { margin: 0.8rem 0 0; padding: 0; list-style: none; counter-reset: s; }
+  .steps li {
+    display: flex; gap: 0.6rem; padding: 0.4rem 0;
+    border-top: 1px dashed var(--border); font-size: 0.93rem;
+  }
+  .steps li:first-child { border-top: 0; }
+  .steps .n {
+    flex: none; width: 1.5rem; height: 1.5rem; border-radius: 50%;
+    background: var(--agency); color: #fff;
+    display: grid; place-items: center; font-size: 0.78rem; font-weight: 700;
+  }
+  .steps li.last .n { background: var(--good); }
+
+  /* question form */
+  .qform { margin-top: 0.8rem; }
+  .qform label { display: block; font-size: 0.88rem; font-weight: 600; }
+  .qform textarea {
+    width: 100%; margin-top: 0.35rem; min-height: 4.5rem; padding: 0.6rem 0.7rem;
+    font: inherit; font-size: 0.92rem;
+    border: 1px solid var(--border); border-radius: 0.5rem; background: var(--card);
+    resize: vertical;
+  }
+  .qform textarea:focus { outline: none; border-color: var(--agency); }
+  .qack { margin-top: 0.6rem; font-size: 0.9rem; color: var(--good); font-weight: 600; }
+  .qack[hidden] { display: none; }
+
+  /* ---------- agent signoff ---------- */
+  .agent { display: flex; flex-wrap: wrap; gap: 1rem 1.2rem; align-items: flex-start; }
+  .avatar {
+    flex: none; width: 3.6rem; height: 3.6rem; border-radius: 50%;
+    background: var(--agency); color: #fff;
+    display: grid; place-items: center;
+    font-family: var(--serif); font-size: 1.2rem; font-weight: 700;
+  }
+  .agent .who { flex: 1 1 20rem; min-width: 0; }
+  .agent .who .nm { font-family: var(--serif); font-size: 1.15rem; font-weight: 600; }
+  .agent .who .role { font-size: 0.85rem; color: var(--muted-fg); }
+  .agent .who p { margin-top: 0.55rem; font-size: 0.95rem; }
+
+  .finepr {
+    max-width: 62rem; margin: 1.1rem auto 0;
+    font-size: 0.78rem; line-height: 1.6; color: var(--muted-fg);
+  }
+  .finepr p + p { margin-top: 0.5rem; }
+</style>
+</head>
+<body>
+
+<div class="wf-note">
+  <span><strong>Upline MVP wireframe</strong> &nbsp;·&nbsp; Insured proposal page &nbsp;·&nbsp; flagship #3 &nbsp;·&nbsp; agency-branded: Upline is named nowhere below this line</span>
+  <span>Sample data. <a href="./week-board.html">&larr; Agent board</a> &nbsp;·&nbsp; <a href="./business-dashboard.html">Owner dashboard &rarr;</a></span>
+</div>
+
+<div class="page">
+
+  <header class="masthead">
+    <div class="wordmark">
+      <span class="crest">SI</span>
+      <span>
+        <span class="name">Seabrook Insurance</span>
+        <span class="tag">Independent agency &middot; since 1994</span>
+      </span>
+    </div>
+    <div class="mast-contact">
+      Prepared for Jordan Hale &middot; September 9, 2026<br />
+      Ray Seabrook &middot; <a href="tel:16035550148">(603) 555-0148</a>
+    </div>
+  </header>
+
+  <div class="ribbon">
+    <span class="dot" aria-hidden="true"></span>
+    <span><strong>This is a proposal, not a change to your policy.</strong>
+    Your Donegal auto and home are in force through October 8. Nothing on this page has been purchased.</span>
+  </div>
+
+  <main class="sheet">
+
+    <!-- ============ OPENING NOTE ============ -->
+    <section class="block opening">
+      <p class="eyebrow">Your October renewal</p>
+      <h1>Jordan, here&rsquo;s what I&rsquo;d do.</h1>
+      <p class="greeting">
+        Your auto and home renew October 8, and Donegal came back <strong>18% higher</strong> &mdash;
+        $3,030 for the year, up from $2,570. Nothing changed on your end to earn that.
+        So I looked at it before you had to call me about it.
+      </p>
+      <p class="sig">&mdash; Ray</p>
+
+      <div class="judgment">
+        <p class="headline">How I looked at this</p>
+        <p>
+          Seabrook has access to fourteen carriers for households like yours. I did not send
+          your family to all fourteen, and I&rsquo;d be suspicious of any agent who told you they had.
+          Most of them were never going to write a home with a 2004 roof, a four-year-old German
+          shepherd, and a hail claim on the file &mdash; and the ones that would have wanted to
+          exclude something that matters to you.
+        </p>
+        <p>
+          I picked <strong>three carriers that could actually win your business</strong>, put the
+          real details of your household in front of them, and read what came back. One of them
+          I&rsquo;m recommending. Two I ruled out, and I&rsquo;ve written down why below, including
+          the one that came back cheaper.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============ THE PICK ============ -->
+    <section class="block">
+      <p class="eyebrow">My recommendation</p>
+      <h2>Move both policies to Progressive.</h2>
+      <p class="lede quiet">
+        One recommendation, not a list to sort through. This is the carrier I&rsquo;d put my own
+        household with given what&rsquo;s in your file.
+      </p>
+
+      <div class="pick">
+        <div class="pick-flag">
+          <span>&#9733; Ray&rsquo;s pick</span>
+          <span class="second">Best fit for your household &mdash; and not the cheapest number I got back</span>
+        </div>
+        <div class="pick-body">
+          <div class="pick-top">
+            <div>
+              <p class="pick-carrier">Progressive</p>
+              <p class="pick-lines">Auto ($1,558) + home ($1,288) &middot; effective October 8, 2026</p>
+            </div>
+            <div class="pick-price">
+              <p class="now">$2,846<span class="per">&nbsp;/ year</span></p>
+              <p class="save">$184 less than your Donegal renewal</p>
+            </div>
+          </div>
+
+          <ul class="why">
+            <li>
+              <span class="tick" aria-hidden="true">&#10003;</span>
+              <span>
+                <b>Your dog is covered, not excluded.</b>
+                <span class="note">Progressive was the only one of the three that would write the home
+                with a German shepherd on the property and no dog-bite exclusion attached.</span>
+              </span>
+            </li>
+            <li>
+              <span class="tick" aria-hidden="true">&#10003;</span>
+              <span>
+                <b>Your 2004 roof is insured for what it costs to replace.</b>
+                <span class="note">Not depreciated. On a 22-year-old roof that difference is
+                usually five figures the day you need it, and it does not show up in the premium.</span>
+              </span>
+            </li>
+            <li>
+              <span class="tick" aria-hidden="true">&#10003;</span>
+              <span>
+                <b>Your 2024 hail claim didn&rsquo;t count against you.</b>
+                <span class="note">Progressive rated it as weather, which is what it was. It came
+                back as a surcharge from one of the others.</span>
+              </span>
+            </li>
+            <li>
+              <span class="tick" aria-hidden="true">&#10003;</span>
+              <span>
+                <b>Maddie in February is a phone call, not a re-application.</b>
+                <span class="note">You told me she turns 16. Adding a teen driver here is a rate
+                change mid-term. At two carriers I looked at it triggers full re-underwriting of
+                the whole policy.</span>
+              </span>
+            </li>
+            <li>
+              <span class="tick" aria-hidden="true">&#10003;</span>
+              <span>
+                <b>Your coverage doesn&rsquo;t go down to get there.</b>
+                <span class="note">Same liability limits, same deductibles. I did not buy you a
+                cheaper number by giving you a thinner policy.</span>
+              </span>
+            </li>
+          </ul>
+
+          <p class="notcheapest">
+            <b>One quote came back cheaper and I&rsquo;m not recommending it.</b>
+            Erie was $2,785 &mdash; $61 less than Progressive &mdash; and their home quote excluded
+            dog bites entirely. You have a four-year-old shepherd. That exclusion sits right on top
+            of the claim you&rsquo;re most likely to have. Best carrier first is how I do this, not
+            lowest number first.
+          </p>
+        </div>
+      </div>
+
+      <div class="compare">
+        <div>
+          <p class="who">What you have now</p>
+          <h3>Donegal</h3>
+          <ul class="rows">
+            <li><span class="k">Annual premium</span><span class="v mono">$3,030</span></li>
+            <li><span class="k">Auto liability</span><span class="v">100/300/100</span></li>
+            <li><span class="k">Auto deductibles</span><span class="v">$500 comp / $500 coll</span></li>
+            <li><span class="k">Dwelling</span><span class="v">$418,000</span></li>
+            <li><span class="k">Home deductible</span><span class="v">$1,000</span></li>
+            <li><span class="k">Roof settlement</span><span class="v">Replacement cost</span></li>
+            <li><span class="k">Dog on premises</span><span class="v">Covered</span></li>
+            <li><span class="k">In force through</span><span class="v">October 8, 2026</span></li>
+          </ul>
+        </div>
+        <div>
+          <p class="who">What I&rsquo;m recommending</p>
+          <h3>Progressive</h3>
+          <ul class="rows">
+            <li><span class="k">Annual premium</span><span class="v mono better">$2,846</span></li>
+            <li><span class="k">Auto liability</span><span class="v">100/300/100 &mdash; same</span></li>
+            <li><span class="k">Auto deductibles</span><span class="v">$500 comp / $500 coll &mdash; same</span></li>
+            <li><span class="k">Dwelling</span><span class="v better">$432,000</span></li>
+            <li><span class="k">Home deductible</span><span class="v">$1,000 &mdash; same</span></li>
+            <li><span class="k">Roof settlement</span><span class="v">Replacement cost</span></li>
+            <li><span class="k">Dog on premises</span><span class="v better">Covered, no exclusion</span></li>
+            <li><span class="k">Would start</span><span class="v">October 8, 2026</span></li>
+          </ul>
+        </div>
+      </div>
+      <p class="small quiet" style="margin-top:0.7rem">
+        Two columns, because there are only two decisions here: stay or move. The dwelling number
+        went up because Progressive&rsquo;s replacement-cost estimate for your square footage is
+        higher than Donegal&rsquo;s. That&rsquo;s more coverage, not more cost.
+      </p>
+    </section>
+
+    <!-- ============ WHO I RULED OUT ============ -->
+    <section class="block">
+      <p class="eyebrow">The part most proposals leave out</p>
+      <h2>Who I ruled out, and why.</h2>
+      <p class="lede quiet">
+        This is the useful half. Anyone can show you the winner. What tells you whether I did the
+        work is knowing what I threw away.
+      </p>
+
+      <div class="out">
+        <div class="out-row">
+          <div>
+            <p class="carrier">Erie</p>
+            <p class="quoted">Quoted $2,785 &middot; $61 cheaper</p>
+          </div>
+          <p class="reason">
+            <b>Ruled out over the dog.</b> Their homeowners quote came with an animal-liability
+            exclusion. If your shepherd ever bites someone, on your property or off it, you&rsquo;re
+            paying that claim yourself. Sixty-one dollars a year is not worth that.
+          </p>
+        </div>
+
+        <div class="out-row">
+          <div>
+            <p class="carrier">Nationwide</p>
+            <p class="quoted">Quoted $2,910</p>
+          </div>
+          <p class="reason">
+            <b>Ruled out over the roof.</b> They&rsquo;d write it, but only on an actual-cash-value
+            roof settlement because it&rsquo;s a 2004 roof. In plain terms: after a hailstorm they
+            pay for a 22-year-old roof, not a new one. You&rsquo;ve already had hail once.
+          </p>
+        </div>
+
+        <div class="out-row">
+          <div>
+            <p class="carrier">Donegal &mdash; your current carrier</p>
+            <p class="quoted">Renewal $3,030 &middot; up 18%</p>
+          </div>
+          <p class="reason">
+            <b>Asked them to re-look. They wouldn&rsquo;t.</b> The increase is a statewide rate
+            action, not something about your household, and there was no credit or endorsement
+            available to bring it down. I&rsquo;d have kept you here if there had been &mdash;
+            staying put is usually the cheapest thing I can do for you.
+          </p>
+        </div>
+
+        <div class="out-row notapproached">
+          <div>
+            <p class="carrier">The rest of our carriers</p>
+            <p class="quoted">Not approached</p>
+          </div>
+          <p class="reason">
+            I didn&rsquo;t send your household to the other eleven. Some don&rsquo;t write homes with
+            roofs this age at all, some won&rsquo;t take the dog, and a few would have come back
+            higher than Donegal. Sending your family&rsquo;s information to carriers that can&rsquo;t
+            win isn&rsquo;t thoroughness &mdash; it&rsquo;s noise. If you want me to go wider, say the
+            word and I will.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ WHAT I USED ============ -->
+    <section class="block">
+      <p class="eyebrow">What this was built on</p>
+      <h2>The details I quoted you on.</h2>
+      <p class="lede quiet">
+        Every number above depends on this being right. If something here is wrong, the quote is
+        wrong &mdash; tell me and I&rsquo;ll redo it.
+      </p>
+
+      <div class="facts">
+        <div class="fact">
+          <p class="k">Household</p>
+          <p class="v">Jordan &amp; Beth Hale &middot; 31 Sycamore St &middot; with Seabrook since 2015</p>
+        </div>
+        <div class="fact">
+          <p class="k">Drivers</p>
+          <p class="v">2 licensed. No violations in five years.</p>
+        </div>
+        <div class="fact">
+          <p class="k">Vehicles</p>
+          <p class="v">2019 Honda Pilot, 2021 Subaru Outback &middot; both garaged at the house</p>
+        </div>
+        <div class="fact">
+          <p class="k">Home</p>
+          <p class="v">Built 1996 &middot; 2,240 sq ft &middot; roof original, 2004</p>
+        </div>
+        <div class="fact flagged">
+          <p class="k">You told us <span class="flag">New this year</span></p>
+          <p class="v">German shepherd, 4 years old, no bite history</p>
+        </div>
+        <div class="fact flagged">
+          <p class="k">You told us <span class="flag">New this year</span></p>
+          <p class="v">Maddie turns 16 in February and will be on the policy</p>
+        </div>
+        <div class="fact">
+          <p class="k">Claims</p>
+          <p class="v">One hail claim, June 2024, paid. Nothing else in ten years.</p>
+        </div>
+        <div class="fact">
+          <p class="k">Not included</p>
+          <p class="v">No umbrella, no life. Worth a conversation, not part of this quote.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ THE CLOSE ============ -->
+    <section class="block close">
+      <p class="eyebrow">If this looks right</p>
+      <h2>Two ways to move, and one thing to be clear about.</h2>
+
+      <div class="paths">
+        <div class="path primary">
+          <h3>Have me start the paperwork</h3>
+          <p>
+            This tells me you want the Progressive policies and you&rsquo;d like me to begin.
+            I&rsquo;ll call you within one business day to confirm the details and walk you through
+            what needs signing.
+          </p>
+
+          <button class="cta" type="button" id="startBtn">
+            Yes &mdash; start the process for me
+          </button>
+
+          <div class="notcovered">
+            <p class="hdr">This button does not put coverage in place.</p>
+            <p>
+              You are <strong>not</strong> switching carriers by clicking it, and you are
+              <strong>not</strong> covered by Progressive. It tells me to start the work. Here is
+              everything that still has to happen, in order:
+            </p>
+            <ol>
+              <li>I call you and confirm the household details on this page.</li>
+              <li>You sign the applications I send you.</li>
+              <li>You put a payment method on file with the carrier.</li>
+              <li>Progressive underwrites and <b>issues</b> the policies.</li>
+              <li>I cancel Donegal, dated <em>after</em> the new policies start &mdash; never before.</li>
+            </ol>
+            <p>
+              Until step 4 is done and I&rsquo;ve confirmed it with you in writing, your
+              <strong>Donegal auto and home are the policies that cover you</strong>. Don&rsquo;t
+              cancel anything and don&rsquo;t stop a payment.
+            </p>
+          </div>
+
+          <div class="pending" id="pendingBox" hidden>
+            <span class="chip">Quote pending &mdash; not bound</span>
+            <h3>Got it, Jordan. This is with Ray now.</h3>
+            <p>
+              Sent September 9 at 3:52 PM. Ray has been notified and will call you at
+              (603) 555-0192 within one business day. Nothing has been purchased and no coverage
+              has changed.
+            </p>
+            <div class="stillcovered">
+              <strong>You are currently insured with Donegal</strong> &mdash; auto policy
+              DA-4419772 and home policy DH-2210845, both in force through October 8, 2026.
+              Keep paying them as normal.
+            </div>
+            <ul class="steps">
+              <li><span class="n">1</span><span><strong>Ray calls you</strong> &mdash; within one business day</span></li>
+              <li><span class="n">2</span><span>You sign the applications</span></li>
+              <li><span class="n">3</span><span>Payment method on file</span></li>
+              <li><span class="n">4</span><span>Progressive issues the policies</span></li>
+              <li class="last"><span class="n">5</span><span><strong>Then</strong> you&rsquo;re covered with Progressive &mdash; and Ray confirms it to you in writing</span></li>
+            </ul>
+            <p class="small quiet">
+              If you don&rsquo;t hear from Ray by tomorrow afternoon, call the office. A request
+              sitting quietly is the one thing neither of us wants.
+            </p>
+          </div>
+        </div>
+
+        <div class="path">
+          <h3>Or just talk to me</h3>
+          <p>
+            Most of my clients would rather ask three questions than click a button, and
+            that&rsquo;s completely fine. Reply to the email this came in on and it lands in my
+            inbox, or pick up the phone.
+          </p>
+
+          <div class="callbox">
+            <p class="num"><a href="tel:16035550148">(603) 555-0148</a></p>
+            <p class="hours">Ray&rsquo;s direct line &middot; Mon&ndash;Fri 8:00&ndash;5:30 &middot; text is fine</p>
+          </div>
+
+          <button class="cta ghost" type="button" onclick="window.location.href='mailto:ray@seabrookins.com?subject=Re%3A%20my%20October%20renewal'">
+            Reply to Ray&rsquo;s email
+          </button>
+
+          <form class="qform" id="qForm">
+            <label for="qText">Or leave me a question and I&rsquo;ll call you about it</label>
+            <textarea id="qText" placeholder="Anything — the roof language, adding Maddie, whether an umbrella makes sense…"></textarea>
+            <button class="cta ghost" type="submit">Send it to Ray</button>
+            <p class="qack" id="qAck" hidden>
+              Sent to Ray. He&rsquo;ll call you about it. Nothing else changed &mdash; your
+              Donegal policies are still in force.
+            </p>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ AGENT SIGNOFF ============ -->
+    <section class="block">
+      <div class="agent">
+        <span class="avatar" aria-hidden="true">RS</span>
+        <div class="who">
+          <p class="nm">Ray Seabrook</p>
+          <p class="role">Seabrook Insurance &middot; 31 years in this town, 14 of them with your family&rsquo;s file on my desk</p>
+          <p>
+            I&rsquo;d rather explain an 18% increase to you in October than lose you over it in
+            November. If you read one thing on this page, make it the part about Erie &mdash;
+            that&rsquo;s the whole job.
+          </p>
+          <p class="small quiet">
+            Whatever you decide, you&rsquo;ll get it from me in writing. Nothing about your
+            insurance changes because of a web page.
+          </p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <div class="finepr">
+    <p>
+      Premiums shown are annual and are quotes, not offers of coverage. They are subject to
+      carrier underwriting, verification of the household details listed above, and any
+      inspection the carrier requires. Quoted figures are good through September 30, 2026.
+    </p>
+    <p>
+      <strong>This document is not a binder, not a certificate, and not evidence of insurance.</strong>
+      No coverage is added, changed, or cancelled until Seabrook Insurance confirms it to you in
+      writing and the carrier issues the policy. Coverage descriptions here are summaries; the
+      policy language controls.
+    </p>
+    <p>Seabrook Insurance &middot; 118 Water Street &middot; (603) 555-0148 &middot; ray@seabrookins.com</p>
+  </div>
+
+</div>
+
+<script>
+/* The close, and only the close, has behavior.
+
+   Clicking "start the process" must never look like a purchase confirmation.
+   It swaps to a PENDING panel that names what is still in force, and the
+   button itself becomes a spent, disabled state rather than disappearing. */
+(function () {
+  var startBtn = document.getElementById('startBtn');
+  var pending = document.getElementById('pendingBox');
+  if (startBtn && pending) {
+    startBtn.addEventListener('click', function () {
+      pending.hidden = false;
+      startBtn.disabled = true;
+      startBtn.textContent = 'Sent to Ray — your quote is pending';
+      startBtn.style.background = 'var(--muted)';
+      startBtn.style.color = 'var(--muted-fg)';
+      startBtn.style.cursor = 'default';
+      pending.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+  }
+
+  var qForm = document.getElementById('qForm');
+  var qAck = document.getElementById('qAck');
+  var qText = document.getElementById('qText');
+  if (qForm && qAck && qText) {
+    qForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (!qText.value.trim()) { qText.focus(); return; }
+      qText.value = '';
+      qAck.hidden = false;
+    });
+  }
+})();
+</script>
+</body>
+</html>

@@ -6,6 +6,7 @@ This is one of the four top-level folders in Team Folio (alongside [`../internal
 
 ## What belongs here
 
+- **GTM next steps** — living owners-and-next-actions tracker per lane ([`next-steps.md`](next-steps.md))
 - **Demo apps** used on sales / waitlist calls (e.g. `agent-demo/`)
 - **Sales demo transcripts and notes** from prospect conversations (`sales-demos/`)
 - **Sales decks** — the thing we put in front of a buyer (`pitch-deck/`)

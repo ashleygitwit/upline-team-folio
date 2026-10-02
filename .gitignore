@@ -6,6 +6,7 @@ node_modules/
 
 # Build output
 internal-comms/dist/
+internal-comms/.wireframe-tmp/
 
 # Local env
 .env

@@ -1,143 +1,129 @@
-const INPUTS = [
-  'Members 1st run end-to-end, plus Stockton Hill in flight — two very different agencies',
-  'A drafted MVP experience and an early pricing approach treated as a constraint',
-  'Real funnel and engagement data: response rates, opt-ins, and what actually drove a shop',
-  'A clear read on which work is VA-assisted vs. automatable, and the cost to run it',
-];
+const GOAL =
+  'We wanted to align on what we’re building, when and how, what we’re selling, how we’ll sell it, and the milestones to keep everyone moving in the same direction.';
 
-const DAYS: {
-  when: string;
-  theme: string;
-  beats: { label: string; text: string }[];
+const DECIDED: {
+  kicker: string;
+  line: string;
+  body: string;
+  points?: string[];
+  href?: string;
+  hrefLabel?: string;
 }[] = [
   {
-    when: 'Monday',
-    theme: 'Lock the bet, then turn it into a path.',
-    beats: [
-      {
-        label: 'Morning',
-        text: 'Start with the evidence. Pressure-test the bet, define the 90-day win, and draw the MVP line — what is above the line versus on ice.',
-      },
-      {
-        label: 'Afternoon',
-        text: 'Walk the drafted journey and rebuild it together. The map stays off the wall until this session.',
-      },
-    ],
+    kicker: 'Venture definition',
+    line: 'Upline is the servicing half of the agency, not a tool.',
+    body: 'Let the human be human; let the AI be the concierge. We never come out as an AMS, and we never position as “Upline Recommends.” The agent’s name stays on the recommendation.',
   },
   {
+    kicker: 'Pricing',
+    line: 'Upline is priced as a percentage of personal-lines premium.',
+    body: 'The flat SaaS fee is dead. A percentage aligns us with the book: if we shop it and they lose revenue, we lose money. The percentage itself is still open.',
+    points: ['24-month agreement', 'Unlimited seats', 'Shopping all-in or all-out', 'Uplift guarantee, not a 90-day out'],
+  },
+  {
+    kicker: 'Launch date',
+    line: 'Product launch November 6.',
+    body: 'Seven surfaces sit above the line. The BI dashboard was cut — stats ship as an email. Design done October 2. Freeze October 23.',
+    href: '#/breadboard',
+    hrefLabel: 'Open the product breadboard',
+  },
+  {
+    kicker: 'Go-to-market',
+    line: 'One metric that matters: 120 demos by end of November.',
+    body: 'Paid top-of-funnel video is the swing play. Cold outbound continues alongside it. Austin spends more time on go-to-market than product.',
+  },
+];
+
+const TAKEAWAYS = [
+  'The $699 SaaS pitch died. We price as a percentage of personal-lines premium.',
+  'The dashboard was cut from MVP and ships as a month-in-review email.',
+  'We are the servicing half of the agency — not a tool, and not an AMS.',
+  'GTM is a volume problem: 120 demos booked by November 30.',
+];
+
+const DAYS = [
+  {
     when: 'Tuesday',
-    theme: 'Make the three moments concrete.',
-    beats: [
-      {
-        label: 'Morning',
-        text: 'Pick the three most important touchpoints and breadboard each one: what lives here, what someone can do, and what decision it supports.',
-      },
-      {
-        label: 'Afternoon',
-        text: 'Ashley and Amanda sketch those breadboards. Austin and the engineer work logistics, data, and feasibility against the same three moments. End of day: hold or revise the direction.',
-      },
-    ],
+    date: 'September 8',
+    theme: 'Sales and product journeys',
+    body: 'We mapped the sales journey from awareness through onboarding, then walked the product experience map together and named the flagship moments to sketch the next day.',
   },
   {
     when: 'Wednesday',
-    theme: 'Go heads-down and make the experience legible.',
-    beats: [
-      {
-        label: 'Morning',
-        text: 'Ashley and Amanda keep going on wires and visual direction. Austin and the engineer keep going on research, logistics, and onboarding.',
-      },
-      {
-        label: 'Afternoon',
-        text: 'Same split. Reviews stay sparse. Leave with enough to write the spec the following week.',
-      },
-    ],
+    date: 'September 9',
+    theme: 'Sketch the product and set up go-to-market efforts',
+    body: 'Product sketched the flagship moments. Go-to-market got onto the systems, started the decks, and mapped the v2 site. The afternoon review is where the dashboard started to come apart.',
   },
-];
-
-const LEAVE_WITH = [
-  'A product bet we either held or revised',
-  '90-day success criteria',
-  'A clear above-the-line MVP scope and an on-ice list',
-  'A shared user journey map',
-  'Three breadboarded touchpoints',
-  'First-pass wires and design direction',
+  {
+    when: 'Thursday',
+    date: 'September 10',
+    theme: 'Keep or kill, and set the launch date',
+    body: 'We drew the MVP line — seven surfaces above it, the BI dashboard cut to an email — and set November 6. The pricing conversation killed the $699 SaaS fee in favor of a percentage of personal-lines premium.',
+  },
+  {
+    when: 'Friday',
+    date: 'September 11',
+    theme: 'Venture operations',
+    body: 'We named roles through year-end, set the Tuesday company weekly, teed up Davie’s first sales experiment, and recorded the podcast with Justin and Davie.',
+  },
 ];
 
 export function SprintPage() {
   return (
     <>
-      <a className="page-back" href="#/roadmap">
-        &larr; Back to roadmap
-      </a>
-
       <section className="hero">
-        <p className="eyebrow">Roadmap · Next</p>
+        <p className="eyebrow">Progress</p>
         <h1 className="hero-title">Product strategy sprint.</h1>
-        <p className="hero-sub">
-          Week of September 8. Three days in the room, Monday through Wednesday. Thursday and Friday
-          are company-wide — no Upline work those days. We are not starting discovery from zero.
-          The job is to decide what we believe, check the experience against that belief, and leave
-          ready to write a short build spec the following week.
-        </p>
+        <p className="hero-sub">{GOAL}</p>
       </section>
 
-      {/* GOAL */}
       <section className="card phase-card">
-        <h2>Goal</h2>
-        <h3 className="sub-label">What we bring in</h3>
-        <ul className="proving-list">
-          {INPUTS.map((i) => (
-            <li key={i}>{i}</li>
-          ))}
-        </ul>
-        <p className="proof-statement" style={{ marginTop: '1.4rem' }}>
-          Lock product strategy for the MVP so we can build. If the bet is wrong, we change the bet.
-          If the experience does not serve the bet, we change the experience. We do not do both at
-          once.
-        </p>
-      </section>
-
-      {/* PLAN */}
-      <section className="card phase-card">
-        <h2>Plan</h2>
-        <p className="proof-statement" style={{ marginBottom: '1rem' }}>
-          The strawman journey map is what we bring to the room.
-        </p>
-        <a className="arc-cta" href="#/mvp-journey">
-          Open the MVP journey map &rarr;
-        </a>
-
-        <hr className="soft-rule" />
-        <h3 className="sub-label">Week at a glance</h3>
-        <div className="sprint-days">
-          {DAYS.map((d) => (
-            <div key={d.when} className="sprint-day">
-              <p className="sprint-day-when">{d.when}</p>
-              <h3>{d.theme}</h3>
-              {d.beats.map((b) => (
-                <p key={b.label}>
-                  <b>{b.label}.</b> {b.text}
-                </p>
-              ))}
-            </div>
+        <h2>What we decided</h2>
+        <div className="sprint-decided">
+          {DECIDED.map((item) => (
+            <article key={item.kicker} className="sprint-decided-card">
+              <p className="sprint-decided-kicker">{item.kicker}</p>
+              <h3>{item.line}</h3>
+              <p>{item.body}</p>
+              {item.points ? (
+                <ul className="sprint-decided-points">
+                  {item.points.map((point) => (
+                    <li key={point}>{point}</li>
+                  ))}
+                </ul>
+              ) : null}
+              {item.href ? (
+                <a className="sprint-decided-link" href={item.href}>
+                  {item.hrefLabel} &rarr;
+                </a>
+              ) : null}
+            </article>
           ))}
         </div>
       </section>
 
-      {/* OUTCOME */}
       <section className="card phase-card">
-        <h2>Outcome</h2>
-        <h3 className="sub-label">By Wednesday night</h3>
-        <ul className="check-list">
-          {LEAVE_WITH.map((i) => (
-            <li key={i}>{i}</li>
+        <h2>Biggest takeaways from the week</h2>
+        <ul className="sprint-takeaways">
+          {TAKEAWAYS.map((line) => (
+            <li key={line}>{line}</li>
           ))}
         </ul>
-        <p className="proof-statement" style={{ marginTop: '1.4rem' }}>
-          The week after, we write a short build spec from the sprint output — what to build, how
-          we know it is done, what is in, and what is on ice. Readable by an engineer and a
-          designer. Not a hundred tickets.
-        </p>
+      </section>
+
+      <section className="card phase-card">
+        <h2>What we accomplished</h2>
+        <div className="sprint-days">
+          {DAYS.map((d) => (
+            <div key={d.when} className="sprint-day">
+              <p className="sprint-day-when">
+                {d.when} · {d.date}
+              </p>
+              <h3>{d.theme}</h3>
+              <p>{d.body}</p>
+            </div>
+          ))}
+        </div>
       </section>
     </>
   );

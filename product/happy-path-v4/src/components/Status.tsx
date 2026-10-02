@@ -1,0 +1,156 @@
+import { useContext, type ReactNode } from "react";
+import { Check, Clock, Eye, HandHeart, Hourglass, MailClock, PencilLine, Search, type LucideIcon } from "lucide-react";
+import { cn } from "cn";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import type { Day } from "@/data";
+import { RowTip } from "@/lib/rowTip";
+import { sendsAt, statusLabel, type PhaseStatus } from "@/phases";
+import { countdown, isShortOnTime, renewalDay, type Request } from "@/tasks";
+
+/**
+ * A household's status in words, as a line with an icon, wherever it's said:
+ * a board line or card, the drawer's header, the Monday email. These were
+ * chips until 2026-10-01: 26px filled squares, between the kit's 24px and
+ * 32px buttons, and the gray ones in the quiet button's own fill, so a row of
+ * them read as things to press. Now only an action gets a box.
+ */
+
+/**
+ * When a household renews, by a clock, on every board card and line and in
+ * the Monday email: under two weeks out the count, "8 days", in red 700, the
+ * red that carries text on white, and further out the date, "Oct 26", in
+ * gray (countdown in tasks.ts). Until 2026-10-01 only a renewal inside its
+ * column's deadlines (board.ts) said it, red when urgent and in the text
+ * color beside a yellow bar when soon. The full date is on hover. A tooltip
+ * has no way in by touch or keyboard, so the drawer's header says the date
+ * too, and the Monday email, being an email, goes without (`tip={false}`).
+ *
+ * A board line or card is one big button underneath (OpenOverlay in
+ * Board.tsx), so the count sits over it to be hovered, and `onOpen` makes a
+ * click on it open the drawer, as a click anywhere else on the card does.
+ */
+export function Countdown({
+  renews,
+  day,
+  tip = true,
+  onOpen,
+  className,
+}: {
+  renews: string;
+  day: Day;
+  tip?: boolean;
+  onOpen?: () => void;
+  className?: string;
+}) {
+  const setOver = useContext(RowTip);
+  const count = (
+    <span
+      onClick={onOpen}
+      onPointerEnter={tip ? () => setOver(true) : undefined}
+      onPointerLeave={tip ? () => setOver(false) : undefined}
+      className={cn(
+        "relative z-10 inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap",
+        isShortOnTime(renews, day) ? "text-destructive-strong" : "text-muted-foreground",
+        className,
+      )}
+    >
+      <Clock aria-hidden className="size-3.5 shrink-0" />
+      {countdown(renews, day)}
+    </span>
+  );
+  if (!tip) return count;
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>{count}</TooltipTrigger>
+      <TooltipContent>{renewalDay(renews, day)}</TooltipContent>
+    </Tooltip>
+  );
+}
+
+/**
+ * A gray line of what's so about a household, after its icon: what it asked
+ * for, or that it's snoozed. The icon sits in a box one line tall, so when the
+ * words wrap on a narrow card it stays level with the first line.
+ */
+export function StatusLine({ icon: Icon, children, className }: { icon: LucideIcon; children: ReactNode; className?: string }) {
+  return (
+    <span className={cn("flex items-start gap-1.5 text-muted-foreground", className)}>
+      <span className="flex h-lh shrink-0 items-center">
+        <Icon aria-hidden className="size-3.5" />
+      </span>
+      <span>{children}</span>
+    </span>
+  );
+}
+
+const phaseIcons: Record<PhaseStatus, LucideIcon> = {
+  scheduled: MailClock,
+  awaitingResponse: Hourglass,
+  inProgress: Search,
+  readyForReview: Eye,
+};
+
+/**
+ * Where a card is in its column on the board (phases.ts), in words after an
+ * icon: Scheduled by the envelope with a clock at its corner, which already
+ * means an email set to go out; Awaiting
+ * Response by an hourglass, for a wait on someone else, since the clock
+ * means the countdown and nothing else; In Progress by a magnifying glass,
+ * for Upline out shopping; and Ready for Review by an eye. Ready for Review
+ * is the one that needs Jenna, so it's in the text color and the rest are
+ * gray, as a big change is set apart from a small one. Scheduled also says
+ * when the email goes ("Scheduled · Tomorrow, 9 AM").
+ */
+export function PhaseStatusLine({ status, day, className }: { status: PhaseStatus; day: Day; className?: string }) {
+  return (
+    <StatusLine icon={phaseIcons[status]} className={cn(status === "readyForReview" && "text-foreground", className)}>
+      {statusLabel[status]}
+      {status === "scheduled" && ` · ${sendsAt(day)}`}
+    </StatusLine>
+  );
+}
+
+/**
+ * Where a household is on the board, as its drawer's header says it under the
+ * name (placeOf in phases.ts): the column and the status, "Closing · Ready
+ * for Review", after the status's icon and in its color, as the board's
+ * cards say the status; Completed by a check in the success color, as a
+ * Completed row's date is. It was an eyebrow over the name until 2026-10-01.
+ */
+export function PlaceLine({ phase, status, className }: { phase: string; status?: PhaseStatus; className?: string }) {
+  if (!status) {
+    return (
+      <StatusLine icon={Check} className={cn("text-success", className)}>
+        {phase}
+      </StatusLine>
+    );
+  }
+  return (
+    <StatusLine icon={phaseIcons[status]} className={cn(status === "readyForReview" && "text-foreground", className)}>
+      {phase} · {statusLabel[status]}
+    </StatusLine>
+  );
+}
+
+const requestIcons: Record<Request["id"], LucideIcon> = { life: HandHeart, info: PencilLine };
+
+/**
+ * What a household asked for on top of the renewal (requestsFor in
+ * tasks.ts), a line each: Life quote requested by a hand holding a heart, in
+ * blue, since it's a sale to make on top of the renewal (it was gray for
+ * part of 2026-10-01), and Info updated by the pencil that marks what
+ * changed in the drawer's Details, in gray. Nothing when there's nothing, so
+ * the line above keeps its place.
+ */
+export function Requests({ requests, className }: { requests: Request[]; className?: string }) {
+  if (requests.length === 0) return null;
+  return (
+    <span className={cn("flex flex-col gap-1", className)}>
+      {requests.map((r) => (
+        <StatusLine key={r.id} icon={requestIcons[r.id]} className={cn(r.id === "life" && "text-primary")}>
+          {r.label}
+        </StatusLine>
+      ))}
+    </span>
+  );
+}

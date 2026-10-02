@@ -1,0 +1,293 @@
+@import "tailwindcss";
+/* The shadcn components' animation utilities and their data-open / data-closed
+   style variants (radix-vega registry), as the design hub loads them. */
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+/* Dark mode is a class, not the OS setting. Nothing here has a dark theme, and
+   without this the Vega components' dark: styles fire on any machine set to dark. */
+@custom-variant dark (&:is(.dark *));
+
+/* =============================================================================
+ * The three Upline faces, latin only, woff2 only. Declared here rather than
+ * through @fontsource's own CSS so the single-file build inlines one format,
+ * not two, and runs with no network.
+ * ========================================================================== */
+@font-face {
+  font-family: "Radio Canada";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src: url("../node_modules/@fontsource/radio-canada/files/radio-canada-latin-400-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Radio Canada";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 500;
+  src: url("../node_modules/@fontsource/radio-canada/files/radio-canada-latin-500-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Radio Canada";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 600;
+  src: url("../node_modules/@fontsource/radio-canada/files/radio-canada-latin-600-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Radio Canada Big";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src: url("../node_modules/@fontsource/radio-canada-big/files/radio-canada-big-latin-400-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Radio Canada Big";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 500;
+  src: url("../node_modules/@fontsource/radio-canada-big/files/radio-canada-big-latin-500-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Reddit Mono";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src: url("../node_modules/@fontsource/reddit-mono/files/reddit-mono-latin-400-normal.woff2") format("woff2");
+}
+
+/* =============================================================================
+ * Upline theme — copied from the design hub (treadwell-investor-deck,
+ * src/app/globals.css), which mirrors src/content/tokens.ts there. That file is
+ * the source of truth; if the brand moves, re-copy rather than edit here.
+ *
+ * One blue does every job: blue/600 is the type, the rules, the band, the
+ * wordmark and the button. No corner radius anywhere. Cards carry a gray/200
+ * hairline and no shadow. Lime is retired.
+ * ========================================================================== */
+
+:root {
+  --font-radio-canada: "Radio Canada";
+  --font-radio-canada-big: "Radio Canada Big";
+  --font-reddit-mono: "Reddit Mono";
+
+  /* Brand */
+  --brand-blue: #082db1;        /* blue/600 — type, rules, band, wordmark, buttons */
+  --primary: var(--brand-blue);
+  --secondary: #ecebe9;         /* gray/100 — the quiet button */
+
+  /* Light surface */
+  --background: #f7f7f6;        /* gray/50 */
+  --foreground: #282831;        /* slate/700 */
+  --card: #ffffff;
+  --muted: #ecebe9;             /* gray/100 */
+  --muted-foreground: #6d6c68;  /* gray/700 — on gray/100, captions only */
+  --border: #dcdad8;            /* gray/200 */
+  --destructive: #f83634;       /* red/500 */
+  /* Status, from the hub's semantic ramps (tokens.ts there): red is error,
+     and yellow, which the hub leaves unassigned, is warning here (Megan's
+     red-yellow-green at the Stockton Hill review). The board's urgency
+     accents are red/500 and yellow/500. White on red/500 is 3.77:1 and the
+     foreground on it is 3.87:1, so type on either fill is slate/800 (4.69:1
+     on red, 12.26:1 on yellow), and red that is itself text on white steps
+     down to red/700. Success is the primary, blue/600, rather than the hub's
+     green (the Agent's actor color, and 2.65:1 with white): the check and
+     date on a Completed row. */
+  --warning: #ffd24a;           /* yellow/500 — warning states */
+  --success: var(--brand-blue); /* blue/600 — success states */
+  --status-foreground: #18181e; /* slate/800 — type on a red/500 or yellow/500 fill */
+  --destructive-strong: #b02625; /* red/700 — red that carries text on white */
+
+  --card-foreground: var(--foreground);
+  --popover: var(--card);
+  --popover-foreground: var(--foreground);
+  --primary-foreground: #ffffff;
+  --secondary-foreground: var(--slate-700);
+  --gray-100: #ecebe9;
+  --accent: var(--gray-100);
+  --card-border: var(--border);
+  --accent-foreground: var(--foreground);
+  --input: var(--border);
+  /* Focus rings on light grounds are blue/300. Grounds that are blue set
+     --ring to white instead. */
+  --blue-300: #5884ff;
+  --blue-100: #b3caff;
+  --ring: var(--blue-300);
+
+  /* Dark surface: the slate family. */
+  --dark-bg: #282831;           /* slate/700 */
+  --dark-fg: #ffffff;
+  --dark-muted: #393944;        /* slate/600 */
+  --dark-muted-fg: #aaaab3;     /* slate/200 */
+  --dark-border: #4f4e5a;       /* slate/500 */
+  --slate-700: #282831;
+
+  /* Structure — the hub's internal-site register: a 1024 shell, 928 of
+     content, and one 80px gap between sections. */
+  --radius: 0px;
+  --shell-max: 1024px;
+  --space-section: 80px;
+  --space-block: 32px;
+  --space-tight: 24px;
+  --card-pad: 28px;
+  /* The prototype's own presenter bar, which is not part of the product. */
+  --demo-bar-h: 48px;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-brand: var(--brand-blue);
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
+  --color-destructive: var(--destructive);
+  --color-destructive-strong: var(--destructive-strong);
+  --color-warning: var(--warning);
+  --color-success: var(--success);
+  --color-status-foreground: var(--status-foreground);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-blue-100: var(--blue-100);
+  --color-blue-300: var(--blue-300);
+  --color-dark-bg: var(--dark-bg);
+  --color-dark-fg: var(--dark-fg);
+  --color-dark-muted: var(--dark-muted);
+  --color-dark-muted-fg: var(--dark-muted-fg);
+  --color-dark-border: var(--dark-border);
+
+  --font-display: var(--font-radio-canada-big), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-radio-canada), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-reddit-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --radius-brand: var(--radius);
+  --radius-xs: 0px;
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+  --radius-xl: 0px;
+  --radius-2xl: 0px;
+  --radius-3xl: 0px;
+  --radius-4xl: 0px;
+}
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+  }
+  /* Headings are weight 500, never 600, with no negative tracking. */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    letter-spacing: normal;
+  }
+  a { color: inherit; }
+  ::selection {
+    background: var(--blue-100);
+    color: var(--slate-700);
+  }
+  *, ::before, ::after {
+    border-color: var(--border);
+  }
+  :where(a, button, summary, [tabindex]):focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 3px;
+  }
+}
+
+@layer components {
+  /* The one eyebrow. 12px / 600 / 0.08em / uppercase, gray 700 on light and
+     white on the dark grounds. */
+  .eyebrow {
+    font-family: var(--font-sans);
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .shell {
+    width: 100%;
+    max-width: var(--shell-max);
+    margin-inline: auto;
+    padding-inline: 20px;
+  }
+  @media (min-width: 640px)  { .shell { padding-inline: 32px; } }
+  @media (min-width: 1024px) { .shell { padding-inline: 48px; } }
+
+  /* The blue band, Upline's dark surface. White on blue/600 is 10.39:1. */
+  .band-surface {
+    background: var(--brand-blue);
+    color: #ffffff;
+    --ring: #ffffff;
+  }
+
+  /* A band's texture, as the design hub draws it (globals.css there,
+     .band-grain): a grain tile that shows only through the art's mask, over
+     the band's own ground. BandGrain sets the URLs. The tile is 2x, so it repeats
+     every 128px; the mask covers the band as object-fit: cover would. The
+     band must be `relative isolate`. */
+  .band-grain {
+    position: absolute;
+    inset: 0;
+    z-index: -10;
+  }
+  .band-grain-art {
+    position: absolute;
+    inset: 0;
+    background: var(--band-grain) 0 0 / 128px 128px repeat;
+    mask: var(--band-mask) center / cover no-repeat;
+  }
+
+  /* Harbor Point's own brand, for everything the policyholder sees: the
+     agency's green and amber from Ashley's v2. Insured-facing surfaces carry no
+     Upline, so this overrides --primary and every library component inside
+     follows. The amber ring is 3.2:1 on white. */
+  .agency {
+    --agency: #1c3d38;
+    --agency-accent: #c07a1f;
+    --agency-soft: #eef2f1;
+    --primary: var(--agency);
+    --ring: var(--agency-accent);
+  }
+}
+
+/* A side drawer opens under the navigation, not over it: the presenter's bar
+   and, while it's on screen, Upline's own bar stay in view and undimmed.
+   Upline.tsx measures where the bars end when a drawer opens and writes it
+   into --sheet-top; the page doesn't scroll while a drawer is open, so it
+   holds. Unlayered, so it wins over the sheet's own utilities. */
+[data-slot="sheet-overlay"] {
+  top: var(--sheet-top, 0px);
+}
+[data-slot="sheet-content"][data-side="right"] {
+  top: var(--sheet-top, 0px);
+  bottom: 0;
+  height: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
