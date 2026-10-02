@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { cn } from "cn";
 import { BandGrain } from "@/components/BandGrain";
 import { agency, dayName, type Day } from "@/data";
 import { lineFor } from "@/dayLine";
@@ -20,13 +21,20 @@ import type { Walk } from "@/walk";
  *
  * The toolbar and the board take v3's Policyholder List width, at most 1280,
  * centered, so a wide window leaves room either side (Upline's bar follows,
- * so the mark keeps their edge). The board is 1000px tall, each column
- * scrolling inside itself when it holds more than fits (Board.tsx); the list
- * runs the page's length (List.tsx). Until 2026-10-01 the board was one
- * screen tall, at most 800px, with each column scrolling inside itself once
- * the page had scrolled it whole into view, and for part of that day it had
- * no height of its own, running the page on for the length of its longest
- * column.
+ * so the mark keeps their edge). With the board showing, the two are exactly
+ * the window's height under the presenter bar, 32px in from its top and its
+ * foot, and nothing comes after them, so the page scrolls until the space
+ * over the toolbar meets the top of the window and stops there, with the
+ * board filling the rest and each column scrolling inside itself when it
+ * holds more than fits (Board.tsx). A window under 576px holds them at 576.
+ * The list runs the page's length instead (List.tsx). `data-fit-window`
+ * lets the capture script hold the board at a 900px window's height, since
+ * it grows the window to fit the page (scripts/capture.mjs). Until
+ * 2026-10-01 the board was one screen tall, at most 800px, with each column
+ * scrolling inside itself once the page had scrolled it whole into view;
+ * for part of that day it had no height of its own, running the page on for
+ * the length of its longest column, and then it was 1000px tall whatever
+ * the window.
  */
 export function Home({ day, walk, ...props }: BoardProps) {
   const [view, setView] = useState<View>("board");
@@ -39,7 +47,15 @@ export function Home({ day, walk, ...props }: BoardProps) {
     <>
       <Hero day={day} walk={walk} />
 
-      <div className="shell max-w-7xl pt-8 pb-10">
+      <div
+        data-fit-window={view === "board" || undefined}
+        className={cn(
+          "shell flex max-w-7xl flex-col py-8",
+          view === "board"
+            ? "h-[calc(100svh-var(--demo-bar-h))] min-h-144"
+            : "min-h-[calc(100svh-var(--demo-bar-h))]",
+        )}
+      >
         <Toolbar
           filters={filters}
           onFilters={setFilters}
@@ -48,7 +64,7 @@ export function Home({ day, walk, ...props }: BoardProps) {
           view={view}
           onView={setView}
         />
-        <div className="mt-4">
+        <div className="mt-4 min-h-0 flex-1">
           {view === "board" ? (
             <Board day={day} walk={walk} placed={placed} filtered={filtered} {...props} />
           ) : (

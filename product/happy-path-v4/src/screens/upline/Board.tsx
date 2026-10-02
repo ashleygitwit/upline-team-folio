@@ -56,10 +56,11 @@ export type BoardProps = WalkProps & {
  * search came back the same day.)
  *
  * The board is drawn as v3's Policyholder List board was, the columns side by
- * side, 12px apart, but 1000px tall: a column with more than fits scrolls
- * inside itself, so the page doesn't run on for the length of the longest
- * (Initial Outreach's 103 rows on Monday ran the page past 4,000px for part
- * of 2026-10-01). A column is wide enough for a couple's name beside its
+ * side, 12px apart, but as tall as the window leaves it (Home.tsx), so a
+ * column with more than fits scrolls inside itself and the page doesn't run
+ * on for the length of the longest (Initial Outreach's 103 rows on Monday
+ * ran the page past 4,000px for part of 2026-10-01). It was 1000px tall
+ * whatever the window, for part of 2026-10-01. A column is wide enough for a couple's name beside its
  * countdown and change; narrower than all four, the board scrolls sideways
  * inside itself.
  */
@@ -77,9 +78,9 @@ export function Board({
   const [picked, setPicked] = useState<Partial<Record<PhaseId, PhaseStatus>>>({});
 
   return (
-    <div data-board className="overflow-x-auto">
+    <div data-board className="h-full overflow-x-auto">
       <div
-        className="grid h-250 gap-x-3"
+        className="grid h-full gap-x-3"
         style={{
           gridTemplateColumns: phases.map((c) => (c.mini ? "minmax(13rem, 1fr)" : "minmax(13.75rem, 1fr)")).join(" "),
           gridTemplateRows: "auto minmax(0, 1fr)",
@@ -120,7 +121,7 @@ export function Board({
  * and the list are the panel's two halves, laid on the board's two rows (the
  * section itself is `display: contents`), so every header is as tall as the
  * tallest and the first cards line up, and every panel runs the board's
- * 1000px, its list scrolling inside it when it holds more than fits (each
+ * height, its list scrolling inside it when it holds more than fits (each
  * list stopped at its last card, with the page scrolling, for part of
  * 2026-10-01). In Shopping Renewal and Closing every
  * household is a card, 8px apart; a snoozed task sinks to the foot. Initial

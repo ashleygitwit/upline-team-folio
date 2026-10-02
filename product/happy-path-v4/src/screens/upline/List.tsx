@@ -21,7 +21,8 @@ import { renewalDate } from "@/tasks";
  * does, with the name as the row's button for the keyboard; an invented
  * one's doesn't, and its name says so when pointed at. v3's Contact column
  * isn't here, since only the named households have a phone or an email. The
- * table runs the page's length rather than the board's 1000px.
+ * table runs the page's length rather than fitting the window as the board
+ * does.
  */
 export function List({
   placed,

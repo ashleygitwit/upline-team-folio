@@ -6,9 +6,9 @@
 // cropped off and every scrolling region (drawer tabs, the pages over the
 // drawer, the phone) opened out to its full height, so nothing on the
 // feedback board hides behind a scroll. The homepage's board is the
-// exception: its columns are 1000px tall and scroll inside themselves by
-// design, so it's captured as Jenna sees it. Run after any change: npm run
-// capture
+// exception: it fits the window and its columns scroll inside themselves by
+// design, so it's held at a 900px window's height and captured as Jenna sees
+// it on one. Run after any change: npm run capture
 //
 // Writes captures/NN-slug.png and captures/manifest.json, which says what
 // each file is, which stop it belongs to and how it was reached; the board
@@ -39,6 +39,7 @@ const unclamp = `
   [data-slot="sheet-content"]:has(> [data-state="open"]) > [inert] { display: none !important; }
   [data-phase-body] { flex: 1 0 auto !important; }
   [class*="max-w-[390px]"] { height: auto !important; min-height: 780px !important; max-height: none !important; overflow: visible !important; }
+  [data-fit-window] { height: ${MIN_HEIGHT - BAR}px !important; }
 `;
 
 const manifest = [];
