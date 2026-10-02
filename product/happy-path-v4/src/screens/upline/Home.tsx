@@ -102,13 +102,14 @@ function Hero({ day, walk }: { day: Day; walk: Walk }) {
 }
 
 /**
- * The band's headline, by day: Monday's good morning; Wednesday's break,
- * since the emails went Tuesday and nothing needs Jenna; Thursday's push to
- * finish, with the quotes back; and Friday's. Wednesday and Thursday were
- * "Good morning, Jenna" until 2026-10-01.
+ * The band's headline, by day: Monday's and Thursday's good morning, so the
+ * line under it, which leads with what needs Jenna, does the talking;
+ * Wednesday's break, since the emails went Tuesday and nothing needs Jenna;
+ * and Friday's. Wednesday and Thursday were "Good morning, Jenna" until
+ * 2026-10-01, and Thursday was "Let's wrap up the week" until 2026-10-02,
+ * when Ashley preferred the earlier, more action-oriented version.
  */
 function greeting(day: Day) {
   if (day === "wed") return "Take a well-deserved break";
-  if (day === "thu") return "Let's wrap up the week";
   return `${day === "fri" ? `Happy ${dayName[day]}` : "Good morning"}, ${agency.agent.first}`;
 }

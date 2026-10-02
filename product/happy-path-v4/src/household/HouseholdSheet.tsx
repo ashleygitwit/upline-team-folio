@@ -36,9 +36,10 @@ type Tab = "details" | "activity" | "notes";
  * household has the same drawer: on white, the stage it's in, as the board's
  * column names it, over its name, a banner when something is going on, and
  * three tabs, and under the tabs, on gray 50, what each one holds. The tabs
- * are Recent activity, Details and Notes, which always open on Recent
+ * are Details, Recent activity and Notes, which always open on Recent
  * activity, since what's coming up and what has happened is what Jenna opens
- * a household to see. Notes is Jenna's own. Closing the drawer gives the
+ * a household to see. Notes is Jenna's own. Recent activity came first until
+ * 2026-10-02, when Ashley asked for Details on the far left. Closing the drawer gives the
  * focus back to whatever opened it (`returnFocus`): Radix gives it back only
  * to a trigger of its own, and the board opens the drawer without one.
  *
@@ -302,11 +303,11 @@ export function HouseholdSheet({
           {/* The list's 12px and a tab's own 12px put the first tab's name on
               the 24px the drawer's words keep from its edge. */}
           <TabsList variant="line" className="w-full justify-start border-b px-3">
-            <TabsTrigger value="activity" className="flex-none">
-              Recent activity
-            </TabsTrigger>
             <TabsTrigger value="details" className="flex-none">
               Details
+            </TabsTrigger>
+            <TabsTrigger value="activity" className="flex-none">
+              Recent activity
             </TabsTrigger>
             <TabsTrigger value="notes" className="flex-none">
               Notes

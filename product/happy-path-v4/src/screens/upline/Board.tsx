@@ -137,6 +137,12 @@ export function Board({
  * (For part of 2026-10-01 the columns were ruled apart by hairlines instead,
  * a screen tall, each scrolling inside itself.)
  *
+ * In Shopping Renewal and Closing, what needs Jenna (Ready for Review) comes
+ * first, then what's waiting, each soonest renewal first, and a snoozed task
+ * last. Until 2026-10-02 every card ran soonest renewal first whatever its
+ * status, so Thursday's two other recommendations to send sat under shops in
+ * progress and sent recommendations (Ashley's review: to-dos first).
+ *
  * Under the column's name, one menu picks what it shows: All, or one of its
  * statuses, each with its count. Its button says what's showing and how many,
  * as the kit's quiet outline button, a size down to sit in a column. A status
@@ -171,9 +177,10 @@ function Column({
 }) {
   const { day, walk } = props;
   const total = statuses.reduce((sum, { n }) => sum + n, 0);
-  const sorted = mini
-    ? items
-    : [...items].sort((a, b) => Number(snoozedEntry(a.e, day, walk)) - Number(snoozedEntry(b.e, day, walk)));
+  // What needs Jenna first, then the rest, then anything snoozed, each
+  // soonest renewal first as phasesFor runs them (the sort keeps their order).
+  const rank = ({ e, status }: Placed) => (snoozedEntry(e, day, walk) ? 2 : status === "readyForReview" ? 0 : 1);
+  const sorted = mini ? items : [...items].sort((a, b) => rank(a) - rank(b));
 
   return (
     <section aria-labelledby={`col-${id}`} className="contents">
@@ -513,7 +520,9 @@ function ListRow({
  * the price and the carrier were off the card (they came off that morning,
  * and came back that afternoon).
  * `foot` sits above the card's drawer button, for anything that's a button of
- * its own.
+ * its own. On a card waiting on someone else (`quiet`), the sentence is gray,
+ * so it reads as secondary beside what needs Jenna; it was in the text color
+ * on every card until 2026-10-02.
  */
 function Card({
   name,
@@ -527,6 +536,7 @@ function Card({
   detail,
   foot,
   phase,
+  quiet = false,
 }: {
   name: string;
   carrier: string;
@@ -543,6 +553,8 @@ function Card({
   foot?: React.ReactNode;
   /** The card's status, at its foot. */
   phase: React.ReactNode;
+  /** Whether the card is waiting on someone else, rather than on Jenna. */
+  quiet?: boolean;
 }) {
   return (
     <div className="p-3 text-sm">
@@ -553,7 +565,7 @@ function Card({
       <p className={cn("mt-1 text-muted-foreground", underName)}>{lines}</p>
       <Price was={was} now={now} pct={pct} className={underName} />
       {status && <div className={cn("mt-1 flex flex-col items-start gap-1", underName)}>{status}</div>}
-      {detail && <p className={cn("mt-2", underName)}>{detail}</p>}
+      {detail && <p className={cn("mt-2", quiet && "text-muted-foreground", underName)}>{detail}</p>}
       {foot && <div className="relative z-10">{foot}</div>}
       <StatusRow className="-mx-3 mt-3 border-t px-3 pt-3" status={phase} when={when} />
     </div>
@@ -561,12 +573,19 @@ function Card({
 }
 
 /**
- * A card's frame: its hairline, all blue while its drawer is open. There's no
- * accent down its left edge (it came off on 2026-10-01): the countdown's
- * color and the request lines say what it said.
+ * A card's frame: its hairline, blue when the card needs Jenna (Ready for
+ * Review, with its button), as Recent activity draws what needs her in the
+ * drawer, and 2px of blue while its drawer is open. Until 2026-10-02 every
+ * card's hairline was gray, and turned blue while its drawer was open.
+ * There's no accent down its left edge (it came off on 2026-10-01): the
+ * countdown's color and the request lines say what it said.
  */
-const cardFrame = (selected = false) =>
-  cn("relative block border bg-card text-card-foreground", selected && "border-primary");
+const cardFrame = (selected = false, needsJenna = false) =>
+  cn(
+    "relative block border bg-card text-card-foreground",
+    (selected || needsJenna) && "border-primary",
+    selected && "ring-1 ring-primary ring-inset",
+  );
 
 /**
  * A card for an invented household: when it renews, what its column says
@@ -586,8 +605,9 @@ function InventedCard({
   day: Day;
 }) {
   const foot = col === "ready" ? <ReviewResults /> : col === "sent" && e.approved && <CloseOut />;
+  const needsJenna = status === "readyForReview";
   return (
-    <NotBuilt className={cardFrame()}>
+    <NotBuilt className={cardFrame(false, needsJenna)}>
       <Card
         name={e.name}
         carrier={e.carrier}
@@ -599,6 +619,7 @@ function InventedCard({
         detail={e.invented!.detail}
         foot={foot}
         phase={<PhaseStatusLine status={status} />}
+        quiet={!needsJenna}
       />
     </NotBuilt>
   );
@@ -708,9 +729,10 @@ function NamedCard({
       <Requests requests={requests} />
     </>
   );
+  const needsJenna = phase === "readyForReview" && !snoozed;
 
   return (
-    <li className={cn(cardFrame(selected), "hover:bg-background")}>
+    <li className={cn(cardFrame(selected, needsJenna), "hover:bg-background")}>
       <OpenOverlay id={e.id} name={e.name} selected={selected} onOpen={profile} />
       <Card
         name={e.name}
@@ -724,6 +746,7 @@ function NamedCard({
         detail={detail}
         foot={foot}
         phase={<PhaseStatusLine status={phase} />}
+        quiet={!needsJenna}
       />
       {cue === e.id && <DemoCue />}
     </li>
