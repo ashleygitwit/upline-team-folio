@@ -137,9 +137,10 @@ export type Walk = {
   /** Earlier weeks' recommendations Jenna sent from a drawer on Monday. */
   recsSent: string[];
   /**
-   * The day Jenna sent a renewal email early or skipped it, by household. This
-   * week's six can only be on Monday; Elena Varga's waits until next week, so
-   * hers can be any day of the walk (firstCards.ts).
+   * The day Jenna sent a renewal email early or skipped it, by household.
+   * Every email still waiting goes Tuesday, so it's always Monday in the walk
+   * (Elena Varga's waited until next week, so hers could be any day, until
+   * she came off the board with next week's emails on 2026-10-02).
    */
   outreachOn: Record<string, Day>;
   /** Each household's notes, oldest first. */

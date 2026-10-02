@@ -7,7 +7,7 @@ import { money } from "@/data";
  * about 55 waiting on an answer and about 41 somewhere between shopping and
  * done (Amanda's sketch, 2026-09-30). The twelve named households keep their
  * files and their walk; these have no file, so their cards don't open, but
- * for the seven first cards (household/firstCards.ts), which do.
+ * for the six first cards (household/firstCards.ts), which do.
  *
  * They're generated from a fixed seed, so the same names land in the same
  * places every time the prototype loads. Every name is invented.
@@ -185,7 +185,12 @@ const cohort = (count: number, from: [number, number], to: [number, number]) =>
  * countdown is red.
  */
 export const pools = {
-  /** Next week's emails, scheduled from Wednesday on. */
+  /**
+   * Next week's emails, which aren't on the board: they're scheduled next
+   * Monday, after the walk's week. They held Scheduled from Wednesday until
+   * 2026-10-02. They're still made first, so everyone after them keeps the
+   * name and the place the seed gives them.
+   */
   nextWeek: cohort(48, [12, 11], [12, 19]),
   /** This week's emails beside the named six: 42 + 6 = 48 going out Tuesday. */
   thisWeek: cohort(42, [11, 26], [12, 12]),

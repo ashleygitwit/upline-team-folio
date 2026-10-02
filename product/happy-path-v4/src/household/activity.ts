@@ -953,20 +953,6 @@ const firstCardWeeks: Record<string, (day: Day, walk: Walk) => Activity> = {
     };
   },
 
-  /** Elena Varga: next week's email, drafted Wednesday, waiting until Tuesday. */
-  "inv-10": (day, walk) =>
-    waitingEmail("inv-10", "Elena", day, walk, {
-      renews: "Dec 18",
-      past: [
-        { when: "Wed 7:00 AM", label: "Renewal email drafted in your voice" },
-        {
-          when: "Tue",
-          label: "Auto-Owners' renewal came in 16% higher",
-          detail: "The roof is from 2008, and Auto-Owners now pays it actual cash value.",
-        },
-      ],
-    }),
-
   /** Sara Ortiz: this week's email Tuesday, as the Pruitts' is; answers Wednesday night and is shopped from Thursday. */
   "inv-82": (day, walk) => {
     const drafted: Item = { when: "Mon 7:00 AM", label: "Renewal email drafted in your voice" };
@@ -1018,7 +1004,7 @@ const firstCardWeeks: Record<string, (day: Day, walk: Walk) => Activity> = {
  * A household's drawer on the walk's day, following what the presenter has
  * done: this week's six from Monday's email through the week's statuses and
  * nudges, earlier weeks' six from Ashley's board on Monday to where the
- * homepage's board has them after, and the seven first cards through the
+ * homepage's board has them after, and the six first cards through the
  * week. `null` for anyone without a file.
  */
 export function activityFor(id: string, day: Day, walk: Walk): Activity | null {

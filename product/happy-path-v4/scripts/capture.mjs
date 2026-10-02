@@ -536,34 +536,29 @@ const captures = [
       await openProfile("Diane Mercer");
     },
   },
-  ...[
-    ["10d", "elena-varga", "Elena Varga", "next week's email, scheduled", "renewal email, with Send now and Skip", () => clickBanner("Review")],
-    ["10e", "sara-ortiz", "Sara Ortiz", "waiting on an answer", "renewal email, sent Tuesday", () => clickLine("View: Renewal email sent")],
-  ].flatMap(([slug, file, name, what, pageName, open]) => [
-    {
-      slug: `${slug}-first-card-${file}`,
-      stop: 10,
-      title: `A first card: ${name}, ${what}`,
-      via: `${name}'s card (the drawer opens on Recent activity)`,
-      run: async () => {
-        await answerQuestionnaire();
-        await jump("Wednesday");
-        await openProfile(name);
-      },
+  {
+    slug: "10d-first-card-sara-ortiz",
+    stop: 10,
+    title: "A first card: Sara Ortiz, waiting on an answer",
+    via: "Sara Ortiz's card (the drawer opens on Recent activity)",
+    run: async () => {
+      await answerQuestionnaire();
+      await jump("Wednesday");
+      await openProfile("Sara Ortiz");
     },
-    {
-      slug: `${slug}a-first-card-${file}-page`,
-      stop: 10,
-      title: `${name}'s ${pageName}`,
-      via: `${name}'s drawer → ${slug === "10d" ? "banner" : "Recent activity → Renewal email sent"}`,
-      run: async () => {
-        await answerQuestionnaire();
-        await jump("Wednesday");
-        await openProfile(name);
-        await open();
-      },
+  },
+  {
+    slug: "10da-first-card-sara-ortiz-page",
+    stop: 10,
+    title: "Sara Ortiz's renewal email, sent Tuesday",
+    via: "Sara Ortiz's drawer → Recent activity → Renewal email sent",
+    run: async () => {
+      await answerQuestionnaire();
+      await jump("Wednesday");
+      await openProfile("Sara Ortiz");
+      await clickLine("View: Renewal email sent");
     },
-  ]),
+  },
   // 11
   {
     slug: "11-check-in-on-the-pruitts",

@@ -468,7 +468,7 @@ function ListRow({
       {status && (
         <StatusRow
           className={cn("mt-1", underName)}
-          status={<PhaseStatusLine status={status} day={day} />}
+          status={<PhaseStatusLine status={status} />}
           when={<Countdown renews={e.renews} day={day} onOpen={e.invented ? undefined : open} />}
         />
       )}
@@ -598,7 +598,7 @@ function InventedCard({
         when={<Countdown renews={e.renews} day={day} />}
         detail={e.invented!.detail}
         foot={foot}
-        phase={<PhaseStatusLine status={status} day={day} />}
+        phase={<PhaseStatusLine status={status} />}
       />
     </NotBuilt>
   );
@@ -723,7 +723,7 @@ function NamedCard({
         status={status}
         detail={detail}
         foot={foot}
-        phase={<PhaseStatusLine status={phase} day={day} />}
+        phase={<PhaseStatusLine status={phase} />}
       />
       {cue === e.id && <DemoCue />}
     </li>
