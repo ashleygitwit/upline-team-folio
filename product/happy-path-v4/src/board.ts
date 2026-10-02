@@ -3,7 +3,7 @@ import { cards } from "@/household/data";
 import { firstCards } from "@/household/firstCards";
 import { pickLine, pools, shopLine, type Invented } from "@/pipeline";
 import { statusFor } from "@/status";
-import { changeRequested, isSnoozed, renewalDate } from "@/tasks";
+import { renewalDate } from "@/tasks";
 import type { Walk } from "@/walk";
 
 /**
@@ -302,75 +302,22 @@ export function boardFor(day: Day, walk: Walk): Record<ColumnId, Entry[]> {
 }
 
 /* ------------------------------------------------------------------ *
- * What needs Jenna
+ * When it renews
  * ------------------------------------------------------------------ */
 
 /** Days from the walk's day to a renewal like "Oct 16"; negative once it's passed. */
 export const daysUntil = (renews: string, day: Day) =>
   Math.round((renewalDate(renews).getTime() - dayDate[day].getTime()) / 86_400_000);
 
-/**
- * When a renewal starts to need a look, by column, counted back from the
- * renewal by what still has to happen after that column: yellow `soon` days
- * out, red `urgent`. Awaiting Response goes earliest, since an answer still
- * has to come in and be shopped, and the team can't shop a renewal under two
- * weeks out (strategy sprint, Thursday afternoon); a sent recommendation only
- * needs a yes and a bind. Scheduled sends itself, Upline shops in a day or
- * two, and Completed is done, so those three never flag. Working numbers,
- * from 2026-10-01, to check with Austin and Stockton Hill. Until then one
- * rule ran across every column, yellow at ten days and red at five, which
- * left most of Awaiting Response's too-late-to-shop renewals unmarked.
+/*
+ * Until 2026-10-01 each step had deadlines of its own, counted back from the
+ * renewal by what still had to happen after it (Awaiting Response yellow at
+ * 21 days and red at 14, Recommendation Ready 14 and 10, Recommendation Sent
+ * 10 and 5), and a card or line counted down, with a red or yellow accent,
+ * only inside them; blue meant a request on top of the renewal. Now every
+ * card and line says when it renews, red under two weeks out whatever its
+ * column (countdown in tasks.ts), and the accents are gone.
  */
-export const deadlines: Partial<Record<ColumnId, { soon: number; urgent: number }>> = {
-  awaiting: { soon: 21, urgent: 14 },
-  ready: { soon: 14, urgent: 10 },
-  sent: { soon: 10, urgent: 5 },
-};
-
-/**
- * The accent down a card's or line's left edge, the hub's card-accent: red
- * or yellow when the renewal is inside its column's deadlines (above) and it
- * isn't done, and blue when the household has asked for something on top of
- * the renewal (a life quote, or a change on file). Blue means that and
- * nothing else, so a recommendation to send or an approval to bind carries no
- * bar of its own: its column, or the card's sentence and button, already
- * say so. Red beats yellow beats blue. Completed and snoozed carry none. The
- * words beside the bar say the same thing, so nothing rests on the color.
- */
-export type Accent = "urgent" | "soon" | "requested";
-
-export function accentFor(e: Entry, col: ColumnId, day: Day, walk: Walk): Accent | null {
-  if (col === "completed") return null;
-  if (!e.invented && isSnoozed(e.id, day, walk)) return null;
-  const deadline = deadlines[col];
-  const days = daysUntil(e.renews, day);
-  if (deadline && days <= deadline.urgent) return "urgent";
-  if (deadline && days <= deadline.soon) return "soon";
-  if (!e.invented && changeRequested(e.id, day, walk)) return "requested";
-  return null;
-}
-
-/** Whether an accent is about time (red or yellow), so the countdown beside it takes its color. */
-export const timed = (accent: Accent | null): accent is "urgent" | "soon" =>
-  accent === "urgent" || accent === "soon";
-
-/**
- * Whether a household needs Jenna on the walk's day: a recommendation to
- * send, an approval to bind, or anything with an accent. Completed and
- * snoozed don't.
- */
-export function needsYou(e: Entry, col: ColumnId, day: Day, walk: Walk) {
-  if (col === "completed") return false;
-  if (!e.invented && isSnoozed(e.id, day, walk)) return false;
-  return col === "ready" || !!e.approved || accentFor(e, col, day, walk) !== null;
-}
-
-/**
- * Everything that needs Jenna, the Monday email's Action Needed. The board's
- * Needs me toggle kept it too, until it came off on 2026-10-01.
- */
-export const needsMe = (board: Record<ColumnId, Entry[]>, day: Day, walk: Walk) =>
-  columns.flatMap((c) => board[c.id].filter((e) => needsYou(e, c.id, day, walk)).map((e) => ({ e, col: c.id })));
 
 /**
  * A change in percent, as the board and the Monday email show it: "+18%", or

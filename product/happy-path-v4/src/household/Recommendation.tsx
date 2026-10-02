@@ -113,10 +113,14 @@ export function Recommendation({
       </PhaseFooter>
     );
 
+  // Which step, in the mono face in gray and sentence case, as the marketing
+  // site's product mockups count steps ("Step 1 of 4"); it was the eyebrow
+  // until 2026-10-01. Under the step's title, its words follow at 8 to 12px,
+  // and a block (the table, the plans, the email) at 24.
   const head = (title: string) => (
     <>
-      <p className="eyebrow text-muted-foreground">Step {step} of 3</p>
-      <h3 ref={heading} id={headline} tabIndex={-1} className="mt-1.5 font-display text-xl">
+      <p className="font-mono text-xs text-muted-foreground">Step {step} of 3</p>
+      <h3 ref={heading} id={headline} tabIndex={-1} className="mt-2 font-display text-xl">
         {title}
       </h3>
     </>
@@ -128,9 +132,9 @@ export function Recommendation({
         <div>
           {head("Shopping Results")}
           {words && (
-            <ul className="mt-3 grid gap-1.5 text-base">
+            <ul className="mt-3 grid gap-2 text-base">
               {words.story.map((line) => (
-                <li key={line} className="flex gap-2.5">
+                <li key={line} className="flex gap-3">
                   <span aria-hidden className="mt-2.5 size-2 shrink-0 border border-primary" />
                   {line}
                 </li>
@@ -140,17 +144,20 @@ export function Recommendation({
           {rec && <p className="mt-3 text-base font-medium">{rec.summary}</p>}
           {rec ? (
             <>
-              <div className="mt-5 border bg-card">
+              <div className="mt-6 border bg-card">
                 <Table className="text-xs">
                   <TableHeader>
+                    {/* The kit's table heads, as the rows are set, rather
+                        than eyebrows, which they were until 2026-10-01, with
+                        "Current carrier" at 9.5px over the current one. */}
                     <TableRow className="bg-muted hover:bg-muted">
-                      <TableHead className="eyebrow min-w-32 text-muted-foreground">Coverage</TableHead>
-                      <TableHead className="eyebrow bg-background text-muted-foreground">
-                        <span className="block text-[9.5px] text-foreground">Current carrier</span>
+                      <TableHead className="h-auto min-w-32 py-2 align-bottom">Coverage</TableHead>
+                      <TableHead className="h-auto bg-background py-2 align-bottom">
                         {rec.currentLabel}
+                        <span className="block font-normal text-muted-foreground">Current carrier</span>
                       </TableHead>
                       {rec.cols.map((c) => (
-                        <TableHead key={c.id} className="eyebrow text-muted-foreground">
+                        <TableHead key={c.id} className="h-auto py-2 align-bottom">
                           {c.name}
                         </TableHead>
                       ))}
@@ -201,7 +208,7 @@ export function Recommendation({
       {step === 2 && (
         <div>
           {head("Select Your Recommendation")}
-          <p className="mt-1.5 text-sm text-muted-foreground">Choose the plan to recommend in your email to {first}.</p>
+          <p className="mt-2 text-sm text-muted-foreground">Choose the plan to recommend in your email to {first}.</p>
           {rec?.options && (
             <RadioGroup
               aria-labelledby={headline}
@@ -212,7 +219,7 @@ export function Recommendation({
                 const o = rec.options.find((x) => x.name === name);
                 if (o?.email) setBody(o.email);
               }}
-              className="mt-4 gap-2"
+              className="mt-6 gap-3"
             >
               {rec.options.map((o) => (
                 <FieldLabel key={o.id} htmlFor={`pick-${card.id}-${o.id}`} className="bg-card">
@@ -239,7 +246,7 @@ export function Recommendation({
       {step === 3 && (
         <div>
           {head("Review Your Recommendation Email")}
-          <div className="mt-4">
+          <div className="mt-6">
             <EmailFrame
               toolbar="Recommendation email · does not auto-send"
               to={card.target ? recEmail.to : `${file.namedInsured} <${card.email}>`}
@@ -250,7 +257,7 @@ export function Recommendation({
                 value={body}
                 readOnly={locked}
                 onChange={(e) => setBody(e.target.value)}
-                className="min-h-60 border-0 bg-transparent px-5.5 py-5 text-[15px] leading-relaxed"
+                className="min-h-60 border-0 bg-transparent p-6 text-[15px] leading-relaxed"
               />
             </EmailFrame>
           </div>
@@ -284,7 +291,7 @@ export function QuotesPage({ docs }: { docs: QuoteDoc[] }) {
       title="Quotes from the carriers"
       description="Current policy documents, then each quote pulled directly from the carrier."
     >
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-8">
         {current.length > 0 && <QuoteLinks label="Current carrier" docs={current} />}
         {shopped.length > 0 && <QuoteLinks label="Shopped" docs={shopped} />}
       </div>
@@ -296,7 +303,7 @@ function QuoteLinks({ label, docs }: { label: string; docs: QuoteDoc[] }) {
   return (
     <div>
       <SectionHead>{label}</SectionHead>
-      <ul className="mt-2.5 grid gap-3">
+      <ul className="mt-3 grid gap-3">
         {docs.map((d) => (
           <li key={d.id}>
             <Tooltip>

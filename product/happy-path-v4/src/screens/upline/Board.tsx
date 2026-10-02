@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { AlarmClock, ChevronDown } from "lucide-react";
+import { AlarmClock, Check, ChevronDown } from "lucide-react";
 import { cn } from "cn";
+import { CarrierMark } from "@/components/CarrierMark";
 import { Countdown, PhaseStatusLine, Requests, StatusLine } from "@/components/Status";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,13 +12,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { accentFor, bigIncrease, pctLabel, setName, timed, type Accent, type ColumnId, type Entry } from "@/board";
-import { earlier, options, pruitt, thisWeek, type Day } from "@/data";
+import { bigIncrease, pctLabel, setName, type ColumnId, type Entry } from "@/board";
+import { earlier, money, options, pruitt, thisWeek, type Day } from "@/data";
 import type { Phase } from "@/household/activity";
 import { cards, fileFor } from "@/household/data";
 import { firstCards } from "@/household/firstCards";
-import { RowTip } from "@/lib/rowTip";
-import { completedOn, phases, phasesFor, statusLabel, type PhaseId, type PhaseStatus, type Placed } from "@/phases";
+import { notInPrototype, RowTip } from "@/lib/rowTip";
+import { completedOn, endCost, phases, statusLabel, type PhaseId, type PhaseStatus, type Placed } from "@/phases";
 import { shopSentence } from "@/pipeline";
 import { statusFor } from "@/status";
 import { isSnoozed, requestsFor, snoozeLabel } from "@/tasks";
@@ -30,8 +31,6 @@ export type BoardProps = WalkProps & {
   /** Opens a household's drawer, with one of its pages over it if `phase` says which. */
   onHousehold: (id: string, phase?: Phase) => void;
 };
-
-const notInPrototype = "This household isn't built out for the prototype.";
 
 /**
  * The homepage's board, which replaced Action Needed and Scheduled Emails on
@@ -50,28 +49,38 @@ const notInPrototype = "This household isn't built out for the prototype.";
  * all of them; it narrows that column alone. Every column opens on All, and
  * once Jenna picks, her pick holds. The picks are the page's own, so every
  * stop opens on All again. (For part of 2026-10-01 the columns each opened
- * on one status instead.) The toolbar's Needs me and search, which narrowed every
- * column at once, came off on 2026-10-01, Needs me as not important and
- * search for now.
+ * on one status instead.) The toolbar above the board (Toolbar.tsx) narrows
+ * every column at once, before the menus do, so a menu's counts are what the
+ * filters and search leave; a column they empty says so. (The toolbar's
+ * Needs me and search came off on 2026-10-01, and v2.5's Filters and v3's
+ * search came back the same day.)
  *
  * The board is drawn as v3's Policyholder List board was, the columns side by
- * side, 12px apart, but 1000px tall: a column with more than fits scrolls
- * inside itself, so the page doesn't run on for the length of the longest
- * (Initial Outreach's 103 rows on Monday ran the page past 4,000px for part
- * of 2026-10-01). A column is wide enough for a couple's name beside its
+ * side, 12px apart, but as tall as the window leaves it (Home.tsx), so a
+ * column with more than fits scrolls inside itself and the page doesn't run
+ * on for the length of the longest (Initial Outreach's 103 rows on Monday
+ * ran the page past 4,000px for part of 2026-10-01). It was 1000px tall
+ * whatever the window, for part of 2026-10-01. A column is wide enough for a couple's name beside its
  * countdown and change; narrower than all four, the board scrolls sideways
  * inside itself.
  */
-export function Board(props: BoardProps) {
-  const { day, walk } = props;
-  const placed = phasesFor(day, walk);
+export function Board({
+  placed,
+  filtered,
+  ...props
+}: BoardProps & {
+  /** Every column's households, as the toolbar leaves them (Home.tsx). */
+  placed: Record<PhaseId, Placed[]>;
+  /** Whether the toolbar's filters or search are narrowing them. */
+  filtered: boolean;
+}) {
   // The status Jenna picked in each column; none is All.
   const [picked, setPicked] = useState<Partial<Record<PhaseId, PhaseStatus>>>({});
 
   return (
-    <div data-board className="overflow-x-auto">
+    <div data-board className="h-full overflow-x-auto">
       <div
-        className="grid h-250 gap-x-3"
+        className="grid h-full gap-x-3"
         style={{
           gridTemplateColumns: phases.map((c) => (c.mini ? "minmax(13rem, 1fr)" : "minmax(13.75rem, 1fr)")).join(" "),
           gridTemplateRows: "auto minmax(0, 1fr)",
@@ -95,7 +104,7 @@ export function Board(props: BoardProps) {
               only={only}
               onOnly={(status) => setPicked((o) => ({ ...o, [c.id]: status }))}
               count={`${shown.length}`}
-              empty={only ? `Nothing here is ${statusLabel[only]}.` : c.empty}
+              empty={only ? `Nothing here is ${statusLabel[only]}.` : filtered ? "No one here matches." : c.empty}
               {...props}
             />
           );
@@ -112,7 +121,7 @@ export function Board(props: BoardProps) {
  * and the list are the panel's two halves, laid on the board's two rows (the
  * section itself is `display: contents`), so every header is as tall as the
  * tallest and the first cards line up, and every panel runs the board's
- * 1000px, its list scrolling inside it when it holds more than fits (each
+ * height, its list scrolling inside it when it holds more than fits (each
  * list stopped at its last card, with the page scrolling, for part of
  * 2026-10-01). In Shopping Renewal and Closing every
  * household is a card, 8px apart; a snoozed task sinks to the foot. Initial
@@ -217,32 +226,11 @@ function Column({
           <ul className={mini ? "-mx-2.5 divide-y border-y" : "flex flex-col gap-2 *:shrink-0"}>
             {sorted.map(({ e, step, status }) =>
               mini ? (
-                <ListRow
-                  key={e.id}
-                  e={e}
-                  col={step}
-                  status={status}
-                  accent={accentFor(e, step, day, walk)}
-                  {...props}
-                />
+                <ListRow key={e.id} e={e} col={step} status={status} {...props} />
               ) : e.invented ? (
-                <InventedCard
-                  key={e.id}
-                  e={e}
-                  col={step}
-                  status={status!}
-                  accent={accentFor(e, step, day, walk)}
-                  day={day}
-                />
+                <InventedCard key={e.id} e={e} col={step} status={status!} day={day} />
               ) : (
-                <NamedCard
-                  key={e.id}
-                  e={e}
-                  col={step}
-                  status={status!}
-                  accent={accentFor(e, step, day, walk)}
-                  {...props}
-                />
+                <NamedCard key={e.id} e={e} col={step} status={status!} {...props} />
               ),
             )}
           </ul>
@@ -288,14 +276,52 @@ function Pct({ pct }: { pct: number }) {
 }
 
 /**
- * When a renewal was completed, "Oct 9", where a card has its change, on a
- * Completed card (completedOn in phases.ts): set as the
- * change is, in the mono face in gray, since the change and the countdown
- * are done with once a renewal is closed.
+ * Last year's premium to this year's renewal, "$4,820 → $5,690", then the
+ * change, as Ashley's v2 cards had it under the name. A flat renewal has
+ * the one price, as hers did.
+ */
+export function Price({ was, now, pct, className }: { was: number; now: number; pct: number; className?: string }) {
+  return (
+    <p className={cn("flex flex-wrap items-baseline gap-x-2 text-muted-foreground", className)}>
+      <span>
+        {pct === 0 ? (
+          money(now)
+        ) : (
+          <>
+            {money(was)} <span aria-hidden>→</span>
+            <span className="sr-only">to</span> {money(now)}
+          </>
+        )}
+      </span>
+      <Pct pct={pct} />
+    </p>
+  );
+}
+
+/**
+ * A card's or row's status with its countdown, when it has one, on the same
+ * line at the right.
+ */
+function StatusRow({ status, when, className }: { status: React.ReactNode; when?: React.ReactNode; className?: string }) {
+  return (
+    <div className={cn("flex items-start justify-between gap-2", className)}>
+      {status}
+      {when}
+    </div>
+  );
+}
+
+/**
+ * When a renewal was completed, "Oct 9", on a Completed row (completedOn in
+ * phases.ts), where an open renewal has when it renews: at the right of the
+ * row's last line, set as the renewal date is, but after a check and in the
+ * success color, blue 600, so it reads as done. Until 2026-10-01 it was
+ * beside the name, where the change is, in the mono face in gray.
  */
 function Completed({ on }: { on: string }) {
   return (
-    <span className="shrink-0 font-mono text-sm text-muted-foreground">
+    <span className="inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap text-success">
+      <Check aria-hidden className="size-3.5 shrink-0" />
       <span className="sr-only">Completed </span>
       {on}
     </span>
@@ -303,10 +329,28 @@ function Completed({ on }: { on: string }) {
 }
 
 /**
- * A household's name, as every card sets it: the headings' display face at
- * 500, at the card's 14px.
+ * A household's name, as every card and row sets it: the headings' display
+ * face at 500, at 16px, a step up from the card's 14px (it was 14px too
+ * until 2026-10-01).
  */
-const nameStyle = "min-w-0 flex-1 font-display text-sm font-medium [overflow-wrap:break-word]";
+const nameStyle = "min-w-0 flex-1 font-display text-base font-medium [overflow-wrap:break-word]";
+
+/**
+ * The carrier's mark in front of a household's name, as the Monday email has
+ * it: the current policy's carrier, centered on the name's first line, with
+ * its name for a screen reader, since the mark is a picture.
+ */
+export function NameMark({ carrier }: { carrier: string }) {
+  return (
+    <span className="flex h-6 shrink-0 items-center self-start">
+      <CarrierMark carrier={carrier} />
+      <span className="sr-only">{carrier}, </span>
+    </span>
+  );
+}
+
+/** How far a line under the name sits in, to start under the name rather than the mark. */
+const underName = "ml-7";
 
 /**
  * The way into a household's drawer from its card: a button laid over the
@@ -370,15 +414,21 @@ function NotBuilt({ className, children }: { className: string; children: React.
 
 /**
  * A household in Initial Outreach or Completed, a row in the column's list
- * (Column): the name, set as every card's is, and the change in percent, at
- * 14px; a renewal running
- * short on time also counts down between the two ("8 days", by a clock, red
- * 700 when it's urgent, with the date on hover). A Completed card has the day
- * it was completed where the change would be, since the change and the
- * countdown are done with once a renewal is closed. Under the name, its
- * status (Initial Outreach's), then a named household's requests and whether
- * it's snoozed. A long name wraps rather than being cut short, so nothing
- * depends on a tooltip. The whole card opens the household's drawer, where
+ * (Column): the carrier's mark and the name, set as every card's is, and
+ * under the name what's renewing ("Home + Auto"), as on a card. An Initial
+ * Outreach row then has last year's price to this year's and the change in
+ * percent, as a card does, and its status, with when it renews at the right
+ * of the same line (by a clock, "8 days" in red under two weeks out and
+ * "Oct 26" after, with the full date on hover), then a named household's
+ * requests and whether it's snoozed. A Completed row has what the policy
+ * ended up costing (endCost in phases.ts) under what's renewing, with the
+ * day it was completed at the right of the same line, by a check (Completed,
+ * below), and no status or renewal, since those are done with once a
+ * renewal is closed. Until 2026-10-01 the change sat
+ * beside the name, with a countdown between them once the renewal was
+ * running short, and neither row said what's renewing or what it costs. A
+ * long name wraps rather than being cut short, so nothing depends on a
+ * tooltip. The whole card opens the household's drawer, where
  * the renewal email is a click away, and the row turns white under the
  * pointer to say so; an invented household's doesn't open, and says so.
  * (These were one-line lists in a white box, the mini columns, until
@@ -388,9 +438,8 @@ function ListRow({
   e,
   col,
   status,
-  accent,
   ...props
-}: BoardProps & { e: Entry; col: ColumnId; status?: PhaseStatus; accent: Accent | null }) {
+}: BoardProps & { e: Entry; col: ColumnId; status?: PhaseStatus }) {
   const { day, walk, household, onHousehold } = props;
   const selected = household === e.id;
   const open = () => onHousehold(e.id);
@@ -399,17 +448,30 @@ function ListRow({
 
   const body = (
     <>
-      <div className="flex items-start gap-2">
+      <div className="flex items-baseline gap-2">
+        <NameMark carrier={e.carrier} />
         <span className={nameStyle}>{setName(e.name)}</span>
-        {timed(accent) && (
-          <Countdown renews={e.renews} day={day} tone={accent} short onOpen={e.invented ? undefined : open} />
-        )}
-        {col === "completed" ? <Completed on={completedOn(e, walk)} /> : <Pct pct={e.pct} />}
       </div>
-      {status && <PhaseStatusLine status={status} day={day} className="mt-1" />}
-      {!e.invented && <Requests requests={requestsFor(e.id, day, walk)} className="mt-1" />}
+      <p className={cn("mt-1 text-muted-foreground", underName)}>{e.lines}</p>
+      {col === "completed" ? (
+        <StatusRow
+          className={underName}
+          status={<p className="text-muted-foreground">{money(endCost(e, walk))}</p>}
+          when={<Completed on={completedOn(e, walk)} />}
+        />
+      ) : (
+        <Price was={e.was} now={e.now} pct={e.pct} className={underName} />
+      )}
+      {status && (
+        <StatusRow
+          className={cn("mt-1", underName)}
+          status={<PhaseStatusLine status={status} day={day} />}
+          when={<Countdown renews={e.renews} day={day} onOpen={e.invented ? undefined : open} />}
+        />
+      )}
+      {!e.invented && <Requests requests={requestsFor(e.id, day, walk)} className={cn("mt-1", underName)} />}
       {snoozed && (
-        <StatusLine icon={AlarmClock} className="mt-1">
+        <StatusLine icon={AlarmClock} className={cn("mt-1", underName)}>
           Snoozed {snoozeLabel(walk.snoozed[e.id].until)}.
         </StatusLine>
       )}
@@ -431,20 +493,30 @@ function ListRow({
  * ------------------------------------------------------------------ */
 
 /**
- * A card in Shopping Renewal or Closing, the two the same: the name, then the
- * countdown once the renewal is running short ("8 days", by a clock, red 700
- * when it's urgent) and the change in percent, the same top line as an
- * Initial Outreach card's. Under the name, whether it's snoozed, with Undo,
- * and what the household asked for. Then one sentence, what the shop found
- * or who it's waiting on, and the action if there is one. At the foot, under
- * a rule that runs edge to edge of the card, its status. Everything is 14px,
- * the kit's row size. What's renewing, the carrier and last year's price to
- * this year's came off on 2026-10-01; the drawer's header has all three.
+ * A card in Shopping Renewal or Closing, the two the same: the carrier's
+ * mark and the name, and under the name what's renewing ("Home + Auto"),
+ * then last year's price to this year's and the change in percent, as
+ * Ashley's v2 cards had them. Then whether
+ * it's snoozed, with Undo, and what the household asked for, and one
+ * sentence, what the shop found or who it's waiting on, all of it starting
+ * under the name rather than the mark. Then the action if there is one, a
+ * button the card's width inside its padding. At the foot, under a rule
+ * that runs edge to edge of the card, its status, with when it renews at
+ * the right of the same line (by a clock, "8 days" in red under two weeks
+ * out and "Oct 26" after). Everything but the name is 14px, the kit's row
+ * size. Until 2026-10-01 a countdown and the change sat beside the name, the
+ * countdown only once the renewal was running short, and what's renewing,
+ * the price and the carrier were off the card (they came off that morning,
+ * and came back that afternoon).
  * `foot` sits above the card's drawer button, for anything that's a button of
  * its own.
  */
 function Card({
   name,
+  carrier,
+  lines,
+  was,
+  now,
   pct,
   when,
   status,
@@ -453,8 +525,14 @@ function Card({
   phase,
 }: {
   name: string;
+  carrier: string;
+  /** What's renewing: "Home + Auto". */
+  lines: string;
+  /** Last year's premium and this year's renewal, and the change between them. */
+  was: number;
+  now: number;
   pct: number;
-  /** The countdown, beside the change. */
+  /** When it renews, at the right of the status. */
   when?: React.ReactNode;
   status?: React.ReactNode;
   detail?: React.ReactNode;
@@ -464,15 +542,16 @@ function Card({
 }) {
   return (
     <div className="p-3 text-sm">
-      <div className="flex items-start gap-2">
+      <div className="flex gap-2">
+        <NameMark carrier={carrier} />
         <h3 className={nameStyle}>{setName(name)}</h3>
-        {when}
-        <Pct pct={pct} />
       </div>
-      {status && <div className="mt-1 flex flex-col items-start gap-1">{status}</div>}
-      {detail && <p className="mt-2">{detail}</p>}
+      <p className={cn("mt-1 text-muted-foreground", underName)}>{lines}</p>
+      <Price was={was} now={now} pct={pct} className={underName} />
+      {status && <div className={cn("mt-1 flex flex-col items-start gap-1", underName)}>{status}</div>}
+      {detail && <p className={cn("mt-2", underName)}>{detail}</p>}
       {foot && <div className="relative z-10">{foot}</div>}
-      <div className="-mx-3 mt-3 border-t px-3 pt-3">{phase}</div>
+      <StatusRow className="-mx-3 mt-3 border-t px-3 pt-3" status={phase} when={when} />
     </div>
   );
 }
@@ -486,8 +565,8 @@ const cardFrame = (selected = false) =>
   cn("relative block border bg-card text-card-foreground", selected && "border-primary");
 
 /**
- * A card for an invented household: its countdown when it's running short,
- * what its column says about it, the button a named household's card would
+ * A card for an invented household: when it renews, what its column says
+ * about it, the button a named household's card would
  * carry, which goes nowhere (the card's tooltip says why), its status, and
  * no drawer behind it.
  */
@@ -495,13 +574,11 @@ function InventedCard({
   e,
   col,
   status,
-  accent,
   day,
 }: {
   e: Entry;
   col: ColumnId;
   status: PhaseStatus;
-  accent: Accent | null;
   day: Day;
 }) {
   const foot = col === "ready" ? <ReviewResults /> : col === "sent" && e.approved && <CloseOut />;
@@ -509,8 +586,12 @@ function InventedCard({
     <NotBuilt className={cardFrame()}>
       <Card
         name={e.name}
+        carrier={e.carrier}
+        lines={e.lines}
+        was={e.was}
+        now={e.now}
         pct={e.pct}
-        when={timed(accent) && <Countdown renews={e.renews} day={day} tone={accent} short />}
+        when={<Countdown renews={e.renews} day={day} />}
         detail={e.invented!.detail}
         foot={foot}
         phase={<PhaseStatusLine status={status} day={day} />}
@@ -550,15 +631,15 @@ const firstOf = (name: string) => name.split(" ")[0];
  * what the board gives it (board.ts), with the same buttons.
  *
  * A task snoozed from the drawer's banner sinks to the foot of its column,
- * loses its countdown and its action, and says so under its name, with Undo.
+ * loses its action, and says so under its name, with Undo. It keeps when it
+ * renews, as every card does (it lost its countdown too until 2026-10-01).
  */
 function NamedCard({
   e,
   col,
   status: phase,
-  accent,
   ...props
-}: BoardProps & { e: Entry; col: ColumnId; status: PhaseStatus; accent: Accent | null }) {
+}: BoardProps & { e: Entry; col: ColumnId; status: PhaseStatus }) {
   const { day, walk, update, household, onHousehold } = props;
   const h = thisWeek.find((x) => x.id === e.id);
   const ew = earlier.find((x) => x.id === e.id);
@@ -615,9 +696,7 @@ function NamedCard({
       </Button>
     </p>
   );
-  const countdown = !snoozed && timed(accent) && (
-    <Countdown renews={e.renews} day={day} tone={accent} short onOpen={profile} />
-  );
+  const countdown = <Countdown renews={e.renews} day={day} onOpen={profile} />;
   const requests = requestsFor(e.id, day, walk);
   const status = (snoozeLine || requests.length > 0) && (
     <>
@@ -631,6 +710,10 @@ function NamedCard({
       <OpenOverlay id={e.id} name={e.name} selected={selected} onOpen={profile} />
       <Card
         name={e.name}
+        carrier={e.carrier}
+        lines={e.lines}
+        was={e.was}
+        now={e.now}
         pct={e.pct}
         when={countdown}
         status={status}
@@ -670,11 +753,11 @@ function ReviewResults({ onOpen }: { onOpen?: () => void }) {
  */
 function CardButton({ onClick, children }: { onClick?: () => void; children: React.ReactNode }) {
   return onClick ? (
-    <Button className="mt-3" onClick={onClick}>
+    <Button className="mt-3 w-full" onClick={onClick}>
       {children}
     </Button>
   ) : (
-    <Button className="mt-3" tabIndex={-1} aria-disabled>
+    <Button className="mt-3 w-full" tabIndex={-1} aria-disabled>
       {children}
     </Button>
   );

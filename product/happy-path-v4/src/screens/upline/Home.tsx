@@ -1,103 +1,114 @@
-import { boardFor } from "@/board";
-import { agency, pruitt, dayName, money, optionById, options, type Day } from "@/data";
+import { useState } from "react";
+import { cn } from "cn";
+import { BandGrain } from "@/components/BandGrain";
+import { agency, dayName, type Day } from "@/data";
+import { lineFor } from "@/dayLine";
+import { isFiltered, narrow, noFilters, type Filters } from "@/filters";
+import { phasesFor } from "@/phases";
 import { Board, type BoardProps } from "@/screens/upline/Board";
+import { List } from "@/screens/upline/List";
+import { Toolbar, type View } from "@/screens/upline/Toolbar";
 import type { Walk } from "@/walk";
 
 /**
- * The homepage, the same every day: a greeting, the day's line, then the
- * board. The header is set as the v3 Policyholder List's was, left-aligned
- * with the room above it that page had (its 40px, the Home link and 40px
- * more), and the board follows at that page's gaps. The blue band that sat
- * here came off on 2026-09-30, after the board replaced the Action Needed and Scheduled Emails sections (the
- * Policyholder List went with them, since the board is the whole book now).
- * The toolbar between them, Needs me and a name search, came off on
- * 2026-10-01.
+ * The homepage, the same every day: the band, then the toolbar, then the
+ * board or the list. The band is v3's homepage band, back on 2026-10-01
+ * (it came off on 2026-09-30, after the board replaced the Action Needed and
+ * Scheduled Emails sections, and the greeting and the line sat on the page's
+ * own ground, left-aligned, until it came back). The toolbar is v2.5's
+ * Filters and v3's search and Board or List (Toolbar.tsx); what it's set to
+ * is the page's own, so every stop opens on the whole board.
  *
- * The header and the board take v3's Policyholder List width too, at most
- * 1280, centered, so a wide window leaves room either side (Upline's bar
- * follows, so the mark keeps their edge). The board is 1000px tall, each
- * column scrolling inside itself when it holds more than fits (Board.tsx).
- * Until 2026-10-01 it was one screen tall, at most 800px, with each column
- * scrolling inside itself once the page had scrolled it whole into view, and
+ * The toolbar and the board take v3's Policyholder List width, at most 1280,
+ * centered, so a wide window leaves room either side (Upline's bar follows,
+ * so the mark keeps their edge). With the board showing, the two are exactly
+ * the window's height under the presenter bar, 32px in from its top and its
+ * foot, and nothing comes after them, so the page scrolls until the space
+ * over the toolbar meets the top of the window and stops there, with the
+ * board filling the rest and each column scrolling inside itself when it
+ * holds more than fits (Board.tsx). A window under 576px holds them at 576.
+ * The list runs the page's length instead (List.tsx). `data-fit-window`
+ * lets the capture script hold the board at a 900px window's height, since
+ * it grows the window to fit the page (scripts/capture.mjs). Until
+ * 2026-10-01 the board was one screen tall, at most 800px, with each column
+ * scrolling inside itself once the page had scrolled it whole into view;
  * for part of that day it had no height of its own, running the page on for
- * the length of its longest column.
+ * the length of its longest column, and then it was 1000px tall whatever
+ * the window.
  */
 export function Home({ day, walk, ...props }: BoardProps) {
+  const [view, setView] = useState<View>("board");
+  const [filters, setFilters] = useState<Filters>(noFilters);
+  const [query, setQuery] = useState("");
+  const placed = narrow(phasesFor(day, walk), filters, query, day);
+  const filtered = isFiltered(filters) || query.trim() !== "";
+
   return (
     <>
-      {/* The toolbar under the line (Needs me and search) came off on
-          2026-10-01, so the board follows the line at the 32px the toolbar
-          did. */}
-      <div className="shell max-w-7xl pt-25 pb-4">
-        <h1 id="home-title" className="text-4xl">
-          {day === "fri" ? `Happy ${dayName[day]}` : "Good morning"}, {agency.agent.first}
-        </h1>
-        <p aria-live="polite" className="mt-2 font-display text-lg text-muted-foreground">
-          {lineFor(day, walk)}
-        </p>
-      </div>
+      <Hero day={day} walk={walk} />
 
-      <div className="shell max-w-7xl pt-4 pb-6">
-        <Board day={day} walk={walk} {...props} />
+      <div
+        data-fit-window={view === "board" || undefined}
+        className={cn(
+          "shell flex max-w-7xl flex-col py-8",
+          view === "board"
+            ? "h-[calc(100svh-var(--demo-bar-h))] min-h-144"
+            : "min-h-[calc(100svh-var(--demo-bar-h))]",
+        )}
+      >
+        <Toolbar
+          filters={filters}
+          onFilters={setFilters}
+          query={query}
+          onQuery={setQuery}
+          view={view}
+          onView={setView}
+        />
+        <div className="mt-4 min-h-0 flex-1">
+          {view === "board" ? (
+            <Board day={day} walk={walk} placed={placed} filtered={filtered} {...props} />
+          ) : (
+            <List day={day} walk={walk} placed={placed} filtered={filtered} {...props} />
+          )}
+        </div>
       </div>
     </>
   );
 }
 
-const count = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`;
+/**
+ * The band, as v3's homepage drew it: the design hub homepage's blue under
+ * the mountain, as the Monday email opens, with the greeting and the day's
+ * line centered on it in white. v3's link to the Policyholder List under
+ * the line isn't here, since the board is the whole book now. It never holds
+ * a card or a button, so it reads the same every day.
+ */
+function Hero({ day, walk }: { day: Day; walk: Walk }) {
+  return (
+    <div className="band-surface relative isolate overflow-clip">
+      <BandGrain />
+      <div className="shell py-(--space-section)">
+        <div className="mx-auto max-w-180 text-center">
+          <h1 id="home-title" className="text-5xl text-balance">
+            {greeting(day)}
+          </h1>
+          <p aria-live="polite" className="mt-(--space-block) font-display text-xl font-medium text-balance">
+            {lineFor(day, walk)}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 /**
- * What's going on, in one line, by day and by what the presenter has done so
- * far, counted off the board. Monday counts what's waiting on Jenna and
- * what's going out; Wednesday has nothing to send or bind; Thursday and
- * Friday follow the Pruitts. Renewals running short on time are the board's
- * to show, with their accents, so the line doesn't count them.
+ * The band's headline, by day: Monday's good morning; Wednesday's break,
+ * since the emails went Tuesday and nothing needs Jenna; Thursday's push to
+ * finish, with the quotes back; and Friday's. Wednesday and Thursday were
+ * "Good morning, Jenna" until 2026-10-01.
  */
-function lineFor(day: Day, walk: Walk): string {
-  const board = boardFor(day, walk);
-  const ready = board.ready.length;
-  const toBind = board.sent.filter((e) => e.approved).length;
-  const skipped = walk.skipped.includes(pruitt.id);
-
-  if (day === "mon") {
-    const needs = [
-      ready && count(ready, "recommendation ready to send", "recommendations ready to send"),
-      toBind && count(toBind, "policy to bind", "policies to bind"),
-    ].filter(Boolean);
-    const going = `Tomorrow at 9 AM, ${count(board.scheduled.length, "renewal email goes", "renewal emails go")} out.`;
-    return needs.length ? `You have ${needs.join(" and ")}. ${going}` : `Nothing to send or bind today. ${going}`;
-  }
-
-  if (day === "wed") {
-    return skipped
-      ? "Nothing to send or bind today. This week's renewal emails went out Tuesday."
-      : "Nothing to send or bind today. This week's renewal emails went out Tuesday, and the Pruitts are being shopped.";
-  }
-
-  const others = board.ready.filter((e) => e.id !== pruitt.id).length;
-  const more = others ? ` ${count(others, "more is", "more are")} ready to send.` : "";
-
-  if (day === "thu") {
-    if (skipped) {
-      return others
-        ? `${count(others, "recommendation is", "recommendations are")} ready to send.`
-        : "Nothing to send or bind today.";
-    }
-    if (walk.recSent) return `Your recommendation went to Leah and Tom. We'll let you know when they answer.${more}`;
-    return others
-      ? `Shopping is done for Leah and Tom Pruitt and ${count(others, "other", "others")}. Their recommendations are ready to send.`
-      : "Shopping has been completed for Leah and Tom Pruitt.";
-  }
-
-  if (skipped) return "Nothing to send or bind today.";
-  const pick = optionById(walk.pick);
-  const erie = options.find((o) => o.current)!;
-  if (walk.bound) {
-    return pick.current
-      ? `Done. The Pruitts are set. Erie renews on ${pruitt.renewsLong}.`
-      : `Done. The Pruitts are set. ${pick.carrier} takes over on ${pruitt.renewsLong}, with ${money(erie.price - pick.price)} back for Leah and Tom.`;
-  }
-  return pick.current
-    ? "Leah and Tom are staying with Erie. There's nothing to bind, so close it out from their card below."
-    : `Leah and Tom said yes to ${pick.carrier}. Bind it in the ${pick.carrier} portal before ${pruitt.renewsLong}, then close it out from their card below.`;
+function greeting(day: Day) {
+  if (day === "wed") return "Take a well-deserved break";
+  if (day === "thu") return "Let's wrap up the week";
+  return `${day === "fri" ? `Happy ${dayName[day]}` : "Good morning"}, ${agency.agent.first}`;
 }

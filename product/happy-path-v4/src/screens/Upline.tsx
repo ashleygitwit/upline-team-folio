@@ -30,7 +30,8 @@ export function Upline({
   // card or line, or a button on it (View the full report, View profile and
   // close). A click doesn't focus a button in Safari, and the walk's review
   // stop opens the drawer with nothing clicked, so failing that it goes to
-  // the household's card or line, wherever it is on the board now.
+  // the household's card or line, wherever it is on the board now, or its
+  // row in the list.
   const opener = useRef<HTMLElement | null>(null);
   const open = (id: string, phase?: Phase) => {
     const at = document.activeElement;
@@ -39,7 +40,7 @@ export function Upline({
     setPage(phase ? { phase } : null);
   };
   const returnFocus = (id: string) => {
-    const card = document.querySelector<HTMLElement>(`[data-board] [data-household="${id}"]`);
+    const card = document.querySelector<HTMLElement>(`[data-household="${id}"]`);
     (opener.current?.isConnected ? opener.current : card)?.focus();
   };
 

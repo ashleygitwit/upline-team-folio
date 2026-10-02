@@ -33,8 +33,15 @@ export function Change({ pct, className }: { pct: number; className?: string }) 
   );
 }
 
+/**
+ * A section's heading in the drawer and its pages: the display face at 500
+ * and 16px, in the text color, sentence case, as the design hub sets a small
+ * label and the marketing site a draft's title, with 12px to what follows
+ * and 32px above it from the section before. It was the eyebrow, in capitals
+ * and gray, until 2026-10-01, when the drawer had about fifteen of them.
+ */
 export function SectionHead({ children, className }: { children: ReactNode; className?: string }) {
-  return <h3 className={cn("eyebrow text-muted-foreground", className)}>{children}</h3>;
+  return <h3 className={cn("font-display text-base font-medium", className)}>{children}</h3>;
 }
 
 /** A quote that matches what the household has today is a check; anything else is written out. */
@@ -63,7 +70,11 @@ export function CarrierLogo({ name }: { name: string }) {
   );
 }
 
-/** An email as it will go out: where it comes from, who it's to, and the words, which can be edited. */
+/**
+ * An email as it will go out: where it comes from, who it's to, and the
+ * words, which can be edited. Everything in it keeps 24px from its sides, as
+ * the drawer does, and the words 24px from the To and Subject above them.
+ */
 export function EmailFrame({
   toolbar,
   to,
@@ -77,11 +88,11 @@ export function EmailFrame({
 }) {
   return (
     <div className="border bg-card">
-      <div className="flex items-center gap-2 border-b bg-muted px-3.5 py-2.5 text-sm text-muted-foreground">
+      <div className="flex items-center gap-2 border-b bg-muted px-6 py-3 text-sm text-muted-foreground">
         <Mail className="size-4" aria-hidden />
         {toolbar}
       </div>
-      <dl className="grid grid-cols-[54px_1fr] gap-x-2 gap-y-0.5 border-b px-5 py-3.5 text-sm">
+      <dl className="grid grid-cols-[54px_1fr] gap-x-2 gap-y-1 border-b px-6 py-4 text-sm">
         <dt className="text-muted-foreground">To</dt>
         <dd>{to}</dd>
         <dt className="text-muted-foreground">Subject</dt>
@@ -113,12 +124,13 @@ export function LinkedEmail({
   const paragraphs = body.split(/\n\n+/);
   const at = paragraphs.findIndex((p) => linkLine.test(p));
   // Each box keeps the kit's own padding, so its focus ring has room, and the
-  // frame's padding is short by as much, so the words sit where one box's did.
+  // frame's padding is short by as much (14px and the box's 10 at the sides,
+  // 16 and its 8 above and below), so the words sit on the frame's 24px.
   const words = "min-h-0 resize-none border-0 bg-transparent text-[15px] leading-relaxed";
 
   if (at < 0) {
     return (
-      <div className="p-3">
+      <div className="px-3.5 py-4">
         <Textarea
           aria-label="Email"
           value={body}
@@ -136,7 +148,7 @@ export function LinkedEmail({
   const join = (b: string, a: string) => onChange([b, paragraphs[at], a].filter((part) => part.trim()).join("\n\n"));
 
   return (
-    <div className="p-3">
+    <div className="px-3.5 py-4">
       <Textarea
         aria-label="Email, before the questionnaire link"
         value={before}

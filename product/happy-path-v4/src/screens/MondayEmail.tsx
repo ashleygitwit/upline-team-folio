@@ -7,58 +7,38 @@ import { BandGrain } from "@/components/BandGrain";
 import { CarrierMark } from "@/components/CarrierMark";
 import { Stage } from "@/components/Stage";
 import { Countdown } from "@/components/Status";
-import {
-  accentFor,
-  bigIncrease,
-  boardFor,
-  needsMe,
-  pctLabel,
-  setName,
-  timed,
-  type Accent,
-  type ColumnId,
-  type Entry,
-} from "@/board";
+import { bigIncrease, pctLabel, setName } from "@/board";
 import { agency } from "@/data";
+import { lineFor } from "@/dayLine";
+import { completedOn, phases, phasesFor, statusLabel, type Placed } from "@/phases";
 import { initialWalk, type WalkProps } from "@/walk";
+
+/** How many lines a list shows before it leaves the rest to Upline. */
+const shown = 5;
 
 /**
  * How the week starts: an email, not a login. Upline writes to Jenna (this is
  * Upline-to-agent mail, so it carries Upline's brand, and opens on the design
- * hub homepage's band) with everything on the board that needs her this
- * week. It's the board at 8:00 AM Monday, before she's touched it, so it
- * reads the same whatever the presenter does later.
+ * hub homepage's band) with the homepage as it stands at 8:00 AM Monday,
+ * before she's touched it, so it reads the same whatever the presenter does
+ * later.
  *
- * Action Needed is what needs Jenna (needsMe in board.ts), in three groups: approvals
- * to bind (Ready to close), recommendations to send, and renewals inside their
- * column's deadlines that are still open (Renewing soon; inside ten days
- * until 2026-10-01). A household that only needs her for a blue accent (a
- * life quote or a change requested) isn't listed, since those have no flow of
- * their own yet. Each line is a mini line from the board, with its accent and
- * its countdown, in the accent's color, instead of the change, since what
- * matters here is how long is left. The countdown has no tooltip, since this
- * is an email. It was the earlier weeks' four until 2026-09-30.
- *
- * Scheduled Emails comes last and quietest, since they go out Tuesday whether
- * she looks at them or not: the board's Scheduled column, all 48, biggest
- * increase first, with the change in percent as the board shows it.
+ * The band says what the homepage's header does, the greeting and Monday's
+ * line (dayLine.ts). Then the board, a section for each of its four
+ * columns (phases.ts) in its order, with the column's count, and inside each
+ * a list for each status in the order its menu has them, soonest renewal
+ * first as the board runs them. A list shows its first five and, when there
+ * are more, a View all on Upline link under it. Each line is a board line
+ * with the carrier's mark in front: the name, when it renews (a countdown in
+ * red under two weeks out and the date after, without a tooltip, since this
+ * is an email) and the change, or for Completed the day it was completed. Until 2026-10-01 the email had
+ * the homepage's sections from before the board, Action Needed and Scheduled
+ * Emails, with every line in full.
  */
 export function MondayEmail({ go }: WalkProps) {
   const day = "mon";
-  const board = boardFor(day, initialWalk);
-  const needs = needsMe(board, day, initialWalk);
-  const toClose = needs.filter(({ e }) => e.approved);
-  const toSend = needs.filter(({ col }) => col === "ready");
-  const soon = needs.filter(
-    ({ e, col }) => !e.approved && col !== "ready" && timed(accentFor(e, col, day, initialWalk)),
-  );
-  const byRenewal = (a: { e: Entry }, b: { e: Entry }) =>
-    Date.parse(`${a.e.renews} 2026`) - Date.parse(`${b.e.renews} 2026`);
-
-  const summary = [
-    toSend.length && count(toSend.length, "recommendation ready to send", "recommendations ready to send"),
-    toClose.length && count(toClose.length, "policy to bind", "policies to bind"),
-  ].filter(Boolean);
+  const placed = phasesFor(day, initialWalk);
+  const toUpline = () => go("card-monday-upline");
 
   return (
     <Stage caption="Jenna's inbox · Monday, October 12, 8:00 AM" size="email">
@@ -80,53 +60,46 @@ export function MondayEmail({ go }: WalkProps) {
         <BandGrain />
         <img src={logo} alt="Upline" className="h-6 w-auto self-start" />
         <div>
-          <h1 className="text-4xl">Good morning, Jenna</h1>
-          <p className="mt-3 font-display text-lg">Here's what needs your attention this week.</p>
+          <h1 className="text-4xl">Good morning, {agency.agent.first}</h1>
+          <p className="mt-3 font-display text-lg">{lineFor(day, initialWalk)}</p>
         </div>
       </header>
 
       <div className="px-8 pb-12">
-        <Group title="Action Needed">
-          <Card size="sm">
-            <CardContent className="gap-6">
-              <p className="text-base">
-                You have {summary.join(" and ")}.
-                {soon.length > 0 && ` Another ${count(soon.length, "renewal is", "renewals are")} short on time.`}
-              </p>
-              <Todos title="Ready to close" items={[...toClose].sort(byRenewal)} />
-              <Todos title="Recommendations ready to send" items={[...toSend].sort(byRenewal)} />
-              <Todos title="Renewing soon" items={[...soon].sort(byRenewal)} />
-              <Button size="lg" className="w-full" onClick={() => go("card-monday-upline")}>
-                View in Upline
-              </Button>
-            </CardContent>
-          </Card>
-        </Group>
+        {phases.map((p) => {
+          const items = placed[p.id];
+          if (items.length === 0) return null;
+          const lists =
+            p.statuses.length === 0
+              ? [{ id: p.id, title: undefined, items }]
+              : p.statuses.map((s) => ({
+                  id: `${p.id}-${s}`,
+                  title: statusLabel[s],
+                  items: items.filter((i) => i.status === s),
+                }));
+          return (
+            <Group key={p.id} title={p.label} count={items.length}>
+              <Card size="sm">
+                <CardContent className="gap-6">
+                  {lists.map((l) => (
+                    <Lines
+                      key={l.id}
+                      id={l.id}
+                      title={l.title}
+                      items={l.items}
+                      completed={p.id === "completed"}
+                      onViewAll={toUpline}
+                    />
+                  ))}
+                </CardContent>
+              </Card>
+            </Group>
+          );
+        })}
 
-        <Group title="Scheduled Emails">
-          <Card size="sm">
-            <CardContent className="gap-4">
-              <p className="text-base">
-                Tomorrow at 9:00 AM, {board.scheduled.length} renewals go out, drafted in your voice and sent from
-                your inbox. You don't need to do anything.
-              </p>
-              <ul className="divide-y border-y text-sm">
-                {board.scheduled.map((e) => (
-                  <li key={e.id} className="flex items-center justify-between gap-4 py-2">
-                    <span className="flex items-center gap-2">
-                      <CarrierMark carrier={e.carrier} />
-                      <span className="sr-only">{e.carrier}, </span>
-                      {e.name}
-                    </span>
-                    <span className={cn("font-mono", bigIncrease(e.pct) ? "text-foreground" : "text-muted-foreground")}>
-                      {pctLabel(e.pct)}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </CardContent>
-          </Card>
-        </Group>
+        <Button size="lg" className="mt-10 w-full" onClick={toUpline}>
+          View in Upline
+        </Button>
       </div>
 
       <p className="border-t px-8 py-5 text-sm text-muted-foreground">
@@ -136,59 +109,91 @@ export function MondayEmail({ go }: WalkProps) {
   );
 }
 
-const count = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`;
-
-/** One section of the email: the homepage's name for it, then its card. */
-function Group({ title, children }: { title: string; children: ReactNode }) {
+/** One section of the email: the board column's name and count, then its card. */
+function Group({ title, count, children }: { title: string; count: number; children: ReactNode }) {
   return (
     <section className="mt-10">
-      <h2 className="text-xl">{title}</h2>
+      <h2 className="text-xl">
+        {title} <span className="font-mono text-sm font-normal text-muted-foreground">{count}</span>
+      </h2>
       <div className="mt-4 flex flex-col gap-3">{children}</div>
     </section>
   );
 }
 
-/** The accent down a line's left edge, as the board draws it. */
-const accentBar: Record<Accent, string> = {
-  urgent: "before:bg-destructive",
-  soon: "before:bg-warning",
-  requested: "before:bg-primary",
-};
+/**
+ * One list in a column's card: the status as its heading, with its count as
+ * the column's has it, in the mono face in gray (it was an eyebrow,
+ * "SCHEDULED · 48", until 2026-10-01; Completed has no statuses, so its one
+ * list goes without), then its first five lines and, past five, View all on
+ * Upline.
+ */
+function Lines({
+  id,
+  title,
+  items,
+  completed,
+  onViewAll,
+}: {
+  id: string;
+  title?: string;
+  items: Placed[];
+  completed: boolean;
+  onViewAll: () => void;
+}) {
+  if (items.length === 0) return null;
+  const heading = `email-${id}`;
+  return (
+    <section aria-labelledby={title && heading}>
+      {title && (
+        <h3 id={heading} className="mb-3 font-display text-base font-medium">
+          {title} <span className="font-mono text-sm font-normal text-muted-foreground">{items.length}</span>
+        </h3>
+      )}
+      <ul className="divide-y border-y text-sm">
+        {items.slice(0, shown).map((p) => (
+          <Line key={p.e.id} {...p} completed={completed} />
+        ))}
+      </ul>
+      {items.length > shown && (
+        <Button
+          variant="link"
+          className="mt-2 h-auto p-0 font-sans text-sm"
+          aria-describedby={title && heading}
+          onClick={onViewAll}
+        >
+          View all on Upline
+        </Button>
+      )}
+    </section>
+  );
+}
 
 /**
- * One group of Action Needed: its name as the eyebrow, with its count, then
- * a line a household, soonest renewal first: the accent, the carrier's mark,
- * the name, and its countdown, in the accent's color.
+ * A household's line: the carrier's mark and the name, then when it renews
+ * and the change in percent, or for Completed the day it was completed.
  */
-function Todos({ title, items }: { title: string; items: { e: Entry; col: ColumnId }[] }) {
-  if (items.length === 0) return null;
+function Line({ e, completed }: Placed & { completed: boolean }) {
   return (
-    <section>
-      <h3 className="eyebrow text-muted-foreground">
-        {title} · {items.length}
-      </h3>
-      <ul className="mt-2 divide-y border-y text-sm">
-        {items.map(({ e, col }) => {
-          const accent = accentFor(e, col, "mon", initialWalk);
-          return (
-            <li
-              key={e.id}
-              className={cn(
-                "relative flex items-center justify-between gap-4 py-2 pl-3",
-                accent && "before:absolute before:inset-y-0 before:left-0 before:w-[3px]",
-                accent && accentBar[accent],
-              )}
-            >
-              <span className="flex min-w-0 items-start gap-2">
-                <CarrierMark carrier={e.carrier} />
-                <span className="sr-only">{e.carrier}, </span>
-                <span className="min-w-0">{setName(e.name)}</span>
-              </span>
-              <Countdown renews={e.renews} day="mon" tone={timed(accent) ? accent : undefined} tip={false} />
-            </li>
-          );
-        })}
-      </ul>
-    </section>
+    <li className="flex items-center justify-between gap-4 py-2">
+      <span className="flex min-w-0 items-start gap-2">
+        <CarrierMark carrier={e.carrier} />
+        <span className="sr-only">{e.carrier}, </span>
+        <span className="min-w-0">{setName(e.name)}</span>
+      </span>
+      <span className="flex shrink-0 items-center gap-3">
+        {!completed && <Countdown renews={e.renews} day="mon" tip={false} />}
+        {completed ? (
+          <span className="font-mono text-muted-foreground">
+            <span className="sr-only">Completed </span>
+            {completedOn(e, initialWalk)}
+          </span>
+        ) : (
+          <span className={cn("font-mono", bigIncrease(e.pct) ? "text-foreground" : "text-muted-foreground")}>
+            {pctLabel(e.pct)}
+          </span>
+        )}
+      </span>
+    </li>
   );
 }

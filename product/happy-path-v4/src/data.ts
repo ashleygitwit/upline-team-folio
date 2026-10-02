@@ -451,6 +451,12 @@ export type Earlier = {
    * from Wednesday they're in `later`'s state and off the homepage.
    */
   monday?: { section: "shopped" | "closing"; detail: string };
+  /**
+   * What the policy costs once bound with a new carrier, for its Completed
+   * row. Diane's file has no shop to price her Auto-Owners, so this one was
+   * made up on 2026-10-01, $400 under Erie's renewal.
+   */
+  bound?: number;
 };
 
 /** Earlier weeks, for the homepage's board. */
@@ -492,6 +498,7 @@ export const earlier: Earlier[] = [
       section: "closing",
       detail: "Diane approved Auto-Owners. Bind it in the portal before October 18.",
     },
+    bound: 3560,
   },
   {
     id: "iyer",

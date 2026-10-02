@@ -72,7 +72,10 @@ export function Layer<T>({
  * page's title, its body scrolling under them so neither scrolls away, and
  * its buttons in a footer under the scroll rather than at the body's foot.
  * The header and the footer are white and the body between them gray 50, as
- * the profile is under its tabs.
+ * the profile is under its tabs. The header and the body keep 24px all
+ * round, as the drawer's own do, and the footer 24px either side and 16px
+ * above and below, a bar for its buttons; until 2026-10-01 they were 20px
+ * either side, 18px over and 28px under.
  *
  * Until 2026-10-01 these were modals centered over the page, wider and
  * shorter than the drawer, so they'd read as a dialog over the page rather
@@ -94,7 +97,7 @@ export function PhasePage({
   const back = useContext(PageBack);
   return (
     <>
-      <div className="px-5 pt-4 pr-14">
+      <div className="p-6 pr-14">
         {back && (
           <Button
             variant="link"
@@ -106,12 +109,12 @@ export function PhasePage({
             {back.label}
           </Button>
         )}
-        <h2 data-page-title tabIndex={-1} className="mt-1 font-display text-2xl">
+        <h2 data-page-title tabIndex={-1} className="mt-2 font-display text-2xl">
           {title}
         </h2>
         {description && <p className="mt-2 text-sm text-muted-foreground">{description}</p>}
       </div>
-      <div data-phase-body className="mt-3.5 min-h-0 flex-1 overflow-y-auto border-t bg-background px-5 pt-4.5 pb-7">
+      <div data-phase-body className="min-h-0 flex-1 overflow-y-auto border-t bg-background p-6">
         {children}
       </div>
       {footer}
@@ -129,7 +132,7 @@ export function PhaseFooter({ done, children }: { done?: boolean; children: Reac
   return (
     <div
       className={cn(
-        "flex border-t px-5 pt-3.5 pb-4",
+        "flex border-t px-6 py-4",
         done
           ? "items-center justify-between gap-4"
           : "flex-col-reverse gap-2 sm:flex-row sm:items-center sm:justify-end",

@@ -105,8 +105,9 @@ export function HouseholdDrawer({
 
       <Dialog open={!!skipping} onOpenChange={(o) => !o && setSkipping(null)}>
         <DialogContent onOpenAutoFocus={focusPanel} className="outline-none">
+          {/* No eyebrow over the question: "Skip outreach" there said what
+              the question and its button already do (it came off on 2026-10-01). */}
           <DialogHeader>
-            <p className="eyebrow text-muted-foreground">Skip outreach</p>
             <DialogTitle className="font-display text-2xl">
               Are you sure you want to skip reaching out to {skipping && spoken(skipping.name)}?
             </DialogTitle>
