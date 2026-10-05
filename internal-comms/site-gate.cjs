@@ -1,6 +1,4 @@
-import { createHash, timingSafeEqual } from 'node:crypto';
-import type { IncomingMessage, ServerResponse } from 'node:http';
-
+const { createHash, timingSafeEqual } = require('node:crypto');
 const PASSWORD = 'upline26';
 const COOKIE_NAME = 'throughline_auth';
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 30;
@@ -14,18 +12,18 @@ const PUBLIC_PATHS = new Set([
   '/apple-touch-icon.png',
 ]);
 
-function token(): string {
+function token() {
   return createHash('sha256').update(`throughline-gate-v1:${PASSWORD}`).digest('hex');
 }
 
-function safeEqual(input: string, expected: string): boolean {
+function safeEqual(input, expected) {
   const left = Buffer.from(input);
   const right = Buffer.from(expected);
   if (left.length !== right.length) return false;
   return timingSafeEqual(left, right);
 }
 
-function readCookie(header: string | null, name: string): string | null {
+function readCookie(header, name) {
   if (!header) return null;
   for (const part of header.split(';')) {
     const separator = part.indexOf('=');
@@ -36,13 +34,13 @@ function readCookie(header: string | null, name: string): string | null {
   return null;
 }
 
-function isSecure(request: Request): boolean {
+function isSecure(request) {
   if (new URL(request.url).protocol === 'https:') return true;
   const forwarded = request.headers.get('x-forwarded-proto');
   return forwarded?.split(',')[0]?.trim() === 'https';
 }
 
-function cookieHeader(value: string, secure: boolean): string {
+function cookieHeader(value, secure) {
   const parts = [
     `${COOKIE_NAME}=${value}`,
     'Path=/',
@@ -54,7 +52,7 @@ function cookieHeader(value: string, secure: boolean): string {
   return parts.join('; ');
 }
 
-function safeNext(value: string): string {
+function safeNext(value) {
   if (!value || value.length > 2048) return '/';
   if (!value.startsWith('/') || value.startsWith('//') || value.startsWith('/\\')) return '/';
   let decoded = value;
@@ -67,7 +65,7 @@ function safeNext(value: string): string {
   return value;
 }
 
-function escapeHtml(value: string): string {
+function escapeHtml(value) {
   return value
     .replace(/&/g, '&amp;')
     .replace(/"/g, '&quot;')
@@ -75,7 +73,7 @@ function escapeHtml(value: string): string {
     .replace(/>/g, '&gt;');
 }
 
-function gateHtml(nextPath: string, showError: boolean): string {
+function gateHtml(nextPath, showError) {
   const error = showError
     ? '<p class="gate-error" role="alert">That password isn’t right.</p>'
     : '';
@@ -218,7 +216,7 @@ function gateHtml(nextPath: string, showError: boolean): string {
 </html>`;
 }
 
-function htmlResponse(body: string, status: number): Response {
+function htmlResponse(body, status) {
   return new Response(body, {
     status,
     headers: {
@@ -230,7 +228,7 @@ function htmlResponse(body: string, status: number): Response {
   });
 }
 
-export async function handleSiteGate(request: Request): Promise<Response | null> {
+async function handleSiteGate(request) {
   const url = new URL(request.url);
   if (PUBLIC_PATHS.has(url.pathname)) return null;
 
@@ -268,7 +266,7 @@ export async function handleSiteGate(request: Request): Promise<Response | null>
   return htmlResponse(gateHtml(nextPath, false), request.method === 'GET' ? 200 : 401);
 }
 
-function headersFromNode(headers: IncomingMessage['headers']): Headers {
+function headersFromNode(headers) {
   const out = new Headers();
   for (const [key, value] of Object.entries(headers)) {
     if (value == null) continue;
@@ -281,7 +279,7 @@ function headersFromNode(headers: IncomingMessage['headers']): Headers {
   return out;
 }
 
-function absoluteUrl(req: IncomingMessage): string {
+function absoluteUrl(req) {
   const host = req.headers.host ?? 'localhost';
   const forwarded = req.headers['x-forwarded-proto'];
   const proto =
@@ -289,11 +287,11 @@ function absoluteUrl(req: IncomingMessage): string {
   return `${proto}://${host}${req.url ?? '/'}`;
 }
 
-function readBody(req: IncomingMessage, limit: number): Promise<Buffer> {
+function readBody(req, limit) {
   return new Promise((resolve, reject) => {
-    const chunks: Buffer[] = [];
+    const chunks = [];
     let size = 0;
-    req.on('data', (chunk: Buffer | string) => {
+    req.on('data', (chunk) => {
       const buffer = Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk);
       size += buffer.length;
       if (size > limit) {
@@ -308,7 +306,7 @@ function readBody(req: IncomingMessage, limit: number): Promise<Buffer> {
   });
 }
 
-async function writeResponse(res: ServerResponse, response: Response) {
+async function writeResponse(res, response) {
   res.statusCode = response.status;
   response.headers.forEach((value, key) => {
     if (key === 'set-cookie') return;
@@ -321,15 +319,11 @@ async function writeResponse(res: ServerResponse, response: Response) {
   res.end(body);
 }
 
-export function applySiteGate(
-  req: IncomingMessage,
-  res: ServerResponse,
-  next: (err?: unknown) => void,
-): void {
+function applySiteGate(req, res, next) {
   void (async () => {
     try {
       const method = req.method ?? 'GET';
-      const init: RequestInit = {
+      const init = {
         method,
         headers: headersFromNode(req.headers),
       };
@@ -351,3 +345,5 @@ export function applySiteGate(
     }
   })();
 }
+
+module.exports = { handleSiteGate, applySiteGate };

@@ -2,5 +2,10 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "installCommand": "npm install && npm install --prefix internal-comms --legacy-peer-deps",
   "buildCommand": "npm run build",
-  "outputDirectory": "internal-comms/dist"
+  "outputDirectory": "internal-comms/dist",
+  "functions": {
+    "middleware.ts": {
+      "includeFiles": "internal-comms/site-gate.cjs"
+    }
+  }
 }

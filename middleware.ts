@@ -1,5 +1,5 @@
 import { next } from '@vercel/functions';
-import { handleSiteGate } from './internal-comms/site-gate.ts';
+import { handleSiteGate } from './internal-comms/site-gate.cjs';
 
 export const config = {
   runtime: 'nodejs',

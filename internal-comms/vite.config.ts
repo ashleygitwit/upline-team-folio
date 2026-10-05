@@ -1,6 +1,6 @@
 import { defineConfig, type Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
-import { applySiteGate } from './site-gate.ts';
+import { applySiteGate } from './site-gate.cjs';
 
 function siteGatePlugin(): Plugin {
   return {
