@@ -1,6 +1,9 @@
 {
   "name": "upline-team-folio",
   "private": true,
+  "dependencies": {
+    "@vercel/functions": "^3.9.11"
+  },
   "scripts": {
     "generate-plan": "node scripts/generate-execution-plan.mjs",
     "sync-data": "cp data/venture-plan.json internal-comms/public/data/venture-plan.json && cp data/learnings.json internal-comms/public/data/learnings.json",

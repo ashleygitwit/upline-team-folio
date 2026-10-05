@@ -1,8 +1,21 @@
-import { defineConfig } from 'vite';
+import { defineConfig, type Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
+import { applySiteGate } from './site-gate.ts';
+
+function siteGatePlugin(): Plugin {
+  return {
+    name: 'throughline-site-gate',
+    configureServer(server) {
+      server.middlewares.use(applySiteGate);
+    },
+    configurePreviewServer(server) {
+      server.middlewares.use(applySiteGate);
+    },
+  };
+}
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [siteGatePlugin(), react()],
   server: {
     port: 5299,
     strictPort: true,
